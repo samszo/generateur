@@ -1,0 +1,23 @@
+<p><a href="<?php echo $this->url(array('controller'=>'index',
+        'action'=>'ajouter'));?>">Ajouter des nouveaux dico</a></p>
+<table>
+    <tr>
+        <th>Url</th>
+        <th>Type</th>
+        <th>Date</th>
+        <th>&nbsp;</th>
+    </tr>
+<?php foreach($this->dicos as $dico) : ?>
+    <tr>
+        <td><?php echo $this->escape($dico->url);?></td>
+        <td><?php echo $this->escape($dico->type);?></td>
+        <td><?php echo $this->escape($dico->maj);?></td>
+        <td>
+            <a href="<?php echo $this->url(array('controller'=>'index',
+                'action'=>'modifier', 'id'=>$dico->id_dico));?>">Modifier</a>
+            <a href="<?php echo $this->url(array('controller'=>'index',
+                'action'=>'supprimer', 'id'=>$dico->id_dico));?>">Supprimer</a>
+        </td>
+    </tr>
+<?php endforeach; ?>
+</table>
