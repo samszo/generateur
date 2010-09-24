@@ -31,7 +31,7 @@ class IndexController extends Zend_Controller_Action
 	        if ($form->isValid($formData)) {
 
 	        	$adapter = new Zend_File_Transfer_Adapter_Http();
-	        	$adapter->setDestination(implode(PATH_SEPARATOR.APPLICATION_PATH . '/../data/upload'));
+	        	$adapter->setDestination(APPLICATION_PATH.'/../data/upload');
 	        	       			
 				if (!$adapter->receive()) {
 					$messages = $adapter->getMessages();
@@ -49,8 +49,8 @@ class IndexController extends Zend_Controller_Action
 					}
 	      		}
 	        	$type = $form->getValue('type');
-	        	$url = $form->url->getFileName();
-	        	
+	        	$url = str_replace(APPLICATION_PATH."/../",WEB_ROOT,$adapter->getFileName());
+	        	$url = str_replace("\\","/",$url);
 	            $dicos = new Model_DbTable_Dicos();
 	           	$dicos->ajouterDico($url, $type);
 
