@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<descs>
+	<desc>
+		<car>[</car>
+		<lib>début d’une étiquette de classe</lib>
+	</desc>
+	<desc>
+		<car>]</car>
+		<lib>fin d’une étiquette de classe</lib>
+	</desc>
+	<desc>
+		<car>|</car>
+		<lib>séparateur de classe dépendante à l’intérieur d’une classe</lib>
+	</desc>
+	<desc>
+		<car>#</car>
+		<lib>renvoie à la classe des données de type “#”</lib>
+	</desc>
+	<desc>
+		<car>$</car>
+		<lib>fin de descripteur de texte</lib>
+	</desc>
+	<desc>
+		<car />
+		<lib>Marqueurs paradigmatiques</lib>
+	</desc>
+	<desc>
+		<car>v_</car>
+		<lib>indicateur de la classe “verbes”</lib>
+	</desc>
+	<desc>
+		<car>a_</car>
+		<lib>indicateur de la classe “adjectifs”</lib>
+	</desc>
+	<desc>
+		<car>m_</car>
+		<lib>indicateur de la classe substantif</lib>
+	</desc>
+	<desc>
+		<car>s_</car>
+		<lib>indicateur de la classe “syntagme”</lib>
+	</desc>
+	<desc>
+		<car>@</car>
+		<lib>séparateur dans les adjectifs placés avant Marqueurs rhétoriques</lib>
+	</desc>
+	<desc>
+		<car>FF</car>
+		<lib>arrêt forcé de développement d’une chaîne de caractères</lib>
+	</desc>
+	<desc>
+		<car>*</car>
+		<lib>chaîne de caractère déplaçable</lib>
+	</desc>
+	<desc>
+		<car>,</car>
+		<lib>indique les	places possibles d'une chaîne de caractère déplaçable</lib>
+	</desc>
+	<desc>
+		<car><![CDATA[<]]></car>
+		<lib>début de chaîne de caractères facultative</lib>
+	</desc>
+	<desc>
+		<car><![CDATA[>]]></car>
+		<lib>fin de chaîne de caractère facultative</lib>
+	</desc>
+	<desc>
+		<car />
+		<lib>Marqueurs de valeurs syntaxiques</lib>
+	</desc>
+	<desc>
+		<car>\</car>
+		<lib>marqueurs de verbes</lib>
+	</desc>
+	<desc>
+		<car>]]</car>
+		<lib>indique dans carac le choix d’un élément parmi une classe d’éléments</lib>
+	</desc>
+	<desc>
+		<car>)</car>
+		<lib>marqueurs de substantifs et adjectifs</lib>
+	</desc>
+	<desc>
+		<car>(</car>
+		<lib>marqueurs de substantifs</lib>
+	</desc>
+</descs>
