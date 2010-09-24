@@ -15,13 +15,13 @@ class Form_Dico extends Zend_Form
 
         $type = new Zend_Form_Element_Radio('type', array(
 		    'multiOptions' => array(
-		        "verbes" => 'verbes'
+		        "conjugaisons" => 'conjugaisons'
 		        ,"adjectifs" => 'adjectifs'
 		        ,"substantif" => 'substantif'
 		        ,"syntagme" => 'syntagme'
-		        ,"texte" => 'texte')
+		        ,"déterminants" => 'déterminants')
 		));
-        $type->setLabel('D�finir un type');
+        $type->setLabel('Définir un type');
 
         $envoyer = new Zend_Form_Element_Submit('envoyer');
         $envoyer->setAttrib('id', 'boutonenvoyer');
