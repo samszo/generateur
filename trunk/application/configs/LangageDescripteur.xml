@@ -1,5 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <descs>
+	<dicos>
+		<dico type="conjugaisons">
+			<traitements>
+				<action char="\r" type="split" desc="récupére chaque modèle de conjugaison">
+					<action char="," type="split" desc="récupére chaque instance de terminaison">
+						<action deb="0" length="1" val="(" type="VerifSubstr" desc="vérifie la déterminaison du verbe" >
+							<NoVerifAction type="SetTerminaison"  />
+							<action char="." type="SetVerbe" />
+						</action>
+					</action>
+				</action>
+			</traitements>	
+		</dico>
+		<dico type="déterminants">
+			<split ordre="1" char="/" action="ChangeVerbe" />
+			<split ordre="2" char="," action="ChangeTerminaison" />
+			<split ordre="3" char="(" action="DescVerbe" />
+			<split ordre="4" char="." action="NumNomVerbe" />
+		</dico>
+	</dicos>
 	<desc>
 		<car>[</car>
 		<lib>début d’une étiquette de classe</lib>
