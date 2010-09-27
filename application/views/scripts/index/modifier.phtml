@@ -1,0 +1,26 @@
+<p><a href="<?php echo $this->url(array('controller'=>'index', 'action'=>'index'));?>">Retour à la liste des dictionnaires</a></p>
+<p>Dictionnaire de <?php echo $this->dico['type']; ?> : <a href="<?php echo $this->dico['url']; ?>" ><?php echo $this->dico['url']; ?></a> ?
+<p><a href="<?php echo $this->url(array('controller'=>'index','action'=>'ajouter'));?>">Ajouter un nouveau verbe</a></p>
+<table>
+    <tr>
+        <th>Id Dico</th>
+        <th>Id Verbe</th>
+        <th>num</th>
+        <th>modele</th>
+        <th>&nbsp;</th>
+    </tr>  
+<?php foreach($this->verbes as $verbe) : ?>
+    <tr>
+        <td><?php echo $this->escape($verbe->id_dico);?></td>
+        <td><?php echo $this->escape($verbe->id_verbe);?></td>
+        <td><?php echo $this->escape($verbe->num);?></td>
+        <td><?php echo $this->escape($verbe->modele);?></td>
+        <td>
+            <a href="<?php echo $this->url(array('controller'=>'index',
+                'action'=>'modifier', 'id'=>$dico->id_dico));?>">Modifier</a>
+            <a href="<?php echo $this->url(array('controller'=>'index',
+                'action'=>'supprimer', 'id'=>$dico->id_dico));?>">Supprimer</a>
+        </td>
+    </tr>
+<?php endforeach; ?>
+</table>
