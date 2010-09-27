@@ -13,14 +13,15 @@ class Form_Dico extends Zend_Form
 		$file->setLabel('Choisir un dictionnaire:')
               ->setValueDisabled(true);        
 
+		//construction des types de dico
+        $config = new Zend_Config_Xml(APPLICATION_PATH.'/configs/LangageDescripteur.xml', 'dicos');
+		$arrT = array();
+		foreach($config->dico as $d){
+			$arrT[$d->type]=$d->type;      
+		}
+              
         $type = new Zend_Form_Element_Radio('type', array(
-		    'multiOptions' => array(
-		        "conjugaisons" => 'conjugaisons'
-		        ,"adjectifs" => 'adjectifs'
-		        ,"substantif" => 'substantif'
-		        ,"syntagme" => 'syntagme'
-		        ,"déterminants" => 'déterminants')
-		));
+		    'multiOptions' => $arrT));
         $type->setLabel('Définir un type');
 
         $envoyer = new Zend_Form_Element_Submit('envoyer');
