@@ -1,9 +1,9 @@
-<p>Êtes-vous sûr de vouloir supprimer le dictionnaire de
-    '<?php echo $this->escape($this->dico['type']); ?>' : '<?php echo $this->escape($this->dico['url_source']); ?>' ?
+<p>Êtes-vous sûr de vouloir supprimer ?
 </p>
 <form action="<?php echo $this->url(array('action'=>'supprimer')); ?>" method="post">
 <div>
-    <input type="hidden" name="id" value="<?php echo $this->dico['id_dico']; ?>" />
+    <input type="hidden" name="id" value="<?php echo $this->id; ?>" />
+    <input type="hidden" name="idParent" value="<?php echo $this->idParent; ?>" />
     <input type="submit" name="supprimer" value="Oui" />
     <input type="submit" name="supprimer" value="Non" />
 </div>
