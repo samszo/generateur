@@ -9,7 +9,22 @@ echo $this->doctype();
 </head>
 <body>
     <div id="content">
-        <h1><?php echo $this->escape($this->title); ?></h1>
+        <h1><?php echo $this->escape($this->title); ?></h1>        
+<?php 
+if($this->types['parent']=="dico"){
+	$urlR = $this->url(array('controller'=>'index', 'action'=>'index'),"",true);
+	$urlR = '<a href="'.$urlR.'">Retour à la liste des '.$this->types['parent'].'s</a>';
+	if($this->parent)
+		$desc = $this->types['parent'].' de '.$this->parent['type'].' : <a href="'.$this->parent['url'].'" >'.$this->parent['url'].'</a>';
+}
+if($this->types['parent']=="verbe"){
+	$urlR = $this->url(array('controller'=>'index', 'action'=>'modifier', 'type'=>$this->types['parent']),"",true);
+	$urlR = '<a href="'.$urlR.'">Retour à la liste des '.$this->types['parent'].'s</a>';
+	$desc = $this->types['parent'].' : '.$this->parent['modele'].'('.$this->parent['num'].')';
+}
+?>
+		<p><?php echo $urlR;?></p>
+		<p><?php echo $desc;?></p>
         <?php echo $this->layout()->content; ?>
     </div>
 </body>
