@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 3.1.1
+-- version 3.2.0.1
 -- http://www.phpmyadmin.net
 --
 -- Serveur: localhost
--- Généré le : Ven 24 Septembre 2010 à 19:32
--- Version du serveur: 5.1.30
--- Version de PHP: 5.2.8
+-- Généré le : Mar 28 Septembre 2010 à 04:28
+-- Version du serveur: 5.1.36
+-- Version de PHP: 5.2.5
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
@@ -25,19 +25,43 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 -- Structure de la table `gen_dicos`
 --
 
-DROP TABLE IF EXISTS `gen_dicos`;
 CREATE TABLE IF NOT EXISTS `gen_dicos` (
   `id_dico` int(11) NOT NULL AUTO_INCREMENT,
-  `url` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `type` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `url` varchar(255) COLLATE utf8_bin NOT NULL,
+  `type` varchar(255) COLLATE utf8_bin NOT NULL,
   `maj` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `url_source` varchar(255) COLLATE utf8_bin NOT NULL,
+  `path_source` varchar(255) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id_dico`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ROW_FORMAT=DYNAMIC AUTO_INCREMENT=3 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin ROW_FORMAT=DYNAMIC AUTO_INCREMENT=2 ;
+
+-- --------------------------------------------------------
 
 --
--- Contenu de la table `gen_dicos`
+-- Structure de la table `gen_terminaisons`
 --
 
-INSERT INTO `gen_dicos` (`id_dico`, `url`, `type`, `maj`) VALUES
-(1, 'http://localhost/generateur/data/upload/DS_determinants.rtf', 'dÃ©terminants', '2010-09-24 18:47:23'),
-(2, 'http://localhost/generateur/data/upload/DS_determinants.rtf', 'dÃ©terminants', '2010-09-24 18:48:45');
+CREATE TABLE IF NOT EXISTS `gen_terminaisons` (
+  `id_trm` int(11) NOT NULL AUTO_INCREMENT,
+  `id_verbe` int(11) NOT NULL,
+  `num` int(11) NOT NULL,
+  `lib` varchar(255) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`id_trm`),
+  KEY `id_verbe` (`id_verbe`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=539 ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `gen_verbes`
+--
+
+CREATE TABLE IF NOT EXISTS `gen_verbes` (
+  `id_verbe` int(11) NOT NULL AUTO_INCREMENT,
+  `id_dico` int(11) NOT NULL,
+  `num` int(11) NOT NULL,
+  `modele` varchar(255) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`id_verbe`),
+  KEY `num` (`num`),
+  KEY `id_dico` (`id_dico`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=15 ;
