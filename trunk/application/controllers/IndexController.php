@@ -27,7 +27,7 @@ class IndexController extends Zend_Controller_Action
 	    
 	    //$this->modifierAction();
 	    
-	    $this->supprimerAction();
+	    //$this->supprimerAction();
 	    
     }
 
