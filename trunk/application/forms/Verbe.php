@@ -9,10 +9,10 @@ class Form_Verbe extends Zend_Form
 
         $id = new Zend_Form_Element_Hidden('id');
         $id->setValue($options["id"]);
-
-      	$model = new Zend_Form_Element_Text('model');
-      	$model->setRequired(true);
-		$model->setLabel('Définir un modèle');
+                
+      	$modele = new Zend_Form_Element_Text('modele');
+      	$modele->setRequired(true);
+		$modele->setLabel('Définir un modèle');
       	
       	$num = new Zend_Form_Element_Text('num');
       	$num->setRequired(true);
@@ -21,6 +21,6 @@ class Form_Verbe extends Zend_Form
         $envoyer = new Zend_Form_Element_Submit('envoyer');
         $envoyer->setAttrib('id', 'boutonenvoyer');
 		$this->setAttrib('enctype', 'multipart/form-data');
-        $this->addElements(array($id, $model, $num, $envoyer));
+        $this->addElements(array($id, $modele, $num, $envoyer));
     }
 }

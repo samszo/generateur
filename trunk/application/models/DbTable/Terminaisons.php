@@ -19,16 +19,6 @@ class Model_DbTable_Terminaisons extends Zend_Db_Table_Abstract
         }
         return $row->toArray();
     }
-
-    public function obtenirVerbeTerminaisons($id)
-    {
-        $id = (int)$id;
-        $row = $this->fetchRow('id_verbe = ' . $id);
-        if (!$row) {
-            throw new Exception("Count not find row $id");
-        }
-        return $row->toArray();
-    }
     
     public function ajouterTerminaison($idVerbe, $num, $lib)
     {
@@ -49,7 +39,7 @@ class Model_DbTable_Terminaisons extends Zend_Db_Table_Abstract
         $this->update($data, 'id_trm = '. (int)$id);
     }
 
-    public function supprimerVerbe($id)
+    public function supprimerTerminaison($id)
     {
         $this->delete('id_trm =' . (int)$id);
     }

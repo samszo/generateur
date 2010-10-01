@@ -4,7 +4,7 @@ class Model_DbTable_Dicos extends Zend_Db_Table_Abstract
     protected $_name = 'gen_dicos';
 	protected $_dependentTables = array('Model_DbTable_Verbes');
 
-    public function obtenirDicos($id)
+    public function obtenirDico($id)
     {
         $id = (int)$id;
         $row = $this->fetchRow('id_dico = ' . $id);

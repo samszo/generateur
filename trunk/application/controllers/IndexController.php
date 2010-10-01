@@ -27,6 +27,8 @@ class IndexController extends Zend_Controller_Action
 	    
 	    //$this->modifierAction();
 	    
+	    $this->supprimerAction();
+	    
     }
 
     public function modifierAction()
@@ -45,25 +47,66 @@ class IndexController extends Zend_Controller_Action
 			$parent = $Rowset->current();
 			$enfants = $parent->findDependentRowset('Model_DbTable_Verbes');
 			$types = array("parent"=>"dico","enfant"=>"verbe");	            	
+			$this->view->title = "Modification du ".$type." (".$id.")";
+			$this->view->libAjout = "Ajouter un nouveau verbe";
         }
         if($type=='verbe'){
 	        $table = new Model_DbTable_Verbes();
 			$Rowset = $table->find($id);
 			$parent = $Rowset->current();
 			$enfants = $parent->findDependentRowset('Model_DbTable_Terminaisons');
-			$types = array("parent"=>"verbe","enfant"=>"terminaison");	            	
+			$types = array("parent"=>"verbe","enfant"=>"terminaison");
+		    //ajout du formulaire pour modifier l'élément parent
+			$form = new Form_Verbe(array("id"=>$id));
+		    $form->envoyer->setLabel('Modifier');
+	        $form->populate($parent->toArray());
+		    $this->view->form = $form;		    
+			$this->view->title = "Modification du ".$type." (".$id.")";
+			$this->view->libAjout = "Ajouter une nouvelle terminaison";
         }
         if($type=='terminaison'){
-        	
+	        $table = new Model_DbTable_Terminaisons();
+			$Rowset = $table->find($id);
+			$parent = $Rowset->current();
+			$enfants = $Rowset->current();
+			$types = array("parent"=>"terminaison","enfant"=>"terminaison");	            	
+			$this->view->title = "Modification de la ".$type." (".$id.")";
+			$this->view->libAjout = "";
+		    //ajout du formulaire pour modifier l'élément parent
+			$form = new Form_Terminaison(array("id"=>$id));
+		    $form->envoyer->setLabel('Modifier');
+	        $form->populate($parent->toArray());
+		    $this->view->form = $form;		    
         }
         
 		$this->view->cols = $enfants->getTable()->info('cols');
         $this->view->key = $enfants->getTable()->info('primary');
-		$this->view->title = "Modification du ".$type." (".$id.")";
 	    $this->view->headTitle($this->view->title, 'PREPEND');
 		$this->view->parent = $parent;
 		$this->view->enfants = $enfants;
 		$this->view->types = $types;
+		
+        if($type!='dico'){
+			if ($this->getRequest()->isPost()) {
+		        $formData = $this->getRequest()->getPost();
+		        if ($form->isValid($formData)) {
+		        	if($type=="verbe"){
+						$dbV = new Model_DbTable_Verbes();
+						$dbV->modifierVerbe($form->getValue('id'),$form->getValue('num'),$form->getValue('modele'));
+						$this->_redirect('/index/modifier/type/verbe/id/'.$id);
+		        	}
+		        	if($type=="terminaison"){
+						$dbT = new Model_DbTable_Terminaisons();
+						$dbT->modifierTerminaison($form->getValue('id'),$form->getValue('num'),$form->getValue('lib'));
+						$this->_redirect('/index/modifier/type/terminaison/id/'.$id);
+		        	}
+		        }else{
+		            $form->populate($formData);
+		        }
+		    }
+        }		
+		
+		
     }
     
     public function sauvegarderAction()
@@ -78,13 +121,14 @@ class IndexController extends Zend_Controller_Action
 	            //echo "idDico = ".$id."<br/>";
 			    $dico = new Gen_Dico();
 				$dico->SaveBdd($id);
+	        	$this->_redirect('/index/modifier/id/'.$id.'/type/dico');
 	        }else{
 	        	$this->_redirect('/');
 	        }
 	    } else {
 	        $id = $this->_getParam('id', 0);
 	        $dicos = new Model_DbTable_Dicos();
-	        $this->view->dico = $dicos->obtenirDicos($id);
+	        $this->view->dico = $dicos->obtenirDico($id);
 	    }
     }
     
@@ -108,7 +152,7 @@ class IndexController extends Zend_Controller_Action
 	    } else {
 	        $id = $this->_getParam('id', 0);
 	        $dicos = new Model_DbTable_Dicos();
-	        $this->view->dico = $dicos->obtenirDicos($id);
+	        $this->view->dico = $dicos->obtenirDico($id);
 	    }
     }
     
@@ -117,19 +161,27 @@ class IndexController extends Zend_Controller_Action
         $type = $this->_getParam('type', 0);
         $id = $this->_getParam('id', 0);
         
-        $this->view->title = "Ajouter un nouveau ".$type;
 	    $this->view->headTitle($this->view->title, 'PREPEND');
 	
 	    if($type=="dico")
 		    $form = new Form_Dico();
 			$this->view->types = array("parent"=>"dico");	            	
+        	$this->view->title = "Ajouter un nouveau ".$type;
 		if($type=="verbe"){
 		    $form = new Form_Verbe(array("id"=>$id));
 			$dicos = new Model_DbTable_Dicos();
-	        $this->view->parent = $dicos->obtenirDicos($id);
+	        $this->view->parent = $dicos->obtenirDico($id);
 			$this->view->types = array("parent"=>"dico","enfant"=>"verbe");	            	
-	    }
-		    
+        	$this->view->title = "Ajouter un nouveau ".$type;
+		}
+		if($type=="terminaison"){
+		    $form = new Form_Terminaison(array("id"=>$id));
+			$verbes = new Model_DbTable_Verbes();
+	        $this->view->parent = $verbes->obtenirVerbe($id);
+			$this->view->types = array("parent"=>"verbe","enfant"=>"terminaison");	            	
+        	$this->view->title = "Ajouter une nouvelle ".$type;
+		}
+	    
 	    $form->envoyer->setLabel('Ajouter');
 	    $this->view->form = $form;
 	
@@ -144,6 +196,11 @@ class IndexController extends Zend_Controller_Action
 					$db = new Model_DbTable_Verbes();
 					$db->ajouterVerbe($form->getValue('id'),$form->getValue('num'),$form->getValue('model'));
 					$this->_redirect('/index/modifier/type/dico/id/'.$id);
+	        	}
+	        	if($type=="terminaison"){
+					$db = new Model_DbTable_Terminaisons();
+					$db->ajouterTerminaison($form->getValue('id'),$form->getValue('num'),$form->getValue('lib'));
+					$this->_redirect('/index/modifier/type/verbe/id/'.$id);
 	        	}
 	        }else{
 	            $form->populate($formData);
@@ -190,38 +247,52 @@ class IndexController extends Zend_Controller_Action
 	{
         $type = $this->_getParam('type', 0);
         $id = $this->_getParam('id', 0);
-		$this->view->title = "Supprimer le ".$type;
-	    $this->view->headTitle($this->view->title, 'PREPEND');
+        if($type=="terminaison")
+			$this->view->title = "Supprimer la ".$type;
+		else
+			$this->view->title = "Supprimer le ".$type;
+		$this->view->headTitle($this->view->title, 'PREPEND');
 	
 	    if ($this->getRequest()->isPost()) {
 	        $supprimer = $this->getRequest()->getPost('supprimer');
 	        if ($supprimer == 'Oui') {
 	            $id = $this->getRequest()->getPost('id');
 	            if($type=="dico"){
-		            $db = new Model_DbTable_Dicos();
-		            $db->supprimerDico($id);	            	
+		            $dbD = new Model_DbTable_Dicos();
+		            $dbD->supprimerDico($id);	            	
 	            }
 	            if($type=="verbe"){
-		            $db = new Model_DbTable_Verbes();
-		            $db->supprimerVerbe($id);	            	
+		            $dbV = new Model_DbTable_Verbes();
+		            $dbD->supprimerVerbe($id);	            	
+	            }
+	            if($type=="terminaison"){
+		            $dbT = new Model_DbTable_Terminaisons();
+		            $dbT->supprimerTerminaison($id);	            	
 	            }
 	        }
 	        if($type=="dico") $this->_redirect('/');
-	        if($type=="verbe") $this->_redirect('/index/modifier/dico/id/'.$this->_getParam('idParent', 0));
+	        if($type=="verbe") $this->_redirect('/index/modifier/type/dico/id/'.$this->_getParam('idParent', 0));
+	        if($type=="terminaison") $this->_redirect('/index/modifier/type/verbe/id/'.$this->_getParam('idParent', 0));
 	    } else {
-	        $id = $this->_getParam('id', 0);
             if($type=="dico"){
 	            $dicos = new Model_DbTable_Dicos();
-		        $this->view->parent = $dicos->obtenirDicos($id);
+		        $this->view->parent = $dicos->obtenirDico($id);
 				$this->view->types = array("parent"=>"dico");	            	
 		        $this->view->id = $id;
             }
             if($type=="verbe"){
 	            $verbes = new Model_DbTable_Verbes();
-		        $this->view->parent = $verbes->obtenirVerbes($id);
+		        $this->view->parent = $verbes->obtenirVerbe($id);
 				$this->view->types = array("parent"=>"verbe");	            	
 		        $this->view->id = $id;
 		        $this->view->idParent = $this->view->parent["id_dico"];
+            }	        
+            if($type=="terminaison"){
+	            $terms = new Model_DbTable_Terminaisons();
+		        $this->view->parent = $terms->obtenirTerminaison($id);
+				$this->view->types = array("parent"=>"terminaison");	            	
+		        $this->view->id = $id;
+		        $this->view->idParent = $this->view->parent["id_verbe"];
             }	        
 	    }
 	}    

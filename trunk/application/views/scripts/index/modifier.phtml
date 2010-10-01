@@ -1,4 +1,8 @@
-<p><a href="<?php echo $this->url(array('controller'=>'index','action'=>'ajouter', 'type'=>$this->types['enfant']));?>">Ajouter un nouveau <?php echo $this->types['enfant']; ?></a></p>
+<p><a href="<?php echo $this->url(array('controller'=>'index','action'=>'ajouter', 'type'=>$this->types['enfant']));?>"><?php echo $this->libAjout; ?></a></p>
+<div>
+<?php echo $this->form ;?>
+</div>
+<br/>
 <table>
     <tr>
 <?php foreach($this->cols as $col) : ?>
@@ -12,9 +16,9 @@
 	<?php endforeach; ?>
         <td>
             <a href="<?php echo $this->url(array('controller'=>'index',
-                'action'=>'modifier', 'id'=>$enfant[$this->key[1]], 'type'=>$this->types['enfant']));?>">Modifier</a>
+                'action'=>'modifier', 'type'=>$this->types['enfant'], 'id'=>$enfant[$this->key[1]]));?>">Modifier</a>
             <a href="<?php echo $this->url(array('controller'=>'index',
-                'action'=>'supprimer', 'id'=>$enfant[$this->key[1]], 'type'=>$this->types['enfant']));?>">Supprimer</a>
+                'action'=>'supprimer', 'type'=>$this->types['enfant'], 'id'=>$enfant[$this->key[1]]));?>">Supprimer</a>
         </td>
     </tr>
 <?php endforeach; ?>
