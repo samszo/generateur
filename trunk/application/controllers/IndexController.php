@@ -247,6 +247,7 @@ class IndexController extends Zend_Controller_Action
 	{
         $type = $this->_getParam('type', 0);
         $id = $this->_getParam('id', 0);
+        
         if($type=="terminaison")
 			$this->view->title = "Supprimer la ".$type;
 		else
@@ -263,7 +264,7 @@ class IndexController extends Zend_Controller_Action
 	            }
 	            if($type=="verbe"){
 		            $dbV = new Model_DbTable_Verbes();
-		            $dbD->supprimerVerbe($id);	            	
+		            $dbV->supprimerVerbe($id);	            	
 	            }
 	            if($type=="terminaison"){
 		            $dbT = new Model_DbTable_Terminaisons();
