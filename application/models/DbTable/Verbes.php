@@ -53,6 +53,13 @@ class Model_DbTable_Verbes extends Zend_Db_Table_Abstract
 
     public function supprimerVerbe($id)
     {
-        $this->delete('id_verbe =' . (int)$id);
+		$Rowset = $this->find($id);
+		$parent = $Rowset->current();
+		$enfants = $parent->findDependentRowset('Model_DbTable_Terminaisons');
+    	$tEnfs = new Model_DbTable_Terminaisons;
+		foreach($enfants as $enf){
+    		$tEnfs->supprimerTerminaison($enf["id_trm"]);	
+    	}
+    	$this->delete('id_verbe =' . (int)$id);
     }
 }
