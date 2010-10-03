@@ -1,5 +1,5 @@
 <p><a href="<?php echo $this->url(array('controller'=>'index', 'action'=>'index'));?>">Retour à la liste des dictionnaires</a></p>
-<p>Êtes-vous sûr de vouloir sauvegarder la version XML du dictionnaire de <?php echo $this->dico['type']; ?> : <a href="<?php echo $this->dico['url']; ?>"><?php echo $this->dico['url']; ?></a> ?
+<p>Êtes-vous sûr de vouloir sauvegarder dans la BDD la version XML du dictionnaire de <?php echo $this->dico['type']; ?> : <a href="<?php echo $this->dico['url']; ?>"><?php echo $this->dico['url']; ?></a> ?
 <br/>le temps de traitement peut être important.
 </p>
 <form action="<?php echo $this->url(array('action'=>'sauvegarder')); ?>" method="post">
