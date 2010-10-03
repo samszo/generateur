@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 3.2.0.1
+-- version 3.1.1
 -- http://www.phpmyadmin.net
 --
 -- Serveur: localhost
--- Généré le : Ven 01 Octobre 2010 à 17:39
--- Version du serveur: 5.1.36
--- Version de PHP: 5.2.5
+-- Généré le : Dim 03 Octobre 2010 à 17:12
+-- Version du serveur: 5.1.30
+-- Version de PHP: 5.2.8
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
@@ -22,6 +22,23 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 -- --------------------------------------------------------
 
 --
+-- Structure de la table `gen_determinants`
+--
+
+CREATE TABLE IF NOT EXISTS `gen_determinants` (
+  `id_dtm` int(11) NOT NULL AUTO_INCREMENT,
+  `id_dico` int(11) NOT NULL,
+  `num` int(11) NOT NULL,
+  `ordre` int(11) NOT NULL,
+  `lib` varchar(255) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`id_dtm`),
+  KEY `id_mod` (`id_dico`),
+  KEY `num` (`num`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin ROW_FORMAT=DYNAMIC AUTO_INCREMENT=724 ;
+
+-- --------------------------------------------------------
+
+--
 -- Structure de la table `gen_dicos`
 --
 
@@ -33,7 +50,7 @@ CREATE TABLE IF NOT EXISTS `gen_dicos` (
   `url_source` varchar(255) COLLATE utf8_bin NOT NULL,
   `path_source` varchar(255) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id_dico`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin ROW_FORMAT=DYNAMIC AUTO_INCREMENT=4 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin ROW_FORMAT=DYNAMIC AUTO_INCREMENT=9 ;
 
 -- --------------------------------------------------------
 
@@ -48,7 +65,7 @@ CREATE TABLE IF NOT EXISTS `gen_terminaisons` (
   `lib` varchar(255) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id_trm`),
   KEY `id_verbe` (`id_verbe`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=541 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1884 ;
 
 -- --------------------------------------------------------
 
@@ -64,4 +81,4 @@ CREATE TABLE IF NOT EXISTS `gen_verbes` (
   PRIMARY KEY (`id_verbe`),
   KEY `num` (`num`),
   KEY `id_dico` (`id_dico`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=16 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=52 ;
