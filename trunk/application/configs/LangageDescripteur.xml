@@ -6,7 +6,7 @@
 				<action char="\r" type="split" desc="récupére chaque modèle de conjugaison">
 					<action char="," type="split" desc="récupére chaque instance de terminaison">
 						<action deb="0" length="1" val="(" type="VerifSubstr" desc="vérifie la déterminaison du verbe" >
-							<NoVerifAction type="SetTerminaison"  />
+							<NoVerifAction type="SetNoeud"  />
 							<action char="." type="SetVerbe" />
 						</action>
 					</action>
@@ -14,10 +14,16 @@
 			</traitements>	
 		</dico>
 		<dico type="déterminants">
-			<split ordre="1" char="/" action="ChangeVerbe" />
-			<split ordre="2" char="," action="ChangeTerminaison" />
-			<split ordre="3" char="(" action="DescVerbe" />
-			<split ordre="4" char="." action="NumNomVerbe" />
+			<traitements>
+				<action char="\r" type="split" desc="récupére chaque modèle du déterminant">
+					<action char="," type="split" desc="récupére chaque instance du modèle">
+						<action type="VerifLast" desc="vérifie la fin du modèle de déterminant" >
+							<NoVerifAction type="SetNoeud"  />
+							<action type="SetModele" />
+						</action>
+					</action>
+				</action>
+			</traitements>	
 		</dico>
 	</dicos>
 	<desc>

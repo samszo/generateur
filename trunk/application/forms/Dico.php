@@ -1,5 +1,4 @@
 <?php
-
 class Form_Dico extends Zend_Form
 {
     public function __construct($options = null)

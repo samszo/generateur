@@ -42,6 +42,7 @@ class Gen_Dico
 	var $urlS;
 	var $pathS;
 	var $type;
+	var $Xtype;
 	var $id;
 
 	/**
@@ -60,9 +61,10 @@ class Gen_Dico
 		//récupération des infos du dico
 		$this->id = $idDico;
 		$dbDico = new Model_DbTable_Dicos();		
-		$arr = $dbDico->obtenirDicos($this->id);
+		$arr = $dbDico->obtenirDico($this->id);
 		$this->urlS = $arr['url_source'];
 		$this->type = $arr['type'];
+		$this->Xtype = $this->RemoveAccents($this->type);
 		$this->pathS = $arr['path_source'];
 		
 		//chargement de la configuration du langage
@@ -105,8 +107,8 @@ class Gen_Dico
 		$date = new Zend_Date();
 		
 		if($this->xml){
-			$this->xml->save(APPLICATION_PATH."\\configs\\".$this->type."_".$date->getTimestamp().".xml");
-			$this->url = WEB_ROOT."/application/configs/".$this->type."_".$date->getTimestamp().".xml";
+			$this->xml->save(ROOT_PATH."/data/dicos/".$this->Xtype."_".$date->getTimestamp().".xml");
+			$this->url = WEB_ROOT."/data/dicos/".$this->Xtype."_".$date->getTimestamp().".xml";
 		}else{
 			$this->url = "";
 		}
@@ -121,22 +123,32 @@ class Gen_Dico
 			$pk = $dbDico->ajouterDico($this->url, $this->type, $this->urlS, $this->pathS);
 			$this->id = $pk;
 		}					
+       
 		
 	}
 
 	public function SaveBdd($idDico){
 		
-		$dbDico = new Model_DbTable_Dicos();
-		$dbVerbe = new Model_DbTable_Verbes();
-		$dbTrm = new Model_DbTable_Terminaisons();
 		
 		//récupère les infos du dico
+		$dbDico = new Model_DbTable_Dicos();
 		$this->id = $idDico;
-		$arrD = $dbDico->obtenirDicos($this->id);		
+		$arrD = $dbDico->obtenirDico($this->id);		
 		
 		//parcourt le xml
 		$path = str_replace(WEB_ROOT,ROOT_PATH,$arrD['url']);
 		$this->xml = simplexml_load_file($path);
+
+		//création des objets de base
+		switch ($arrD['type']) {
+			case 'conjugaisons':
+				$dbVerbe = new Model_DbTable_Verbes();
+				$dbTrm = new Model_DbTable_Terminaisons();
+				break;
+			case 'déterminants':
+				$dbDtm = new Model_DbTable_Determinants();
+				break;
+		}
 		
 		foreach ($this->xml->children() as $k => $n) {
 			switch ($k) {
@@ -145,6 +157,14 @@ class Gen_Dico
 					$i=0;
 					foreach ($n->terminaisons->terminaison as $kTrm => $nTrm) {
 						$dbTrm->ajouterTerminaison($pkV,$i,$nTrm);
+						$i++;
+					}
+					break;
+				case 'determinants':
+					$num = $n['num'];
+					$i=0;
+					foreach ($n->determinant as $kDtm => $nDtm) {
+						$dbDtm->ajouterDeterminant($this->id,$num,$i,$nDtm);
 						$i++;
 					}
 					break;
@@ -158,19 +178,30 @@ class Gen_Dico
 		//applique l'action défini dans la description du langage
 		switch ($action['type']) {
 			case 'split':
-				//pour améliorer le split
+				//pour améliorer le split des saut de ligne
 				if($action['char']=="\\r") $c='- -'; else $c=$action['char']."";
 				//met la chaine dans un tableau
 				$arr = split($c, $chaine);
 				//boucle sur les fragments de chaine optenus
-				foreach ($arr as $frag) {
+				for ($i = 0 ; $i < count($arr) ; $i++) {
+					//foreach ($arr as $frag) {
+					$frag = $arr[$i];
 					//vérifie si le traitement comporte des sous actions
 					if(count($action->children())==0){
 						$this->AjoutFrag($frag, $action);
 					}else{
 						//boucle sur les sous actions de l'action
 						foreach ($action->children() as $act) {
-							$this->TraiteAction($frag, $act);
+							//vérifie si l'action est liée à la fin du tableau
+							if($act['type']=="VerifLast"){
+								if($i==(count($arr)-1)){
+									$this->TraiteAction($frag, $act->action);					
+								}else{
+									$this->TraiteAction($frag, $act->NoVerifAction);					
+								}
+							}else{
+								$this->TraiteAction($frag, $act);								
+							}
 						}
 					}
 				}
@@ -185,28 +216,21 @@ class Gen_Dico
 				}
 				break;
 
-			case 'SetTerminaison':
-				$this->SetTerminaison($chaine, $action);
+			case 'SetNoeud':
+				$this->SetNoeud($chaine, $action);
 				break;
-				
+								
 			case 'SetVerbe':
 				$this->SetVerbe($chaine, $action);
 				break;
+				
+			case 'SetModele':
+				$this->SetModele($chaine, $action);
+				break;
 		}
 
 	}
-
-	public function SetTerminaison($chaine, $action){
-
-		if(!$this->xmlTmp){
-			//initialise le noeud
-			$this->xmlTmp = $this->xml->createElement('terminaisons');			
-		}
-		//ajoute la terminaison
-		$n = $this->xml->createElement('terminaison',$chaine);
-		$this->xmlTmp->appendChild($n);		
-	}
-	
+        	
 	public function SetVerbe($chaine, $action){
 		
 		//calcul les attributs
@@ -232,6 +256,36 @@ class Gen_Dico
 		
 	}
 	
+	public function SetNoeud($chaine, $action){
+
+		if(!$this->xmlTmp){
+			//initialise le noeud
+			$this->xmlTmp = $this->xml->createElement($this->Xtype);			
+		}
+		//ajoute le noeud
+		$n = $this->xml->createElement(substr($this->Xtype,0,-1),$chaine);
+		$this->xmlTmp->appendChild($n);		
+	}
+	
+	public function SetModele($chaine, $action){
+		
+		if(!$this->xmlTmp){
+			//initialise le noeud
+			$this->xmlTmp = $this->xml->createElement($this->Xtype);			
+		}
+		//création de l'attribut 
+		$xAtt = $this->xml->createAttribute('num');
+		$nText = $this->xml->createTextNode($chaine);
+		$xAtt->appendChild($nText); 				
+		$this->xmlTmp->appendChild($xAtt);
+		//ajoute le modèle à la racine		
+		$this->xmlRoot->appendChild($this->xmlTmp);
+		//réiniitialise l'xml temporaire
+		$this->xmlTmp = false;
+		
+	}
+		
+	
 	public function InitXmlDico(){
 		//initialisation du fichier xml
 		$this->xml = new DOMDocument('1.0', 'UTF-8');
@@ -241,9 +295,9 @@ class Gen_Dico
 		$this->xmlRoot->appendChild($xAtt);
 		$nText = $this->xml->createTextNode($this->type);
 		$xAtt->appendChild($nText); 				
-		$xAtt = $this->xml->createAttribute('url');
+		$xAtt = $this->xml->createAttribute('urlS');
 		$this->xmlRoot->appendChild($xAtt);
-		$nText = $this->xml->createTextNode($this->url);
+		$nText = $this->xml->createTextNode($this->urlS);
 		$xAtt->appendChild($nText); 				
 	}
 	
@@ -318,6 +372,16 @@ class Gen_Dico
 		return $str;
 	}
 	
+	function RemoveAccents($str, $charset='utf-8')
+	{
+	    $str = htmlentities($str, ENT_NOQUOTES, $charset);
+	    
+	    $str = preg_replace('#\&([A-za-z])(?:acute|cedil|circ|grave|ring|tilde|uml)\;#', '\1', $str);
+	    $str = preg_replace('#\&([A-za-z]{2})(?:lig)\;#', '\1', $str); // pour les ligatures e.g. '&oelig;'
+	    $str = preg_replace('#\&[^;]+\;#', '', $str); // supprime les autres caractères
+	    
+	    return $str;
+	}
 	
 	
 }

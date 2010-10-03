@@ -20,22 +20,23 @@ class IndexController extends Zend_Controller_Action
 	    //$form->envoyer->setLabel('Ajouter');
 	    //$this->view->form = $form;
 	    
-	    //$dico = new Gen_Dico();
-	    //$dico->Traite("C:\wamp\www\generateur\dico\DS_conjugaisonsTot", "conjugaisons");
-		//$dico->GetMacToXml(3);
-		//$dico->SaveBdd(1);	    
+	    /*
+	    $dico = new Gen_Dico();
+		$dico->GetMacToXml(7);
+		$dico->SaveBdd(7);
+		*/	    
 	    
 	    //$this->modifierAction();
 	    
 	    //$this->supprimerAction();
 	    
+	    //$this->creerxmlAction();
     }
 
     public function modifierAction()
     {
-
-        $id = $this->_getParam('id', 0);
-        $type = $this->_getParam('type', 0);
+        $id = $this->_getParam('id', 0);//722;//
+        $type = $this->_getParam('type', 0);//'determinant';//
     	/*
         $echo =false;
         Zend_Debug::dump($id, $echo, $echo);
@@ -45,10 +46,17 @@ class IndexController extends Zend_Controller_Action
 	        $table = new Model_DbTable_Dicos();
 			$Rowset = $table->find($id);
 			$parent = $Rowset->current();
-			$enfants = $parent->findDependentRowset('Model_DbTable_Verbes');
-			$types = array("parent"=>"dico","enfant"=>"verbe");	            	
+			if($parent['type']=='conjugaisons'){
+				$enfants = $parent->findDependentRowset('Model_DbTable_Verbes');
+				$types = array("parent"=>"dico","enfant"=>"verbe");	            	
+				$this->view->libAjout = "Ajouter un nouveau verbe";
+			}
+			if($parent['type']=='déterminants'){
+				$enfants = $parent->findDependentRowset('Model_DbTable_Determinants');
+				$types = array("parent"=>"dico","enfant"=>"determinant");	            	
+				$this->view->libAjout = "Ajouter un nouveau déterminant";
+			}
 			$this->view->title = "Modification du ".$type." (".$id.")";
-			$this->view->libAjout = "Ajouter un nouveau verbe";
         }
         if($type=='verbe'){
 	        $table = new Model_DbTable_Verbes();
@@ -78,6 +86,21 @@ class IndexController extends Zend_Controller_Action
 	        $form->populate($parent->toArray());
 		    $this->view->form = $form;		    
         }
+
+        if($type=='determinant'){
+	        $table = new Model_DbTable_Determinants();
+			$Rowset = $table->find($id);
+			$parent = $Rowset->current();
+			$enfants = $Rowset->current();
+			$types = array("parent"=>"determinant","enfant"=>"determinant");	            	
+			$this->view->title = "Modification du déterminant (".$id.")";
+			$this->view->libAjout = "";
+		    //ajout du formulaire pour modifier l'élément parent
+			$form = new Form_Determinant(array("id"=>$id));
+		    $form->envoyer->setLabel('Modifier');
+	        $form->populate($parent->toArray());
+		    $this->view->form = $form;		    
+        }
         
 		$this->view->cols = $enfants->getTable()->info('cols');
         $this->view->key = $enfants->getTable()->info('primary');
@@ -89,6 +112,7 @@ class IndexController extends Zend_Controller_Action
         if($type!='dico'){
 			if ($this->getRequest()->isPost()) {
 		        $formData = $this->getRequest()->getPost();
+		        print_r($form);
 		        if ($form->isValid($formData)) {
 		        	if($type=="verbe"){
 						$dbV = new Model_DbTable_Verbes();
@@ -99,6 +123,11 @@ class IndexController extends Zend_Controller_Action
 						$dbT = new Model_DbTable_Terminaisons();
 						$dbT->modifierTerminaison($form->getValue('id'),$form->getValue('num'),$form->getValue('lib'));
 						$this->_redirect('/index/modifier/type/terminaison/id/'.$id);
+		        	}
+		        	if($type=="determinant"){
+						$dbD = new Model_DbTable_Determinants();
+						$dbD->modifierDeterminant($form->getValue('id'),$form->getValue('num'),$form->getValue('ordre'),$form->getValue('lib'));
+						$this->_redirect('/index/modifier/type/determinant/id/'.$id);
 		        	}
 		        }else{
 		            $form->populate($formData);
@@ -111,7 +140,7 @@ class IndexController extends Zend_Controller_Action
     
     public function sauvegarderAction()
     {
-		$this->view->title = "Sauvegarde du dictionaire XML";
+		$this->view->title = "Sauvegarde du dictionaire XML dans la BDD";
 	    $this->view->headTitle($this->view->title, 'PREPEND');
 
 	    if ($this->getRequest()->isPost()) {
@@ -144,7 +173,7 @@ class IndexController extends Zend_Controller_Action
 	            //echo "idDico = ".$id."<br/>";
 			    $dico = new Gen_Dico();
 				$dico->GetMacToXml($id);
-				$this->view->xml = $dico->xml->saveHTML();
+				//$this->view->xml = $dico->xml->saveHTML();
 	        	$this->_redirect('index/sauvegarder/id/'.$id);
 	        }else{
 	        	$this->_redirect('/');
@@ -181,7 +210,14 @@ class IndexController extends Zend_Controller_Action
 			$this->view->types = array("parent"=>"verbe","enfant"=>"terminaison");	            	
         	$this->view->title = "Ajouter une nouvelle ".$type;
 		}
-	    
+		if($type=="determinant"){
+		    $form = new Form_Determinant(array("id"=>$id));
+			$dicos = new Model_DbTable_Dicos();
+	        $this->view->parent = $dicos->obtenirDico($id);
+		    $this->view->types = array("parent"=>"dico","enfant"=>"determinant");	            	
+        	$this->view->title = "Ajouter un nouveau ".$type;
+		}
+		
 	    $form->envoyer->setLabel('Ajouter');
 	    $this->view->form = $form;
 	
@@ -202,6 +238,11 @@ class IndexController extends Zend_Controller_Action
 					$db->ajouterTerminaison($form->getValue('id'),$form->getValue('num'),$form->getValue('lib'));
 					$this->_redirect('/index/modifier/type/verbe/id/'.$id);
 	        	}
+	        	if($type=="determinant"){
+					$dbD = new Model_DbTable_Determinants();
+					$dbD->ajouterDeterminant($form->getValue('id'),$form->getValue('num'),$form->getValue('ordre'),$form->getValue('lib'));
+					$this->_redirect('/index/modifier/type/dico/id/'.$id);
+	        	}
 	        }else{
 	            $form->populate($formData);
 	        }
@@ -211,8 +252,11 @@ class IndexController extends Zend_Controller_Action
     
     private function ajouterDico($form){
 
+	try {
+    	
     	$adapter = new Zend_File_Transfer_Adapter_Http();
-        $adapter->setDestination(ROOT_PATH.'\data\upload');
+        echo ROOT_PATH.'/data/upload';
+    	$adapter->setDestination(ROOT_PATH.'/data/upload');
                			
 		if (!$adapter->receive()) {
 			$messages = $adapter->getMessages();
@@ -239,7 +283,14 @@ class IndexController extends Zend_Controller_Action
         $dico->Save();
            
         $this->_redirect('/');
-    	
+	}catch (Zend_Exception $e) {
+          // Appeler Zend_Loader::loadClass() sur une classe non-existante
+          //entrainera la levée d'une exception dans Zend_Loader
+          echo "Récupère exception: " . get_class($e) . "\n";
+          echo "Message: " . $e->getMessage() . "\n";
+          // puis tout le code nécessaire pour récupérer l'erreur
+	}
+        
     }
     
     
@@ -270,9 +321,13 @@ class IndexController extends Zend_Controller_Action
 		            $dbT = new Model_DbTable_Terminaisons();
 		            $dbT->supprimerTerminaison($id);	            	
 	            }
+	            if($type=="determinant"){
+		            $dbDt = new Model_DbTable_Determinants();
+		            $dbDt->supprimerDeterminant($id);	            	
+	            }
 	        }
 	        if($type=="dico") $this->_redirect('/');
-	        if($type=="verbe") $this->_redirect('/index/modifier/type/dico/id/'.$this->_getParam('idParent', 0));
+	        if($type=="verbe" || $type=="determinant" ) $this->_redirect('/index/modifier/type/dico/id/'.$this->_getParam('idParent', 0));
 	        if($type=="terminaison") $this->_redirect('/index/modifier/type/verbe/id/'.$this->_getParam('idParent', 0));
 	    } else {
             if($type=="dico"){
@@ -294,6 +349,13 @@ class IndexController extends Zend_Controller_Action
 				$this->view->types = array("parent"=>"terminaison");	            	
 		        $this->view->id = $id;
 		        $this->view->idParent = $this->view->parent["id_verbe"];
+            }	        
+            if($type=="determinant"){
+	            $deter = new Model_DbTable_Determinants();
+		        $this->view->parent = $deter->obtenirDeterminant($id);
+				$this->view->types = array("parent"=>"determinant");	            	
+		        $this->view->id = $id;
+		        $this->view->idParent = $this->view->parent["id_dico"];
             }	        
 	    }
 	}    
