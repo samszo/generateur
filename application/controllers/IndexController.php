@@ -14,17 +14,17 @@ class IndexController extends Zend_Controller_Action
 	    $this->view->headTitle($this->view->title, 'PREPEND');
 	    $dicos = new Model_DbTable_Dicos();
 	    $this->view->dicos = $dicos->fetchAll();		 
-
+    	
 		//pour le débuggage
 	    //$form = new Form_DicoAjout();
 	    //$form->envoyer->setLabel('Ajouter');
 	    //$this->view->form = $form;
 	    
-	    /*
-	    $dico = new Gen_Dico();
-		$dico->GetMacToXml(7);
-		$dico->SaveBdd(7);
-		*/	    
+	    //
+	    //$dico = new Gen_Dico();
+		//$dico->GetMacToXml(16);
+		//$dico->SaveBdd(7);
+		//	    
 	    
 	    //$this->modifierAction();
 	    
@@ -35,8 +35,8 @@ class IndexController extends Zend_Controller_Action
 
     public function modifierAction()
     {
-        $id = $this->_getParam('id', 0);//722;//
-        $type = $this->_getParam('type', 0);//'determinant';//
+        $id = $this->_getParam('id', 0);//
+        $type = $this->_getParam('type', 0);//
     	/*
         $echo =false;
         Zend_Debug::dump($id, $echo, $echo);
@@ -55,6 +55,16 @@ class IndexController extends Zend_Controller_Action
 				$enfants = $parent->findDependentRowset('Model_DbTable_Determinants');
 				$types = array("parent"=>"dico","enfant"=>"determinant");	            	
 				$this->view->libAjout = "Ajouter un nouveau déterminant";
+			}
+			if($parent['type']=='compléments'){
+				$enfants = $parent->findDependentRowset('Model_DbTable_Complements');
+				$types = array("parent"=>"dico","enfant"=>"complement");	            	
+				$this->view->libAjout = "Ajouter un nouveau complément";
+			}
+			if($parent['type']=='syntagmes'){
+				$enfants = $parent->findDependentRowset('Model_DbTable_Syntagmes');
+				$types = array("parent"=>"dico","enfant"=>"syntagme");	            	
+				$this->view->libAjout = "Ajouter un nouveau syntagme";
 			}
 			$this->view->title = "Modification du ".$type." (".$id.")";
         }
@@ -86,7 +96,6 @@ class IndexController extends Zend_Controller_Action
 	        $form->populate($parent->toArray());
 		    $this->view->form = $form;		    
         }
-
         if($type=='determinant'){
 	        $table = new Model_DbTable_Determinants();
 			$Rowset = $table->find($id);
@@ -97,6 +106,34 @@ class IndexController extends Zend_Controller_Action
 			$this->view->libAjout = "";
 		    //ajout du formulaire pour modifier l'élément parent
 			$form = new Form_Determinant(array("id"=>$id));
+		    $form->envoyer->setLabel('Modifier');
+	        $form->populate($parent->toArray());
+		    $this->view->form = $form;		    
+        }
+        if($type=='complement'){
+	        $table = new Model_DbTable_Complements();
+			$Rowset = $table->find($id);
+			$parent = $Rowset->current();
+			$enfants = $Rowset->current();
+			$types = array("parent"=>"complement","enfant"=>"complement");	            	
+			$this->view->title = "Modification du complément (".$id.")";
+			$this->view->libAjout = "";
+		    //ajout du formulaire pour modifier l'élément parent
+			$form = new Form_Complement(array("id"=>$id));
+		    $form->envoyer->setLabel('Modifier');
+	        $form->populate($parent->toArray());
+		    $this->view->form = $form;		    
+        }
+        if($type=='syntagme'){
+	        $table = new Model_DbTable_Syntagmes();
+			$Rowset = $table->find($id);
+			$parent = $Rowset->current();
+			$enfants = $Rowset->current();
+			$types = array("parent"=>"complement","enfant"=>"syntagme");	            	
+			$this->view->title = "Modification du syntagme (".$id.")";
+			$this->view->libAjout = "";
+		    //ajout du formulaire pour modifier l'élément parent
+			$form = new Form_Syntagme(array("id"=>$id));
 		    $form->envoyer->setLabel('Modifier');
 	        $form->populate($parent->toArray());
 		    $this->view->form = $form;		    
@@ -117,18 +154,24 @@ class IndexController extends Zend_Controller_Action
 		        	if($type=="verbe"){
 						$dbV = new Model_DbTable_Verbes();
 						$dbV->modifierVerbe($form->getValue('id'),$form->getValue('num'),$form->getValue('modele'));
-						$this->_redirect('/index/modifier/type/verbe/id/'.$id);
 		        	}
 		        	if($type=="terminaison"){
 						$dbT = new Model_DbTable_Terminaisons();
 						$dbT->modifierTerminaison($form->getValue('id'),$form->getValue('num'),$form->getValue('lib'));
-						$this->_redirect('/index/modifier/type/terminaison/id/'.$id);
 		        	}
 		        	if($type=="determinant"){
 						$dbD = new Model_DbTable_Determinants();
 						$dbD->modifierDeterminant($form->getValue('id'),$form->getValue('num'),$form->getValue('ordre'),$form->getValue('lib'));
-						$this->_redirect('/index/modifier/type/determinant/id/'.$id);
 		        	}
+		        	if($type=="complement"){
+						$dbC = new Model_DbTable_Complements();
+						$dbC->modifierComplement($form->getValue('id'),$form->getValue('num'),$form->getValue('ordre'),$form->getValue('lib'));
+		        	}
+		        	if($type=="syntagme"){
+						$dbS = new Model_DbTable_Syntagmes();
+						$dbS->modifierSyntagme($form->getValue('id'),$form->getValue('num'),$form->getValue('ordre'),$form->getValue('lib'));
+		        	}
+					$this->_redirect('/index/modifier/type/'.$type.'/id/'.$id);
 		        }else{
 		            $form->populate($formData);
 		        }
@@ -200,21 +243,35 @@ class IndexController extends Zend_Controller_Action
 		    $form = new Form_Verbe(array("id"=>$id));
 			$dicos = new Model_DbTable_Dicos();
 	        $this->view->parent = $dicos->obtenirDico($id);
-			$this->view->types = array("parent"=>"dico","enfant"=>"verbe");	            	
+			$this->view->types = array("parent"=>"dico","enfant"=>$type);	            	
         	$this->view->title = "Ajouter un nouveau ".$type;
 		}
 		if($type=="terminaison"){
 		    $form = new Form_Terminaison(array("id"=>$id));
 			$verbes = new Model_DbTable_Verbes();
 	        $this->view->parent = $verbes->obtenirVerbe($id);
-			$this->view->types = array("parent"=>"verbe","enfant"=>"terminaison");	            	
+			$this->view->types = array("parent"=>"verbe","enfant"=>$type);	            	
         	$this->view->title = "Ajouter une nouvelle ".$type;
 		}
 		if($type=="determinant"){
 		    $form = new Form_Determinant(array("id"=>$id));
 			$dicos = new Model_DbTable_Dicos();
 	        $this->view->parent = $dicos->obtenirDico($id);
-		    $this->view->types = array("parent"=>"dico","enfant"=>"determinant");	            	
+		    $this->view->types = array("parent"=>"dico","enfant"=>$type);	            	
+        	$this->view->title = "Ajouter un nouveau ".$type;
+		}
+		if($type=="complement"){
+		    $form = new Form_Complement(array("id"=>$id));
+			$dicos = new Model_DbTable_Dicos();
+	        $this->view->parent = $dicos->obtenirDico($id);
+		    $this->view->types = array("parent"=>"dico","enfant"=>$type);	            	
+        	$this->view->title = "Ajouter un nouveau ".$type;
+		}
+		if($type=="syntagme"){
+		    $form = new Form_Syntagme(array("id"=>$id));
+			$dicos = new Model_DbTable_Dicos();
+	        $this->view->parent = $dicos->obtenirDico($id);
+		    $this->view->types = array("parent"=>"dico","enfant"=>$type);	            	
         	$this->view->title = "Ajouter un nouveau ".$type;
 		}
 		
@@ -241,6 +298,16 @@ class IndexController extends Zend_Controller_Action
 	        	if($type=="determinant"){
 					$dbD = new Model_DbTable_Determinants();
 					$dbD->ajouterDeterminant($form->getValue('id'),$form->getValue('num'),$form->getValue('ordre'),$form->getValue('lib'));
+					$this->_redirect('/index/modifier/type/dico/id/'.$id);
+	        	}
+	        	if($type=="complement"){
+					$dbC = new Model_DbTable_Complements();
+					$dbC->ajouterComplement($form->getValue('id'),$form->getValue('num'),$form->getValue('ordre'),$form->getValue('lib'));
+					$this->_redirect('/index/modifier/type/dico/id/'.$id);
+	        	}
+	        	if($type=="syntagme"){
+					$dbS = new Model_DbTable_Syntagmes();
+					$dbS->ajouterSyntagme($form->getValue('id'),$form->getValue('num'),$form->getValue('ordre'),$form->getValue('lib'));
 					$this->_redirect('/index/modifier/type/dico/id/'.$id);
 	        	}
 	        }else{
@@ -325,35 +392,58 @@ class IndexController extends Zend_Controller_Action
 		            $dbDt = new Model_DbTable_Determinants();
 		            $dbDt->supprimerDeterminant($id);	            	
 	            }
+	            if($type=="complement"){
+		            $dbC = new Model_DbTable_Complements();
+		            $dbC->supprimerComplement($id);	            	
+	            }
+	            if($type=="syntagme"){
+		            $dbS = new Model_DbTable_Syntagmes();
+		            $dbS->supprimerSyntagme($id);	            	
+	            }
 	        }
 	        if($type=="dico") $this->_redirect('/');
-	        if($type=="verbe" || $type=="determinant" ) $this->_redirect('/index/modifier/type/dico/id/'.$this->_getParam('idParent', 0));
+	        if($type=="verbe" || $type=="determinant" || $type=="complement" || $type=="syntagme")
+	        	$this->_redirect('/index/modifier/type/dico/id/'.$this->_getParam('idParent', 0));
 	        if($type=="terminaison") $this->_redirect('/index/modifier/type/verbe/id/'.$this->_getParam('idParent', 0));
 	    } else {
             if($type=="dico"){
 	            $dicos = new Model_DbTable_Dicos();
 		        $this->view->parent = $dicos->obtenirDico($id);
-				$this->view->types = array("parent"=>"dico");	            	
+				$this->view->types = array("parent"=>$type);	            	
 		        $this->view->id = $id;
             }
             if($type=="verbe"){
 	            $verbes = new Model_DbTable_Verbes();
 		        $this->view->parent = $verbes->obtenirVerbe($id);
-				$this->view->types = array("parent"=>"verbe");	            	
+				$this->view->types = array("parent"=>$type);	            	
 		        $this->view->id = $id;
 		        $this->view->idParent = $this->view->parent["id_dico"];
             }	        
             if($type=="terminaison"){
 	            $terms = new Model_DbTable_Terminaisons();
 		        $this->view->parent = $terms->obtenirTerminaison($id);
-				$this->view->types = array("parent"=>"terminaison");	            	
+				$this->view->types = array("parent"=>$type);	            	
 		        $this->view->id = $id;
 		        $this->view->idParent = $this->view->parent["id_verbe"];
             }	        
             if($type=="determinant"){
 	            $deter = new Model_DbTable_Determinants();
 		        $this->view->parent = $deter->obtenirDeterminant($id);
-				$this->view->types = array("parent"=>"determinant");	            	
+				$this->view->types = array("parent"=>$type);	            	
+		        $this->view->id = $id;
+		        $this->view->idParent = $this->view->parent["id_dico"];
+            }	        
+            if($type=="complement"){
+	            $comp = new Model_DbTable_Complements();
+		        $this->view->parent = $comp->obtenirComplement($id);
+				$this->view->types = array("parent"=>$type);	            	
+		        $this->view->id = $id;
+		        $this->view->idParent = $this->view->parent["id_dico"];
+            }	        
+            if($type=="syntagme"){
+	            $synt = new Model_DbTable_Syntagmes();
+		        $this->view->parent = $synt->obtenirSyntagme($id);
+				$this->view->types = array("parent"=>$type);	            	
 		        $this->view->id = $id;
 		        $this->view->idParent = $this->view->parent["id_dico"];
             }	        
