@@ -27,8 +27,8 @@
 	            echo '';
 			}else{
 	        	//vérifie si les enfants du dico on été calculé
-				$Verbes = $table->getVerbesDico($dico->id_dico);
-				if($Verbes->count()>0){
+				$items = $table->getItemsDico($dico->id_dico);
+				if($items->count()>0){
 		            echo '<a href="'.$this->url(array('controller'=>'index', 'action'=>'modifier', 'type'=>'dico', 'id'=>$dico->id_dico)).'">Modifier</a>';
 	            }else{
 		            echo '<a href="'.$this->url(array('controller'=>'index', 'action'=>'sauvegarder', 'id'=>$dico->id_dico)).'">Ajouter à la BDD</a>';

@@ -3,8 +3,8 @@
 	<dicos>
 		<dico type="conjugaisons">
 			<traitements>
-				<action char="\r" type="split" desc="récupére chaque modèle de conjugaison">
-					<action char="," type="split" desc="récupére chaque instance de terminaison">
+				<action char="\r" type="explode" desc="récupére chaque modèle de conjugaison">
+					<action char="," type="explode" desc="récupére chaque instance de terminaison">
 						<action deb="0" length="1" val="(" type="VerifSubstr" desc="vérifie la déterminaison du verbe" >
 							<NoVerifAction type="SetNoeud"  />
 							<action char="." type="SetVerbe" />
@@ -15,11 +15,47 @@
 		</dico>
 		<dico type="déterminants">
 			<traitements>
-				<action char="\r" type="split" desc="récupére chaque modèle du déterminant">
-					<action char="," type="split" desc="récupére chaque instance du modèle">
-						<action type="VerifLast" desc="vérifie la fin du modèle de déterminant" >
+				<action char="\r" type="explode" desc="récupére chaque modèle du déterminant">
+					<action char="," type="explode" desc="récupére chaque instance du modèle">
+						<action type="VerifFin" desc="vérifie la fin du modèle de déterminant" >
 							<NoVerifAction type="SetNoeud"  />
 							<action type="SetModele" />
+						</action>
+					</action>
+				</action>
+			</traitements>	
+		</dico>
+		<dico type="compléments">
+			<traitements>
+				<action char="\r" type="explode" desc="récupére chaque modèle de complément">
+					<action char="," type="explode" desc="récupére chaque instance du modèle">
+						<action type="VerifDeb" desc="vérifie le début du modèle de complément" >
+							<NoVerifAction type="SetNoeud"  />
+							<action type="SetModele" />
+						</action>
+					</action>
+				</action>
+			</traitements>	
+		</dico>
+		<dico type="syntagmes">
+			<traitements>
+				<action char="\r" type="explode" desc="récupére chaque modèle de syntagme">
+					<action char="," type="explode" desc="récupére chaque instance du syntagme">
+						<action type="VerifFin" desc="vérifie le début du modèle de syntagme" >
+							<NoVerifAction type="SetNoeud"  />
+							<action type="SetModele" />
+						</action>
+					</action>
+				</action>
+			</traitements>	
+		</dico>
+		<dico type="concepts">
+			<traitements>
+				<action char="\r\r" type="explode" desc="récupére chaque item du dictionnaire">
+					<action char="\r" type="explode" desc="récupére chaque lien de l'item">
+						<action type="VerifDeb" desc="vérifie le début de l'item" >
+							<NoVerifAction type="SetNoeud"  />
+							<action type="SetConcept" />
 						</action>
 					</action>
 				</action>
@@ -80,7 +116,7 @@
 	</desc>
 	<desc>
 		<car>,</car>
-		<lib>indique les	places possibles d'une chaîne de caractère déplaçable</lib>
+		<lib>indique les places possibles d'une chaîne de caractère déplaçable</lib>
 	</desc>
 	<desc>
 		<car><![CDATA[<]]></car>

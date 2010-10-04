@@ -4,14 +4,21 @@ class Model_DbTable_Dicos extends Zend_Db_Table_Abstract
     protected $_name = 'gen_dicos';
 	protected $_dependentTables = array('Model_DbTable_Verbes');
 
-    public function getVerbesDico($id)
+    public function getItemsDico($id)
     {
         $id = (int)$id;
 		$Rowset = $this->find($id);
 		$dico = $Rowset->current();
-		$verbes = $dico->findDependentRowset('Model_DbTable_Verbes');
-        
-        return $verbes;
+		if($dico['type']=='conjugaisons')
+			$items = $dico->findDependentRowset('Model_DbTable_Verbes');
+		if($dico['type']=='déterminants')
+			$items = $dico->findDependentRowset('Model_DbTable_Determinants');
+		if($dico['type']=='compléments')
+			$items = $dico->findDependentRowset('Model_DbTable_Complements');
+		if($dico['type']=='syntagmes')
+			$items = $dico->findDependentRowset('Model_DbTable_Syntagmes');
+			
+        return $items;
     }
 	
 	public function obtenirDico($id)
