@@ -148,6 +148,12 @@ class Gen_Dico
 			case 'déterminants':
 				$dbDtm = new Model_DbTable_Determinants();
 				break;
+			case 'compléments':
+				$dbCpm = new Model_DbTable_Complements();
+				break;
+			case 'syntagmes':
+				$dbSyn = new Model_DbTable_Syntagmes();
+				break;
 		}
 		
 		foreach ($this->xml->children() as $k => $n) {
@@ -168,6 +174,22 @@ class Gen_Dico
 						$i++;
 					}
 					break;
+				case 'complements':
+					$num = $n['num'];
+					$i=0;
+					foreach ($n->complement as $kCpm => $nCpm) {
+						$dbCpm->ajouterComplement($this->id,$num,$i,$nCpm);
+						$i++;
+					}
+					break;
+				case 'syntagmes':
+					$num = $n['num'];
+					$i=0;
+					foreach ($n->syntagme as $kSyn => $nSyn) {
+						$dbSyn->ajouterSyntagme($this->id,$num,$i,$nSyn);
+						$i++;
+					}
+					break;
 			}
 		}
 		
@@ -177,13 +199,13 @@ class Gen_Dico
 
 		//applique l'action défini dans la description du langage
 		switch ($action['type']) {
-			case 'split':
-				//pour améliorer le split des saut de ligne
-				if($action['char']=="\\r") $c='- -'; else $c=$action['char']."";
+			case 'explode':
+				//pour améliorer le explode des saut de ligne
+				$c = str_replace("\\r","- -",$action['char']);
 				//met la chaine dans un tableau
-				$arr = split($c, $chaine);
+				$arr = explode($c, $chaine);
 				//boucle sur les fragments de chaine optenus
-				for ($i = 0 ; $i < count($arr) ; $i++) {
+				for ($i = 0 ; $i < count($arr); $i++) {
 					//foreach ($arr as $frag) {
 					$frag = $arr[$i];
 					//vérifie si le traitement comporte des sous actions
@@ -193,15 +215,25 @@ class Gen_Dico
 						//boucle sur les sous actions de l'action
 						foreach ($action->children() as $act) {
 							//vérifie si l'action est liée à la fin du tableau
-							if($act['type']=="VerifLast"){
-								if($i==(count($arr)-1)){
-									$this->TraiteAction($frag, $act->action);					
-								}else{
-									$this->TraiteAction($frag, $act->NoVerifAction);					
-								}
-							}else{
-								$this->TraiteAction($frag, $act);								
-							}
+							switch ($act['type']) {
+								case "VerifFin":
+									if($i==(count($arr)-1)){
+										$this->TraiteAction($frag, $act->action);					
+									}else{
+										$this->TraiteAction($frag, $act->NoVerifAction);					
+									}
+									break;								
+								case "VerifDeb":
+									if($i==0){
+										$this->TraiteAction($frag, $act->action);					
+									}else{
+										$this->TraiteAction($frag, $act->NoVerifAction);					
+									}
+									break;								
+								default:
+									$this->TraiteAction($frag, $act);								
+									break;
+							}							
 						}
 					}
 				}
@@ -227,6 +259,11 @@ class Gen_Dico
 			case 'SetModele':
 				$this->SetModele($chaine, $action);
 				break;
+			
+			case 'SetConcept':
+				$this->SetConcept($chaine, $action);
+				break;
+				
 		}
 
 	}
@@ -248,7 +285,7 @@ class Gen_Dico
 		$nText = $this->xml->createTextNode($verbe);
 		$xAtt->appendChild($nText);
 		$xFrag->appendChild($xAtt);
-		//ajoute les termianisons au verbe
+		//ajoute les terminaisons au verbe
 		$xFrag->appendChild($this->xmlTmp);
 		$this->xmlTmp = false;
 		//ajoute le verbe à la racine		
@@ -262,10 +299,152 @@ class Gen_Dico
 			//initialise le noeud
 			$this->xmlTmp = $this->xml->createElement($this->Xtype);			
 		}
-		//ajoute le noeud
-		$n = $this->xml->createElement(substr($this->Xtype,0,-1),$chaine);
-		$this->xmlTmp->appendChild($n);		
+		//calcul le noeud
+		if($this->type=="concepts") {
+			$this->SetTypeConcept($this->xmlTmp->getAttribute('type'), $chaine);			
+		}else{
+			$n = $this->xml->createElement(substr($this->Xtype,0,-1),$chaine);		
+			//ajoute le noeud
+			$this->xmlTmp->appendChild($n);		
+		}
+				
 	}
+
+	public function SetTypeConcept($type, $chaine){
+				
+		if(strpos($chaine,"[")===false){
+			switch ($type) {
+				case "a":
+					//création d'un adjectif
+					$this->SetAdjectif($chaine);		
+					break;
+				case "m":
+					//création d'un substantif
+					$this->SetSubstantif($chaine);		
+					break;
+			}
+		}else{
+			//création d'un lien vers un concept
+			$this->xmlTmp->appendChild($this->SetGen($chaine));		
+		}
+						
+	}
+
+
+	public function SetSubstantif($chaine){
+		
+
+		//calcul les attributs
+		$elision = substr($chaine,0,1);
+		$genre = substr($chaine,2,1);
+		$c = substr($chaine,4);
+		$arr = explode("|",$c);
+		$prefix =  $arr[0];
+		
+		$accords = explode(" ",$arr[1]);
+		if(count($accords)==2){
+			$s = $accords[0];
+			$p = $accords[1];
+		}else{
+			$s = "";
+			$p = $accords[0];
+		}
+		
+		//création du noeud substantif
+		$xFrag = $this->xml->createElement('sub');
+		//$cm = $this->xml->createTextNode($prefix);
+		//$ct = $this->xml->createCDATASection($chaine);
+		//$xFrag->appendChild($cm);
+		//$to = mb_detect_encoding($chaine);
+    
+		//création des attributs
+		$xAtt = $this->xml->createAttribute('eli');
+		$nText = $this->xml->createTextNode($elision);
+		$xAtt->appendChild($nText); 				
+		$xFrag->appendChild($xAtt);
+		
+		$xAtt = $this->xml->createAttribute('genre');
+		$nText = $this->xml->createTextNode($genre);
+		$xAtt->appendChild($nText); 				
+		$xFrag->appendChild($xAtt);
+
+		$xAtt = $this->xml->createAttribute('pref');
+		$nText = $this->xml->createTextNode($prefix);
+		$xAtt->appendChild($nText); 				
+		$xFrag->appendChild($xAtt);
+		
+		$xAtt = $this->xml->createAttribute('s');
+		$nText = $this->xml->createTextNode($s);
+		$xAtt->appendChild($nText);
+		$xFrag->appendChild($xAtt);
+
+		$xAtt = $this->xml->createAttribute('p');
+		$nText = $this->xml->createTextNode($p);
+		$xAtt->appendChild($nText);
+		$xFrag->appendChild($xAtt);
+
+		$this->xmlTmp->appendChild($xFrag);		
+		
+	}
+	
+	public function SetAdjectif($chaine){
+		
+
+		//calcul les attributs
+		$elision = substr($chaine,0,1);
+		$c = substr($chaine,strpos($chaine, ")")+1);
+		$arr = explode("|",$c);
+		$prefix =  $arr[0];
+		$accords = explode(" ",$arr[1]);
+		$m_s = $accords[0];
+		$f_s = $accords[1];
+		$m_p = $accords[2];
+		$f_p = $accords[3];
+		
+		//création du noeud adjectif
+		$xFrag = $this->xml->createElement('adj',$chaine);
+		
+		//création des attributs
+		$xAtt = $this->xml->createAttribute('eli');
+		$nText = $this->xml->createTextNode($elision);
+		$xAtt->appendChild($nText); 				
+		$xFrag->appendChild($xAtt);
+		
+		$xAtt = $this->xml->createAttribute('pref');
+		$nText = $this->xml->createTextNode($prefix);
+		$xAtt->appendChild($nText);
+		$xFrag->appendChild($xAtt);
+
+		$xAtt = $this->xml->createAttribute('ms');
+		$nText = $this->xml->createTextNode($m_s);
+		$xAtt->appendChild($nText);
+		$xFrag->appendChild($xAtt);
+
+		$xAtt = $this->xml->createAttribute('fs');
+		$nText = $this->xml->createTextNode($f_s);
+		$xAtt->appendChild($nText);
+		$xFrag->appendChild($xAtt);
+
+		$xAtt = $this->xml->createAttribute('mp');
+		$nText = $this->xml->createTextNode($m_p);
+		$xAtt->appendChild($nText);
+		$xFrag->appendChild($xAtt);
+
+		$xAtt = $this->xml->createAttribute('fp');
+		$nText = $this->xml->createTextNode($f_p);
+		$xAtt->appendChild($nText);
+		$xFrag->appendChild($xAtt);
+		
+		$this->xmlTmp->appendChild($xFrag);		
+				
+	}
+	
+	public function SetGen($chaine){
+		
+		$xFrag = $this->xml->createElement('gen',$concept);
+		return $xFrag;
+	}
+		
 	
 	public function SetModele($chaine, $action){
 		
@@ -285,6 +464,29 @@ class Gen_Dico
 		
 	}
 		
+	public function SetConcept($chaine, $action){
+		
+		//initialise l'xml temporaire
+		$this->xmlTmp = $this->xml->createElement($this->Xtype);			
+		
+		//création de l'attribut type
+		$xAtt = $this->xml->createAttribute('type');
+		$type = substr($chaine,0,strpos($chaine, "_"));
+		$nText = $this->xml->createTextNode($type);
+		$xAtt->appendChild($nText); 				
+		$this->xmlTmp->appendChild($xAtt);
+		
+		//création de l'attribut lib
+		$xAtt = $this->xml->createAttribute('lib');
+		$lib = substr($chaine,strpos($chaine, "_")+1);
+		$nText = $this->xml->createTextNode($lib);
+		$xAtt->appendChild($nText); 				
+		$this->xmlTmp->appendChild($xAtt);
+		
+		//ajoute le modèle à la racine		
+		$this->xmlRoot->appendChild($this->xmlTmp);
+		
+	}
 	
 	public function InitXmlDico(){
 		//initialisation du fichier xml
