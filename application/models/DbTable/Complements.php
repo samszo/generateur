@@ -19,16 +19,34 @@ class Model_DbTable_Complements extends Zend_Db_Table_Abstract
         }
         return $row->toArray();
     }
+
+
+	public function existeComplement($idDico, $num, $ordre, $lib)
+    {
+		$select = $this->select();
+		$select->from($this, array('id_cpm'))
+			->where('id_dico = ?', $idDico)
+			->where('lib = ?', $lib)
+			->where('num = ?', $num)
+			->where('ordre = ?', $ordre);
+	    $rows = $this->fetchAll($select);        
+	    if($rows->count()>0)$id=$rows[0]->id_cpm; else $id=-1;
+        return $id;
+    }    
     
     public function ajouterComplement($idDico, $num, $ordre, $lib)
     {
-    	$data = array(
+    	$id = $this->existeComplement($idDico, $num, $ordre, $lib);
+    	if(!$id){
+    		$data = array(
             'id_dico' => $idDico,
             'num' => $num,
     		'ordre' => $ordre,
             'lib' => $lib
-        );
-        $this->insert($data);
+	        );
+    	 	$id = $this->insert($data);
+    	}
+    	return $id;
     }
     
     public function modifierComplement($id, $num, $ordre, $lib)

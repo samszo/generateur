@@ -8,7 +8,7 @@ class Model_DbTable_Syntagmes extends Zend_Db_Table_Abstract
             'refTableClass'     => 'Model_DbTable_Dicos',
             'refColumns'        => 'id_dico'
         )
-    );	
+    );	    
     
     public function obtenirSyntagme($id)
     {
@@ -20,15 +20,32 @@ class Model_DbTable_Syntagmes extends Zend_Db_Table_Abstract
         return $row->toArray();
     }
     
+	public function existeSyntagme($idDico, $num, $ordre, $lib)
+    {
+		$select = $this->select();
+		$select->from($this, array('id_syn'))
+			->where('id_dico = ?', $idDico)
+			->where('num = ?', $num)
+			->where('ordre = ?', $ordre)
+			->where('lib = ?', $lib);
+		$rows = $this->fetchAll($select);        
+	    if($rows->count()>0)$id=$rows[0]->id_syn; else $id=-1;
+        return $id;
+    }    
+    
     public function ajouterSyntagme($idDico, $num, $ordre, $lib="")
     {
-    	$data = array(
-            'id_dico' => $idDico,
-            'num' => $num,
-    		'ordre' => $ordre,
-            'lib' => $lib
-        );
-        $this->insert($data);
+    	$id = $this->existeSyntagme($idDico, $num, $ordre, $lib);
+    	if(!$id){
+	    	$data = array(
+	            'id_dico' => $idDico,
+	            'num' => $num,
+	    		'ordre' => $ordre,
+	            'lib' => $lib
+        	);
+    	 	$id = $this->insert($data);
+    	}
+    	return $id;
     }
     
     public function modifierSyntagme($id, $num, $ordre, $lib)

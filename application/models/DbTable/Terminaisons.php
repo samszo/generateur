@@ -4,9 +4,9 @@ class Model_DbTable_Terminaisons extends Zend_Db_Table_Abstract
     protected $_name = 'gen_terminaisons';
     protected $_referenceMap    = array(
         'Verbe' => array(
-            'columns'           => 'id_verbe',
-            'refTableClass'     => 'Model_DbTable_Verbes',
-            'refColumns'        => 'id_verbe'
+            'columns'           => 'id_conj',
+            'refTableClass'     => 'Model_DbTable_Conjugaisons',
+            'refColumns'        => 'id_conj'
         )
     );	
     
@@ -20,14 +20,29 @@ class Model_DbTable_Terminaisons extends Zend_Db_Table_Abstract
         return $row->toArray();
     }
     
-    public function ajouterTerminaison($idVerbe, $num, $lib)
+	public function existeTerminaison($idConj, $num, $lib)
     {
-    	$data = array(
-            'id_verbe' => $idVerbe,
-            'num' => $num,
-            'lib' => $lib
-        );
-        $this->insert($data);
+		$select = $this->select();
+		$select->from($this, array('id_trm'))
+			->where('id_conj = ?', $idConj)
+			->where('num = ?', $num)
+			->where('lib = ?', $lib);
+	    $rows = $this->fetchAll($select);        
+	    if($rows->count()>0)$id=$rows[0]->id_trm; else $id=-1;
+        return $id;
+    }    
+    
+    public function ajouterTerminaison($idConj, $num, $lib)
+    {
+    	$id = $this->existeTerminaison($idConj, $num, $lib);
+    	if(!$id){
+    		$data = array(
+	            'id_conj' => $idConj,
+	            'num' => $num,
+	            'lib' => $lib);
+    	 	$id = $this->insert($data);
+    	}
+    	return $id;
     }
     
     public function modifierTerminaison($id, $num, $lib)

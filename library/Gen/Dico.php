@@ -83,8 +83,10 @@ class Gen_Dico
 		foreach ($chaines as $line_num => $chaine) {
 			//applique le traitement pour chaque ligne
 			foreach ($trtmt[0]->children() as $action) {
-				//pour faciliter la gestion des splits
+				//pour faciliter la gestion des explode
 				$chaine = str_replace("\r","- -",$chaine);
+				//supprime les retours chariots en trop
+				$chaine = str_replace("- -- -- -","- -- -",$chaine);
 				
 				//pour l'encode des caractère
 				//$chaine = mb_convert_encoding($chaine, "UTF-8", "macintosh");
@@ -142,7 +144,7 @@ class Gen_Dico
 		//création des objets de base
 		switch ($arrD['type']) {
 			case 'conjugaisons':
-				$dbVerbe = new Model_DbTable_Verbes();
+				$dbConj = new Model_DbTable_Conjugaisons();
 				$dbTrm = new Model_DbTable_Terminaisons();
 				break;
 			case 'déterminants':
@@ -154,12 +156,25 @@ class Gen_Dico
 			case 'syntagmes':
 				$dbSyn = new Model_DbTable_Syntagmes();
 				break;
+			case 'concepts':
+				$dbCon = new Model_DbTable_Concepts();
+				$dbVer = new Model_DbTable_Verbes();
+				$dbAdj = new Model_DbTable_Adjectifs();
+				$dbSub = new Model_DbTable_Substantifs();
+				$dbSyn = new Model_DbTable_Syntagmes();
+				$dbGen = new Model_DbTable_Generateurs();
+				$dbConVer = new Model_DbTable_ConceptsVerbes();
+				$dbConAdj = new Model_DbTable_ConceptsAdjectifs();
+				$dbConSub = new Model_DbTable_ConceptsSubstantifs();
+				$dbConSyn = new Model_DbTable_ConceptsSyntagmes();
+				$dbConGen = new Model_DbTable_ConceptsGenerateurs();
+				break;
 		}
 		
 		foreach ($this->xml->children() as $k => $n) {
 			switch ($k) {
-				case 'verbe':
-					$pkV = $dbVerbe->ajouterVerbe($this->id,$n['num'],$n['modele']);
+				case 'conjugaisons':
+					$pkV = $dbConj->ajouterConjugaison($this->id,$n['num'],$n['modele']);
 					$i=0;
 					foreach ($n->terminaisons->terminaison as $kTrm => $nTrm) {
 						$dbTrm->ajouterTerminaison($pkV,$i,$nTrm);
@@ -188,6 +203,34 @@ class Gen_Dico
 					foreach ($n->syntagme as $kSyn => $nSyn) {
 						$dbSyn->ajouterSyntagme($this->id,$num,$i,$nSyn);
 						$i++;
+					}
+					break;
+				case 'concept':
+					$idC = $dbCon->ajouterConcept($this->id,$n['lib'],$n['type']);						
+					foreach ($n->children() as $kCon => $nCon) {
+						//ajout suivant le type de concept
+				    	switch ($kCon) {
+				    		case 'verbe':
+				    			$idT = $dbVer->ajouterVerbe($this->id,-1,$nCon["eli"],$nCon["pref"],$nCon["modele"]);
+				    			$dbConVer->ajouterConceptVerbe($idC,$idT);
+				    			break;				    		
+				    		case 'adj':
+				    			$idT = $dbAdj->ajouterAdjectif($this->id,$nCon["eli"],$nCon["pref"],$nCon["ms"],$nCon["fs"],$nCon["mp"],$nCon["fp"]);
+				    			$dbConAdj->ajouterConceptAdjectif($idC,$idT);
+				    			break;				    		
+				    		case 'syn':
+				    			$idT = $dbSyn->ajouterSyntagme($this->id,-1,-1,$nCon);
+				    			$dbConSyn->ajouterConceptSyntagme($idC,$idT);
+				    			break;				    		
+				    		case 'sub':
+				    			$idT = $dbSub->ajouterSubstantif($this->id,$nCon["eli"],$nCon["pref"],$nCon["s"],$nCon["p"]);
+				    			$dbConSub->ajouterConceptSubstantif($idC,$idT);
+				    			break;				    		
+				    		case 'gen':
+				    			$idT = $dbGen->ajouterGenerateur($this->id,$nCon);
+				    			$dbConGen->ajouterConceptGenerateur($idC,$idT);
+				    			break;				    		
+				    	}
 					}
 					break;
 			}
@@ -252,8 +295,8 @@ class Gen_Dico
 				$this->SetNoeud($chaine, $action);
 				break;
 								
-			case 'SetVerbe':
-				$this->SetVerbe($chaine, $action);
+			case 'SetConjugaison':
+				$this->SetConjugaison($chaine, $action);
 				break;
 				
 			case 'SetModele':
@@ -268,7 +311,7 @@ class Gen_Dico
 
 	}
         	
-	public function SetVerbe($chaine, $action){
+	public function SetConjugaison($chaine, $action){
 		
 		//calcul les attributs
 		$c = $action['char']."";
@@ -276,7 +319,7 @@ class Gen_Dico
 		$num = substr($chaine,1,strpos($chaine, $c)-1);
 		$verbe = substr($chaine,strpos($chaine, $c)+1,-1);
 		//création du noeud verbe
-		$xFrag = $this->xml->createElement('verbe',$chaine);
+		$xFrag = $this->xml->createElement('conj',$chaine);
 		$xAtt = $this->xml->createAttribute('num');
 		$nText = $this->xml->createTextNode($num);
 		$xAtt->appendChild($nText); 				
@@ -322,15 +365,56 @@ class Gen_Dico
 					//création d'un substantif
 					$this->SetSubstantif($chaine);		
 					break;
+				case "s":
+					//création d'un substantif
+					$this->SetSyntagme($chaine);		
+					break;
+				case "v":
+					//création d'un substantif
+					$this->SetVerbe($chaine);		
+					break;
 			}
 		}else{
 			//création d'un lien vers un concept
-			$this->xmlTmp->appendChild($this->SetGen($chaine));		
+			$this->SetGen($chaine);		
 		}
 						
 	}
 
 
+	public function SetVerbe($chaine){
+		
+
+		//calcul les attributs
+		$elision = substr($chaine,0,1);		
+		$arr = explode("|",substr($chaine,2));
+		$prefix =  $arr[0];
+		$modele = $arr[1];
+
+		//création du noeud verbe
+		$xFrag = $this->xml->createElement('verbe');
+    
+		//création des attributs
+		$xAtt = $this->xml->createAttribute('eli');
+		$nText = $this->xml->createTextNode($elision);
+		$xAtt->appendChild($nText); 				
+		$xFrag->appendChild($xAtt);
+		
+		$xAtt = $this->xml->createAttribute('pref');
+		$nText = $this->xml->createTextNode($prefix);
+		$xAtt->appendChild($nText); 				
+		$xFrag->appendChild($xAtt);
+		
+		$xAtt = $this->xml->createAttribute('modele');
+		$nText = $this->xml->createTextNode($modele);
+		$xAtt->appendChild($nText);
+		$xFrag->appendChild($xAtt);
+
+		$this->xmlTmp->appendChild($xFrag);		
+		
+	}
+	
+	
 	public function SetSubstantif($chaine){
 		
 
@@ -340,6 +424,10 @@ class Gen_Dico
 		$c = substr($chaine,4);
 		$arr = explode("|",$c);
 		$prefix =  $arr[0];
+		
+		if(count($arr)==1){
+			$arr[1] = "";
+		}
 		
 		$accords = explode(" ",$arr[1]);
 		if(count($accords)==2){
@@ -352,10 +440,6 @@ class Gen_Dico
 		
 		//création du noeud substantif
 		$xFrag = $this->xml->createElement('sub');
-		//$cm = $this->xml->createTextNode($prefix);
-		//$ct = $this->xml->createCDATASection($chaine);
-		//$xFrag->appendChild($cm);
-		//$to = mb_detect_encoding($chaine);
     
 		//création des attributs
 		$xAtt = $this->xml->createAttribute('eli');
@@ -402,7 +486,7 @@ class Gen_Dico
 		$f_p = $accords[3];
 		
 		//création du noeud adjectif
-		$xFrag = $this->xml->createElement('adj',$chaine);
+		$xFrag = $this->xml->createElement('adj');
 		
 		//création des attributs
 		$xAtt = $this->xml->createAttribute('eli');
@@ -439,10 +523,24 @@ class Gen_Dico
 				
 	}
 	
+	public function SetSyntagme($chaine){
+		
+		
+		//création du noeud adjectif
+		$xFrag = $this->xml->createElement('syn',$chaine);
+		
+		$this->xmlTmp->appendChild($xFrag);		
+				
+	}
+	
 	public function SetGen($chaine){
 		
-		$xFrag = $this->xml->createElement('gen',$concept);
-		return $xFrag;
+		$xFrag = $this->xml->createElement('gen');
+		$cm = $this->xml->createTextNode($chaine);
+		$ct = $this->xml->createCDATASection($chaine);
+		$xFrag->appendChild($ct);
+
+		$this->xmlTmp->appendChild($xFrag);		
 	}
 		
 	
@@ -467,7 +565,7 @@ class Gen_Dico
 	public function SetConcept($chaine, $action){
 		
 		//initialise l'xml temporaire
-		$this->xmlTmp = $this->xml->createElement($this->Xtype);			
+		$this->xmlTmp = $this->xml->createElement(substr($this->Xtype,0,-1));			
 		
 		//création de l'attribut type
 		$xAtt = $this->xml->createAttribute('type');

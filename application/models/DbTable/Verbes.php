@@ -2,15 +2,21 @@
 class Model_DbTable_Verbes extends Zend_Db_Table_Abstract
 {
     protected $_name = 'gen_verbes';
-	protected $_dependentTables = array('Model_DbTable_Terminaisons');
 
+    protected $_dependentTables = array('Model_DbTable_ConceptsVerbes');
+    
     protected $_referenceMap    = array(
         'Dico' => array(
             'columns'           => 'id_dico',
             'refTableClass'     => 'Model_DbTable_Dicos',
             'refColumns'        => 'id_dico'
         )
-    );	
+        ,'Conjugaison' => array(
+            'columns'           => 'id_conj',
+            'refTableClass'     => 'Model_DbTable_Conjugaisons',
+            'refColumns'        => 'id_conj'
+        )
+        );	
 	
     public function obtenirVerbe($id)
     {
@@ -21,31 +27,43 @@ class Model_DbTable_Verbes extends Zend_Db_Table_Abstract
         }
         return $row->toArray();
     }
-
-    public function obtenirDicoVerbes($id)
-    {
-        $id = (int)$id;
-        $row = $this->fetchRow('id_dico = ' . $id);
-        if (!$row) {
-            throw new Exception("Count not find row $id");
-        }
-        return $row->toArray();
-    }
     
-    public function ajouterVerbe($idDico, $num, $modele)
+    public function ajouterVerbe($idDico, $idConj, $eli, $prefix, $modele)
     {
-    	$data = array(
+    	$id = $this->existeVerbe($idDico, $idConj, $eli, $prefix, $modele);
+    	if(!$id){
+    	   	$data = array(
             'id_dico' => $idDico,
-            'num' => $num,
+            'id_conj' => $idConj,
+    		'elision' => $eli,
+    		'prefix' => $prefix,
             'modele' => $modele
-        );
-        return $this->insert($data);
+	        );
+    	 	$id = $this->insert($data);
+    	}
+    	return $id;
     }
+
+	public function existeVerbe($idDico, $idConj, $eli, $prefix, $modele)
+    {
+		$select = $this->select();
+		$select->from($this, array('id_verbe'))
+			->where('id_dico = ?', $idDico)
+			->where('id_conj = ?', $idConj)
+			->where('elision = ?', $eli)
+			->where('prefix = ?', $prefix)
+			->where('modele = ?', $modele);
+	    $rows = $this->fetchAll($select);        
+	    if($rows->count()>0)$id=$rows[0]->id_verbe; else $id=-1;
+        return $id;
+    }    
     
-    public function modifierVerbe($id, $num, $modele)
+    public function modifierVerbe($id, $idConj, $eli, $prefix, $modele)
     {
         $data = array(
-            'num' => $num,
+            'id_conj' => $idConj,
+    		'elision' => $eli,
+    		'prefix' => $prefix,
             'modele' => $modele
         );
         $this->update($data, 'id_verbe = '. (int)$id);
@@ -53,13 +71,6 @@ class Model_DbTable_Verbes extends Zend_Db_Table_Abstract
 
     public function supprimerVerbe($id)
     {
-		$Rowset = $this->find($id);
-		$parent = $Rowset->current();
-		$enfants = $parent->findDependentRowset('Model_DbTable_Terminaisons');
-    	$tEnfs = new Model_DbTable_Terminaisons;
-		foreach($enfants as $enf){
-    		$tEnfs->supprimerTerminaison($enf["id_trm"]);	
-    	}
     	$this->delete('id_verbe =' . (int)$id);
     }
 }

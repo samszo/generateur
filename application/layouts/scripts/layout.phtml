@@ -17,7 +17,7 @@ if($this->types['parent']=="dico"){
 	if($this->parent)
 		$desc = $this->types['parent'].' de '.$this->parent['type'].' : <a href="'.$this->parent['url'].'" >'.$this->parent['url'].'</a>';
 }
-if($this->types['parent']=="verbe"){
+if($this->types['parent']=="conjugaison"){
 	$urlR = $this->url(array('controller'=>'index', 'action'=>'modifier', 'type'=>'dico', 'id'=>$this->parent['id_dico']),"",true);
 	$urlR = '<a href="'.$urlR.'">Retour à la liste des '.$this->types['parent'].'s</a>';
 	$desc = $this->types['parent'].' : '.$this->parent['modele'].' ('.$this->parent['num'].')';
