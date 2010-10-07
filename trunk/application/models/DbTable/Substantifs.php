@@ -33,13 +33,13 @@ class Model_DbTable_Substantifs extends Zend_Db_Table_Abstract
 			->where('s = ?', $s)
 			->where('p = ?', $p);
 		$rows = $this->fetchAll($select);        
-	    if($rows->count()>0)$id=$rows[0]->id_sub; else $id=-1;
+	    if($rows->count()>0)$id=$rows[0]->id_sub; else $id=false;
         return $id;
     }    
     
     public function ajouterSubstantif($idDico, $eli, $prefix, $s, $p)
     {
-    	$id = $this->existeSubstantif($idDico, $idConj, $eli, $prefix, $modele);
+    	$id = $this->existeSubstantif($idDico, $eli, $prefix, $s, $p);
     	if(!$id){
 	    	$data = array(
 	            'id_dico' => $idDico,

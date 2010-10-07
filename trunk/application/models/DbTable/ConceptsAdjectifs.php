@@ -11,7 +11,7 @@ class Model_DbTable_ConceptsAdjectifs extends Zend_Db_Table_Abstract
         )
         ,'Adjectif' => array(
             'columns'           => 'id_adj',
-            'refTableClass'     => 'Model_DbTable_Adjectif',
+            'refTableClass'     => 'Model_DbTable_Adjectifs',
             'refColumns'        => 'id_adj'
         )
 	);	
@@ -33,7 +33,7 @@ class Model_DbTable_ConceptsAdjectifs extends Zend_Db_Table_Abstract
 			->where('id_concept = ?', $idCon)
 			->where('id_adj = ?', $idAdj);
 		$rows = $this->fetchAll($select);        
-	    if($rows->count()>0)$id=$rows[0]->id_concept; else $id=-1;
+	    if($rows->count()>0)$id=$rows[0]->id_concept; else $id=false;
         return $id;
     }    
     

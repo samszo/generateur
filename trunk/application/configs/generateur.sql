@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 3.2.0.1
+-- version 3.1.1
 -- http://www.phpmyadmin.net
 --
 -- Serveur: localhost
--- Généré le : Jeu 07 Octobre 2010 à 07:30
--- Version du serveur: 5.1.36
--- Version de PHP: 5.2.5
+-- Généré le : Jeu 07 Octobre 2010 à 19:32
+-- Version du serveur: 5.1.30
+-- Version de PHP: 5.2.8
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `gen_adjectifs` (
   `f_p` varchar(255) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id_adj`),
   KEY `id_dico` (`id_dico`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin ROW_FORMAT=DYNAMIC AUTO_INCREMENT=7713 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin ROW_FORMAT=DYNAMIC AUTO_INCREMENT=2178 ;
 
 -- --------------------------------------------------------
 
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS `gen_complements` (
   PRIMARY KEY (`id_cpm`),
   KEY `id_dico` (`id_dico`),
   KEY `num` (`num`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin ROW_FORMAT=DYNAMIC AUTO_INCREMENT=534 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin ROW_FORMAT=DYNAMIC AUTO_INCREMENT=133 ;
 
 -- --------------------------------------------------------
 
@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS `gen_concepts` (
   `type` varchar(255) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id_concept`),
   KEY `id_dico` (`id_dico`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=12302 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=6882 ;
 
 -- --------------------------------------------------------
 
@@ -156,7 +156,7 @@ CREATE TABLE IF NOT EXISTS `gen_conjugaisons` (
   PRIMARY KEY (`id_conj`),
   KEY `num` (`num`),
   KEY `id_dico` (`id_dico`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=16 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=104 ;
 
 -- --------------------------------------------------------
 
@@ -173,7 +173,7 @@ CREATE TABLE IF NOT EXISTS `gen_determinants` (
   PRIMARY KEY (`id_dtm`),
   KEY `num` (`num`),
   KEY `id_dico` (`id_dico`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin ROW_FORMAT=DYNAMIC AUTO_INCREMENT=2529 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin ROW_FORMAT=DYNAMIC AUTO_INCREMENT=362 ;
 
 -- --------------------------------------------------------
 
@@ -189,7 +189,7 @@ CREATE TABLE IF NOT EXISTS `gen_dicos` (
   `url_source` varchar(255) COLLATE utf8_bin NOT NULL,
   `path_source` varchar(255) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id_dico`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin ROW_FORMAT=DYNAMIC AUTO_INCREMENT=5 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin ROW_FORMAT=DYNAMIC AUTO_INCREMENT=7 ;
 
 -- --------------------------------------------------------
 
@@ -203,7 +203,7 @@ CREATE TABLE IF NOT EXISTS `gen_generateurs` (
   `valeur` varchar(255) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id_gen`),
   KEY `id_dico` (`id_dico`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=3051 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=4788 ;
 
 -- --------------------------------------------------------
 
@@ -220,7 +220,7 @@ CREATE TABLE IF NOT EXISTS `gen_substantifs` (
   `p` varchar(255) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id_sub`),
   KEY `id_dico` (`id_dico`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin ROW_FORMAT=DYNAMIC AUTO_INCREMENT=4190 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin ROW_FORMAT=DYNAMIC AUTO_INCREMENT=8028 ;
 
 -- --------------------------------------------------------
 
@@ -237,7 +237,7 @@ CREATE TABLE IF NOT EXISTS `gen_syntagmes` (
   PRIMARY KEY (`id_syn`),
   KEY `num` (`num`),
   KEY `id_dico` (`id_dico`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin ROW_FORMAT=DYNAMIC AUTO_INCREMENT=428 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin ROW_FORMAT=DYNAMIC AUTO_INCREMENT=389 ;
 
 -- --------------------------------------------------------
 
@@ -251,8 +251,8 @@ CREATE TABLE IF NOT EXISTS `gen_terminaisons` (
   `num` int(11) NOT NULL,
   `lib` varchar(255) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id_trm`),
-  KEY `id_conj` (`id_conj`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=541 ;
+  KEY `id_verbe` (`id_conj`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=3116 ;
 
 -- --------------------------------------------------------
 
@@ -270,4 +270,4 @@ CREATE TABLE IF NOT EXISTS `gen_verbes` (
   PRIMARY KEY (`id_verbe`),
   KEY `id_dico` (`id_dico`),
   KEY `id_conj` (`id_conj`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin ROW_FORMAT=DYNAMIC AUTO_INCREMENT=1369 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin ROW_FORMAT=DYNAMIC AUTO_INCREMENT=2692 ;

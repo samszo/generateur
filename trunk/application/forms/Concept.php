@@ -3,7 +3,9 @@ class Form_Concept extends Zend_Form
 {
     public function __construct($options = null)
     {
-        parent::__construct($options);
+	try {
+    	
+    	parent::__construct($options);
         $this->setName('concept');
 
         $id = new Zend_Form_Element_Hidden('id');
@@ -22,5 +24,12 @@ class Form_Concept extends Zend_Form
         $envoyer->setAttrib('id', 'boutonenvoyer');
 		$this->setAttrib('enctype', 'multipart/form-data');
         $this->addElements(array($id, $lib, $type, $envoyer));
-    }
+	}catch (Zend_Exception $e) {
+          // Appeler Zend_Loader::loadClass() sur une classe non-existante
+          //entrainera la levée d'une exception dans Zend_Loader
+          echo "Récupère exception: " . get_class($e) . "\n";
+          echo "Message: " . $e->getMessage() . "\n";
+          // puis tout le code nécessaire pour récupérer l'erreur
+	}
+	}
 }

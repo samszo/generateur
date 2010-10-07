@@ -33,13 +33,13 @@ class Model_DbTable_ConceptsGenerateurs extends Zend_Db_Table_Abstract
 			->where('id_concept = ?', $idCon)
 			->where('id_gen = ?', $idGen);
 		$rows = $this->fetchAll($select);        
-	    if($rows->count()>0)$id=$rows[0]->id_concept; else $id=-1;
+	    if($rows->count()>0)$id=$rows[0]->id_concept; else $id=false;
         return $id;
     }    
     
     public function ajouterConceptGenerateur($idCon, $idGen)
     {
-    	$id = $this->existeConceptGenerateur($idDico, $idGen);
+    	$id = $this->existeConceptGenerateur($idCon, $idGen);
     	if(!$id){
 	    	$data = array(
         	'id_concept' => $idCon

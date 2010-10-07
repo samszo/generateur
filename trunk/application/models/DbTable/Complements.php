@@ -30,7 +30,7 @@ class Model_DbTable_Complements extends Zend_Db_Table_Abstract
 			->where('num = ?', $num)
 			->where('ordre = ?', $ordre);
 	    $rows = $this->fetchAll($select);        
-	    if($rows->count()>0)$id=$rows[0]->id_cpm; else $id=-1;
+	    if($rows->count()>0)$id=$rows[0]->id_cpm; else $id=false;
         return $id;
     }    
     

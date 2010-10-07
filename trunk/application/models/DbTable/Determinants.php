@@ -29,7 +29,7 @@ class Model_DbTable_Determinants extends Zend_Db_Table_Abstract
 			->where('ordre = ?', $ordre)
 			->where('num = ?', $num);
 	    $rows = $this->fetchAll($select);        
-	    if($rows->count()>0)$id=$rows[0]->id_dtm; else $id=-1;
+	    if($rows->count()>0)$id=$rows[0]->id_dtm; else $id=false;
         return $id;
     }    
     

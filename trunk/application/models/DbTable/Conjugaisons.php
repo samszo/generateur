@@ -30,7 +30,7 @@ class Model_DbTable_Conjugaisons extends Zend_Db_Table_Abstract
 			->where('modele = ?', $modele)
 			->where('num = ?', $num);
 	    $rows = $this->fetchAll($select);        
-	    if($rows->count()>0)$id=$rows[0]->id_conj; else $id=-1;
+	    if($rows->count()>0)$id=$rows[0]->id_conj; else $id=false;
         return $id;
     }    
     

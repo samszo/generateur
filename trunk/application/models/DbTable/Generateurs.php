@@ -30,7 +30,7 @@ class Model_DbTable_Generateurs extends Zend_Db_Table_Abstract
 			->where('id_dico = ?', $idDico)
 			->where('valeur = ?', $valeur);
 		$rows = $this->fetchAll($select);        
-	    if($rows->count()>0)$id=$rows[0]->id_gen; else $id=-1;
+	    if($rows->count()>0)$id=$rows[0]->id_gen; else $id=false;
         return $id;
     }    
     
