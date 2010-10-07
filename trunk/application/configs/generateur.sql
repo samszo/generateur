@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 3.1.1
+-- version 3.2.0.1
 -- http://www.phpmyadmin.net
 --
 -- Serveur: localhost
--- Généré le : Lun 04 Octobre 2010 à 22:31
--- Version du serveur: 5.1.30
--- Version de PHP: 5.2.8
+-- Généré le : Jeu 07 Octobre 2010 à 07:30
+-- Version du serveur: 5.1.36
+-- Version de PHP: 5.2.5
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
@@ -26,7 +26,7 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 --
 
 CREATE TABLE IF NOT EXISTS `gen_adjectifs` (
-  `id_adjectif` int(11) NOT NULL AUTO_INCREMENT,
+  `id_adj` int(11) NOT NULL AUTO_INCREMENT,
   `id_dico` int(11) NOT NULL,
   `elision` int(11) NOT NULL,
   `prefix` varchar(255) COLLATE utf8_bin NOT NULL,
@@ -34,9 +34,9 @@ CREATE TABLE IF NOT EXISTS `gen_adjectifs` (
   `f_s` varchar(255) COLLATE utf8_bin NOT NULL,
   `m_p` varchar(255) COLLATE utf8_bin NOT NULL,
   `f_p` varchar(255) COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`id_adjectif`),
+  PRIMARY KEY (`id_adj`),
   KEY `id_dico` (`id_dico`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin ROW_FORMAT=DYNAMIC AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin ROW_FORMAT=DYNAMIC AUTO_INCREMENT=7713 ;
 
 -- --------------------------------------------------------
 
@@ -68,7 +68,95 @@ CREATE TABLE IF NOT EXISTS `gen_concepts` (
   `type` varchar(255) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id_concept`),
   KEY `id_dico` (`id_dico`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=12302 ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `gen_concepts_adjectifs`
+--
+
+CREATE TABLE IF NOT EXISTS `gen_concepts_adjectifs` (
+  `id_concept` int(11) NOT NULL,
+  `id_adj` int(11) NOT NULL,
+  PRIMARY KEY (`id_concept`,`id_adj`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `gen_concepts_conjugaisons`
+--
+
+CREATE TABLE IF NOT EXISTS `gen_concepts_conjugaisons` (
+  `id_concept` int(11) NOT NULL,
+  `id_conj` int(11) NOT NULL,
+  PRIMARY KEY (`id_concept`,`id_conj`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `gen_concepts_generateurs`
+--
+
+CREATE TABLE IF NOT EXISTS `gen_concepts_generateurs` (
+  `id_concept` int(11) NOT NULL,
+  `id_gen` int(11) NOT NULL,
+  PRIMARY KEY (`id_concept`,`id_gen`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `gen_concepts_substantifs`
+--
+
+CREATE TABLE IF NOT EXISTS `gen_concepts_substantifs` (
+  `id_concept` int(11) NOT NULL,
+  `id_sub` int(11) NOT NULL,
+  PRIMARY KEY (`id_concept`,`id_sub`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `gen_concepts_syntagmes`
+--
+
+CREATE TABLE IF NOT EXISTS `gen_concepts_syntagmes` (
+  `id_concept` int(11) NOT NULL,
+  `id_syn` int(11) NOT NULL,
+  PRIMARY KEY (`id_concept`,`id_syn`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `gen_concepts_verbes`
+--
+
+CREATE TABLE IF NOT EXISTS `gen_concepts_verbes` (
+  `id_concept` int(11) NOT NULL,
+  `id_verbe` int(11) NOT NULL,
+  PRIMARY KEY (`id_concept`,`id_verbe`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `gen_conjugaisons`
+--
+
+CREATE TABLE IF NOT EXISTS `gen_conjugaisons` (
+  `id_conj` int(11) NOT NULL AUTO_INCREMENT,
+  `id_dico` int(11) NOT NULL,
+  `num` int(11) NOT NULL,
+  `modele` varchar(255) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`id_conj`),
+  KEY `num` (`num`),
+  KEY `id_dico` (`id_dico`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=16 ;
 
 -- --------------------------------------------------------
 
@@ -101,7 +189,38 @@ CREATE TABLE IF NOT EXISTS `gen_dicos` (
   `url_source` varchar(255) COLLATE utf8_bin NOT NULL,
   `path_source` varchar(255) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id_dico`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin ROW_FORMAT=DYNAMIC AUTO_INCREMENT=17 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin ROW_FORMAT=DYNAMIC AUTO_INCREMENT=5 ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `gen_generateurs`
+--
+
+CREATE TABLE IF NOT EXISTS `gen_generateurs` (
+  `id_gen` int(11) NOT NULL AUTO_INCREMENT,
+  `id_dico` int(11) NOT NULL,
+  `valeur` varchar(255) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`id_gen`),
+  KEY `id_dico` (`id_dico`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=3051 ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `gen_substantifs`
+--
+
+CREATE TABLE IF NOT EXISTS `gen_substantifs` (
+  `id_sub` int(11) NOT NULL AUTO_INCREMENT,
+  `id_dico` int(11) NOT NULL,
+  `elision` int(11) NOT NULL,
+  `prefix` varchar(255) COLLATE utf8_bin NOT NULL,
+  `s` varchar(255) COLLATE utf8_bin NOT NULL,
+  `p` varchar(255) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`id_sub`),
+  KEY `id_dico` (`id_dico`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin ROW_FORMAT=DYNAMIC AUTO_INCREMENT=4190 ;
 
 -- --------------------------------------------------------
 
@@ -118,7 +237,7 @@ CREATE TABLE IF NOT EXISTS `gen_syntagmes` (
   PRIMARY KEY (`id_syn`),
   KEY `num` (`num`),
   KEY `id_dico` (`id_dico`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin ROW_FORMAT=DYNAMIC AUTO_INCREMENT=218 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin ROW_FORMAT=DYNAMIC AUTO_INCREMENT=428 ;
 
 -- --------------------------------------------------------
 
@@ -128,12 +247,12 @@ CREATE TABLE IF NOT EXISTS `gen_syntagmes` (
 
 CREATE TABLE IF NOT EXISTS `gen_terminaisons` (
   `id_trm` int(11) NOT NULL AUTO_INCREMENT,
-  `id_verbe` int(11) NOT NULL,
+  `id_conj` int(11) NOT NULL,
   `num` int(11) NOT NULL,
   `lib` varchar(255) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id_trm`),
-  KEY `id_verbe` (`id_verbe`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1884 ;
+  KEY `id_conj` (`id_conj`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=541 ;
 
 -- --------------------------------------------------------
 
@@ -143,10 +262,12 @@ CREATE TABLE IF NOT EXISTS `gen_terminaisons` (
 
 CREATE TABLE IF NOT EXISTS `gen_verbes` (
   `id_verbe` int(11) NOT NULL AUTO_INCREMENT,
+  `id_conj` int(11) NOT NULL,
   `id_dico` int(11) NOT NULL,
-  `num` int(11) NOT NULL,
+  `elision` int(11) NOT NULL,
+  `prefix` varchar(255) COLLATE utf8_bin NOT NULL,
   `modele` varchar(255) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id_verbe`),
-  KEY `num` (`num`),
-  KEY `id_dico` (`id_dico`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=52 ;
+  KEY `id_dico` (`id_dico`),
+  KEY `id_conj` (`id_conj`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin ROW_FORMAT=DYNAMIC AUTO_INCREMENT=1369 ;

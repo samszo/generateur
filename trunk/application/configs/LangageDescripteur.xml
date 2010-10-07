@@ -5,9 +5,9 @@
 			<traitements>
 				<action char="\r" type="explode" desc="récupére chaque modèle de conjugaison">
 					<action char="," type="explode" desc="récupére chaque instance de terminaison">
-						<action deb="0" length="1" val="(" type="VerifSubstr" desc="vérifie la déterminaison du verbe" >
+						<action deb="0" length="1" val="(" type="VerifSubstr" desc="vérifie la déterminaison de la conjugaison" >
 							<NoVerifAction type="SetNoeud"  />
-							<action char="." type="SetVerbe" />
+							<action char="." type="SetConjugaison" />
 						</action>
 					</action>
 				</action>

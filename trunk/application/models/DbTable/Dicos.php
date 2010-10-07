@@ -17,6 +17,8 @@ class Model_DbTable_Dicos extends Zend_Db_Table_Abstract
 			$items = $dico->findDependentRowset('Model_DbTable_Complements');
 		if($dico['type']=='syntagmes')
 			$items = $dico->findDependentRowset('Model_DbTable_Syntagmes');
+		if($dico['type']=='concepts')
+			$items = $dico->findDependentRowset('Model_DbTable_Concepts');
 			
         return $items;
     }
