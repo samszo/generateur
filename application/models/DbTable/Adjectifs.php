@@ -35,7 +35,7 @@ class Model_DbTable_Adjectifs extends Zend_Db_Table_Abstract
 			->where('m_p = ?', $mp)
 			->where('f_p = ?', $fp);
 	    $rows = $this->fetchAll($select);        
-	    if($rows->count()>0)$id=$rows[0]->id_adj; else $id=-1;
+	    if($rows->count()>0)$id=$rows[0]->id_adj; else $id=false;
         return $id;
     }    
     

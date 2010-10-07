@@ -33,7 +33,7 @@ class Model_DbTable_ConceptsSubstantifs extends Zend_Db_Table_Abstract
 			->where('id_concept = ?', $idCon)
 			->where('id_sub = ?', $idSub);
 		$rows = $this->fetchAll($select);        
-	    if($rows->count()>0)$id=$rows[0]->id_concept; else $id=-1;
+	    if($rows->count()>0)$id=$rows[0]->id_concept; else $id=false;
         return $id;
     }    
     

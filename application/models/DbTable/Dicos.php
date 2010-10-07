@@ -10,7 +10,7 @@ class Model_DbTable_Dicos extends Zend_Db_Table_Abstract
 		$Rowset = $this->find($id);
 		$dico = $Rowset->current();
 		if($dico['type']=='conjugaisons')
-			$items = $dico->findDependentRowset('Model_DbTable_Verbes');
+			$items = $dico->findDependentRowset('Model_DbTable_Conjugaisons');
 		if($dico['type']=='déterminants')
 			$items = $dico->findDependentRowset('Model_DbTable_Determinants');
 		if($dico['type']=='compléments')

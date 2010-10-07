@@ -173,7 +173,7 @@ class Gen_Dico
 		
 		foreach ($this->xml->children() as $k => $n) {
 			switch ($k) {
-				case 'conjugaisons':
+				case 'conjugaison':
 					$pkV = $dbConj->ajouterConjugaison($this->id,$n['num'],$n['modele']);
 					$i=0;
 					foreach ($n->terminaisons->terminaison as $kTrm => $nTrm) {
@@ -307,6 +307,10 @@ class Gen_Dico
 				$this->SetConcept($chaine, $action);
 				break;
 				
+			
+			case 'SetTerminaison':
+				$this->SetTerminaison($chaine, $action);
+				break;
 		}
 
 	}
@@ -319,7 +323,7 @@ class Gen_Dico
 		$num = substr($chaine,1,strpos($chaine, $c)-1);
 		$verbe = substr($chaine,strpos($chaine, $c)+1,-1);
 		//création du noeud verbe
-		$xFrag = $this->xml->createElement('conj',$chaine);
+		$xFrag = $this->xml->createElement('conjugaison',$chaine);
 		$xAtt = $this->xml->createAttribute('num');
 		$nText = $this->xml->createTextNode($num);
 		$xAtt->appendChild($nText); 				
@@ -335,6 +339,19 @@ class Gen_Dico
 		$this->xmlRoot->appendChild($xFrag);
 		
 	}
+	
+	public function SetTerminaison($chaine, $action){
+
+		if(!$this->xmlTmp){
+			//initialise le noeud
+			$this->xmlTmp = $this->xml->createElement("terminaisons");			
+		}
+		//calcul le noeud
+		$n = $this->xml->createElement("terminaison",$chaine);		
+		//ajoute le noeud
+		$this->xmlTmp->appendChild($n);		
+				
+	}	
 	
 	public function SetNoeud($chaine, $action){
 

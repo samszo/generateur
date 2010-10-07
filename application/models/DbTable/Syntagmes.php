@@ -29,7 +29,7 @@ class Model_DbTable_Syntagmes extends Zend_Db_Table_Abstract
 			->where('ordre = ?', $ordre)
 			->where('lib = ?', $lib);
 		$rows = $this->fetchAll($select);        
-	    if($rows->count()>0)$id=$rows[0]->id_syn; else $id=-1;
+	    if($rows->count()>0)$id=$rows[0]->id_syn; else $id=false;
         return $id;
     }    
     

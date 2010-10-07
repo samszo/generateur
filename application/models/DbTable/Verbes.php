@@ -54,7 +54,7 @@ class Model_DbTable_Verbes extends Zend_Db_Table_Abstract
 			->where('prefix = ?', $prefix)
 			->where('modele = ?', $modele);
 	    $rows = $this->fetchAll($select);        
-	    if($rows->count()>0)$id=$rows[0]->id_verbe; else $id=-1;
+	    if($rows->count()>0)$id=$rows[0]->id_verbe; else $id=false;
         return $id;
     }    
     
