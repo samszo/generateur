@@ -11,7 +11,7 @@ class Model_DbTable_ConceptsGenerateurs extends Zend_Db_Table_Abstract
         )
         ,'Generateur' => array(
             'columns'           => 'id_gen',
-            'refTableClass'     => 'Model_DbTable_Generateur',
+            'refTableClass'     => 'Model_DbTable_Generateurs',
             'refColumns'        => 'id_gen'
         )
 	);	

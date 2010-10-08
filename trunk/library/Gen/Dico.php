@@ -129,7 +129,7 @@ class Gen_Dico
 		
 	}
 
-	public function SaveBdd($idDico){
+	public function SaveBdd($idDico, $idDicoConj=-1){
 		
 		
 		//récupère les infos du dico
@@ -168,6 +168,8 @@ class Gen_Dico
 				$dbConSub = new Model_DbTable_ConceptsSubstantifs();
 				$dbConSyn = new Model_DbTable_ConceptsSyntagmes();
 				$dbConGen = new Model_DbTable_ConceptsGenerateurs();
+				//récupère le dico de référence pour les conjugaisons
+				$dbConj = new Model_DbTable_Conjugaisons();				
 				break;
 		}
 		
@@ -206,12 +208,14 @@ class Gen_Dico
 					}
 					break;
 				case 'concept':
-					$idC = $dbCon->ajouterConcept($this->id,$n['lib'],$n['type']);						
+					$idC = $dbCon->ajouterConcept($this->id,$n['lib'],$n['type']);
 					foreach ($n->children() as $kCon => $nCon) {
 						//ajout suivant le type de concept
 				    	switch ($kCon) {
 				    		case 'verbe':
-				    			$idT = $dbVer->ajouterVerbe($this->id,-1,$nCon["eli"],$nCon["pref"],$nCon["modele"]);
+				    			//récupère l'identifiant de conjugaison
+				    			$idConj = $dbConj->obtenirConjugaisonIdModele($idDicoConj,$nCon["modele"]);
+				    			$idT = $dbVer->ajouterVerbe($this->id,$idConj,$nCon["eli"],$nCon["pref"]);
 				    			$dbConVer->ajouterConceptVerbe($idC,$idT);
 				    			break;				    		
 				    		case 'adj':

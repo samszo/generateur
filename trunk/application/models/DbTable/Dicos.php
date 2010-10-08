@@ -23,7 +23,19 @@ class Model_DbTable_Dicos extends Zend_Db_Table_Abstract
         return $items;
     }
 	
-	public function obtenirDico($id)
+	public function obtenirDicoType($type)
+    {
+		$select = $this->select();
+		$select->from($this, array('id_dico','maj'))
+			->where('type = ?', $type);
+	    $rs = $this->fetchAll($select);        
+    	if (!$rs) {
+            throw new Exception("Count not find rs $id");
+        }
+        return $rs->toArray();
+	}
+    
+    public function obtenirDico($id)
     {
         $id = (int)$id;
         $row = $this->fetchRow('id_dico = ' . $id);

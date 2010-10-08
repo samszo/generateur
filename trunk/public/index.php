@@ -16,6 +16,7 @@ defined('APPLICATION_ENV')
 
 set_include_path(APPLICATION_PATH.'/../library');       
 set_include_path(get_include_path().PATH_SEPARATOR."C:\wamp\www\ZendFramework\library");
+set_include_path(get_include_path().PATH_SEPARATOR."C:\wamp\www\ZendFramework-1.10.8\extras\library");
 
 /** Zend_Application */
 require_once 'Zend/Application.php';

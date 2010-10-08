@@ -11,7 +11,7 @@ class Model_DbTable_ConceptsVerbes extends Zend_Db_Table_Abstract
         )
         ,'Verbe' => array(
             'columns'           => 'id_verbe',
-            'refTableClass'     => 'Model_DbTable_Verbe',
+            'refTableClass'     => 'Model_DbTable_Verbes',
             'refColumns'        => 'id_verbe'
         )
 	);	

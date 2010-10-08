@@ -9,12 +9,10 @@ class Form_Verbe extends Zend_Form
 
         $id = new Zend_Form_Element_Hidden('id');
         $id->setValue($options["id"]);
-      	        
+        
 		//construction des modèle de conjugaison
-		$conjs = new Model_DbTable_Conjugaisons();
-		$arrV = $conjs->fetchAll();		               
-        $modele = new Zend_Form_Element_Select('modele', array(
-		    'multiOptions' => $arrV));
+        $modele = new Zend_Form_Element_Select('id_conj', array(
+		    'multiOptions' => $options["RsConjs"]));
         $modele->setLabel('Choisir un modèle de conjugaison');
 		$modele->setRequired(true);
 		

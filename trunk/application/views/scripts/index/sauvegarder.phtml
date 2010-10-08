@@ -7,5 +7,18 @@
     <input type="hidden" name="id" value="<?php echo $this->dico['id_dico']; ?>" />
     <input type="submit" name="sauvegarder" value="Oui" />
     <input type="submit" name="sauvegarder" value="Non" />
+<?php
+	if($this->dico['type']=="concepts"){
+		//choix des dictionnaires de référence
+		echo "<p>Choisissez le dictionnaire de référence pour les conjugaisons : ";
+		$dbDico = new Model_DbTable_Dicos();
+		$arrDicos = $dbDico->obtenirDicoType("conjugaisons");
+		echo "<SELECT name='idDicoConj'>";
+		foreach($arrDicos as $d){
+			echo "<OPTION value='".$d['id_dico']."' >".$d['maj']."</OPTION>";			
+		}
+		echo "</SELECT></p>";	
+	}	
+?>
 </div>
 </form>
