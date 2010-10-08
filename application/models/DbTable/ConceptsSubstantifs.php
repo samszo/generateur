@@ -11,7 +11,7 @@ class Model_DbTable_ConceptsSubstantifs extends Zend_Db_Table_Abstract
         )
         ,'Substantif' => array(
             'columns'           => 'id_sub',
-            'refTableClass'     => 'Model_DbTable_Substantif',
+            'refTableClass'     => 'Model_DbTable_Substantifs',
             'refColumns'        => 'id_sub'
         )
 	);	

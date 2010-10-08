@@ -11,7 +11,7 @@ class Model_DbTable_ConceptsSyntagmes extends Zend_Db_Table_Abstract
         )
         ,'Syntagme' => array(
             'columns'           => 'id_syn',
-            'refTableClass'     => 'Model_DbTable_Substantif',
+            'refTableClass'     => 'Model_DbTable_Syntagmes',
             'refColumns'        => 'id_syn'
         )
 	);	

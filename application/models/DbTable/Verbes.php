@@ -28,31 +28,29 @@ class Model_DbTable_Verbes extends Zend_Db_Table_Abstract
         return $row->toArray();
     }
     
-    public function ajouterVerbe($idDico, $idConj, $eli, $prefix, $modele)
+    public function ajouterVerbe($idDico, $idConj, $eli, $prefix, $modele="", $idDicoConj=-1)
     {
-    	$id = $this->existeVerbe($idDico, $idConj, $eli, $prefix, $modele);
+    	$id = $this->existeVerbe($idDico, $idConj, $eli, $prefix);
     	if(!$id){
     	   	$data = array(
             'id_dico' => $idDico,
             'id_conj' => $idConj,
     		'elision' => $eli,
-    		'prefix' => $prefix,
-            'modele' => $modele
+    		'prefix' => $prefix
 	        );
     	 	$id = $this->insert($data);
     	}
     	return $id;
     }
 
-	public function existeVerbe($idDico, $idConj, $eli, $prefix, $modele)
+	public function existeVerbe($idDico, $idConj, $eli, $prefix)
     {
 		$select = $this->select();
 		$select->from($this, array('id_verbe'))
 			->where('id_dico = ?', $idDico)
 			->where('id_conj = ?', $idConj)
 			->where('elision = ?', $eli)
-			->where('prefix = ?', $prefix)
-			->where('modele = ?', $modele);
+			->where('prefix = ?', $prefix);
 	    $rows = $this->fetchAll($select);        
 	    if($rows->count()>0)$id=$rows[0]->id_verbe; else $id=false;
         return $id;
@@ -63,8 +61,7 @@ class Model_DbTable_Verbes extends Zend_Db_Table_Abstract
         $data = array(
             'id_conj' => $idConj,
     		'elision' => $eli,
-    		'prefix' => $prefix,
-            'modele' => $modele
+    		'prefix' => $prefix
         );
         $this->update($data, 'id_verbe = '. (int)$id);
     }

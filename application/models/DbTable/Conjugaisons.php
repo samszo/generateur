@@ -21,6 +21,48 @@ class Model_DbTable_Conjugaisons extends Zend_Db_Table_Abstract
         }
         return $row->toArray();
     }
+
+
+    public function obtenirConjugaisonIdModele($idDico, $modele)
+    {
+		$select = $this->select();
+		$select->from($this, array('id_conj'))
+			->where('id_dico = ?', $idDico)
+			->where('modele = ?', $modele);
+		$rs = $this->fetchAll($select);        
+    	if (!$rs) {
+            throw new Exception("Count not find rs $id");
+        }
+        return $rs[0]->id_conj;
+    }
+
+    public function obtenirConjugaisonDico($idDico)
+    {
+		$select = $this->select();
+		$select->from($this, array('id_conj','modele'))
+			->where('id_dico = ?', $idDico);
+	    $rs = $this->fetchAll($select);        
+    	if (!$rs) {
+            throw new Exception("Count not find rs $id");
+        }
+        return $rs->toArray();
+    }
+
+    public function obtenirConjugaisonListeModeles()
+    {
+		$select = $this->select();
+		$select->from($this, array('id_conj','modele'))
+			->order("modele");
+	    $rs = $this->fetchAll($select);        
+    	if (!$rs) {
+            throw new Exception("Count not find rs $id");
+        }
+        $arr = array();
+        foreach($rs as $r){
+        	$arr[$r['id_conj']]=$r['modele'];	
+        }
+        return $arr;
+    }
     
 	public function existeConjugaison($idDico, $num, $modele)
     {

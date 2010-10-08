@@ -1,5 +1,5 @@
 <?php
-class Form_Dico extends Zend_Form
+class Form_Dico extends ZendX_JQuery_Form
 {
     public function __construct($options = null)
     {
@@ -23,9 +23,14 @@ class Form_Dico extends Zend_Form
 		    'multiOptions' => $arrT));
         $type->setLabel('Définir un type');
 
+                
         $envoyer = new Zend_Form_Element_Submit('envoyer');
         $envoyer->setAttrib('id', 'boutonenvoyer');
-		$this->setAttrib('enctype', 'multipart/form-data');
-        $this->addElements(array($id, $file, $type, $envoyer));
+ 
+        $this->setAttrib('enctype', 'multipart/form-data');
+        $this->addElements(array($id, $file, $type, $envoyer, $form));
+
+
+        
     }
 }
