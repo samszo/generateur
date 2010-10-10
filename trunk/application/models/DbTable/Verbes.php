@@ -28,7 +28,7 @@ class Model_DbTable_Verbes extends Zend_Db_Table_Abstract
         return $row->toArray();
     }
     
-    public function ajouterVerbe($idDico, $idConj, $eli, $prefix, $modele="", $idDicoConj=-1)
+    public function ajouterVerbe($idDico, $idConj, $eli, $prefix)
     {
     	$id = $this->existeVerbe($idDico, $idConj, $eli, $prefix);
     	if(!$id){

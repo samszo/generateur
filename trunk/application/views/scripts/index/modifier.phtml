@@ -1,8 +1,14 @@
-<p><a href="<?php echo $this->url(array('controller'=>'index','action'=>'ajouter', 'type'=>$this->types['enfant']));?>"><?php echo $this->libAjout; ?></a></p>
-<div>
+<p><a href="<?php echo $this->url(array('controller'=>'index','action'=>'ajouter', 'type'=>$this->types['enfant']));?>"><?php echo $this->libAjout; ?></a>
+<?php if($this->types['parent']=="concept"):?>
+<a href="<?php echo $this->url(array('controller'=>'index','action'=>'ajouter', 'type'=>'generateur'));?>">Ajouter un générateur</a>
+<?php endif; ?>
+</p>
+<table>
+    <tr>
+<td>
 <?php echo $this->form ;?>
-</div>
-<br/>
+</td>
+<td>
 <table>
     <tr>
 <?php foreach($this->cols as $col) : ?>
@@ -16,10 +22,35 @@
 	<?php endforeach; ?>
         <td>
             <a href="<?php echo $this->url(array('controller'=>'index',
-                'action'=>'modifier', 'type'=>$this->types['enfant'], 'id'=>$enfant[$this->key[1]]));?>">Modifier</a>
+                'action'=>'modifier', 'idParent'=>$this->idParent, 'type'=>$this->types['enfant'], 'id'=>$enfant[$this->key[1]]));?>">Modifier</a>
             <a href="<?php echo $this->url(array('controller'=>'index',
-                'action'=>'supprimer', 'type'=>$this->types['enfant'], 'id'=>$enfant[$this->key[1]]));?>">Supprimer</a>
+                'action'=>'supprimer', 'idParent'=>$this->idParent, 'type'=>$this->types['enfant'], 'id'=>$enfant[$this->key[1]]));?>">Supprimer</a>
         </td>
     </tr>
 <?php endforeach; ?>
 </table>
+</td>
+<td>
+<?php if($this->types['parent']=="concept"):?>
+<table>
+    <tr>
+        <th>id_gen</th>
+        <th>valeur</th>
+    </tr>  
+<?php foreach($this->gens as $gen) : ?>
+    <tr>
+        <td><?php echo $this->escape($gen['id_gen']);?></td>
+        <td><?php echo $this->escape($gen['valeur']);?></td>
+        <td>
+            <a href="<?php echo $this->url(array('controller'=>'index',
+                'action'=>'modifier', 'idParent'=>$this->idParent, 'type'=>'generateur', 'id'=>$gen['id_gen']));?>">Modifier</a>
+            <a href="<?php echo $this->url(array('controller'=>'index',
+                'action'=>'supprimer', 'idParent'=>$this->idParent, 'type'=>'generateur', 'id'=>$gen['id_gen']));?>">Supprimer</a>
+        </td>
+    </tr>
+<?php endforeach; ?>
+</table>
+</td>
+</tr>
+</table>
+<?php endif; ?>

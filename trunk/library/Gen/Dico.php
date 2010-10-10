@@ -44,7 +44,8 @@ class Gen_Dico
 	var $type;
 	var $Xtype;
 	var $id;
-
+	var $nom;
+	
 	/**
 	 * Le constructeur initialise le dictionnaire.
 	 */
@@ -66,6 +67,7 @@ class Gen_Dico
 		$this->type = $arr['type'];
 		$this->Xtype = $this->RemoveAccents($this->type);
 		$this->pathS = $arr['path_source'];
+		$this->nom = $arr['nom'];
 		
 		//chargement de la configuration du langage
 		$this->xmlDesc = simplexml_load_file($this->urlDesc);
@@ -120,9 +122,9 @@ class Gen_Dico
 		
 		//enregistre le dico
 		if($this->id){
-			$dbDico->modifierDico($this->id,$this->url, $this->type, $this->urlS);
+			$dbDico->modifierDico($this->id, $this->nom, $this->url, $this->type, $this->urlS);
 		}else{
-			$pk = $dbDico->ajouterDico($this->url, $this->type, $this->urlS, $this->pathS);
+			$pk = $dbDico->ajouterDico($this->url, $this->nom, $this->type, $this->urlS, $this->pathS);
 			$this->id = $pk;
 		}					
        
@@ -169,7 +171,10 @@ class Gen_Dico
 				$dbConSyn = new Model_DbTable_ConceptsSyntagmes();
 				$dbConGen = new Model_DbTable_ConceptsGenerateurs();
 				//récupère le dico de référence pour les conjugaisons
-				$dbConj = new Model_DbTable_Conjugaisons();				
+				$dbConj = new Model_DbTable_Conjugaisons();
+				//ajoute le lien entre le dictionnaire général et le dictionnaire de référende
+				$dbDicos = new Model_DbTable_DicosDicos();
+				$dbDicos->ajouterDicoGenDicoRef($idDico,$idDicoConj);
 				break;
 		}
 		
@@ -214,7 +219,7 @@ class Gen_Dico
 				    	switch ($kCon) {
 				    		case 'verbe':
 				    			//récupère l'identifiant de conjugaison
-				    			$idConj = $dbConj->obtenirConjugaisonIdModele($idDicoConj,$nCon["modele"]);
+				    			$idConj = $dbConj->obtenirConjugaisonIdByNumModele($idDicoConj,$nCon["modele"]."");
 				    			$idT = $dbVer->ajouterVerbe($this->id,$idConj,$nCon["eli"],$nCon["pref"]);
 				    			$dbConVer->ajouterConceptVerbe($idC,$idT);
 				    			break;				    		
@@ -231,7 +236,7 @@ class Gen_Dico
 				    			$dbConSub->ajouterConceptSubstantif($idC,$idT);
 				    			break;				    		
 				    		case 'gen':
-				    			$idT = $dbGen->ajouterGenerateur($this->id,$nCon);
+				    			$idT = $dbGen->ajouterGenerateur($this->id,$nCon[0]);
 				    			$dbConGen->ajouterConceptGenerateur($idC,$idT);
 				    			break;				    		
 				    	}

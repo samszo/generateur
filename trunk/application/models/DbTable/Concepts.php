@@ -7,7 +7,7 @@ class Model_DbTable_Concepts extends Zend_Db_Table_Abstract
 		,'Model_DbTable_ConceptsAdjectifs'
 		,'Model_DbTable_ConceptsSubstantifs'
 		,'Model_DbTable_ConceptsSyntagmes'
-		,'Model_DbTable_ConceptsGens'
+		,'Model_DbTable_ConceptsGenerateurs'
 		);
 	
     protected $_referenceMap    = array(

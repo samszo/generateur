@@ -26,7 +26,7 @@ class Model_DbTable_Dicos extends Zend_Db_Table_Abstract
 	public function obtenirDicoType($type)
     {
 		$select = $this->select();
-		$select->from($this, array('id_dico','maj'))
+		$select->from($this, array('id_dico','maj','nom'))
 			->where('type = ?', $type);
 	    $rs = $this->fetchAll($select);        
     	if (!$rs) {
@@ -45,11 +45,12 @@ class Model_DbTable_Dicos extends Zend_Db_Table_Abstract
         return $row->toArray();
     }
 
-    public function ajouterDico($url, $type, $urlS="", $pathS="")
+    public function ajouterDico($url, $nom, $type, $urlS="", $pathS="")
     {
         //mettre utf8_decode pour php 5.3
     	$data = array(
-            'url' => $url,
+            'nom' => $nom,
+    		'url' => $url,
             'url_source' => $urlS,
             'path_source' => $pathS,
     		'type' => $type
@@ -57,14 +58,16 @@ class Model_DbTable_Dicos extends Zend_Db_Table_Abstract
         return $this->insert($data);
     }
     
-    public function modifierDico($id, $url, $type, $urlS)
+    public function modifierDico($id, $nom, $url, $type, $urlS)
     {
         $data = array(
-            'url' => $url,
+            'nom' => $nom,
+        	'url' => $url,
             'url_source' => $urlS,
         	'type' => $type,
             'maj' => new Zend_Db_Expr('CURDATE()')
         );
+        print_r($data);
         $this->update($data, 'id_dico = '. (int)$id);
     }
 
