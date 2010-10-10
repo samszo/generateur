@@ -23,14 +23,14 @@ class IndexController extends Zend_Controller_Action
 	    //
 	    //$dico = new Gen_Dico();
 		//$dico->GetMacToXml(4);
-		//$dico->SaveBdd(1);
+		//$dico->SaveBdd(7,1);
 		//	    
 	    
 	    //$this->modifierAction();
 	    
 	    //$this->supprimerAction();
 	    
-	    $this->ajouterAction();
+	    //$this->ajouterAction();
 	    
 	    //$this->creerxmlAction();
     }
@@ -39,6 +39,9 @@ class IndexController extends Zend_Controller_Action
     {
 		$type = $this->_getParam('type', 0);
         $id = $this->_getParam('id', 0);
+        $idParent = $this->_getParam('idParent', 0);
+        $this->view->idParent = $id;
+        
     	    	  	/*
         $echo =false;
         Zend_Debug::dump($id, $echo, $echo);
@@ -48,6 +51,10 @@ class IndexController extends Zend_Controller_Action
 	        $table = new Model_DbTable_Dicos();
 			$Rowset = $table->find($id);
 			$parent = $Rowset->current();
+			$form = new Form_DicoModif();
+		    $form->envoyer->setLabel('Modifier');
+	        $form->populate($parent->toArray());
+		    $this->view->form = $form;		    
 			if($parent['type']=='conjugaisons'){
 				$enfants = $parent->findDependentRowset('Model_DbTable_Conjugaisons');
 				$types = array("parent"=>"dico","enfant"=>"conjugaison");	            	
@@ -93,8 +100,7 @@ class IndexController extends Zend_Controller_Action
 	        $table = new Model_DbTable_Terminaisons();
 			$Rowset = $table->find($id);
 			$parent = $Rowset->current();
-			$enfants = $Rowset->current();
-			$types = array("parent"=>"terminaison","enfant"=>"terminaison");	            	
+			$types = array("parent"=>"terminaison");	            	
 			$this->view->title = "Modification de la ".$type." (".$id.")";
 			$this->view->libAjout = "";
 		    //ajout du formulaire pour modifier l'élément parent
@@ -107,8 +113,7 @@ class IndexController extends Zend_Controller_Action
 	        $table = new Model_DbTable_Determinants();
 			$Rowset = $table->find($id);
 			$parent = $Rowset->current();
-			$enfants = $Rowset->current();
-			$types = array("parent"=>"determinant","enfant"=>"determinant");	            	
+			$types = array("parent"=>"determinant");	            	
 			$this->view->title = "Modification du déterminant (".$id.")";
 			$this->view->libAjout = "";
 		    //ajout du formulaire pour modifier l'élément parent
@@ -121,8 +126,7 @@ class IndexController extends Zend_Controller_Action
 	        $table = new Model_DbTable_Complements();
 			$Rowset = $table->find($id);
 			$parent = $Rowset->current();
-			$enfants = $Rowset->current();
-			$types = array("parent"=>"complement","enfant"=>"complement");	            	
+			$types = array("parent"=>"complement");	            	
 			$this->view->title = "Modification du complément (".$id.")";
 			$this->view->libAjout = "";
 		    //ajout du formulaire pour modifier l'élément parent
@@ -135,8 +139,7 @@ class IndexController extends Zend_Controller_Action
 	        $table = new Model_DbTable_Syntagmes();
 			$Rowset = $table->find($id);
 			$parent = $Rowset->current();
-			$enfants = $Rowset->current();
-			$types = array("parent"=>"syntagme","enfant"=>"syntagme");	            	
+			$types = array("parent"=>"syntagme");	            	
 			$this->view->title = "Modification du syntagme (".$id.")";
 			$this->view->libAjout = "";
 		    //ajout du formulaire pour modifier l'élément parent
@@ -149,13 +152,19 @@ class IndexController extends Zend_Controller_Action
 	        $table = new Model_DbTable_Concepts();
 			$Rowset = $table->find($id);
 			$parent = $Rowset->current();
-			//charge les enfants suivant le type de concept
-			if($parent->type=="a")$tType="Adjectifs";
-			if($parent->type=="v")$tType="Verbes";
-			if($parent->type=="m")$tType="Substantifs";
-			if($parent->type=="s")$tType="Syntagmes";
-			$enfants = $parent->findManyToManyRowset('Model_DbTable_'.$tType,
-                                                 'Model_DbTable_Concepts'.$tType);
+			if($parent->type!=""){
+				//charge les enfants suivant le type de concept
+				if($parent->type=="a")$tType="Adjectifs";
+				if($parent->type=="v")$tType="Verbes";
+				if($parent->type=="m")$tType="Substantifs";
+				if($parent->type=="s")$tType="Syntagmes";
+				$enfants = $parent->findManyToManyRowset('Model_DbTable_'.$tType,
+	                                                 'Model_DbTable_Concepts'.$tType);
+			}
+			//ajout des généreteurs
+			$gens = $parent->findManyToManyRowset('Model_DbTable_Generateurs',
+	                                                 'Model_DbTable_ConceptsGenerateurs');
+			$this->view->gens = $gens;
 			$types = array("parent"=>"concept","enfant"=>strtolower(substr($tType,0,-1)));	            	
 			$this->view->title = "Modification du concept (".$id.")";
 			$this->view->libAjout = "Ajouter $tType";
@@ -169,11 +178,8 @@ class IndexController extends Zend_Controller_Action
 	        $table = new Model_DbTable_Adjectifs();
 			$Rowset = $table->find($id);
 			$parent = $Rowset->current();
-			$pRs = $parent->findManyToManyRowset('Model_DbTable_Concepts','Model_DbTable_ConceptsAdjectifs');
-			$pR = $pRs->current();
-			$this->view->idParent=$pR['id_concept'];
-			$enfants = $Rowset->current();
-			$types = array("parent"=>$type,"enfant"=>$type);	            	
+			$this->view->idParent=$idParent;
+			$types = array("parent"=>$type);	            	
 			$this->view->title = "Modification de l'adjectif (".$id.")";
 			$this->view->libAjout = "";
 		    //ajout du formulaire pour modifier l'élément parent
@@ -186,70 +192,90 @@ class IndexController extends Zend_Controller_Action
 	        $table = new Model_DbTable_Verbes();
 			$Rowset = $table->find($id);
 			$parent = $Rowset->current();
-			$pRs = $parent->findManyToManyRowset('Model_DbTable_Concepts','Model_DbTable_ConceptsVerbes');
-			$pR = $pRs->current();
-			$this->view->idParent=$pR['id_concept'];
-			$enfants = $Rowset->current();
-			$types = array("parent"=>$type,"enfant"=>$type);	            	
+			$this->view->idParent=$idParent;
+			$types = array("parent"=>$type);	            	
 			$this->view->title = "Modification du verbe (".$id.")";
 			$this->view->libAjout = "";
-		    //ajout du formulaire pour modifier l'élément parent
-			$form = new Form_Verbe(array("id"=>$id));
+			//récupère les modèles de conjugaison pour ce dictionnaire
+			$dbConj = new Model_DbTable_Conjugaisons();
+			$RsConjs = $dbConj->obtenirConjugaisonListeModeles($parent['id_dico']);
+			//ajout du formulaire pour modifier l'élément parent
+        	$form = new Form_Verbe(array("id"=>$id,"RsConjs"=>$RsConjs));
+		    $form->envoyer->setLabel('Modifier');
+	        $form->populate($parent->toArray());
+		    $this->view->form = $form;		    
+        }
+        if($type=='generateur'){
+	        $table = new Model_DbTable_Generateurs();
+			$Rowset = $table->find($id);
+			$parent = $Rowset->current();
+			$this->view->idParent=$idParent;
+			$types = array("parent"=>$type);	            	
+			$this->view->title = "Modification du generateur (".$id.")";
+			$this->view->libAjout = "";
+			//ajout du formulaire pour modifier l'élément parent
+        	$form = new Form_Generateur(array("id"=>$id));
 		    $form->envoyer->setLabel('Modifier');
 	        $form->populate($parent->toArray());
 		    $this->view->form = $form;		    
         }
         
-        
-		$this->view->cols = $enfants->getTable()->info('cols');
-        $this->view->key = $enfants->getTable()->info('primary');
+        if(count($enfants)>0){
+			$this->view->cols = $enfants->getTable()->info('cols');
+	        $this->view->key = $enfants->getTable()->info('primary');
+	    }
 	    $this->view->headTitle($this->view->title, 'PREPEND');
 		$this->view->parent = $parent;
 		$this->view->enfants = $enfants;
 		$this->view->types = $types;
 		
-        if($type!='dico'){
-			if ($this->getRequest()->isPost()) {
-		        $formData = $this->getRequest()->getPost();
-		        print_r($form);
-		        if ($form->isValid($formData)) {
-		        	if($type=="conjugaison"){
-						$dbCo = new Model_DbTable_Conjugaisons();
-						$dbCo->modifierConjugaison($form->getValue('id'),$form->getValue('num'),$form->getValue('modele'));
-		        	}
-		        	if($type=="terminaison"){
-						$dbT = new Model_DbTable_Terminaisons();
-						$dbT->modifierTerminaison($form->getValue('id'),$form->getValue('num'),$form->getValue('lib'));
-		        	}
-		        	if($type=="determinant"){
-						$dbD = new Model_DbTable_Determinants();
-						$dbD->modifierDeterminant($form->getValue('id'),$form->getValue('num'),$form->getValue('ordre'),$form->getValue('lib'));
-		        	}
-		        	if($type=="complement"){
-						$dbC = new Model_DbTable_Complements();
-						$dbC->modifierComplement($form->getValue('id'),$form->getValue('num'),$form->getValue('ordre'),$form->getValue('lib'));
-		        	}
-		        	if($type=="syntagme"){
-						$dbS = new Model_DbTable_Syntagmes();
-						$dbS->modifierSyntagme($form->getValue('id'),$form->getValue('num'),$form->getValue('ordre'),$form->getValue('lib'));
-		        	}
-		        	if($type=="concept"){
-						$dbCpt = new Model_DbTable_Concepts();
-						$dbCpt->modifierConcept($form->getValue('id'),$form->getValue('lib'),$form->getValue('type'));
-		        	}
-		        	if($type=="adjectif"){
-						$dbAdj = new Model_DbTable_Adjectifs();
-						$dbAdj->modifierAdjectif($form->getValue('id'),$form->getValue('elision'),$form->getValue('prefix'),$form->getValue('m_s'),$form->getValue('f_s'),$form->getValue('m_p'),$form->getValue('f_p'));
-		        	}
-		        	if($type=="verbe"){
-						$dbVer = new Model_DbTable_Verbes();
-						$dbVer->modifierVerbe($form->getValue('id'),$form->getValue('id_conj'),$form->getValue('elision'),$form->getValue('prefix'),$form->getValue('modele'));
-		        	}
-		        	$this->_redirect('/index/modifier/type/'.$type.'/id/'.$id);
-		        }else{
-		            $form->populate($formData);
-		        }
-		    }
+		if ($this->getRequest()->isPost()) {
+	        $formData = $this->getRequest()->getPost();
+	        if ($form->isValid($formData)) {
+	        	if($type=='dico'){
+					$dbDic = new Model_DbTable_Dicos();
+					$dbDic->modifierDico($form->getValue('id_dico'),$form->getValue('nom'),$form->getValue('url'),$form->getValue('type'),$form->getValue('url_source'));
+	        	}
+	        	if($type=="conjugaison"){
+					$dbCo = new Model_DbTable_Conjugaisons();
+					$dbCo->modifierConjugaison($form->getValue('id'),$form->getValue('num'),$form->getValue('modele'));
+	        	}
+	        	if($type=="terminaison"){
+					$dbT = new Model_DbTable_Terminaisons();
+					$dbT->modifierTerminaison($form->getValue('id'),$form->getValue('num'),$form->getValue('lib'));
+	        	}
+	        	if($type=="determinant"){
+					$dbD = new Model_DbTable_Determinants();
+					$dbD->modifierDeterminant($form->getValue('id'),$form->getValue('num'),$form->getValue('ordre'),$form->getValue('lib'));
+	        	}
+	        	if($type=="complement"){
+					$dbC = new Model_DbTable_Complements();
+					$dbC->modifierComplement($form->getValue('id'),$form->getValue('num'),$form->getValue('ordre'),$form->getValue('lib'));
+	        	}
+	        	if($type=="syntagme"){
+					$dbS = new Model_DbTable_Syntagmes();
+					$dbS->modifierSyntagme($form->getValue('id'),$form->getValue('num'),$form->getValue('ordre'),$form->getValue('lib'));
+	        	}
+	        	if($type=="concept"){
+					$dbCpt = new Model_DbTable_Concepts();
+					$dbCpt->modifierConcept($form->getValue('id'),$form->getValue('lib'),$form->getValue('type'));
+	        	}
+	        	if($type=="adjectif"){
+					$dbAdj = new Model_DbTable_Adjectifs();
+					$dbAdj->modifierAdjectif($form->getValue('id'),$form->getValue('elision'),$form->getValue('prefix'),$form->getValue('m_s'),$form->getValue('f_s'),$form->getValue('m_p'),$form->getValue('f_p'));
+	        	}
+	        	if($type=="verbe"){
+					$dbVer = new Model_DbTable_Verbes();
+					$dbVer->modifierVerbe($form->getValue('id'),$form->getValue('id_conj'),$form->getValue('elision'),$form->getValue('prefix'),$form->getValue('modele'));
+	        	}
+	        	if($type=="generateur"){
+					$dbGen = new Model_DbTable_Generateurs();
+					$dbGen->modifierGenerateur($form->getValue('id'),$form->getValue('valeur'));
+	        	}
+	        	$this->_redirect('/index/modifier/type/'.$type.'/id/'.$id.'/idParent/'.$idParent);
+	        }else{
+	            $form->populate($formData);
+	        }
         }		
 		
 		
@@ -267,7 +293,7 @@ class IndexController extends Zend_Controller_Action
 	            $idDicoConj = $this->getRequest()->getPost('idDicoConj');
 	            //echo "idDico = ".$id."<br/>";
 			    $dico = new Gen_Dico();
-				$dico->SaveBdd($id,$idDicoConj);
+				$dico->SaveBdd($id, $idDicoConj);
 	        	$this->_redirect('/index/modifier/id/'.$id.'/type/dico');
 	        }else{
 	        	$this->_redirect('/');
@@ -305,11 +331,13 @@ class IndexController extends Zend_Controller_Action
     
     public function ajouterAction()
     {
-		$type = "dico";//;$this->_getParam('type', 0);
+		$type = $this->_getParam('type', 0);
         $id = $this->_getParam('id', 0);
-    	        
+        $idParent = $this->_getParam('idParent', 0);
+        $this->view->idParent = $id;
+                
 	    $this->view->headTitle($this->view->title, 'PREPEND');
-	
+			    
 	    if($type=="dico"){
 		    $form = new Form_Dico();
 			$this->view->types = array("parent"=>"dico");	            	
@@ -372,8 +400,17 @@ class IndexController extends Zend_Controller_Action
 		    $this->view->types = array("parent"=>"concept","enfant"=>$type);	            	
         	$this->view->title = "Ajouter un nouveau ".$type;
 			$dbConj = new Model_DbTable_Conjugaisons();
-			$RsConjs = $dbConj->obtenirConjugaisonListeModeles();
+			$RsConjs = $dbConj->obtenirConjugaisonListeModeles($parent['id_dico']);
         	$form = new Form_Verbe(array("id"=>$id,"RsConjs"=>$RsConjs));
+		}
+		if($type=="generateur"){
+			$dbCpt = new Model_DbTable_Concepts();
+			$Rowset = $dbCpt->find($id);
+			$parent = $Rowset->current();
+	        $this->view->parent = $parent;
+		    $this->view->types = array("parent"=>"concept","enfant"=>$type);	            	
+        	$this->view->title = "Ajouter un nouveau ".$type;
+        	$form = new Form_Generateur(array("id"=>$id));
 		}
 		
 	    $form->envoyer->setLabel('Ajouter');
@@ -388,7 +425,7 @@ class IndexController extends Zend_Controller_Action
 	        	}
 	        	if($type=="conjugaison"){
 					$db = new Model_DbTable_Conjugaisons();
-					$db->ajouterConjugaison($form->getValue('id'),$form->getValue('num'),$form->getValue('model'));
+					$db->ajouterConjugaison($form->getValue('id'),$form->getValue('num'),$form->getValue('modele'));
 					$this->_redirect('/index/modifier/type/dico/id/'.$id);
 	        	}
 	        	if($type=="terminaison"){
@@ -435,10 +472,23 @@ class IndexController extends Zend_Controller_Action
 					$cpt = $rs->current();
 
 					$dbVer = new Model_DbTable_Verbes();
-					$idVer = $dbVer->ajouterVerbe($cpt['id_dico'],$form->getValue['id_conj'],$form->getValue('elision'),$form->getValue('prefix'));
+					$idVer = $dbVer->ajouterVerbe($cpt['id_dico'],$form->getValue('id_conj'),$form->getValue('elision'),$form->getValue('prefix'));
 
 					$dbCptVer = new Model_DbTable_ConceptsVerbes();
 					$dbCptVer->ajouterConceptVerbe($cpt['id_concept'], $idVer);
+
+					$this->_redirect('/index/modifier/type/concept/id/'.$id);
+	        	}
+	        	if($type=="generateur"){
+					$dbCpt = new Model_DbTable_Concepts();
+	        		$rs = $dbCpt->find($form->getValue('id'));
+					$cpt = $rs->current();
+
+					$dbGen = new Model_DbTable_Generateurs();
+					$idGen = $dbGen->ajouterGenerateur($cpt['id_dico'],$form->getValue('valeur'));
+
+					$dbCptGen = new Model_DbTable_ConceptsGenerateurs();
+					$dbCptGen->ajouterConceptGenerateur($cpt['id_concept'], $idGen);
 
 					$this->_redirect('/index/modifier/type/concept/id/'.$id);
 	        	}
@@ -476,6 +526,7 @@ class IndexController extends Zend_Controller_Action
         $url = str_replace(ROOT_PATH,WEB_ROOT,$adapter->getFileName());
         $url = str_replace("\\","/",$url);
 		$dico = new Gen_Dico();
+		$dico->nom = $form->getValue('nom');
         $dico->urlS = $url;
         $dico->pathS = $adapter->getFileName();
         $dico->type = $type;
@@ -499,7 +550,9 @@ class IndexController extends Zend_Controller_Action
 		
 		$type = $this->_getParam('type', 0);
         $id = $this->_getParam('id', 0);
-        
+        $idParent = $this->_getParam('idParent', 0);
+        $this->view->idParent = $id;
+                
         if($type=="terminaison" || $type=="conjugaison")
 			$this->view->title = "Supprimer la ".$type;
         elseif($type=="adjectif")
@@ -548,12 +601,16 @@ class IndexController extends Zend_Controller_Action
 		            $dbVer = new Model_DbTable_Verbes();
 		            $dbVer->supprimerVerbe($id);	            	
 	            }
+	            if($type=="generateur"){
+		            $dbGen = new Model_DbTable_Generateurs();
+		            $dbGen->supprimerGenerateur($id);	            	
+	            }
 	        }
 	        if($type=="dico") $this->_redirect('/');
 	        if($type=="conjugaison" || $type=="determinant" || $type=="complement" || $type=="syntagme" || $type=="concept")
 	        	$this->_redirect('/index/modifier/type/dico/id/'.$this->_getParam('idParent', 0));
 	        if($type=="terminaison") $this->_redirect('/index/modifier/type/conjugaison/id/'.$this->_getParam('idParent', 0));
-	        if($type=="adjectif" || $type=="adjectif") $this->_redirect('/index/modifier/type/concept/id/'.$this->_getParam('idParent', 0));
+	        if($type=="adjectif" || $type=="verbe" || $type=="generateur") $this->_redirect('/index/modifier/type/concept/id/'.$this->_getParam('idParent', 0));
 	    } else {
             if($type=="dico"){
 	            $dicos = new Model_DbTable_Dicos();
@@ -610,9 +667,7 @@ class IndexController extends Zend_Controller_Action
 		        $this->view->parent = $parent;
 				$this->view->types = array("parent"=>$type);	            	
 		        $this->view->id = $id;
-				$pRs = $parent->findManyToManyRowset('Model_DbTable_Concepts','Model_DbTable_ConceptsAdjectifs');
-				$pR = $pRs->current();
-				$this->view->idParent=$pR['id_concept'];
+				$this->view->idParent=$idParent;
             }	        
             if($type=="verbe"){
 	            $table = new Model_DbTable_Verbes();
@@ -621,9 +676,16 @@ class IndexController extends Zend_Controller_Action
 		        $this->view->parent = $parent;
 				$this->view->types = array("parent"=>$type);	            	
 		        $this->view->id = $id;
-				$pRs = $parent->findManyToManyRowset('Model_DbTable_Concepts','Model_DbTable_ConceptsVerbes');
-				$pR = $pRs->current();
-				$this->view->idParent=$pR['id_concept'];
+				$this->view->idParent=$idParent;
+            }	        
+            if($type=="generateur"){
+	            $table = new Model_DbTable_Generateurs();
+				$Rowset = $table->find($id);
+				$parent = $Rowset->current();            
+		        $this->view->parent = $parent;
+				$this->view->types = array("parent"=>$type);	            	
+		        $this->view->id = $id;
+				$this->view->idParent=$idParent;
             }	        
 	    }
 	}catch (Zend_Exception $e) {

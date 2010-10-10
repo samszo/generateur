@@ -8,8 +8,12 @@ class Form_Dico extends ZendX_JQuery_Form
 
         $id = new Zend_Form_Element_Hidden('id');
 
+      	$nom = new Zend_Form_Element_Text('nom');
+      	$nom->setRequired(true);
+		$nom->setLabel('Donner un nom:');
+        
 		$file = new Zend_Form_Element_File('url');
-		$file->setLabel('Choisir un dictionnaire:')
+		$file->setLabel('Choisir un fichier:')
               ->setValueDisabled(true);        
 
 		//construction des types de dico
@@ -17,8 +21,7 @@ class Form_Dico extends ZendX_JQuery_Form
 		$arrT = array();
 		foreach($config->dico as $d){
 			$arrT[$d->type]=$d->type;      
-		}
-              
+		}     
         $type = new Zend_Form_Element_Radio('type', array(
 		    'multiOptions' => $arrT));
         $type->setLabel('Définir un type');
@@ -28,7 +31,7 @@ class Form_Dico extends ZendX_JQuery_Form
         $envoyer->setAttrib('id', 'boutonenvoyer');
  
         $this->setAttrib('enctype', 'multipart/form-data');
-        $this->addElements(array($id, $file, $type, $envoyer, $form));
+        $this->addElements(array($id, $nom, $file, $type, $envoyer));
 
 
         

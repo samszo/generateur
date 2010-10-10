@@ -11,23 +11,23 @@ class Form_Verbe extends Zend_Form
         $id->setValue($options["id"]);
         
 		//construction des modèle de conjugaison
-        $modele = new Zend_Form_Element_Select('id_conj', array(
+        $conj = new Zend_Form_Element_Select('id_conj', array(
 		    'multiOptions' => $options["RsConjs"]));
-        $modele->setLabel('Choisir un modèle de conjugaison');
-		$modele->setRequired(true);
+		$conj->setRequired(true);
+        $conj->setLabel('Choisir un modèle de conjugaison:');
 		
       	$eli = new Zend_Form_Element_Select('elision', array(
 		    'multiOptions' => array(1=>"avec",0=>"sans")));
       	$eli->setRequired(true);
-		$eli->setLabel("Définir l'élision");
+		$eli->setLabel("Définir l'élision:");
 
       	$prefix = new Zend_Form_Element_Text('prefix');
       	$prefix->setRequired(true);
-		$prefix->setLabel('Définir un prefix');
+		$prefix->setLabel('Définir un prefix:');
 		
         $envoyer = new Zend_Form_Element_Submit('envoyer');
         $envoyer->setAttrib('id', 'boutonenvoyer');
 		$this->setAttrib('enctype', 'multipart/form-data');
-        $this->addElements(array($id, $modele, $eli, $prefix, $envoyer));
+        $this->addElements(array($id, $conj, $eli, $prefix, $envoyer));
     }
 }

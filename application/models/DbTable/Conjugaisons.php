@@ -23,17 +23,20 @@ class Model_DbTable_Conjugaisons extends Zend_Db_Table_Abstract
     }
 
 
-    public function obtenirConjugaisonIdModele($idDico, $modele)
+    public function obtenirConjugaisonIdByNumModele($idDico, $num)
     {
 		$select = $this->select();
 		$select->from($this, array('id_conj'))
 			->where('id_dico = ?', $idDico)
-			->where('modele = ?', $modele);
+			->where('num = ?', $num);
 		$rs = $this->fetchAll($select);        
     	if (!$rs) {
             throw new Exception("Count not find rs $id");
         }
-        return $rs[0]->id_conj;
+        if($rs->count()==0)
+        	return -1;
+        else
+	        return $rs[0]->id_conj;
     }
 
     public function obtenirConjugaisonDico($idDico)
@@ -41,23 +44,18 @@ class Model_DbTable_Conjugaisons extends Zend_Db_Table_Abstract
 		$select = $this->select();
 		$select->from($this, array('id_conj','modele'))
 			->where('id_dico = ?', $idDico);
-	    $rs = $this->fetchAll($select);        
+		$rs = $this->fetchAll($select);        
     	if (!$rs) {
             throw new Exception("Count not find rs $id");
         }
         return $rs->toArray();
     }
 
-    public function obtenirConjugaisonListeModeles()
+    public function obtenirConjugaisonListeModeles($idDico)
     {
-		$select = $this->select();
-		$select->from($this, array('id_conj','modele'))
-			->order("modele");
-	    $rs = $this->fetchAll($select);        
-    	if (!$rs) {
-            throw new Exception("Count not find rs $id");
-        }
-        $arr = array();
+		$dbDics = new Model_DbTable_DicosDicos();
+		$idDicos = $dbDics->obtenirDicoGenDicosRefs($idDico);
+    	$rs = $this->obtenirConjugaisonDico($idDicos['id_dico_ref']);
         foreach($rs as $r){
         	$arr[$r['id_conj']]=$r['modele'];	
         }

@@ -1,4 +1,6 @@
-<?php 
+<?php
+$urlR="";
+$desc="";
 echo $this->doctype(); 
 ?>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
@@ -40,12 +42,17 @@ if($this->types['parent']=="concept"){
 	$urlR = '<a href="'.$urlR.'">Retour à la liste des '.$this->types['parent'].'s</a>';
 	$desc = $this->types['parent'].' : '.$this->parent['lib'].' ('.$this->parent['type'].')';
 }
-if($this->types['parent']=="adjectif"){
+if($this->types['parent']=="adjectif"
+	|| $this->types['parent']=="verbe"){
 	$urlR = $this->url(array('controller'=>'index', 'action'=>'modifier', 'type'=>'concept', 'id'=>$this->idParent),"",true);
 	$urlR = '<a href="'.$urlR.'">Retour à la liste des '.$this->types['parent'].'s</a>';
 	$desc = $this->types['parent'].' : '.$this->parent['prefix'];
 }
-
+if($this->types['parent']=="generateur"){
+	$urlR = $this->url(array('controller'=>'index', 'action'=>'modifier', 'type'=>'concept', 'id'=>$this->idParent),"",true);
+	$urlR = '<a href="'.$urlR.'">Retour à la liste des '.$this->types['parent'].'s</a>';
+	$desc = $this->types['parent'].' : '.$this->parent['valeur'];
+}
 ?>
 		<p><?php echo $urlR;?></p>
 		<p><?php echo $desc;?></p>
