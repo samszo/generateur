@@ -72,7 +72,7 @@ class IndexController extends Zend_Controller_Action
 			}
 			if($parent['type']=='syntagmes'){
 				$enfants = $parent->findDependentRowset('Model_DbTable_Syntagmes');
-				$types = array("parent"=>"dico","enfant"=>"syntagme");	            	
+				$types = array("parent"=>"dico","enfant"=>"DicoSyntagme");	            	
 				$this->view->libAjout = "Ajouter un nouveau syntagme";
 			}
 			if($parent['type']=='concepts'){
@@ -135,11 +135,11 @@ class IndexController extends Zend_Controller_Action
 	        $form->populate($parent->toArray());
 		    $this->view->form = $form;		    
         }
-        if($type=='syntagme'){
+        if($type=='DicoSyntagme'){
 	        $table = new Model_DbTable_Syntagmes();
 			$Rowset = $table->find($id);
 			$parent = $Rowset->current();
-			$types = array("parent"=>"syntagme");	            	
+			$types = array("parent"=>"DicoSyntagme");	            	
 			$this->view->title = "Modification du syntagme (".$id.")";
 			$this->view->libAjout = "";
 		    //ajout du formulaire pour modifier l'élément parent
@@ -167,7 +167,7 @@ class IndexController extends Zend_Controller_Action
 			$this->view->gens = $gens;
 			$types = array("parent"=>"concept","enfant"=>strtolower(substr($tType,0,-1)));	            	
 			$this->view->title = "Modification du concept (".$id.")";
-			$this->view->libAjout = "Ajouter $tType";
+			$this->view->libAjout = "Ajouter ".$types["enfant"];
 			//ajout du formulaire pour modifier l'élément parent
 			$form = new Form_Concept(array("id"=>$id));
 		    $form->envoyer->setLabel('Modifier');
@@ -219,6 +219,34 @@ class IndexController extends Zend_Controller_Action
 	        $form->populate($parent->toArray());
 		    $this->view->form = $form;		    
         }
+        if($type=='substantif'){
+	        $table = new Model_DbTable_Substantifs();
+			$Rowset = $table->find($id);
+			$parent = $Rowset->current();
+			$this->view->idParent=$idParent;
+			$types = array("parent"=>$type);	            	
+			$this->view->title = "Modification du substantif (".$id.")";
+			$this->view->libAjout = "";
+			//ajout du formulaire pour modifier l'élément parent
+        	$form = new Form_Substantif(array("id"=>$id));
+		    $form->envoyer->setLabel('Modifier');
+	        $form->populate($parent->toArray());
+		    $this->view->form = $form;		    
+        }
+        if($type=='syntagme'){
+	        $table = new Model_DbTable_Syntagmes();
+			$Rowset = $table->find($id);
+			$parent = $Rowset->current();
+			$this->view->idParent=$idParent;
+			$types = array("parent"=>$type);	            	
+			$this->view->title = "Modification du syntagme (".$id.")";
+			$this->view->libAjout = "";
+			//ajout du formulaire pour modifier l'élément parent
+        	$form = new Form_Syntagme(array("id"=>$id));
+		    $form->envoyer->setLabel('Modifier');
+	        $form->populate($parent->toArray());
+		    $this->view->form = $form;		    
+        }
         
         if(count($enfants)>0){
 			$this->view->cols = $enfants->getTable()->info('cols');
@@ -252,7 +280,7 @@ class IndexController extends Zend_Controller_Action
 					$dbC = new Model_DbTable_Complements();
 					$dbC->modifierComplement($form->getValue('id'),$form->getValue('num'),$form->getValue('ordre'),$form->getValue('lib'));
 	        	}
-	        	if($type=="syntagme"){
+	        	if($type=="DicoSyntagme"){
 					$dbS = new Model_DbTable_Syntagmes();
 					$dbS->modifierSyntagme($form->getValue('id'),$form->getValue('num'),$form->getValue('ordre'),$form->getValue('lib'));
 	        	}
@@ -271,6 +299,14 @@ class IndexController extends Zend_Controller_Action
 	        	if($type=="generateur"){
 					$dbGen = new Model_DbTable_Generateurs();
 					$dbGen->modifierGenerateur($form->getValue('id'),$form->getValue('valeur'));
+	        	}
+	        	if($type=="substantif"){
+					$dbSub = new Model_DbTable_Substantifs();
+					$dbSub->modifierSubstantif($form->getValue('id'),$form->getValue('elision'),$form->getValue('prefix'),$form->getValue('s'),$form->getValue('p'));
+	        	}
+	        	if($type=="syntagme"){
+					$dbSyn = new Model_DbTable_Syntagmes();
+					$dbSyn->modifierSyntagme($form->getValue('id'),$form->getValue('num'),$form->getValue('ordre'),$form->getValue('lib'));
 	        	}
 	        	$this->_redirect('/index/modifier/type/'.$type.'/id/'.$id.'/idParent/'.$idParent);
 	        }else{
@@ -371,7 +407,7 @@ class IndexController extends Zend_Controller_Action
 		    $this->view->types = array("parent"=>"dico","enfant"=>$type);	            	
         	$this->view->title = "Ajouter un nouveau ".$type;
 		}
-		if($type=="syntagme"){
+		if($type=="DicoSyntagme"){
 		    $form = new Form_Syntagme(array("id"=>$id));
 			$dicos = new Model_DbTable_Dicos();
 	        $this->view->parent = $dicos->obtenirDico($id);
@@ -412,6 +448,24 @@ class IndexController extends Zend_Controller_Action
         	$this->view->title = "Ajouter un nouveau ".$type;
         	$form = new Form_Generateur(array("id"=>$id));
 		}
+		if($type=="substantif"){
+			$dbCpt = new Model_DbTable_Concepts();
+			$Rowset = $dbCpt->find($id);
+			$parent = $Rowset->current();
+	        $this->view->parent = $parent;
+		    $this->view->types = array("parent"=>"concept","enfant"=>$type);	            	
+        	$this->view->title = "Ajouter un nouveau ".$type;
+        	$form = new Form_Substantif(array("id"=>$id));
+		}
+		if($type=="syntagme"){
+			$dbCpt = new Model_DbTable_Concepts();
+			$Rowset = $dbCpt->find($id);
+			$parent = $Rowset->current();
+	        $this->view->parent = $parent;
+		    $this->view->types = array("parent"=>"concept","enfant"=>$type);	            	
+        	$this->view->title = "Ajouter un nouveau ".$type;
+        	$form = new Form_Syntagme(array("id"=>$id));
+		}
 		
 	    $form->envoyer->setLabel('Ajouter');
 	    $this->view->form = $form;
@@ -443,7 +497,7 @@ class IndexController extends Zend_Controller_Action
 					$dbC->ajouterComplement($form->getValue('id'),$form->getValue('num'),$form->getValue('ordre'),$form->getValue('lib'));
 					$this->_redirect('/index/modifier/type/dico/id/'.$id);
 	        	}
-	        	if($type=="syntagme"){
+	        	if($type=="DicoSyntagme"){
 					$dbS = new Model_DbTable_Syntagmes();
 					$dbS->ajouterSyntagme($form->getValue('id'),$form->getValue('num'),$form->getValue('ordre'),$form->getValue('lib'));
 					$this->_redirect('/index/modifier/type/dico/id/'.$id);
@@ -489,6 +543,32 @@ class IndexController extends Zend_Controller_Action
 
 					$dbCptGen = new Model_DbTable_ConceptsGenerateurs();
 					$dbCptGen->ajouterConceptGenerateur($cpt['id_concept'], $idGen);
+
+					$this->_redirect('/index/modifier/type/concept/id/'.$id);
+	        	}
+	        	if($type=="substantif"){
+					$dbCpt = new Model_DbTable_Concepts();
+	        		$rs = $dbCpt->find($form->getValue('id'));
+					$cpt = $rs->current();
+
+					$dbSub = new Model_DbTable_Substantifs();
+					$idSub = $dbSub->ajouterSubstantif($cpt['id_dico'],$form->getValue('elision'),$form->getValue('prefix'),$form->getValue('s'),$form->getValue('p'));
+
+					$dbCptSub = new Model_DbTable_ConceptsSubstantifs();
+					$dbCptSub->ajouterConceptSubstantif($cpt['id_concept'], $idSub);
+
+					$this->_redirect('/index/modifier/type/concept/id/'.$id);
+	        	}
+	        	if($type=="syntagme"){
+					$dbCpt = new Model_DbTable_Concepts();
+	        		$rs = $dbCpt->find($form->getValue('id'));
+					$cpt = $rs->current();
+
+					$dbSyn = new Model_DbTable_Syntagmes();
+					$idSyn = $dbSyn->ajouterSyntagme($cpt['id_dico'],$form->getValue('num'),$form->getValue('ordre'),$form->getValue('lib'));
+
+					$dbCptSyn = new Model_DbTable_ConceptsSyntagmes();
+					$dbCptSyn->ajouterConceptSyntagme($cpt['id_concept'], $idSyn);
 
 					$this->_redirect('/index/modifier/type/concept/id/'.$id);
 	        	}
@@ -585,7 +665,7 @@ class IndexController extends Zend_Controller_Action
 		            $dbC = new Model_DbTable_Complements();
 		            $dbC->supprimerComplement($id);	            	
 	            }
-	            if($type=="syntagme"){
+	            if($type=="DicoSyntagme"){
 		            $dbS = new Model_DbTable_Syntagmes();
 		            $dbS->supprimerSyntagme($id);	            	
 	            }
@@ -605,12 +685,21 @@ class IndexController extends Zend_Controller_Action
 		            $dbGen = new Model_DbTable_Generateurs();
 		            $dbGen->supprimerGenerateur($id);	            	
 	            }
+	            if($type=="substantif"){
+		            $dbSub = new Model_DbTable_Substantifs();
+		            $dbSub->supprimerSubstantif($id);	            	
+	            }
+	            if($type=="syntagme"){
+		            $dbSyn = new Model_DbTable_Syntagmes();
+		            $dbSyn->supprimerSyntagme($id);	            	
+	            }
 	        }
 	        if($type=="dico") $this->_redirect('/');
-	        if($type=="conjugaison" || $type=="determinant" || $type=="complement" || $type=="syntagme" || $type=="concept")
+	        if($type=="conjugaison" || $type=="determinant" || $type=="complement" || $type=="DicoSyntagme" || $type=="concept")
 	        	$this->_redirect('/index/modifier/type/dico/id/'.$this->_getParam('idParent', 0));
 	        if($type=="terminaison") $this->_redirect('/index/modifier/type/conjugaison/id/'.$this->_getParam('idParent', 0));
-	        if($type=="adjectif" || $type=="verbe" || $type=="generateur") $this->_redirect('/index/modifier/type/concept/id/'.$this->_getParam('idParent', 0));
+	        if($type=="adjectif" || $type=="verbe" || $type=="generateur" || $type=="substantif"|| $type=="syntagme")
+	        	$this->_redirect('/index/modifier/type/concept/id/'.$this->_getParam('idParent', 0));
 	    } else {
             if($type=="dico"){
 	            $dicos = new Model_DbTable_Dicos();
@@ -646,7 +735,7 @@ class IndexController extends Zend_Controller_Action
 		        $this->view->id = $id;
 		        $this->view->idParent = $this->view->parent["id_dico"];
             }	        
-            if($type=="syntagme"){
+            if($type=="DicoSyntagme"){
 	            $synt = new Model_DbTable_Syntagmes();
 		        $this->view->parent = $synt->obtenirSyntagme($id);
 				$this->view->types = array("parent"=>$type);	            	
@@ -680,6 +769,24 @@ class IndexController extends Zend_Controller_Action
             }	        
             if($type=="generateur"){
 	            $table = new Model_DbTable_Generateurs();
+				$Rowset = $table->find($id);
+				$parent = $Rowset->current();            
+		        $this->view->parent = $parent;
+				$this->view->types = array("parent"=>$type);	            	
+		        $this->view->id = $id;
+				$this->view->idParent=$idParent;
+            }	        
+            if($type=="substantif"){
+	            $table = new Model_DbTable_Substantifs();
+				$Rowset = $table->find($id);
+				$parent = $Rowset->current();            
+		        $this->view->parent = $parent;
+				$this->view->types = array("parent"=>$type);	            	
+		        $this->view->id = $id;
+				$this->view->idParent=$idParent;
+            }	        
+            if($type=="syntagme"){
+	            $table = new Model_DbTable_Syntagmes();
 				$Rowset = $table->find($id);
 				$parent = $Rowset->current();            
 		        $this->view->parent = $parent;
