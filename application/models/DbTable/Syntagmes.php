@@ -35,7 +35,7 @@ class Model_DbTable_Syntagmes extends Zend_Db_Table_Abstract
     
     public function ajouterSyntagme($idDico, $num, $ordre, $lib="")
     {
-    	$id = $this->existeSyntagme($idDico, $num, $ordre, $lib);
+    	$id = false;//$this->existeSyntagme($idDico, $num, $ordre, $lib);
     	if(!$id){
 	    	$data = array(
 	            'id_dico' => $idDico,

@@ -39,7 +39,7 @@ class Model_DbTable_ConceptsSubstantifs extends Zend_Db_Table_Abstract
     
     public function ajouterConceptSubstantif($idCon, $idSub)
     {
-    	$id = $this->existeConceptSubstantif($idCon, $idSub);
+    	$id = false;//$this->existeConceptSubstantif($idCon, $idSub);
     	if(!$id){
 	    	$data = array(
         	'id_concept' => $idCon
