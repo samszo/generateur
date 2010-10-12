@@ -23,7 +23,7 @@ class IndexController extends Zend_Controller_Action
 	    //
 	    //$dico = new Gen_Dico();
 		//$dico->GetMacToXml(4);
-		//$dico->SaveBdd(7,1);
+		//$dico->SaveBdd(6,1);
 		//	    
 	    
 	    //$this->modifierAction();
@@ -37,16 +37,18 @@ class IndexController extends Zend_Controller_Action
 
     public function modifierAction()
     {
+    try{
 		$type = $this->_getParam('type', 0);
         $id = $this->_getParam('id', 0);
         $idParent = $this->_getParam('idParent', 0);
         $this->view->idParent = $id;
         
-    	    	  	/*
+    	/*
         $echo =false;
         Zend_Debug::dump($id, $echo, $echo);
         Zend_Debug::dump($type, $label = null, $echo = true);
 		*/
+        
         if($type=='dico'){
 	        $table = new Model_DbTable_Dicos();
 			$Rowset = $table->find($id);
@@ -313,7 +315,14 @@ class IndexController extends Zend_Controller_Action
 	            $form->populate($formData);
 	        }
         }		
-		
+	}catch (Zend_Exception $e) {
+          // Appeler Zend_Loader::loadClass() sur une classe non-existante
+          //entrainera la levée d'une exception dans Zend_Loader
+          echo "Récupère exception: " . get_class($e) . "\n";
+          echo "Message: " . $e->getMessage() . "\n";
+          // puis tout le code nécessaire pour récupérer l'erreur
+	}
+        
 		
     }
     
@@ -327,7 +336,7 @@ class IndexController extends Zend_Controller_Action
 	        if ($calculer == 'Oui') {
 	            $id = $this->getRequest()->getPost('id');
 	            $idDicoConj = $this->getRequest()->getPost('idDicoConj');
-	            //echo "idDico = ".$id."<br/>";
+	            echo "idDico = ".$id." idDicoConj = ".$idDicoConj."<br/>";
 			    $dico = new Gen_Dico();
 				$dico->SaveBdd($id, $idDicoConj);
 	        	$this->_redirect('/index/modifier/id/'.$id.'/type/dico');
@@ -584,7 +593,7 @@ class IndexController extends Zend_Controller_Action
 	try {
     	
     	$adapter = new Zend_File_Transfer_Adapter_Http();
-        echo ROOT_PATH.'/data/upload';
+        //echo ROOT_PATH.'/data/upload';
     	$adapter->setDestination(ROOT_PATH.'/data/upload');
                			
 		if (!$adapter->receive()) {
@@ -604,14 +613,15 @@ class IndexController extends Zend_Controller_Action
       	}
         $type = $form->getValue('type');
         $url = str_replace(ROOT_PATH,WEB_ROOT,$adapter->getFileName());
-        $url = str_replace("\\","/",$url);
+        //$url = str_replace("\\","/",$url);
 		$dico = new Gen_Dico();
 		$dico->nom = $form->getValue('nom');
         $dico->urlS = $url;
         $dico->pathS = $adapter->getFileName();
         $dico->type = $type;
         $dico->Save();
-           
+		print_r($dico);
+        
         $this->_redirect('/');
 	}catch (Zend_Exception $e) {
           // Appeler Zend_Loader::loadClass() sur une classe non-existante

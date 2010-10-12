@@ -42,7 +42,7 @@ class Model_DbTable_Concepts extends Zend_Db_Table_Abstract
     
     public function ajouterConcept($idDico, $lib, $type)
     {
-    	$id = $this->existeConcept($idDico, $lib, $type);
+    	$id = false;//$this->existeConcept($idDico, $lib, $type);
     	if(!$id){
     		$data = array(
             'id_dico' => $idDico,

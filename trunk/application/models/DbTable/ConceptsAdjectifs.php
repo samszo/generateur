@@ -39,7 +39,7 @@ class Model_DbTable_ConceptsAdjectifs extends Zend_Db_Table_Abstract
     
     public function ajouterConceptAdjectif($idCon, $idAdj)
     {
-    	$id = $this->existeConceptAdjectif($idCon, $idAdj);
+    	$id = false;//$this->existeConceptAdjectif($idCon, $idAdj);
     	if(!$id){
 	    	$data = array(
         	'id_concept' => $idCon

@@ -59,6 +59,8 @@ class Gen_Dico
 
 	public function GetMacToXml($idDico){
 
+	try {
+		
 		//récupération des infos du dico
 		$this->id = $idDico;
 		$dbDico = new Model_DbTable_Dicos();		
@@ -104,15 +106,24 @@ class Gen_Dico
 			}
 		}
 		$this->Save();
+       
+	}catch (Zend_Exception $e) {
+          // Appeler Zend_Loader::loadClass() sur une classe non-existante
+          //entrainera la levée d'une exception dans Zend_Loader
+          echo "Récupère exception: " . get_class($e) . "\n";
+          echo "Message: " . $e->getMessage() . "\n";
+          // puis tout le code nécessaire pour récupérer l'erreur
+	}
+		
 	}
 
 	public function Save(){
 
-		$date = new Zend_Date();
-		
+	try {
+    	
 		if($this->xml){
-			$this->xml->save(ROOT_PATH."/data/dicos/".$this->Xtype."_".$date->getTimestamp().".xml");
-			$this->url = WEB_ROOT."/data/dicos/".$this->Xtype."_".$date->getTimestamp().".xml";
+			$this->xml->save(ROOT_PATH."/data/dicos/".$this->Xtype."_".$this->id.".xml");
+			$this->url = WEB_ROOT."/data/dicos/".$this->Xtype."_".$this->id.".xml";
 		}else{
 			$this->url = "";
 		}
@@ -128,11 +139,20 @@ class Gen_Dico
 			$this->id = $pk;
 		}					
        
+	}catch (Zend_Exception $e) {
+          // Appeler Zend_Loader::loadClass() sur une classe non-existante
+          //entrainera la levée d'une exception dans Zend_Loader
+          echo "Récupère exception: " . get_class($e) . "\n";
+          echo "Message: " . $e->getMessage() . "\n";
+          // puis tout le code nécessaire pour récupérer l'erreur
+	}
 		
 	}
 
 	public function SaveBdd($idDico, $idDicoConj=-1){
 		
+	try {
+		ini_set(max_execution_time, 300); 
 		
 		//récupère les infos du dico
 		$dbDico = new Model_DbTable_Dicos();
@@ -177,7 +197,7 @@ class Gen_Dico
 				$dbDicos->ajouterDicoGenDicoRef($idDico,$idDicoConj);
 				break;
 		}
-		
+
 		foreach ($this->xml->children() as $k => $n) {
 			switch ($k) {
 				case 'conjugaison':
@@ -244,6 +264,13 @@ class Gen_Dico
 					break;
 			}
 		}
+	}catch (Zend_Exception $e) {
+          // Appeler Zend_Loader::loadClass() sur une classe non-existante
+          //entrainera la levée d'une exception dans Zend_Loader
+          echo "Récupère exception: " . get_class($e) . "\n";
+          echo "Message: " . $e->getMessage() . "\n";
+          // puis tout le code nécessaire pour récupérer l'erreur
+	}
 		
 	}
 	
