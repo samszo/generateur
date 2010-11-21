@@ -65,7 +65,7 @@ class Model_DbTable_Dicos extends Zend_Db_Table_Abstract
         	'url' => $url,
             'url_source' => $urlS,
         	'type' => $type,
-            'maj' => new Zend_Db_Expr('CURDATE()')
+            'maj' => new Zend_Db_Expr('NOW()')
         );
         print_r($data);
         $this->update($data, 'id_dico = '. (int)$id);
