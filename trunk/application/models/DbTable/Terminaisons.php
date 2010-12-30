@@ -20,7 +20,21 @@ class Model_DbTable_Terminaisons extends Zend_Db_Table_Abstract
         return $row->toArray();
     }
     
-	public function existeTerminaison($idConj, $num, $lib)
+    public function obtenirConjugaison($id)
+    {
+        $id = (int)$id;
+		$query = $this->select()
+            ->where('id_conj = ' . $id)
+            ->order('num') ;
+        
+        $rows = $this->fetchAll('id_conj = ' . $id);
+        if (!$rows) {
+            throw new Exception("Count not find row $id");
+        }
+        return $rows->toArray();
+    }
+    
+    public function existeTerminaison($idConj, $num, $lib)
     {
 		$select = $this->select();
 		$select->from($this, array('id_trm'))

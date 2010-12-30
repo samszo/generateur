@@ -152,7 +152,6 @@ class Gen_Dico
 	public function SaveBdd($idDico, $idDicoConj=-1){
 		
 	try {
-		ini_set(max_execution_time, 300); 
 		
 		//récupère les infos du dico
 		$dbDico = new Model_DbTable_Dicos();
@@ -342,11 +341,15 @@ class Gen_Dico
 			case 'SetConcept':
 				$this->SetConcept($chaine, $action);
 				break;
-				
-			
+		
 			case 'SetTerminaison':
 				$this->SetTerminaison($chaine, $action);
 				break;
+			
+			case 'SetTerminaisonFin':
+				$this->SetTerminaison($chaine, $action, true);
+				break;
+				
 		}
 
 	}
@@ -370,13 +373,12 @@ class Gen_Dico
 		$xFrag->appendChild($xAtt);
 		//ajoute les terminaisons au verbe
 		$xFrag->appendChild($this->xmlTmp);
-		$this->xmlTmp = false;
-		//ajoute le verbe à la racine		
-		$this->xmlRoot->appendChild($xFrag);
+		//met à jour le xml temporaire
+		$this->xmlTmp = $xFrag;
 		
 	}
 	
-	public function SetTerminaison($chaine, $action){
+	public function SetTerminaison($chaine, $action, $fin=false){
 
 		if(!$this->xmlTmp){
 			//initialise le noeud
@@ -384,8 +386,24 @@ class Gen_Dico
 		}
 		//calcul le noeud
 		$n = $this->xml->createElement("terminaison",$chaine);		
-		//ajoute le noeud
-		$this->xmlTmp->appendChild($n);		
+
+		//vérifie si le noeud conjugaison est créé
+		$conj = $this->xmlTmp->getElementsByTagName('terminaisons');
+		if($conj->length == 0){		
+			//ajoute le noeud à la racine du xml temporaire
+			$this->xmlTmp->appendChild($n);
+		}else{
+			//ajoute le noeud à terminaisons
+			$conj->item(0)->appendChild($n);
+		}
+
+		//on vérifie si c'est la dernière conjugaison
+		if($fin){
+			//ajoute le modèle à la racine		
+			$this->xmlRoot->appendChild($this->xmlTmp);
+			//réiniitialise l'xml temporaire
+			$this->xmlTmp = false;			
+		}
 				
 	}	
 	
