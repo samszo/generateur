@@ -43,7 +43,8 @@ class Model_DbTable_Conjugaisons extends Zend_Db_Table_Abstract
     {
 		$select = $this->select();
 		$select->from($this, array('id_conj','modele'))
-			->where('id_dico = ?', $idDico);
+			->where('id_dico = ?', $idDico)
+			->order('modele');
 		$rs = $this->fetchAll($select);        
     	if (!$rs) {
             throw new Exception("Count not find rs $id");
@@ -56,7 +57,10 @@ class Model_DbTable_Conjugaisons extends Zend_Db_Table_Abstract
 		$dbDics = new Model_DbTable_DicosDicos();
 		$idDicos = $dbDics->obtenirDicoGenDicosRefs($idDico);
     	$rs = $this->obtenirConjugaisonDico($idDicos['id_dico_ref']);
-        foreach($rs as $r){
+    	if (!$rs) {
+            throw new Exception("Count not find rs $idDico - ".$idDicos['id_dico_ref']);
+        }
+    	foreach($rs as $r){
         	$arr[$r['id_conj']]=$r['modele'];	
         }
         return $arr;

@@ -22,8 +22,8 @@ class IndexController extends Zend_Controller_Action
 	    
 	    //
 	    //$dico = new Gen_Dico();
-		//$dico->GetMacToXml(4);
-		//$dico->SaveBdd(6,1);
+		//$dico->GetMacToXml(9);
+		//$dico->SaveBdd(9);
 		//	    
 	    
 	    //$this->modifierAction();
