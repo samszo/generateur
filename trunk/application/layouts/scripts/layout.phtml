@@ -8,6 +8,7 @@ echo $this->doctype();
     <?php echo $this->headMeta(); ?>
     <?php echo $this->headTitle(); ?>
 	<?php echo $this->headLink()->prependStylesheet($this->baseUrl().'/css/site.css'); ?>    
+	<?php echo $this->headScript()->prependFile($this->baseUrl().'/js/jquery-1.4.4.min.js'); ?>    
 </head>
 <body>
     <div id="content">
@@ -32,6 +33,9 @@ if($this->types['parent']=="terminaison"){
 if($this->types['parent']=="complement"
 	|| $this->types['parent']=="determinant"
 	|| $this->types['parent']=="DicoSyntagme"
+	|| $this->types['parent']=="pronom_complement"
+	|| $this->types['parent']=="pronom_sujet"
+	|| $this->types['parent']=="negation"
 	){
 	$urlR = $this->url(array('controller'=>'index', 'action'=>'modifier', 'type'=>'dico', 'id'=>$this->parent['id_dico']),"",true);
 	$urlR = '<a href="'.$urlR.'">Retour à la liste des '.$this->types['parent'].'s</a>';

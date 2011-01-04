@@ -64,7 +64,56 @@
 				</action>
 			</traitements>	
 		</dico>
+		<dico type="pronoms_complement">
+			<traitements>
+				<action char="\r" type="explode" desc="récupére chaque modèle de pronom">
+					<action type="SetPronom" char="," attributs="num,lib,lib_eli"/>
+				</action>
+			</traitements>	
+		</dico>
+		<dico type="pronoms_sujet">
+			<traitements>
+				<action char="\r" type="explode" desc="récupére chaque modèle de pronom">
+					<action type="SetPronom" char="," attributs="num,lib,lib_eli"/>
+				</action>
+			</traitements>	
+		</dico>
+		<dico type="négations">
+			<traitements>
+				<action char="\r" type="explode" desc="récupére chaque modèle de négation">
+					<action type="SetNegation" char="," attributs="num,lib"/>
+				</action>
+			</traitements>	
+		</dico>
 	</dicos>
+	<moteur>
+		<traitements>
+			<action char="\r" type="explode" desc="récupére chaque modèle de conjugaison">
+				<action char="," type="explode" desc="récupére chaque instance de terminaison">
+					<action type="VerifFin" desc="vérifie la fin du modèle" >
+						<NoVerifAction deb="0" length="1" val="(" type="VerifSubstr" desc="vérifie la déterminaison de la conjugaison" >
+							<NoVerifAction type="SetTerminaison"  />
+							<action char="." type="SetConjugaison" />
+						</NoVerifAction>
+						<action char="." type="SetTerminaisonFin" />
+					</action>
+				</action>
+			</action>
+		</traitements>	
+	</moteur>
+	<positions type="verbe">
+Position 1 : type de négation
+Position 2 : temps verbal
+Position 3 : pronoms sujets définis
+Positions 4 ET 5 : pronoms compléments
+Position 6 : ordre des pronoms sujets
+Position 7 : pronoms indéfinis
+Position 8 : Place du sujet dans la chaîne grammaticale	
+	</positions>
+	<desc>
+		<car>=</car>
+		<lib>blocage de l'information</lib>
+	</desc>
 	<desc>
 		<car>[</car>
 		<lib>début d’une étiquette de classe</lib>
@@ -76,6 +125,10 @@
 	<desc>
 		<car>|</car>
 		<lib>séparateur de classe dépendante à l’intérieur d’une classe</lib>
+	</desc>
+	<desc>
+		<car>||</car>
+		<lib>séparateur entre la classe et la définition de l'accord</lib>
 	</desc>
 	<desc>
 		<car>#</car>
@@ -104,6 +157,26 @@
 	<desc>
 		<car>s_</car>
 		<lib>indicateur de la classe “syntagme”</lib>
+	</desc>
+	<desc>
+		<car>di_</car>
+		<lib>indicateur de la classe “dictionnaire particulier”</lib>
+	</desc>
+	<desc>
+		<car>th_</car>
+		<lib>indicateur de la classe “thème spécifique”</lib>
+	</desc>
+	<desc>
+		<car>sy_</car>
+		<lib>indicateur de la classe “locution syntaxique”</lib>
+	</desc>
+	<desc>
+		<car>rc_</car>
+		<lib>indicateur de la classe “représentation des connaissances”</lib>
+	</desc>
+	<desc>
+		<car>l_</car>
+		<lib>indicateur de la classe “locution”</lib>
 	</desc>
 	<desc>
 		<car>@</car>
@@ -148,5 +221,13 @@
 	<desc>
 		<car>(</car>
 		<lib>marqueurs de substantifs</lib>
+	</desc>
+	<desc>
+		<car>%</car>
+		<lib>marqueurs de saut de ligne</lib>
+	</desc>
+	<desc>
+		<car>∏</car>
+		<lib>séparateur entre adjectifs</lib>
 	</desc>
 </descs>

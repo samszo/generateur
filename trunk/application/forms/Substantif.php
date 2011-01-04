@@ -25,9 +25,14 @@ class Form_Substantif extends Zend_Form
       	$p->setRequired(true);
 		$p->setLabel('Définir le pluriel');
 		
-        $envoyer = new Zend_Form_Element_Submit('envoyer');
+      	$g = new Zend_Form_Element_Select('genre', array(
+		    'multiOptions' => array(2=>"féminin",1=>"masculin")));
+		$g->setRequired(true);
+		$g->setLabel('Définir le genre');
+		
+		$envoyer = new Zend_Form_Element_Submit('envoyer');
         $envoyer->setAttrib('id', 'boutonenvoyer');
 		$this->setAttrib('enctype', 'multipart/form-data');
-        $this->addElements(array($id, $eli, $prefix, $s, $p, $envoyer));
+        $this->addElements(array($id, $eli, $prefix, $s, $p, $g, $envoyer));
     }
 }

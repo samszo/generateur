@@ -19,6 +19,28 @@ class Model_DbTable_Determinants extends Zend_Db_Table_Abstract
         }
         return $row->toArray();
     }
+
+    public function obtenirDeterminantByNum($num)
+    {
+        $rs = $this->fetchAll('num = '.$num);
+        if (!$rs) {
+            throw new Exception("Count not find row $id");
+        }
+        return $rs->toArray();
+    }
+
+    public function obtenirDeterminantByDicoNumNombre($idDico, $num, $pluriel)
+    {
+    	if($pluriel)
+	        $rs = $this->fetchAll('id_dico = '.$idDico.' AND num = '.$num.' AND ordre > 3');
+	    else
+	        $rs = $this->fetchAll('id_dico = '.$idDico.' AND num = '.$num.' AND ordre < 4');
+	    
+        if (!$rs) {
+            throw new Exception("Count not find row $id");
+        }
+        return $rs->toArray();
+    }
     
 	public function existeDeterminant($idDico, $num, $ordre, $lib)
     {
@@ -62,4 +84,10 @@ class Model_DbTable_Determinants extends Zend_Db_Table_Abstract
     {
         $this->delete('id_dtm =' . (int)$id);
     }
+
+    public function supprimerDico($id)
+    {
+    	$this->delete('id_dico =' . (int)$id);
+    }
+    
 }

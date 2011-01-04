@@ -1,9 +1,9 @@
 <table>
 <tr><td>
-<?php echo $this->form ; ?>
+<?php if(!$this->form->getValue('CacheForm')) echo $this->form ; ?>
 </td></tr>
 <tr><td>
-<table>
+	<table>
     <tr>
         <th>Indicatif présent</th>
         <th>Indicatif imparfait</th>
@@ -186,6 +186,6 @@
         <td><?php echo $this->form->getValue('prefix').$this->Terms[36]['lib']; ?></td>
         <td><?php echo $this->form->getValue('prefix').$this->Terms[37]['lib']; ?></td>
     </tr>  
-</table>
+	</table>
 </td></tr>
 </table>

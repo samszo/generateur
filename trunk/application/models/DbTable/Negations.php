@@ -1,7 +1,7 @@
 <?php
-class Model_DbTable_Syntagmes extends Zend_Db_Table_Abstract
+class Model_DbTable_Negations extends Zend_Db_Table_Abstract
 {
-    protected $_name = 'gen_syntagmes';
+    protected $_name = 'gen_negations';
     protected $_referenceMap    = array(
         'Verbe' => array(
             'columns'           => 'id_dico',
@@ -10,17 +10,17 @@ class Model_DbTable_Syntagmes extends Zend_Db_Table_Abstract
         )
     );	    
     
-    public function obtenirSyntagme($id)
+    public function obtenirNegation($id)
     {
         $id = (int)$id;
-        $row = $this->fetchRow('id_syn = ' . $id);
+        $row = $this->fetchRow('id_negation = ' . $id);
         if (!$row) {
             throw new Exception("Count not find row $id");
         }
         return $row->toArray();
     }
 
-    public function obtenirSyntagmeByDicoNum($idDico,$num)
+   public function obtenirNegationByDicoNum($idDico,$num)
     {
         $query = $this->select()
             ->where( "id_dico IN (?)",$idDico)
@@ -32,48 +32,45 @@ class Model_DbTable_Syntagmes extends Zend_Db_Table_Abstract
         }
         return $r;
     }
-        
-	public function existeSyntagme($idDico, $num, $ordre, $lib)
+    
+	public function existeNegation($idDico, $num, $lib)
     {
 		$select = $this->select();
-		$select->from($this, array('id_syn'))
+		$select->from($this, array('id_negation'))
 			->where('id_dico = ?', $idDico)
 			->where('num = ?', $num)
-			->where('ordre = ?', $ordre)
 			->where('lib = ?', $lib);
 		$rows = $this->fetchAll($select);        
-	    if($rows->count()>0)$id=$rows[0]->id_syn; else $id=false;
+	    if($rows->count()>0)$id=$rows[0]->id_pronom; else $id=false;
         return $id;
     }    
     
-    public function ajouterSyntagme($idDico, $num, $ordre, $lib="")
+    public function ajouterNegation($idDico, $num, $lib)
     {
-    	$id = false;//$this->existeSyntagme($idDico, $num, $ordre, $lib);
+    	$id = false;//$this->existeNegation($idDico, $num, $lib);
     	if(!$id){
 	    	$data = array(
 	            'id_dico' => $idDico,
 	            'num' => $num,
-	    		'ordre' => $ordre,
-	            'lib' => $lib
-        	);
+	    		'lib' => $lib
+	    	);
     	 	$id = $this->insert($data);
     	}
     	return $id;
     }
     
-    public function modifierSyntagme($id, $num, $ordre, $lib)
+    public function modifierNegation($id, $num, $lib)
     {
         $data = array(
             'num' => $num,
-    		'ordre' => $ordre,
-        	'lib' => $lib
+    		'lib' => $lib
         );
-        $this->update($data, 'id_syn = '. (int)$id);
+        $this->update($data, 'id_negation = '. (int)$id);
     }
 
-    public function supprimerSyntagme($id)
+    public function supprimerNegation($id)
     {
-        $this->delete('id_syn =' . (int)$id);
+        $this->delete('id_negation =' . (int)$id);
     }
 
     public function supprimerDico($id)

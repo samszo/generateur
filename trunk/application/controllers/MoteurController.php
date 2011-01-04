@@ -1,31 +1,40 @@
 <?php
-class ConjugaisonController extends Zend_Controller_Action
+class MoteurController extends Zend_Controller_Action
 {
 
-    public function conjugaisonAction()
+    public function moteurAction()
     {
-    	echo "TOTO";
-		testerAction();		
     }
     
     public function testerAction()
     {
     try{
-    	$dbConj = new Model_DbTable_Conjugaisons();
-    	$RsConjs = $dbConj->obtenirConjugaisonListeModeles(11);
-        $form = new Form_Verbe(array("id"=>-1,"RsConjs"=>$RsConjs));
+    	
+        $form = new Form_Moteur();
 	    $form->envoyer->setLabel('Tester');
 	    $this->view->form = $form;
 
 	    if ($this->getRequest()->isPost()) {
 	        $formData = $this->getRequest()->getPost();
 	        if ($form->isValid($formData)) {
-	        	//récupère les terminaisons du modèle
-				$dbTerms = new Model_DbTable_Terminaisons();
-				$this->view->Terms = $dbTerms->obtenirConjugaison($form->getValue('id_conj'));
+	        	//calcul l'expresion saisie
+				$moteur = new Gen_Moteur();
+				$arrDicos = array(
+					"concepts"=>17
+					,"syntagmes"=>4
+					,"pronoms_complement"=>13
+					,"conjugaisons"=>11
+					,"pronoms_sujet"=>14
+					,"déterminants"=>15
+					,"négations"=>2);		
+				$moteur->arrDicos = $arrDicos;		
+				$moteur->Generation($form->getValue('valeur'));
+	        		        	
+				$this->view->Generation = $moteur->texte;
 	        }
 	    }
-	}catch (Zend_Exception $e) {
+	    
+    }catch (Zend_Exception $e) {
           // Appeler Zend_Loader::loadClass() sur une classe non-existante
           //entrainera la levée d'une exception dans Zend_Loader
           echo "Récupère exception: " . get_class($e) . "\n";

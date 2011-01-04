@@ -16,23 +16,22 @@ class IndexController extends Zend_Controller_Action
 	    $this->view->dicos = $dicos->fetchAll();		 
     	
 		//pour le débuggage
-	    //$form = new Form_DicoAjout();
-	    //$form->envoyer->setLabel('Ajouter');
-	    //$this->view->form = $form;
+		$moteur = new Gen_Moteur();
+		$arrDicos = array(
+			"concepts"=>17
+			,"syntagmes"=>4
+			,"pronoms_complement"=>13
+			,"conjugaisons"=>11
+			,"pronoms_sujet"=>14
+			,"déterminants"=>15
+			,"négations"=>2);		
+		//$moteur->arrDicos = $arrDicos;		
+		//$moteur->Generation("[a_amoureux 1@m_action 3|12]");
+		
+		// $dico = new Gen_Dico();
+		// $dico->GetMacToXml(14);
 	    
-	    //
-	    //$dico = new Gen_Dico();
-		//$dico->GetMacToXml(9);
-		//$dico->SaveBdd(9);
-		//	    
 	    
-	    //$this->modifierAction();
-	    
-	    //$this->supprimerAction();
-	    
-	    //$this->ajouterAction();
-	    
-	    //$this->creerxmlAction();
     }
 
     public function modifierAction()
@@ -58,7 +57,9 @@ class IndexController extends Zend_Controller_Action
 	        $form->populate($parent->toArray());
 		    $this->view->form = $form;		    
 			if($parent['type']=='conjugaisons'){
-				$enfants = $parent->findDependentRowset('Model_DbTable_Conjugaisons');
+				$DB_conj = new Model_DbTable_Conjugaisons();
+				$select = $DB_conj->select()->order(array('modele'));
+				$enfants = $parent->findDependentRowset('Model_DbTable_Conjugaisons','Dico',$select);
 				$types = array("parent"=>"dico","enfant"=>"conjugaison");	            	
 				$this->view->libAjout = "Ajouter une nouvelle conjugaison";
 			}
@@ -81,6 +82,21 @@ class IndexController extends Zend_Controller_Action
 				$enfants = $parent->findDependentRowset('Model_DbTable_Concepts');
 				$types = array("parent"=>"dico","enfant"=>"concept");	            	
 				$this->view->libAjout = "Ajouter un nouveau concept";
+			}
+			if($parent['type']=='pronoms_complement'){
+				$enfants = $parent->findDependentRowset('Model_DbTable_Pronoms');
+				$types = array("parent"=>"dico","enfant"=>"pronom_complement");	            	
+				$this->view->libAjout = "Ajouter un nouveau pronom complèment";
+			}
+			if($parent['type']=='pronoms_sujet'){
+				$enfants = $parent->findDependentRowset('Model_DbTable_Pronoms');
+				$types = array("parent"=>"dico","enfant"=>"pronom_sujet");	            	
+				$this->view->libAjout = "Ajouter un nouveau pronom sujet";
+			}
+			if($parent['type']=='négations'){
+				$enfants = $parent->findDependentRowset('Model_DbTable_Negations');
+				$types = array("parent"=>"dico","enfant"=>"negation");	            	
+				$this->view->libAjout = "Ajouter une nouvelle négation";
 			}
 			$this->view->title = "Modification du ".$type." (".$id.")";
         }
@@ -249,6 +265,45 @@ class IndexController extends Zend_Controller_Action
 	        $form->populate($parent->toArray());
 		    $this->view->form = $form;		    
         }
+        if($type=='pronom_complement'){
+	        $table = new Model_DbTable_Pronoms();
+			$Rowset = $table->find($id);
+			$parent = $Rowset->current();
+			$types = array("parent"=>$type);	            	
+			$this->view->title = "Modification du pronom complement(".$id.")";
+			$this->view->libAjout = "";
+		    //ajout du formulaire pour modifier l'élément parent
+			$form = new Form_Pronom(array("id"=>$id,"type"=>"complement"));
+		    $form->envoyer->setLabel('Modifier');
+	        $form->populate($parent->toArray());
+		    $this->view->form = $form;		    
+        }
+        if($type=='pronom_sujet'){
+	        $table = new Model_DbTable_Pronoms();
+			$Rowset = $table->find($id);
+			$parent = $Rowset->current();
+			$types = array("parent"=>$type);	            	
+			$this->view->title = "Modification du pronom sujet(".$id.")";
+			$this->view->libAjout = "";
+		    //ajout du formulaire pour modifier l'élément parent
+			$form = new Form_Pronom(array("id"=>$id,"type"=>"complement"));
+		    $form->envoyer->setLabel('Modifier');
+	        $form->populate($parent->toArray());
+		    $this->view->form = $form;		    
+        }
+        if($type=='negation'){
+	        $table = new Model_DbTable_Negations();
+			$Rowset = $table->find($id);
+			$parent = $Rowset->current();
+			$types = array("parent"=>$type);	            	
+			$this->view->title = "Modification de la négation (".$id.")";
+			$this->view->libAjout = "";
+		    //ajout du formulaire pour modifier l'élément parent
+			$form = new Form_Negation(array("id"=>$id));
+		    $form->envoyer->setLabel('Modifier');
+	        $form->populate($parent->toArray());
+		    $this->view->form = $form;		    
+        }
         
         if(count($enfants)>0){
 			$this->view->cols = $enfants->getTable()->info('cols');
@@ -304,11 +359,23 @@ class IndexController extends Zend_Controller_Action
 	        	}
 	        	if($type=="substantif"){
 					$dbSub = new Model_DbTable_Substantifs();
-					$dbSub->modifierSubstantif($form->getValue('id'),$form->getValue('elision'),$form->getValue('prefix'),$form->getValue('s'),$form->getValue('p'));
+					$dbSub->modifierSubstantif($form->getValue('id'),$form->getValue('elision'),$form->getValue('prefix'),$form->getValue('s'),$form->getValue('p'),$form->getValue('genre'));
 	        	}
 	        	if($type=="syntagme"){
 					$dbSyn = new Model_DbTable_Syntagmes();
 					$dbSyn->modifierSyntagme($form->getValue('id'),$form->getValue('num'),$form->getValue('ordre'),$form->getValue('lib'));
+	        	}
+	        	if($type=="pronom_complement"){
+					$dbPro = new Model_DbTable_Pronoms();
+					$dbPro->modifierPronom($form->getValue('id'),$form->getValue('num'),$form->getValue('lib'),$form->getValue('lib_eli'),$form->getValue('type'));
+	        	}
+	        	if($type=="pronom_sujet"){
+					$dbPro = new Model_DbTable_Pronoms();
+					$dbPro->modifierPronom($form->getValue('id'),$form->getValue('num'),$form->getValue('lib'),$form->getValue('lib_eli'),$form->getValue('type'));
+	        	}
+	        	if($type=="negation"){
+					$dbNeg = new Model_DbTable_Negations();
+					$dbNeg->modifierNegation($form->getValue('id'),$form->getValue('num'),$form->getValue('lib'));
 	        	}
 	        	$this->_redirect('/index/modifier/type/'.$type.'/id/'.$id.'/idParent/'.$idParent);
 	        }else{
@@ -475,6 +542,33 @@ class IndexController extends Zend_Controller_Action
         	$this->view->title = "Ajouter un nouveau ".$type;
         	$form = new Form_Syntagme(array("id"=>$id));
 		}
+		if($type=="pronom_complement"){
+			$dbCpt = new Model_DbTable_Pronoms();
+			$Rowset = $dbCpt->find($id);
+			$parent = $Rowset->current();
+	        $this->view->parent = $parent;
+		    $this->view->types = array("parent"=>"dico","enfant"=>$type);	            	
+        	$this->view->title = "Ajouter un nouveau pronom complément";
+        	$form = new Form_Pronom(array("id"=>$id,"type"=>"complement"));
+		}
+		if($type=="pronom_sujet"){
+			$dbCpt = new Model_DbTable_Pronoms();
+			$Rowset = $dbCpt->find($id);
+			$parent = $Rowset->current();
+	        $this->view->parent = $parent;
+		    $this->view->types = array("parent"=>"dico","enfant"=>$type);	            	
+        	$this->view->title = "Ajouter un nouveau pronom sujet";
+        	$form = new Form_Pronom(array("id"=>$id,"type"=>"sujet"));
+		}
+		if($type=="negation"){
+			$dbCpt = new Model_DbTable_Negations();
+			$Rowset = $dbCpt->find($id);
+			$parent = $Rowset->current();
+	        $this->view->parent = $parent;
+		    $this->view->types = array("parent"=>"dico","enfant"=>$type);	            	
+        	$this->view->title = "Ajouter une nouvelle négation";
+        	$form = new Form_Negation(array("id"=>$id));
+		}
 		
 	    $form->envoyer->setLabel('Ajouter');
 	    $this->view->form = $form;
@@ -561,7 +655,7 @@ class IndexController extends Zend_Controller_Action
 					$cpt = $rs->current();
 
 					$dbSub = new Model_DbTable_Substantifs();
-					$idSub = $dbSub->ajouterSubstantif($cpt['id_dico'],$form->getValue('elision'),$form->getValue('prefix'),$form->getValue('s'),$form->getValue('p'));
+					$idSub = $dbSub->ajouterSubstantif($cpt['id_dico'],$form->getValue('elision'),$form->getValue('prefix'),$form->getValue('s'),$form->getValue('p'),$form->getValue('genre'));
 
 					$dbCptSub = new Model_DbTable_ConceptsSubstantifs();
 					$dbCptSub->ajouterConceptSubstantif($cpt['id_concept'], $idSub);
@@ -580,6 +674,21 @@ class IndexController extends Zend_Controller_Action
 					$dbCptSyn->ajouterConceptSyntagme($cpt['id_concept'], $idSyn);
 
 					$this->_redirect('/index/modifier/type/concept/id/'.$id);
+	        	}
+	        	if($type=="pronom_complement"){
+					$dbPro = new Model_DbTable_Pronoms();
+					$dbPro->ajouterPronom($form->getValue('id'),$form->getValue('num'),$form->getValue('lib'),$form->getValue('lib_eli'),$form->getValue('type'));
+					$this->_redirect('/index/modifier/type/dico/id/'.$id);
+	        	}
+	        	if($type=="pronom_sujet"){
+					$dbPro = new Model_DbTable_Pronoms();
+					$dbPro->ajouterPronom($form->getValue('id'),$form->getValue('num'),$form->getValue('lib'),$form->getValue('lib_eli'),$form->getValue('type'));
+					$this->_redirect('/index/modifier/type/dico/id/'.$id);
+	        	}
+	        	if($type=="negation"){
+					$dbNeg = new Model_DbTable_Negations();
+					$dbNeg->ajouterNegation($form->getValue('id'),$form->getValue('num'),$form->getValue('lib'));
+					$this->_redirect('/index/modifier/type/dico/id/'.$id);
 	        	}
 	        }else{
 	            $form->populate($formData);
@@ -703,9 +812,22 @@ class IndexController extends Zend_Controller_Action
 		            $dbSyn = new Model_DbTable_Syntagmes();
 		            $dbSyn->supprimerSyntagme($id);	            	
 	            }
+	            if($type=="pronom_complement"){
+		            $dbPro = new Model_DbTable_Pronoms();
+		            $dbPro->supprimerPronom($id);	            	
+	            }
+	            if($type=="pronom_sujet"){
+		            $dbPro = new Model_DbTable_Pronoms();
+		            $dbPro->supprimerPronom($id);	            	
+	            }
+	            if($type=="negation"){
+		            $dbNeg = new Model_DbTable_Negations();
+		            $dbNeg->ajouterNegation($id);	            	
+	            }
 	        }
 	        if($type=="dico") $this->_redirect('/');
-	        if($type=="conjugaison" || $type=="determinant" || $type=="complement" || $type=="DicoSyntagme" || $type=="concept")
+	        if($type=="conjugaison" || $type=="determinant" || $type=="complement" || $type=="DicoSyntagme" || $type=="concept"
+	        	 || $type=="pronom_complement" || $type=="pronom_sujet" || $type=="negation")
 	        	$this->_redirect('/index/modifier/type/dico/id/'.$this->_getParam('idParent', 0));
 	        if($type=="terminaison") $this->_redirect('/index/modifier/type/conjugaison/id/'.$this->_getParam('idParent', 0));
 	        if($type=="adjectif" || $type=="verbe" || $type=="generateur" || $type=="substantif"|| $type=="syntagme")
@@ -803,6 +925,27 @@ class IndexController extends Zend_Controller_Action
 				$this->view->types = array("parent"=>$type);	            	
 		        $this->view->id = $id;
 				$this->view->idParent=$idParent;
+            }	        
+            if($type=="pronom_complement"){
+	            $Pro = new Model_DbTable_Pronoms();
+		        $this->view->parent = $Pro->obtenirPronom($id);
+				$this->view->types = array("parent"=>$type);	            	
+		        $this->view->id = $id;
+		        $this->view->idParent = $this->view->parent["id_dico"];
+            }	        
+            if($type=="pronom_sujet"){
+	            $Pro = new Model_DbTable_Pronoms();
+		        $this->view->parent = $Pro->obtenirPronom($id);
+				$this->view->types = array("parent"=>$type);	            	
+		        $this->view->id = $id;
+		        $this->view->idParent = $this->view->parent["id_dico"];
+            }	        
+            if($type=="negation"){
+	            $Neg = new Model_DbTable_Negations();
+		        $this->view->parent = $Neg->obtenirNegation($id);
+				$this->view->types = array("parent"=>$type);	            	
+		        $this->view->id = $id;
+		        $this->view->idParent = $this->view->parent["id_dico"];
             }	        
 	    }
 	}catch (Zend_Exception $e) {
