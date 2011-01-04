@@ -28,7 +28,50 @@ class Model_DbTable_Concepts extends Zend_Db_Table_Abstract
         return $row->toArray();
     }
 
-	public function existeConcept($idDico, $lib, $type)
+    public function obtenirConceptByDico($id)
+    {
+        $id = (int)$id;
+        $query = $this->select()
+            ->where( "id_dico = " . $id);
+		$rs = $this->fetchAll($query);        
+    	if (!$rs) {
+            throw new Exception("Count not find rs $id");
+        }
+        return $rs->toArray();
+    }
+
+    public function obtenirConceptByDicoLibType($idDico,$lib,$type)
+    {
+        $query = $this->select()
+            ->where( "id_dico IN (?)",$idDico)
+        	->where( "lib = ?",$lib)
+            ->where( "type = ?",$type)
+            ;
+		$r = $this->fetchRow($query);        
+    	if (!$r) {
+            throw new Exception("Count not find rs $id");
+        }
+        return $r;
+    }
+    
+    public function obtenirConceptDescription($idDico, $arrClass){
+
+			$cpt = $this->obtenirConceptByDicoLibType($idDico,$arrClass[1],$arrClass[0]);
+			//cherche les enfants suivant le type de concept
+			if($arrClass[0]=="a")$tType="Adjectifs";
+			if($arrClass[0]=="v")$tType="Verbes";
+			if($arrClass[0]=="m")$tType="Substantifs";
+			if($arrClass[0]=="s")$tType="Syntagmes";
+			$enfants = $cpt->findManyToManyRowset('Model_DbTable_'.$tType,
+                                                 'Model_DbTable_Concepts'.$tType);
+			//cherche les généreteurs
+			$gens = $cpt->findManyToManyRowset('Model_DbTable_Generateurs',
+	                                                 'Model_DbTable_ConceptsGenerateurs');
+    	
+    		return array("src"=>$cpt->toArray(),"dst"=>array_merge($enfants->toArray(),$gens->toArray()));
+    }
+    
+    public function existeConcept($idDico, $lib, $type)
     {
 		$select = $this->select();
 		$select->from($this, array('id_concept'))
@@ -65,16 +108,20 @@ class Model_DbTable_Concepts extends Zend_Db_Table_Abstract
 
     public function supprimerConcept($id)
     {
-		$Rowset = $this->find($id);
-		$parent = $Rowset->current();
-		//a faire en bouclant sur les $_dependentTables
-		/*
-		$enfants = $parent->findDependentRowset('Model_DbTable_Terminaisons');
-    	$tEnfs = new Model_DbTable_Terminaisons;
-		foreach($enfants as $enf){
-    		$tEnfs->supprimerTerminaison($enf["id_trm"]);	
-    	}
-		*/
+    	foreach($this->_dependentTables as $t){
+			$tEnfs = new $t();
+			$tEnfs->supprimerConcept($id);
+		}
     	$this->delete('id_concept =' . (int)$id);
     }
+
+    public function supprimerDico($id)
+    {
+    	$arr = $this->obtenirConceptByDico($id);
+		foreach($arr as $enf){
+    		$this->supprimerConcept($enf["id_concept"]);	
+    	}    	
+    	$this->delete('id_dico =' . (int)$id);
+    }
+    
 }

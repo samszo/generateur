@@ -63,4 +63,10 @@ class Model_DbTable_ConceptsSubstantifs extends Zend_Db_Table_Abstract
     {
         $this->delete('id_sub = ' .$idSub.' AND id_concept = ' .$idCon);
     }
+    
+    public function supprimerConcept($idCon)
+    {
+        $this->delete('id_concept = ' .$idCon);
+    }
+    
 }

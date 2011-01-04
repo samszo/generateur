@@ -63,4 +63,10 @@ class Model_DbTable_Complements extends Zend_Db_Table_Abstract
     {
         $this->delete('id_cpm =' . (int)$id);
     }
+
+    public function supprimerDico($id)
+    {
+    	$this->delete('id_dico =' . (int)$id);
+    }
+    
 }

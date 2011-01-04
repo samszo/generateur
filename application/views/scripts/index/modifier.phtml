@@ -5,52 +5,61 @@
 </p>
 <table>
     <tr>
-<td>
-<?php echo $this->form ;?>
-</td>
-<td>
-<table>
-    <tr>
-<?php foreach($this->cols as $col) : ?>
-        <th><?php echo $col;?></th>
-<?php endforeach; ?>
-    </tr>  
-<?php foreach($this->enfants as $enfant) : ?>
-    <tr>
-	<?php foreach($this->cols as $col) : ?>
-        <td><?php echo $this->escape($enfant[$col]);?></td>
-	<?php endforeach; ?>
-        <td>
-            <a href="<?php echo $this->url(array('controller'=>'index',
-                'action'=>'modifier', 'idParent'=>$this->idParent, 'type'=>$this->types['enfant'], 'id'=>$enfant[$this->key[1]]));?>">Modifier</a>
-            <a href="<?php echo $this->url(array('controller'=>'index',
-                'action'=>'supprimer', 'idParent'=>$this->idParent, 'type'=>$this->types['enfant'], 'id'=>$enfant[$this->key[1]]));?>">Supprimer</a>
-        </td>
-    </tr>
-<?php endforeach; ?>
-</table>
-</td>
-<td>
-<?php if($this->types['parent']=="concept"):?>
-<table>
-    <tr>
-        <th>id_gen</th>
-        <th>valeur</th>
-    </tr>  
-<?php foreach($this->gens as $gen) : ?>
-    <tr>
-        <td><?php echo $this->escape($gen['id_gen']);?></td>
-        <td><?php echo $this->escape($gen['valeur']);?></td>
-        <td>
-            <a href="<?php echo $this->url(array('controller'=>'index',
-                'action'=>'modifier', 'idParent'=>$this->idParent, 'type'=>'generateur', 'id'=>$gen['id_gen']));?>">Modifier</a>
-            <a href="<?php echo $this->url(array('controller'=>'index',
-                'action'=>'supprimer', 'idParent'=>$this->idParent, 'type'=>'generateur', 'id'=>$gen['id_gen']));?>">Supprimer</a>
-        </td>
-    </tr>
-<?php endforeach; ?>
-</table>
-</td>
-</tr>
+		<td valign="top" >
+		<?php 
+		echo $this->form ;
+		if($this->types['parent']=="verbe"){
+			echo "<input type=\"button\" onclick=\"$('#resultat').load('".WEB_ROOT."/public/conjugaison/tester', {CacheForm:1
+				,id_conj:".$this->form->getValue('id_conj')."
+				,elision:".$this->form->getValue('elision')."
+				,prefix:'".$this->form->getValue('prefix')."'});\" value=\"tester\" >";
+		}
+		?>
+		</td>
+		<td>
+			<div id="resultat"></div>
+			<table>
+			    <tr>
+			<?php foreach($this->cols as $col) : ?>
+			        <th><?php echo $col;?></th>
+			<?php endforeach; ?>
+			    </tr>  
+			<?php foreach($this->enfants as $enfant) : ?>
+			    <tr>
+				<?php foreach($this->cols as $col) : ?>
+			        <td><?php echo $this->escape($enfant[$col]);?></td>
+				<?php endforeach; ?>
+			        <td>
+			            <a href="<?php echo $this->url(array('controller'=>'index',
+			                'action'=>'modifier', 'idParent'=>$this->idParent, 'type'=>$this->types['enfant'], 'id'=>$enfant[$this->key[1]]));?>">Modifier</a>
+			            <a href="<?php echo $this->url(array('controller'=>'index',
+			                'action'=>'supprimer', 'idParent'=>$this->idParent, 'type'=>$this->types['enfant'], 'id'=>$enfant[$this->key[1]]));?>">Supprimer</a>
+			        </td>
+			    </tr>
+			<?php endforeach; ?>
+			</table>
+		</td>
+		<td>
+			<?php if($this->types['parent']=="concept"):?>
+			<table>
+			    <tr>
+			        <th>id_gen</th>
+			        <th>valeur</th>
+			    </tr>  
+			<?php foreach($this->gens as $gen) : ?>
+			    <tr>
+			        <td><?php echo $this->escape($gen['id_gen']);?></td>
+			        <td><?php echo $this->escape($gen['valeur']);?></td>
+			        <td>
+			            <a href="<?php echo $this->url(array('controller'=>'index',
+			                'action'=>'modifier', 'idParent'=>$this->idParent, 'type'=>'generateur', 'id'=>$gen['id_gen']));?>">Modifier</a>
+			            <a href="<?php echo $this->url(array('controller'=>'index',
+			                'action'=>'supprimer', 'idParent'=>$this->idParent, 'type'=>'generateur', 'id'=>$gen['id_gen']));?>">Supprimer</a>
+			        </td>
+			    </tr>
+				<?php endforeach; ?>
+			</table>
+		</td>
+	</tr>
 </table>
 <?php endif; ?>

@@ -52,8 +52,7 @@ class Gen_Dico
 	public function __construct($urlDesc="") {
 
 		if($urlDesc=="")$urlDesc=APPLICATION_PATH.'/configs/LangageDescripteur.xml';
-		$this->urlDesc = $urlDesc;
-		
+		$this->urlDesc = $urlDesc;	
 			
 	}
 
@@ -195,6 +194,15 @@ class Gen_Dico
 				$dbDicos = new Model_DbTable_DicosDicos();
 				$dbDicos->ajouterDicoGenDicoRef($idDico,$idDicoConj);
 				break;
+			case 'pronoms_complement':
+				$dbPro = new Model_DbTable_Pronoms();
+				break;
+			case 'pronoms_sujet':
+				$dbPro = new Model_DbTable_Pronoms();
+				break;
+			case 'negations':
+				$dbNeg = new Model_DbTable_Negations();
+				break;
 		}
 
 		foreach ($this->xml->children() as $k => $n) {
@@ -251,7 +259,7 @@ class Gen_Dico
 				    			$dbConSyn->ajouterConceptSyntagme($idC,$idT);
 				    			break;				    		
 				    		case 'sub':
-				    			$idT = $dbSub->ajouterSubstantif($this->id,$nCon["eli"],$nCon["pref"],$nCon["s"],$nCon["p"]);
+				    			$idT = $dbSub->ajouterSubstantif($this->id,$nCon["eli"],$nCon["pref"],$nCon["s"],$nCon["p"],$nCon["genre"]);
 				    			$dbConSub->ajouterConceptSubstantif($idC,$idT);
 				    			break;				    		
 				    		case 'gen':
@@ -259,6 +267,29 @@ class Gen_Dico
 				    			$dbConGen->ajouterConceptGenerateur($idC,$idT);
 				    			break;				    		
 				    	}
+					}
+					break;
+				case 'pronom_complement':
+					if($n['lib']){
+						$num = $n['num']."";
+						$lib = $n['lib']."";
+						$lib_eli = $n['lib_eli']."";
+						$dbPro->ajouterPronom($this->id,$num,$lib,$lib_eli,"complement");
+					}
+					break;
+				case 'pronom_sujet':
+					if($n['lib']){
+						$num = $n['num']."";
+						$lib = $n['lib']."";
+						$lib_eli = $n['lib_eli']."";
+						$dbPro->ajouterPronom($this->id,$num,$lib,$lib_eli,"sujet");
+					}
+					break;
+				case 'negation':
+					if($n['lib']){
+						$num = $n['num']."";
+						$lib = $n['lib']."";
+						$dbNeg->ajouterNegation($this->id,$num,$lib);
 					}
 					break;
 			}
@@ -349,11 +380,64 @@ class Gen_Dico
 			case 'SetTerminaisonFin':
 				$this->SetTerminaison($chaine, $action, true);
 				break;
-				
+			case 'SetPronom':	
+				$this->SetPronom($chaine, $action);
+				break;
+			case 'SetNegation':	
+				$this->SetNegation($chaine, $action);
+				break;
 		}
 
 	}
-        	
+
+	public function SetNegation($chaine, $action){
+		
+		$xFrag = $this->xml->createElement("negation","");	
+		
+		$c = $action['char']."";
+		$arr = explode($c, $chaine);
+		$arrAtrib = explode($c, $action['attributs']);
+		//boucle sur les fragments de chaine optenus
+		for ($i = 0 ; $i < count($arr); $i++) {
+			//calcul les attributs
+			$xAtt = $this->xml->createAttribute($arrAtrib[$i]);
+			$nText = $this->xml->createTextNode($arr[$i]);
+			$xAtt->appendChild($nText); 				
+			$xFrag->appendChild($xAtt);
+			
+		}
+		//ajoute le modèle à la racine		
+		$this->xmlRoot->appendChild($xFrag);
+		
+	}
+	
+	public function SetPronom($chaine, $action){
+		
+		//création du noeud verbe
+		if($this->type=='pronoms_complement'){
+			$xFrag = $this->xml->createElement("pronom_complement","");	
+		}
+		if($this->type=='pronoms_sujet'){
+			$xFrag = $this->xml->createElement("pronom_sujet","");	
+		}
+		
+		$c = $action['char']."";
+		$arr = explode($c, $chaine);
+		$arrAtrib = explode($c, $action['attributs']);
+		//boucle sur les fragments de chaine optenus
+		for ($i = 0 ; $i < count($arr); $i++) {
+			//calcul les attributs
+			$xAtt = $this->xml->createAttribute($arrAtrib[$i]);
+			$nText = $this->xml->createTextNode($arr[$i]);
+			$xAtt->appendChild($nText); 				
+			$xFrag->appendChild($xAtt);
+			
+		}
+		//ajoute le modèle à la racine		
+		$this->xmlRoot->appendChild($xFrag);
+		
+	}
+	
 	public function SetConjugaison($chaine, $action){
 		
 		//calcul les attributs

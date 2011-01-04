@@ -1,7 +1,7 @@
 <?php
-class Model_DbTable_Syntagmes extends Zend_Db_Table_Abstract
+class Model_DbTable_Pronoms extends Zend_Db_Table_Abstract
 {
-    protected $_name = 'gen_syntagmes';
+    protected $_name = 'gen_pronoms';
     protected $_referenceMap    = array(
         'Verbe' => array(
             'columns'           => 'id_dico',
@@ -10,70 +10,74 @@ class Model_DbTable_Syntagmes extends Zend_Db_Table_Abstract
         )
     );	    
     
-    public function obtenirSyntagme($id)
+    public function obtenirPronom($id)
     {
         $id = (int)$id;
-        $row = $this->fetchRow('id_syn = ' . $id);
+        $row = $this->fetchRow('id_pronom = ' . $id);
         if (!$row) {
             throw new Exception("Count not find row $id");
         }
         return $row->toArray();
     }
 
-    public function obtenirSyntagmeByDicoNum($idDico,$num)
+   public function obtenirPronomByDicoNumType($idDico,$num,$type)
     {
         $query = $this->select()
             ->where( "id_dico IN (?)",$idDico)
         	->where( "num = ?",$num)
-            ;
+        	->where( "type = ?",$type)
+        	;
 		$r = $this->fetchRow($query);        
     	if (!$r) {
             throw new Exception("Count not find rs $id");
         }
         return $r;
     }
-        
-	public function existeSyntagme($idDico, $num, $ordre, $lib)
+    
+	public function existePronom($idDico, $num, $lib, $lib_eli, $type)
     {
 		$select = $this->select();
 		$select->from($this, array('id_syn'))
 			->where('id_dico = ?', $idDico)
 			->where('num = ?', $num)
-			->where('ordre = ?', $ordre)
-			->where('lib = ?', $lib);
+			->where('lib = ?', $lib)
+			->where('lib_eli = ?', $lib_eli)
+			->where('type = ?', $type);
 		$rows = $this->fetchAll($select);        
-	    if($rows->count()>0)$id=$rows[0]->id_syn; else $id=false;
+	    if($rows->count()>0)$id=$rows[0]->id_pronom; else $id=false;
         return $id;
     }    
     
-    public function ajouterSyntagme($idDico, $num, $ordre, $lib="")
+    public function ajouterPronom($idDico, $num, $lib, $lib_eli, $type)
     {
-    	$id = false;//$this->existeSyntagme($idDico, $num, $ordre, $lib);
+    	$id = false;//$this->existePronom($idDico, $num, $lib, $lib_eli, $type);
     	if(!$id){
 	    	$data = array(
 	            'id_dico' => $idDico,
 	            'num' => $num,
-	    		'ordre' => $ordre,
-	            'lib' => $lib
-        	);
+	    		'lib' => $lib,
+	            'lib_eli' => $lib_eli,
+	            'type' => $type
+	    	);
     	 	$id = $this->insert($data);
     	}
     	return $id;
     }
     
-    public function modifierSyntagme($id, $num, $ordre, $lib)
+    public function modifierPronom($id, $num, $lib, $lib_eli, $type)
     {
         $data = array(
             'num' => $num,
-    		'ordre' => $ordre,
-        	'lib' => $lib
+    		'lib' => $lib,
+        	'lib_eli' => $lib_eli,
+            'type' => $type
         );
-        $this->update($data, 'id_syn = '. (int)$id);
+        $this->update($data, 'id_pronom = '. (int)$id);
     }
 
-    public function supprimerSyntagme($id)
+    public function supprimerPronom($id)
     {
-        $this->delete('id_syn =' . (int)$id);
+        $this->delete('id_pronom =' . (int)$id);
     }
 
     public function supprimerDico($id)

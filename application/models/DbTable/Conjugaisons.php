@@ -42,7 +42,7 @@ class Model_DbTable_Conjugaisons extends Zend_Db_Table_Abstract
     public function obtenirConjugaisonDico($idDico)
     {
 		$select = $this->select();
-		$select->from($this, array('id_conj','modele'))
+		$select->from($this, array('id_conj', 'id_dico', 'num', 'modele'))
 			->where('id_dico = ?', $idDico)
 			->order('modele');
 		$rs = $this->fetchAll($select);        
@@ -103,13 +103,18 @@ class Model_DbTable_Conjugaisons extends Zend_Db_Table_Abstract
 
     public function supprimerConjugaison($id)
     {
-		$Rowset = $this->find($id);
-		$parent = $Rowset->current();
-		$enfants = $parent->findDependentRowset('Model_DbTable_Terminaisons');
     	$tEnfs = new Model_DbTable_Terminaisons;
-		foreach($enfants as $enf){
-    		$tEnfs->supprimerTerminaison($enf["id_trm"]);	
-    	}
+   		$tEnfs->supprimerConjugaison($id);	
     	$this->delete('id_conj =' . (int)$id);
     }
+
+    public function supprimerDico($id)
+    {
+    	$arr = $this->obtenirConjugaisonDico($id);
+		foreach($arr as $enf){
+    		$this->supprimerConjugaison($enf["id_conj"]);	
+    	}    	
+    	$this->delete('id_dico =' . (int)$id);
+    }
+    
 }

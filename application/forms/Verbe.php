@@ -10,6 +10,9 @@ class Form_Verbe extends Zend_Form
         $id = new Zend_Form_Element_Hidden('id');
         $id->setValue($options["id"]);
         
+        $CacheForm = new Zend_Form_Element_Hidden('CacheForm');
+        $CacheForm->setValue(false);
+        
 		//construction des modèle de conjugaison
         $conj = new Zend_Form_Element_Select('id_conj', array(
 		    'multiOptions' => $options["RsConjs"]));
@@ -27,7 +30,8 @@ class Form_Verbe extends Zend_Form
 		
         $envoyer = new Zend_Form_Element_Submit('envoyer');
         $envoyer->setAttrib('id', 'boutonenvoyer');
+        
 		$this->setAttrib('enctype', 'multipart/form-data');
-        $this->addElements(array($id, $conj, $eli, $prefix, $envoyer));
+        $this->addElements(array($id, $CacheForm, $conj, $eli, $prefix, $envoyer));
     }
 }

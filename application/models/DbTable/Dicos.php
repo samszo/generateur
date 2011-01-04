@@ -2,7 +2,18 @@
 class Model_DbTable_Dicos extends Zend_Db_Table_Abstract
 {
     protected $_name = 'gen_dicos';
-	protected $_dependentTables = array('Model_DbTable_Verbes');
+	protected $_dependentTables = array(
+		'Model_DbTable_Conjugaisons'
+		,'Model_DbTable_Determinants'
+		,'Model_DbTable_Complements'
+		,'Model_DbTable_Syntagmes'
+		,'Model_DbTable_Concepts'
+		,'Model_DbTable_DicosDicos'
+		,'Model_DbTable_Substantifs'
+		,'Model_DbTable_Adjectifs'
+		,'Model_DbTable_Pronoms'
+		,'Model_DbTable_Negations'
+		);
 
     public function getItemsDico($id)
     {
@@ -19,6 +30,12 @@ class Model_DbTable_Dicos extends Zend_Db_Table_Abstract
 			$items = $dico->findDependentRowset('Model_DbTable_Syntagmes');
 		if($dico['type']=='concepts')
 			$items = $dico->findDependentRowset('Model_DbTable_Concepts');
+		if($dico['type']=='pronoms_complement')
+			$items = $dico->findDependentRowset('Model_DbTable_Pronoms');
+		if($dico['type']=='pronoms_sujet')
+			$items = $dico->findDependentRowset('Model_DbTable_Pronoms');
+		if($dico['type']=='négations')
+			$items = $dico->findDependentRowset('Model_DbTable_Negations');
 			
         return $items;
     }
@@ -73,7 +90,19 @@ class Model_DbTable_Dicos extends Zend_Db_Table_Abstract
 
     public function supprimerDico($id)
     {
-        $this->delete('id_dico =' . (int)$id);
+    	//vérifier s'il n'y a pas de dictionnaire lié
+    	$dbDicoDico = new Model_DbTable_DicosDicos();
+    	$arr = $dbDicoDico->obtenirDicoGenByDicosRefs($id);
+    	
+    	if($arr){
+	   		throw new Exception("Impossible de supprimer ce dictionnaire.\nC'est une référence pour d'autres dictionnaires.");
+    	}
+    	
+    	foreach($this->_dependentTables as $t){
+			$tEnfs = new $t();
+			$tEnfs->supprimerDico($id);
+		}
+    	$this->delete('id_dico =' . (int)$id);
     }
     
 }

@@ -27,11 +27,24 @@ class Model_DbTable_Terminaisons extends Zend_Db_Table_Abstract
             ->where('id_conj = ' . $id)
             ->order('num') ;
         
-        $rows = $this->fetchAll('id_conj = ' . $id);
+        $rows = $this->fetchAll($query);
         if (!$rows) {
             throw new Exception("Count not find row $id");
         }
         return $rows->toArray();
+    }
+   
+    public function obtenirConjugaisonByConjNum($idConj,$num)
+    {
+        $query = $this->select()
+            ->where( "id_conj = ?",$idConj)
+        	->where( "num = ?",$num)
+        	;
+		$r = $this->fetchRow($query);        
+    	if (!$r) {
+            throw new Exception("Count not find rs $id");
+        }
+        return $r;
     }
     
     public function existeTerminaison($idConj, $num, $lib)
@@ -72,4 +85,10 @@ class Model_DbTable_Terminaisons extends Zend_Db_Table_Abstract
     {
         $this->delete('id_trm =' . (int)$id);
     }
+    
+    public function supprimerConjugaison($id)
+    {
+        $this->delete('id_conj =' . (int)$id);
+    }
+    
 }
