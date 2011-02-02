@@ -41,7 +41,7 @@ class Model_DbTable_Substantifs extends Zend_Db_Table_Abstract
     
     public function ajouterSubstantif($idDico, $eli, $prefix, $s, $p, $genre)
     {
-    	$id = false;//$this->existeSubstantif($idDico, $eli, $prefix, $s, $p, $genre);
+    	$id = $this->existeSubstantif($idDico, $eli, $prefix, $s, $p, $genre);
     	if(!$id){
 	    	$data = array(
 	            'id_dico' => $idDico,

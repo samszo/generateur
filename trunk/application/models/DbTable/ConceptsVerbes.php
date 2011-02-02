@@ -39,7 +39,7 @@ class Model_DbTable_ConceptsVerbes extends Zend_Db_Table_Abstract
     
     public function ajouterConceptVerbe($idCon, $idVerbe)
     {    	
-    	$id = false;//$this->existeConceptVerbe($idCon, $idVerbe);
+    	$id = $this->existeConceptVerbe($idCon, $idVerbe);
     	if(!$id){
 	    	$data = array(
         	'id_concept' => $idCon

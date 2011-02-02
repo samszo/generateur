@@ -39,7 +39,7 @@ class Model_DbTable_ConceptsGenerateurs extends Zend_Db_Table_Abstract
     
     public function ajouterConceptGenerateur($idCon, $idGen)
     {
-    	$id = false;//$this->existeConceptGenerateur($idCon, $idGen);
+    	$id = $this->existeConceptGenerateur($idCon, $idGen);
     	if(!$id){
 	    	$data = array(
         	'id_concept' => $idCon
