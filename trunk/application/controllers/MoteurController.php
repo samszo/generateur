@@ -24,9 +24,10 @@ class MoteurController extends Zend_Controller_Action
 					,"syntagmes"=>4
 					,"pronoms_complement"=>13
 					,"conjugaisons"=>11
-					,"pronoms_sujet"=>14
+					,"pronoms"=>14
 					,"déterminants"=>15
-					,"négations"=>2);		
+					,"negations"=>16		
+					);		
 				$moteur->arrDicos = $arrDicos;		
 				$moteur->Generation($form->getValue('valeur'));
 	        		        	

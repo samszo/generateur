@@ -30,7 +30,7 @@ class Model_DbTable_Syntagmes extends Zend_Db_Table_Abstract
     	if (!$r) {
             throw new Exception("Count not find rs $id");
         }
-        return $r;
+        return $r->toArray();
     }
         
 	public function existeSyntagme($idDico, $num, $ordre, $lib)

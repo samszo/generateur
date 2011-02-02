@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 3.1.1
+-- version 3.2.0.1
 -- http://www.phpmyadmin.net
 --
 -- Serveur: localhost
--- Généré le : Mar 04 Janvier 2011 à 18:29
--- Version du serveur: 5.1.30
--- Version de PHP: 5.2.8
+-- Généré le : Ven 07 Janvier 2011 à 14:11
+-- Version du serveur: 5.1.36
+-- Version de PHP: 5.2.5
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
@@ -8067,7 +8067,6 @@ INSERT INTO `gen_concepts` (`id_concept`, `id_dico`, `lib`, `type`) VALUES
 (13788, 17, 'abdiqué', 'a'),
 (13787, 17, 'abattu', 'a'),
 (13786, 17, 'abandonné', 'a'),
-(13785, 17, 'extes', ''),
 (19278, 17, 'identifier', 'v'),
 (19279, 17, 'ignorer', 'v'),
 (19280, 17, 'illuminer', 'v'),
@@ -30997,18 +30996,18 @@ INSERT INTO `gen_pronoms` (`id_pronom`, `id_dico`, `type`, `num`, `lib`, `lib_el
 (124, 13, 'complément', 40, 'de ', 'd'''),
 (125, 13, 'complément', 41, 'pour ', 'pour'),
 (126, 13, 'complément', 42, 'que ', 'qu'''),
-(127, 14, 'sujet', 0, ' je', ' j'''),
-(128, 14, 'sujet', 0, ' tu', ' tu'),
-(129, 14, 'sujet', 3, ' il', ' il'),
-(130, 14, 'sujet', 4, ' nous', ' nous'),
-(131, 14, 'sujet', 5, ' vous', ' vous'),
+(127, 14, 'sujet', 1, ' je ', ' j'''),
+(128, 14, 'sujet', 2, ' tu', ' tu'),
+(129, 14, 'sujet', 3, ' il ', 'il '),
+(130, 14, 'sujet', 4, ' nous ', ' nous '),
+(131, 14, 'sujet', 5, ' vous ', ' vous '),
 (132, 14, 'sujet', 6, ' [=1|a_il] ', '[=1|a_il]'),
 (133, 14, 'sujet', 8, '[=1|a_zéro]', '[=1|a_zéro]'),
-(134, 14, 'sujet_indefini', 1, ' ce ', ' ç'),
-(135, 14, 'sujet_indefini', 2, 'ça', 'ça '),
-(136, 14, 'sujet_indefini', 3, ' on ', 'on '),
+(134, 14, 'sujet_indefini', 1, 'ce ', ' ç'),
+(135, 14, 'sujet_indefini', 2, 'ça ', 'ça '),
+(136, 14, 'sujet_indefini', 3, 'on ', 'on '),
 (137, 14, 'sujet_indefini', 4, 'il ', 'il '),
-(138, 14, 'sujet_indefini', 5, ' cela ', 'cela '),
+(138, 14, 'sujet_indefini', 5, 'cela  ', 'cela '),
 (139, 14, 'sujet', 9, '[=1|a_zéro]', '[=1|a_zéro]'),
 (140, 14, 'sujet', 7, ' [=1|a_il] ', ' [=1|a_il] ');
 

@@ -49,7 +49,7 @@ class Model_DbTable_Concepts extends Zend_Db_Table_Abstract
             ;
 		$r = $this->fetchRow($query);        
     	if (!$r) {
-            throw new Exception("Count not find rs $id");
+            throw new Exception("Count not find rs $idDico,$lib,$type");
         }
         return $r;
     }
@@ -83,9 +83,11 @@ class Model_DbTable_Concepts extends Zend_Db_Table_Abstract
         return $id;
     }    
     
-    public function ajouterConcept($idDico, $lib, $type)
+    public function ajouterConcept($idDico, $lib, $type, $existe=false)
     {
-    	$id = false;//$this->existeConcept($idDico, $lib, $type);
+    	$id = false;
+    	if($existe)
+    		$id = $this->existeConcept($idDico, $lib, $type);
     	if(!$id){
     		$data = array(
             'id_dico' => $idDico,

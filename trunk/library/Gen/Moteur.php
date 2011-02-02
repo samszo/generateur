@@ -56,11 +56,12 @@ class Gen_Moteur
 		//parcourt l'ensemble de la chaine
 		for($i = 0; $i < strlen($texte); $i++)
         {
+        	$this->ordre ++;
         	$c = $texte[$i];
         	//est-ce le début d'une classe
         	if($c == "["){
         		//on récupère la valeur de la classe et la position des caractères dans la chaine
-        		$arrClass = $this->getClassVals(substr($texte,$i));
+        		$arrClass = $this->getClassVals($texte, $i);
         		$this->class = $arrClass["valeur"];        		
         		
         		//on boucle sur les class
@@ -70,48 +71,17 @@ class Gen_Moteur
         			        		
         		//on passe à la chaine suivante
 	        	$i=$arrClass["fin"];
-        		$this->ordre ++;
         	}else{
         		//on ajoute le caractère
-				$this->arrClass[$this->ordre]["texte"] .= $c;
+				$this->arrClass[$this->ordre]["texte"] = $c;
         	}
         }
                 
         //on calcule le texte
-        $this->calculTexte();
+        $this->genereTexte();
 
 	}
-	
-	public function getVecteur($arr){
-
 		
-		if(isset($arr["determinant"])){												
-			//calcul le pluriel
-			if($arr["determinant"]["pluriel"]){
-				$txt = $arr["substantif"]["p"];
-			}
-		}
-		
-		
-		if(isset($arr["substantif"])){			
-			//calcul le détaerminant
-			if($arr["substantif"]["elision"]==0 && $arr["substantif"]["genre"]==1){
-				$det = $arr["determinant"]["vals"][0]["lib"]." ";
-			}
-			if($arr["substantif"]["elision"]==0 && $arr["substantif"]["genre"]==2){
-				$det = $arr["determinant"]["vals"][1]["lib"]." ";
-			}
-			if($arr["substantif"]["elision"]==1 && $arr["substantif"]["genre"]==1){
-				$det = $arr["determinant"]["vals"][2]["lib"];
-			}
-			if($arr["substantif"]["elision"]==1 && $arr["substantif"]["genre"]==2){
-				$det = $arr["determinant"]["vals"][3]["lib"];
-			}
-		}
-		
-		return $det;
-	}	
-	
 	public function genereTexte(){
 
 		$this->texte = "";
@@ -136,10 +106,19 @@ class Gen_Moteur
 				
 				if(isset($arr["adjectifs"])){					
 					foreach($arr["adjectifs"] as $adj){
-						$adjs .= $this->genereAdjectif($arr);
+						$adjs .= $this->genereAdjectif($arr, $adj);
 					}
 				}
-				$this->texte .= $det.$sub." ".$adjs;					
+
+				if(isset($arr["verbe"])){					
+					$verbe = $this->genereVerbe($arr);
+				}					
+				
+				if(isset($arr["syntagme"])){					
+					$this->texte = $arr["syntagme"];
+				}					
+				
+				$this->texte .= $det.$sub." ".$adjs.$verbe;					
 			}
 			$this->ordre ++;
 		}
@@ -150,7 +129,7 @@ class Gen_Moteur
 
 		$txt = $arr["substantif"]["s"];
 		
-		if(isset($arr["pluriel"])){												
+		if($arr["pluriel"]){												
 			$txt = $arr["substantif"]["p"];
 		}
 		
@@ -231,13 +210,13 @@ class Gen_Moteur
 		return $det;
 	}
 	
-	public function genereAdjectif($arr){
+	public function genereAdjectif($arr,$adj){
 
 		$txt = "";
 
 		//calcul le nombre
 		$n = "_s"; 		
-		if(isset($arr["pluriel"])){												
+		if($arr["pluriel"]){												
 			$n = "_p";
 		}
 		
@@ -247,7 +226,7 @@ class Gen_Moteur
 			if($arr["genre"]==2) $g = "f";
 		}
 
-		$txt = $arr["adjectif"]["prefix"].$arr["adjectif"][$g.$n];
+		$txt = $adj["prefix"].$adj[$g.$n];
 
 		return $txt;
 	}
@@ -263,7 +242,7 @@ class Gen_Moteur
 			$temps= 0;
 		}
 		
-		$num = ($temps*6)+$arr["terminaison"]; 		
+		$num = ($temps*6)+$arr["terminaison"]-1; 		
 		if($arr["determinant_verbe"][1]==8){
 			$num= 36;
 		}
@@ -272,7 +251,7 @@ class Gen_Moteur
 		}
 		
 		//calcul le numéro de la conjugaison
-		if($arr["terminaison"]==7)
+		//if($arr["terminaison"]==7)
 			
 
 		$txt = $this->getTerminaison($arr["verbe"]["id_conj"],$num);
@@ -292,19 +271,9 @@ class Gen_Moteur
 		Position 8 : Place du sujet dans la chaîne grammaticale
 		*/
 		$arr["debneg"]="";
-		$arr["prodem"]="";
+		$arr["finneg"]="";
 		$arr["prodem"]="";		
-		
-		//génère la négation
-		if($arr["determinant_verbe"][0]!=0){
-			$arr["finneg"] = $this->getNegation($arr["determinant_verbe"][0]);
-			if($arr["elision"]==1){
-				$arr["debneg"] = "n'";	
-			}else{
-				$arr["debneg"] = "ne ";
-			}
-		}
-		
+				
 		//génère le pronom
 		$arr = $this->generePronom($arr);    	
 		
@@ -321,6 +290,16 @@ class Gen_Moteur
 			$eli = in_array(substr($centre,0,1), $arrEli);
 		}
 
+		//génère la négation
+		if($arr["determinant_verbe"][0]!=0){
+			$arr["finneg"] = $this->getNegation($arr["determinant_verbe"][0]);
+			if($arr["elision"]==0){
+				$arr["debneg"] = "ne ";	
+			}else{
+				$arr["debneg"] = "n'";
+			}
+		}
+		
 		//construction de la forme verbale
 		$verbe = "";
 		//gextion de l'infinitif
@@ -336,11 +315,7 @@ class Gen_Moteur
 			}	
 			$verbe = $arr["finneg"].$verbe; 
 			if($arr["debneg"]!=""){
-				if($eli==0){
-					$verbe = $arr["debneg"]["lib"].$verbe; 
-				}else{
-					$verbe = $arr["debneg"]["lib_eli"].$verbe; 
-				}
+				$verbe = $arr["debneg"].$verbe; 
 			}	
 		}		
 		//gestion de l'ordre inverse
@@ -353,7 +328,7 @@ class Gen_Moteur
 			if($c == "e" && $arr["terminaison"]==1){
 				$verbe = substr($centre,-1)."é-"; 
 			}
-			$verbe = $arr["debneg"].$arr["prodem"].$verbe.$arr["prosuj"]["lib"].$arr["prodem"]["lib"];
+			$verbe = $arr["debneg"]." ".$arr["prodem"]." ".$verbe." ".$arr["prosuj"]["lib"].$arr["prodem"]["lib"];
 		}
 		//gestion de l'ordre normal
 		if($verbe==""){
@@ -367,12 +342,7 @@ class Gen_Moteur
 				}
 			}	
 			if($arr["debneg"]!=""){
-				if($eli==0){
-					$verbe = $arr["debneg"]["lib"].$verbe; 
-				}else{
-					$verbe = $arr["debneg"]["lib_eli"].$verbe; 
-					$eli=0;
-				}
+				$verbe = $arr["debneg"].$verbe; 
 			}	
 			if($arr["prosuj"]!=""){
 				if($eli==0){
@@ -407,6 +377,9 @@ class Gen_Moteur
 				case "v":
 					$this->getVerbe($class);
 					break;
+				case "s":
+					$this->getSyntagme($class,false);
+					break;
 				default:
 					$cls = $this->getAleaClass($class);
 					$this->arrClass[$this->ordre]["default"][] = $cls;
@@ -415,26 +388,24 @@ class Gen_Moteur
 		}
 		
 		//vérifie si la class possède un blocage d'information
-		$c = strpos($class,"#");
-		if($c>0){
+		if(substr($class,0,1)=="#"){
 			$this->getSyntagme($class);	
 		}
 
 		//vérifie si la class possède un blocage d'information
-		$c = strpos($class,"#");
-		if($c>0){
-			$this->getSyntagme($class);	
+		if(substr($class,0,1)=="="){
+			$this->getBlocage($class);	
 		}
 		
 	}
 	
-	public function getClassVals($class){
+	public function getClassVals($txt,$i=0){
 
-		$deb = strpos($class,"[");
-		$fin = strpos($class,"]",substr($class, $deb+1));
+		$deb = strpos($txt,"[",$i);
+		$fin = strpos($txt,"]",$deb+1);
 
 		//on récupère la valeur de la classe
-        $class = substr($class, $deb+1, $fin-1);
+        $class = substr($txt, $deb+1, -(strlen($txt)-$fin));
         
         //on récupère la définition de l'accord 
         $arr = explode("||",$class);
@@ -451,23 +422,38 @@ class Gen_Moteur
 	
 	public function getAdjectifs($class){
 
-        $d = strpos($class,"∏");        
-        if($d){
-        	//récupère le substantif
-	        $arr=explode("@", $class);        
+        //récupère le substantif
+        $arr=explode("@", $class);
+        if(count($arr)>1){ 
         	$this->getSubstantif($arr[1]);
-        	
+        }
+		
+        $d = strpos($arr[0],"∏");        
+        if($d){        	
         	//récupère les adjectifs
 	        $arrAdj=explode("∏", $arr[0]);        
 	        //récupère la définition des adjectifs
-	        $arrClass = array();	       
 	        foreach($arrAdj as $a){
 		        $this->arrClass[$this->ordre]["adjectifs"][] = $this->getAleaClass($a);
 	        	
 	        }        	
         }else{
-	        $this->arrClass[$this->ordre]["adjectifs"][] = $this->getAleaClass($class);        	
+	        $this->arrClass[$this->ordre]["adjectifs"][] = $this->getAleaClass($arr[0]);        	
         }
+	}
+	
+	public function getBlocage($class){
+
+        //récupère le numéro du blocage
+        $num=substr($class,1);
+		
+        //récupère l'ordre
+        $ordre=count($this->arrClass["vecteur"])-$num;
+        
+        //Récupère les information de genre et de nombre
+        $this->arrClass[$this->ordre]["pluriel"] = $this->arrClass["vecteur"][$ordre]["pluriel"]; 
+        $this->arrClass[$this->ordre]["genre"] = $this->arrClass["vecteur"][$ordre]["genre"]; 
+        
 	}
 	
 	public function getDeterminant($class){
@@ -476,10 +462,10 @@ class Gen_Moteur
 
         //vérifie si le déterminant est pour un verbe
         if(strlen($class) > 6){
-        	//vérie si le determinant n'est pas transmis
         	$intD = intval($class);
-        	$strD = $this->arrClass[$this->ordre]["determinant_verbe"];
-        	if($intD==0){
+        	if($intD==0 && $this->ordre > 0){
+        		//vérifie si le determinant n'est pas transmis
+        		$strD = $this->arrClass[$this->ordre]["determinant_verbe"];
         		for($i = $this->ordre-1; $i >= 0; $i--){
         			if(intval($this->arrClass[$i]["determinant_verbe"])!=0){
 						$class = $this->arrClass[$i]["determinant_verbe"];
@@ -498,11 +484,22 @@ class Gen_Moteur
         	$class = $class-100;
         }       			
         //vérifie s'il faut chercher le déterminant
-        $arrClass = " ";
-        if($dtr!=99){
+        if($class!=99 && $class!=0){
 	        $tDtr = new Model_DbTable_Determinants();
         	$arrClass = $tDtr->obtenirDeterminantByDicoNumNombre($this->arrDicos["déterminants"],$class,$pluriel);        				
         }
+        
+        if($class==0){
+        	//vérifie si le determinant n'est pas transmis
+        	for($i = $this->ordre-1; $i > 0; $i--){
+        		if(intval($this->arrClass[$i]["determinant"])!=0){
+					$arrClass = $this->arrClass[$i]["determinant"];
+					$pluriel = $this->arrClass[$i]["pluriel"];
+					$i=-1;        				
+        		}
+        	}
+        }
+        
         //ajoute le déterminant
 		$this->arrClass[$this->ordre]["determinant"] = $arrClass;
         
@@ -520,21 +517,43 @@ class Gen_Moteur
         $this->arrClass[$this->ordre]["substantif"] = $arrClass;
 
         //met à jour le genre et l'élision
-        $this->arrClass[$this->ordre]["genre"] = $arrClass;
-        $this->arrClass[$this->ordre]["elision"] = $arrClass;
-                
+        $this->arrClass[$this->ordre]["genre"] = $arrClass["genre"];
+        $this->arrClass[$this->ordre]["elision"] = $arrClass["elision"];
+        
+        //vérifie si un déterminant est présent
+        if(!$this->arrClass[$this->ordre]["pluriel"])$this->arrClass[$this->ordre]["pluriel"]=false;
+        
+        //ajoute le vecteur
+        $this->arrClass["vecteur"][] = array("pluriel"=>$this->arrClass[$this->ordre]["pluriel"]
+        	,"genre"=>$this->arrClass[$this->ordre]["genre"]);
+        
         return $arrClass;
 	}
 
-	public function getSyntagme($class){
-
-        //récupère la définition de la class
-        $table = new Model_DbTable_Syntagmes();
-        $arrClass = $table->obtenirSyntagmeByDicoNum($this->arrDicos['syntagmes'],substr($class,1));
+	public function getSyntagme($class, $direct=true){
 		
-        $this->arrClass[$this->ordre]["syntagme"] = $arrClass;
-        return $arr;
-
+		//vérifie si le syntagme direct #
+		if($direct){
+	        //récupère la définition de la class
+	        $table = new Model_DbTable_Syntagmes();
+	        $arrClass = $table->obtenirSyntagmeByDicoNum($this->arrDicos['syntagmes'],substr($class,1));
+			
+	        $syn = $arrClass["lib"];
+	        if(substr($syn,0,1)== "["){
+	        	$arrClass = $this->getClassVals($syn);
+	        	$this->class = $arrClass["valeur"];        		
+	        	//on boucle sur les class
+	        	foreach($arrClass["arr"] as $cls){
+	        			$this->getClass($cls);
+	        	}
+	        }else{
+		        $this->arrClass[$this->ordre]["syntagme"] = $syn;
+	        	
+	        }
+		}else{
+	        $arrClass = $this->getAleaClass($class);
+	        $this->arrClass[$this->ordre]["syntagme"] = $arrClass["lib"];			
+		}
 	}
 	
 	public function getNegation($class){
@@ -552,7 +571,7 @@ class Gen_Moteur
         $table = new Model_DbTable_Pronoms();
         $arrClass = $table->obtenirPronomByDicoNumType($this->arrDicos['pronoms'],$class,$type);
 
-		return $arrP;										
+		return $arrClass;										
 
 	}
 
@@ -562,7 +581,7 @@ class Gen_Moteur
         $table = new Model_DbTable_Terminaisons();
         $arrClass = $table->obtenirConjugaisonByConjNum($idConj, $num);
 
-		return $arrP["lib"];
+		return $arrClass["lib"];
 												
 	}
 	
@@ -574,7 +593,7 @@ class Gen_Moteur
         $this->arrClass[$this->ordre]["verbe"] = $arrClass;
                 
         //met à jour l'élision
-        $this->arrClass[$this->ordre]["elision"] = $arrClass;
+        $this->arrClass[$this->ordre]["elision"] = $arrClass["elision"];
         
         return $arrClass;
 	}

@@ -28,9 +28,9 @@ class Model_DbTable_Negations extends Zend_Db_Table_Abstract
             ;
 		$r = $this->fetchRow($query);        
     	if (!$r) {
-            throw new Exception("Count not find rs $id");
+            throw new Exception("Count not find rs $idDico,$num");
         }
-        return $r;
+        return $r->toArray();
     }
     
 	public function existeNegation($idDico, $num, $lib)
