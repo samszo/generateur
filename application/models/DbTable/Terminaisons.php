@@ -44,7 +44,7 @@ class Model_DbTable_Terminaisons extends Zend_Db_Table_Abstract
     	if (!$r) {
             throw new Exception("Count not find rs $id");
         }
-        return $r;
+        return $r->toArray();
     }
     
     public function existeTerminaison($idConj, $num, $lib)
