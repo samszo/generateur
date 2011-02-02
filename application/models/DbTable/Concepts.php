@@ -83,7 +83,7 @@ class Model_DbTable_Concepts extends Zend_Db_Table_Abstract
         return $id;
     }    
     
-    public function ajouterConcept($idDico, $lib, $type, $existe=false)
+    public function ajouterConcept($idDico, $lib, $type, $existe=true)
     {
     	$id = false;
     	if($existe)

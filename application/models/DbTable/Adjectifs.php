@@ -41,7 +41,7 @@ class Model_DbTable_Adjectifs extends Zend_Db_Table_Abstract
     
     public function ajouterAdjectif($idDico, $eli, $prefix, $ms, $fs, $mp, $fp)
     {
-    	$id = false;//$this->existeAdjectif($idDico, $eli, $prefix, $ms, $fs, $mp, $fp);
+    	$id = $this->existeAdjectif($idDico, $eli, $prefix, $ms, $fs, $mp, $fp);
     	if(!$id){
     		$data = array(
 	            'id_dico' => $idDico,

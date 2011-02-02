@@ -37,7 +37,7 @@ class Model_DbTable_Pronoms extends Zend_Db_Table_Abstract
 	public function existePronom($idDico, $num, $lib, $lib_eli, $type)
     {
 		$select = $this->select();
-		$select->from($this, array('id_syn'))
+		$select->from($this, array('id_pronom'))
 			->where('id_dico = ?', $idDico)
 			->where('num = ?', $num)
 			->where('lib = ?', $lib)
@@ -50,7 +50,7 @@ class Model_DbTable_Pronoms extends Zend_Db_Table_Abstract
     
     public function ajouterPronom($idDico, $num, $lib, $lib_eli, $type)
     {
-    	$id = false;//$this->existePronom($idDico, $num, $lib, $lib_eli, $type);
+    	$id = $this->existePronom($idDico, $num, $lib, $lib_eli, $type);
     	if(!$id){
 	    	$data = array(
 	            'id_dico' => $idDico,

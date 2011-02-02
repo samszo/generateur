@@ -39,7 +39,7 @@ class Model_DbTable_ConceptsSyntagmes extends Zend_Db_Table_Abstract
         
     public function ajouterConceptSyntagme($idCon, $idSyn)
     {
-    	$id = false;//$this->existeConceptSyntagme($idCon, $idSyn);
+    	$id = $this->existeConceptSyntagme($idCon, $idSyn);
     	if(!$id){
 	    	$data = array(
         	'id_concept' => $idCon

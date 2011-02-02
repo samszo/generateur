@@ -45,6 +45,24 @@ class Gen_Dico
 	var $Xtype;
 	var $id;
 	var $nom;
+	var $dbConj;
+	var $dbTrm;
+	var $dbDtm;
+	var $dbCpm;
+	var $dbSyn;
+	var $dbCon;
+	var $dbVer;
+	var $dbAdj;
+	var $dbSub;
+	var $dbGen;
+	var $dbConVer;
+	var $dbConAdj;
+	var $dbConSub;
+	var $dbConSyn;
+	var $dbConGen;
+	var $dbDicos;
+	var $dbPro;
+	var $dbNeg;
 	
 	/**
 	 * Le constructeur initialise le dictionnaire.
@@ -148,7 +166,7 @@ class Gen_Dico
 		
 	}
 
-	public function SaveBdd($idDico, $idDicoConj=-1){
+	public function SaveBdd($idDico, $idDicoConj=-1, $idDicoMerge=-1){
 		
 	try {
 		
@@ -164,136 +182,56 @@ class Gen_Dico
 		//création des objets de base
 		switch ($arrD['type']) {
 			case 'conjugaisons':
-				$dbConj = new Model_DbTable_Conjugaisons();
-				$dbTrm = new Model_DbTable_Terminaisons();
+				$this->dbConj = new Model_DbTable_Conjugaisons();
+				$this->dbTrm = new Model_DbTable_Terminaisons();
 				break;
 			case 'déterminants':
-				$dbDtm = new Model_DbTable_Determinants();
+				$this->bDtm = new Model_DbTable_Determinants();
 				break;
 			case 'compléments':
-				$dbCpm = new Model_DbTable_Complements();
+				$this->dbCpm = new Model_DbTable_Complements();
 				break;
 			case 'syntagmes':
-				$dbSyn = new Model_DbTable_Syntagmes();
+				$this->dbSyn = new Model_DbTable_Syntagmes();
 				break;
 			case 'concepts':
-				$dbCon = new Model_DbTable_Concepts();
-				$dbVer = new Model_DbTable_Verbes();
-				$dbAdj = new Model_DbTable_Adjectifs();
-				$dbSub = new Model_DbTable_Substantifs();
-				$dbSyn = new Model_DbTable_Syntagmes();
-				$dbGen = new Model_DbTable_Generateurs();
-				$dbConVer = new Model_DbTable_ConceptsVerbes();
-				$dbConAdj = new Model_DbTable_ConceptsAdjectifs();
-				$dbConSub = new Model_DbTable_ConceptsSubstantifs();
-				$dbConSyn = new Model_DbTable_ConceptsSyntagmes();
-				$dbConGen = new Model_DbTable_ConceptsGenerateurs();
+				$this->dbCon = new Model_DbTable_Concepts();
+				$this->dbVer = new Model_DbTable_Verbes();
+				$this->dbAdj = new Model_DbTable_Adjectifs();
+				$this->dbSub = new Model_DbTable_Substantifs();
+				$this->dbSyn = new Model_DbTable_Syntagmes();
+				$this->dbGen = new Model_DbTable_Generateurs();
+				$this->dbConVer = new Model_DbTable_ConceptsVerbes();
+				$this->dbConAdj = new Model_DbTable_ConceptsAdjectifs();
+				$this->dbConSub = new Model_DbTable_ConceptsSubstantifs();
+				$this->dbConSyn = new Model_DbTable_ConceptsSyntagmes();
+				$this->dbConGen = new Model_DbTable_ConceptsGenerateurs();
 				//récupère le dico de référence pour les conjugaisons
-				$dbConj = new Model_DbTable_Conjugaisons();
+				$this->dbConj = new Model_DbTable_Conjugaisons();
 				//ajoute le lien entre le dictionnaire général et le dictionnaire de référende
-				$dbDicos = new Model_DbTable_DicosDicos();
-				$dbDicos->ajouterDicoGenDicoRef($idDico,$idDicoConj);
+				$this->dbDicos = new Model_DbTable_DicosDicos();
+				$this->dbDicos->ajouterDicoGenDicoRef($idDico,$idDicoConj);
 				break;
 			case 'pronoms_complement':
-				$dbPro = new Model_DbTable_Pronoms();
+				$this->dbPro = new Model_DbTable_Pronoms();
 				break;
 			case 'pronoms_sujet':
-				$dbPro = new Model_DbTable_Pronoms();
+				$this->dbPro = new Model_DbTable_Pronoms();
 				break;
 			case 'negations':
-				$dbNeg = new Model_DbTable_Negations();
+				$this->dbNeg = new Model_DbTable_Negations();
 				break;
 		}
 
 		foreach ($this->xml->children() as $k => $n) {
-			switch ($k) {
-				case 'conjugaison':
-					$pkV = $dbConj->ajouterConjugaison($this->id,$n['num'],$n['modele']);
-					$i=0;
-					foreach ($n->terminaisons->terminaison as $kTrm => $nTrm) {
-						$dbTrm->ajouterTerminaison($pkV,$i,$nTrm);
-						$i++;
-					}
-					break;
-				case 'determinants':
-					$num = $n['num'];
-					$i=0;
-					foreach ($n->determinant as $kDtm => $nDtm) {
-						$dbDtm->ajouterDeterminant($this->id,$num,$i,$nDtm);
-						$i++;
-					}
-					break;
-				case 'complements':
-					$num = $n['num'];
-					$i=0;
-					foreach ($n->complement as $kCpm => $nCpm) {
-						$dbCpm->ajouterComplement($this->id,$num,$i,$nCpm);
-						$i++;
-					}
-					break;
-				case 'syntagmes':
-					$num = $n['num'];
-					$i=0;
-					foreach ($n->syntagme as $kSyn => $nSyn) {
-						$dbSyn->ajouterSyntagme($this->id,$num,$i,$nSyn);
-						$i++;
-					}
-					break;
-				case 'concept':
-					$idC = $dbCon->ajouterConcept($this->id,$n['lib'],$n['type']);
-					foreach ($n->children() as $kCon => $nCon) {
-						//ajout suivant le type de concept
-				    	switch ($kCon) {
-				    		case 'verbe':
-				    			//récupère l'identifiant de conjugaison
-				    			$idConj = $dbConj->obtenirConjugaisonIdByNumModele($idDicoConj,$nCon["modele"]."");
-				    			$idT = $dbVer->ajouterVerbe($this->id,$idConj,$nCon["eli"],$nCon["pref"]);
-				    			$dbConVer->ajouterConceptVerbe($idC,$idT);
-				    			break;				    		
-				    		case 'adj':
-				    			$idT = $dbAdj->ajouterAdjectif($this->id,$nCon["eli"],$nCon["pref"],$nCon["ms"],$nCon["fs"],$nCon["mp"],$nCon["fp"]);
-				    			$dbConAdj->ajouterConceptAdjectif($idC,$idT);
-				    			break;				    		
-				    		case 'syn':
-				    			$idT = $dbSyn->ajouterSyntagme($this->id,-1,-1,$nCon);
-				    			$dbConSyn->ajouterConceptSyntagme($idC,$idT);
-				    			break;				    		
-				    		case 'sub':
-				    			$idT = $dbSub->ajouterSubstantif($this->id,$nCon["eli"],$nCon["pref"],$nCon["s"],$nCon["p"],$nCon["genre"]);
-				    			$dbConSub->ajouterConceptSubstantif($idC,$idT);
-				    			break;				    		
-				    		case 'gen':
-				    			$idT = $dbGen->ajouterGenerateur($this->id,$nCon[0]);
-				    			$dbConGen->ajouterConceptGenerateur($idC,$idT);
-				    			break;				    		
-				    	}
-					}
-					break;
-				case 'pronom_complement':
-					if($n['lib']){
-						$num = $n['num']."";
-						$lib = $n['lib']."";
-						$lib_eli = $n['lib_eli']."";
-						$dbPro->ajouterPronom($this->id,$num,$lib,$lib_eli,"complement");
-					}
-					break;
-				case 'pronom_sujet':
-					if($n['lib']){
-						$num = $n['num']."";
-						$lib = $n['lib']."";
-						$lib_eli = $n['lib_eli']."";
-						$dbPro->ajouterPronom($this->id,$num,$lib,$lib_eli,"sujet");
-					}
-					break;
-				case 'negation':
-					if($n['lib']){
-						$num = $n['num']."";
-						$lib = $n['lib']."";
-						$dbNeg->ajouterNegation($this->id,$num,$lib);
-					}
-					break;
+			$this->SaveItem($k,$n);
+			if($idDicoMerge!=-1){
+				$this->id = $idDicoMerge;
+				$this->SaveItem($k,$n);
+				$this->id = $idDico;
 			}
 		}
+		
 	}catch (Zend_Exception $e) {
           // Appeler Zend_Loader::loadClass() sur une classe non-existante
           //entrainera la levée d'une exception dans Zend_Loader
@@ -304,9 +242,100 @@ class Gen_Dico
 		
 	}
 	
+	private function SaveItem($k,$n){
+
+		switch ($k) {
+			case 'conjugaison':
+				$pkV = $this->dbConj->ajouterConjugaison($this->id,$n['num'],$n['modele']);
+				$i=0;
+				foreach ($n->terminaisons->terminaison as $kTrm => $nTrm) {
+					$this->dbTrm->ajouterTerminaison($pkV,$i,$nTrm);
+					$i++;
+				}
+				break;
+			case 'determinants':
+				$num = $n['num'];
+				$i=0;
+				foreach ($n->determinant as $kDtm => $nDtm) {
+					$this->dbDtm->ajouterDeterminant($this->id,$num,$i,$nDtm);
+					$i++;
+				}
+				break;
+			case 'complements':
+				$num = $n['num'];
+				$i=0;
+				foreach ($n->complement as $kCpm => $nCpm) {
+					$this->dbCpm->ajouterComplement($this->id,$num,$i,$nCpm);
+					$i++;
+				}
+				break;
+			case 'syntagmes':
+				$num = $n['num'];
+				$i=0;
+				foreach ($n->syntagme as $kSyn => $nSyn) {
+					$this->dbSyn->ajouterSyntagme($this->id,$num,$i,$nSyn);
+					$i++;
+				}
+				break;
+			case 'concept':
+				$idC = $this->dbCon->ajouterConcept($this->id,$n['lib'],$n['type']);
+				foreach ($n->children() as $kCon => $nCon) {
+					//ajout suivant le type de concept
+			    	switch ($kCon) {
+			    		case 'verbe':
+			    			//récupère l'identifiant de conjugaison
+			    			$idConj = $this->dbConj->obtenirConjugaisonIdByNumModele($idDicoConj,$nCon["modele"]."");
+			    			$idT = $this->dbVer->ajouterVerbe($this->id,$idConj,$nCon["eli"],$nCon["pref"]);
+			    			$this->dbConVer->ajouterConceptVerbe($idC,$idT);
+			    			break;				    		
+			    		case 'adj':
+			    			$idT = $this->dbAdj->ajouterAdjectif($this->id,$nCon["eli"],$nCon["pref"],$nCon["ms"],$nCon["fs"],$nCon["mp"],$nCon["fp"]);
+			    			$this->dbConAdj->ajouterConceptAdjectif($idC,$idT);
+			    			break;				    		
+			    		case 'syn':
+			    			$idT = $this->dbSyn->ajouterSyntagme($this->id,-1,-1,$nCon);
+			    			$this->dbConSyn->ajouterConceptSyntagme($idC,$idT);
+			    			break;				    		
+			    		case 'sub':
+			    			$idT = $this->dbSub->ajouterSubstantif($this->id,$nCon["eli"],$nCon["pref"],$nCon["s"],$nCon["p"],$nCon["genre"]);
+			    			$this->dbConSub->ajouterConceptSubstantif($idC,$idT);
+			    			break;				    		
+			    		case 'gen':
+			    			$idT = $this->dbGen->ajouterGenerateur($this->id,$nCon[0]);
+			    			$this->dbConGen->ajouterConceptGenerateur($idC,$idT);
+			    			break;				    		
+			    	}
+				}
+				break;
+			case 'pronom_complement':
+				if($n['lib']){
+					$num = $n['num']."";
+					$lib = $n['lib']."";
+					$lib_eli = $n['lib_eli']."";
+					$this->dbPro->ajouterPronom($this->id,$num,$lib,$lib_eli,"complement");
+				}
+				break;
+			case 'pronom_sujet':
+				if($n['lib']){
+					$num = $n['num']."";
+					$lib = $n['lib']."";
+					$lib_eli = $n['lib_eli']."";
+					$this->dbPro->ajouterPronom($this->id,$num,$lib,$lib_eli,"sujet");
+				}
+				break;
+			case 'negation':
+				if($n['lib']){
+					$num = $n['num']."";
+					$lib = $n['lib']."";
+					$this->dbNeg->ajouterNegation($this->id,$num,$lib);
+				}
+				break;
+		}		
+		
+	}
+	
 	public function TraiteAction($chaine, $action){
 
-		//applique l'action défini dans la description du langage
 		switch ($action['type']) {
 			case 'explode':
 				//pour améliorer le explode des saut de ligne
@@ -425,7 +454,7 @@ class Gen_Dico
 		$arr = explode($c, $chaine);
 		$arrAtrib = explode($c, $action['attributs']);
 		//boucle sur les fragments de chaine optenus
-		for ($i = 0 ; $i < count($arr); $i++) {
+		for ($i = 0 ; $i < count($arrAtrib); $i++) {
 			//calcul les attributs
 			$xAtt = $this->xml->createAttribute($arrAtrib[$i]);
 			$nText = $this->xml->createTextNode($arr[$i]);

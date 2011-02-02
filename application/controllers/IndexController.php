@@ -16,6 +16,7 @@ class IndexController extends Zend_Controller_Action
 	    $this->view->dicos = $dicos->fetchAll();		 
     	
 		//pour le débuggage
+		/*
 		$moteur = new Gen_Moteur();
 		$arrDicos = array(
 			"concepts"=>17
@@ -27,9 +28,10 @@ class IndexController extends Zend_Controller_Action
 			,"negations"=>16);		
 		$moteur->arrDicos = $arrDicos;		
 		$moteur->Generation("[3100000|v_chanter]");
-		
-		// $dico = new Gen_Dico();
-		// $dico->GetMacToXml(14);
+		*/
+		//$dico = new Gen_Dico();
+		//$dico->GetMacToXml(19);
+		//$dico->SaveBdd(18, -1, 13);
 	    
 	    
     }
@@ -403,9 +405,10 @@ class IndexController extends Zend_Controller_Action
 	        if ($calculer == 'Oui') {
 	            $id = $this->getRequest()->getPost('id');
 	            $idDicoConj = $this->getRequest()->getPost('idDicoConj');
+	            $idDicoMerge = $this->getRequest()->getPost('idDicoMerge');
 	            echo "idDico = ".$id." idDicoConj = ".$idDicoConj."<br/>";
 			    $dico = new Gen_Dico();
-				$dico->SaveBdd($id, $idDicoConj);
+				$dico->SaveBdd($id, $idDicoConj,$idDicoMerge);
 	        	$this->_redirect('/index/modifier/id/'.$id.'/type/dico');
 	        }else{
 	        	$this->_redirect('/');

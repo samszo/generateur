@@ -36,7 +36,7 @@ class Model_DbTable_Generateurs extends Zend_Db_Table_Abstract
     
     public function ajouterGenerateur($idDico, $valeur)
     {
-    	$id = false;//$this->existeGenerateur($idDico, $valeur);
+    	$id = $this->existeGenerateur($idDico, $valeur);
     	if(!$id){
 	    	$data = array(
             'id_dico' => $idDico,

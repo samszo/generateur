@@ -47,7 +47,7 @@ class Model_DbTable_Negations extends Zend_Db_Table_Abstract
     
     public function ajouterNegation($idDico, $num, $lib)
     {
-    	$id = false;//$this->existeNegation($idDico, $num, $lib);
+    	$id = $this->existeNegation($idDico, $num, $lib);
     	if(!$id){
 	    	$data = array(
 	            'id_dico' => $idDico,
