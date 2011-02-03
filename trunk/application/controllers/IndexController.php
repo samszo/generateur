@@ -29,9 +29,9 @@ class IndexController extends Zend_Controller_Action
 		$moteur->arrDicos = $arrDicos;		
 		$moteur->Generation("[3100000|v_chanter]");
 		*/
-		//$dico = new Gen_Dico();
+		$dico = new Gen_Dico();
 		//$dico->GetMacToXml(19);
-		//$dico->SaveBdd(18, -1, 13);
+		//$dico->SaveBdd(19, 11);
 	    
 	    
     }
@@ -176,7 +176,7 @@ class IndexController extends Zend_Controller_Action
 				//charge les enfants suivant le type de concept
 				if($parent->type=="a")$tType="Adjectifs";
 				if($parent->type=="v")$tType="Verbes";
-				if($parent->type=="m")$tType="Substantifs";
+				if($parent->type=="m" || $parent->type!="dis" || $parent->type!="carac")$tType="Substantifs";
 				if($parent->type=="s")$tType="Syntagmes";
 				$enfants = $parent->findManyToManyRowset('Model_DbTable_'.$tType,
 	                                                 'Model_DbTable_Concepts'.$tType);

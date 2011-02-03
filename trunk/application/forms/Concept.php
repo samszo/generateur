@@ -16,7 +16,8 @@ class Form_Concept extends Zend_Form
 		$lib->setLabel('Définir un libellé');
         
 		$type = new Zend_Form_Element_Select('type', array(
-		    'multiOptions' => array("v"=>"verbe","a"=>"adjectif","m"=>"substantif","s"=>"syntagme")));
+		    'multiOptions' => array("v"=>"verbe","a"=>"adjectif","m"=>"substantif","s"=>"syntagme"
+				,"dis"=>"distinction","carac"=>"caractère","thl"=>"théorie")));
       	$type->setRequired(true);
 		$type->setLabel("Choisir un type");
 		
