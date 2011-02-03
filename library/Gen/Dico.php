@@ -173,6 +173,7 @@ class Gen_Dico
 		//récupère les infos du dico
 		$dbDico = new Model_DbTable_Dicos();
 		$this->id = $idDico;
+		$this->idConj = $idDicoConj;
 		$arrD = $dbDico->obtenirDico($this->id);		
 		
 		//parcourt le xml
@@ -279,12 +280,15 @@ class Gen_Dico
 				break;
 			case 'concept':
 				$idC = $this->dbCon->ajouterConcept($this->id,$n['lib'],$n['type']);
+				if($n['type']=="thl"){
+					$to = 1;
+				}
 				foreach ($n->children() as $kCon => $nCon) {
 					//ajout suivant le type de concept
 			    	switch ($kCon) {
 			    		case 'verbe':
 			    			//récupère l'identifiant de conjugaison
-			    			$idConj = $this->dbConj->obtenirConjugaisonIdByNumModele($idDicoConj,$nCon["modele"]."");
+			    			$idConj = $this->dbConj->obtenirConjugaisonIdByNumModele($this->idConj,$nCon["modele"]."");
 			    			$idT = $this->dbVer->ajouterVerbe($this->id,$idConj,$nCon["eli"],$nCon["pref"]);
 			    			$this->dbConVer->ajouterConceptVerbe($idC,$idT);
 			    			break;				    		
@@ -557,15 +561,24 @@ class Gen_Dico
 					//création d'un substantif
 					$this->SetVerbe($chaine);		
 					break;
+				default:
+					//vérifie si la	 chaine est un substantif
+					if(substr($chaine,1,1)=="(" && substr($chaine,3,1)==")" && strpos($chaine,"|")){
+						$this->SetSubstantif($chaine);
+					}else{
+						//création d'un générateur de concept
+						$this->SetGen($chaine);
+					}		
+				break;
 			}
 		}else{
-			//création d'un lien vers un concept
+			//création d'un générateur de concept
 			$this->SetGen($chaine);		
 		}
 						
 	}
-
-
+	
+	
 	public function SetVerbe($chaine){
 		
 
@@ -619,7 +632,11 @@ class Gen_Dico
 			$p = $accords[1];
 		}else{
 			$s = "";
-			$p = $accords[0];
+			if($accords[0]==0){
+				$p = "";
+			}else{
+				$p = $accords[0];				
+			}
 		}
 		
 		//création du noeud substantif
@@ -753,14 +770,14 @@ class Gen_Dico
 		
 		//création de l'attribut type
 		$xAtt = $this->xml->createAttribute('type');
-		$type = substr($chaine,0,strpos($chaine, "_"));
-		$nText = $this->xml->createTextNode($type);
+		$arrType = $this->GetTypeConcept($chaine);
+		$nText = $this->xml->createTextNode($arrType["lib"]);
 		$xAtt->appendChild($nText); 				
 		$this->xmlTmp->appendChild($xAtt);
 		
 		//création de l'attribut lib
 		$xAtt = $this->xml->createAttribute('lib');
-		$lib = substr($chaine,strpos($chaine, "_")+1);
+		$lib = substr($chaine,$arrType["fin"]);
 		$nText = $this->xml->createTextNode($lib);
 		$xAtt->appendChild($nText); 				
 		$this->xmlTmp->appendChild($xAtt);
@@ -768,6 +785,31 @@ class Gen_Dico
 		//ajoute le modèle à la racine		
 		$this->xmlRoot->appendChild($this->xmlTmp);
 		
+	}
+	
+	public function GetTypeConcept($chaine){
+		
+		$type="";
+		$fin=0;
+		
+		if(strpos($chaine, "_")){
+			$type = substr($chaine,0,strpos($chaine, "_"));
+			$fin = strpos($chaine, "_")+1;
+		}
+		if(substr($chaine,0,5)=="carac"){
+			$type = "carac";
+			$fin = 5;
+		}
+		if(strpos($chaine, "-")){
+			$type = substr($chaine,0,strpos($chaine, "-"));
+			$fin = strpos($chaine, "-")+1;
+		}
+		if(strpos($chaine, ".")){
+			$type = substr($chaine,0,strpos($chaine, "."));
+			$fin = strpos($chaine, "-")+1;
+		}
+		
+		return array("lib"=>$type, "fin"=>$fin);
 	}
 	
 	public function InitXmlDico(){
