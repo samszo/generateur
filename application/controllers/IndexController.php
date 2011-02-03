@@ -172,7 +172,7 @@ class IndexController extends Zend_Controller_Action
 	        $table = new Model_DbTable_Concepts();
 			$Rowset = $table->find($id);
 			$parent = $Rowset->current();
-			if($parent->type!=""){
+			if($parent->type!="" && $parent->type!="age"){
 				//charge les enfants suivant le type de concept
 				if($parent->type=="a")$tType="Adjectifs";
 				if($parent->type=="v")$tType="Verbes";
