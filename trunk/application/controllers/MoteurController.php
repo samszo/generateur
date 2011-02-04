@@ -14,20 +14,21 @@ class MoteurController extends Zend_Controller_Action
 	    $form->envoyer->setLabel('Tester');
 	    $this->view->form = $form;
 
-	    if ($this->getRequest()->isPost()) {
-	        $formData = $this->getRequest()->getPost();
+	    if ($this->getRequest()->isGet()) {
+	        $formData = $this->getRequest()->getQuery();
 	        if ($form->isValid($formData)) {
 	        	//calcul l'expresion saisie
 				$moteur = new Gen_Moteur();
 				$arrDicos = array(
-					"concepts"=>17
-					,"syntagmes"=>4
-					,"pronoms_complement"=>13
-					,"conjugaisons"=>11
-					,"pronoms"=>14
-					,"déterminants"=>15
-					,"negations"=>16		
-					);		
+					"concepts"=>implode(",", $form->getValue('dicoIdsCpt'))
+					,"syntagmes"=>implode(",", $form->getValue('dicoIdsStg'))
+					,"pronoms_complement"=>implode(",", $form->getValue('dicoIdsPrCp'))
+					,"conjugaisons"=>implode(",", $form->getValue('dicoIdsCjg'))
+					,"pronoms"=>implode(",", $form->getValue('dicoIdsPrSt'))
+					,"déterminants"=>implode(",", $form->getValue('dicoIdsDtm'))
+					,"negations"=>implode(",", $form->getValue('dicoIdsNgt'))		
+					);
+				//print_r($arrDicos);		
 				$moteur->arrDicos = $arrDicos;		
 				$moteur->Generation($form->getValue('valeur'));
 	        		        	
