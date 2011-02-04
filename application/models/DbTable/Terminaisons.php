@@ -42,7 +42,7 @@ class Model_DbTable_Terminaisons extends Zend_Db_Table_Abstract
         	;
 		$r = $this->fetchRow($query);        
     	if (!$r) {
-            throw new Exception("Count not find rs $id");
+            throw new Exception("Count not find rs $idConj");
         }
         return $r->toArray();
     }

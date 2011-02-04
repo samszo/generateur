@@ -11,9 +11,7 @@ class ConjugaisonController extends Zend_Controller_Action
     public function testerAction()
     {
     try{
-    	$dbConj = new Model_DbTable_Conjugaisons();
-    	$RsConjs = $dbConj->obtenirConjugaisonListeModeles(11);
-        $form = new Form_Verbe(array("id"=>-1,"RsConjs"=>$RsConjs));
+        $form = new Form_Verbe(array("id"=>-1));
 	    $form->envoyer->setLabel('Tester');
 	    $this->view->form = $form;
 

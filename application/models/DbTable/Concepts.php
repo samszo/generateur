@@ -43,13 +43,14 @@ class Model_DbTable_Concepts extends Zend_Db_Table_Abstract
     public function obtenirConceptByDicoLibType($idDico,$lib,$type)
     {
         $query = $this->select()
-            ->where( "id_dico IN (?)",$idDico)
+            ->where( "id_dico IN ($idDico)")
         	->where( "lib = ?",$lib)
             ->where( "type = ?",$type)
             ;
+        $sql = $query->__toString();
 		$r = $this->fetchRow($query);        
     	if (!$r) {
-            throw new Exception("Count not find rs $idDico,$lib,$type");
+            throw new Exception("La classe $lib de type $type n'a pas été trouvé dans le(s) dictionnaire(s) $idDico");
         }
         return $r;
     }
@@ -58,17 +59,22 @@ class Model_DbTable_Concepts extends Zend_Db_Table_Abstract
 
 			$cpt = $this->obtenirConceptByDicoLibType($idDico,$arrClass[1],$arrClass[0]);
 			//cherche les enfants suivant le type de concept
+			$tType ="";
 			if($arrClass[0]=="a")$tType="Adjectifs";
 			if($arrClass[0]=="v")$tType="Verbes";
-			if($arrClass[0]=="m")$tType="Substantifs";
+			if($arrClass[0]=="m" || $arrClass[0]=="carac")$tType="Substantifs";
 			if($arrClass[0]=="s")$tType="Syntagmes";
-			$enfants = $cpt->findManyToManyRowset('Model_DbTable_'.$tType,
-                                                 'Model_DbTable_Concepts'.$tType);
+			if($tType!=""){
+				$enfants = $cpt->findManyToManyRowset('Model_DbTable_'.$tType,
+	                                                 'Model_DbTable_Concepts'.$tType);
+				$arrEnf = $enfants->toArray();
+			}else{
+				$arrEnf = array();
+			}
 			//cherche les généreteurs
 			$gens = $cpt->findManyToManyRowset('Model_DbTable_Generateurs',
-	                                                 'Model_DbTable_ConceptsGenerateurs');
-    	
-    		return array("src"=>$cpt->toArray(),"dst"=>array_merge($enfants->toArray(),$gens->toArray()));
+	                                                 'Model_DbTable_ConceptsGenerateurs');    	
+    		return array("src"=>$cpt->toArray(),"dst"=>array_merge($arrEnf,$gens->toArray()));
     }
     
     public function existeConcept($idDico, $lib, $type)

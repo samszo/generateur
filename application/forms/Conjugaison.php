@@ -9,7 +9,7 @@ class Form_Conjugaison extends Zend_Form
 
         $id = new Zend_Form_Element_Hidden('id');
         $id->setValue($options["id"]);
-                
+        
       	$modele = new Zend_Form_Element_Text('modele');
       	$modele->setRequired(true);
 		$modele->setLabel('Définir un modèle');

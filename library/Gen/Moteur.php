@@ -66,7 +66,7 @@ class Gen_Moteur
         		
         		//on boucle sur les class
         		foreach($arrClass["arr"] as $cls){
-        				$this->getClass($cls);
+        			$this->getClass($cls);
         		}
         			        		
         		//on passe à la chaine suivante
@@ -382,21 +382,42 @@ class Gen_Moteur
 					break;
 				default:
 					$cls = $this->getAleaClass($class);
-					$this->arrClass[$this->ordre]["default"][] = $cls;
+					if($cls)
+						$this->arrClass[$this->ordre]["default"][] = $cls;
 				break;
 			}			
 		}
 		
-		//vérifie si la class possède un blocage d'information
-		if(substr($class,0,1)=="#"){
-			$this->getSyntagme($class);	
-		}
-
-		//vérifie si la class possède un blocage d'information
-		if(substr($class,0,1)=="="){
-			$this->getBlocage($class);	
-		}
 		
+		//vérifie si la class est un caractère
+		if(substr($class,0,5)=="carac"){
+			$class = str_replace("carac", "carac_", $class);
+			$cls = $this->getAleaClass($class);
+			$this->arrClass[$this->ordre]["carac"] = $cls;			
+		}else{
+			//vérifie si la class possède un blocage d'information
+			if(substr($class,0,1)=="#"){
+				$this->getSyntagme($class);	
+			}
+	
+			//vérifie si la class possède un blocage d'information
+			if(substr($class,0,1)=="="){
+				$this->getBlocage($class);	
+			}
+			
+			//vérifie si la class est un type spécifique
+			$c = strpos($class,"-");
+			if($c>0){
+				$classSpe = substr($class,0,$c)."_".substr($class,$c+1);
+				$cls = $this->getAleaClass($classSpe);
+				if(is_string($cls)){
+					$this->arrClass[$this->ordre]["texte"] = $cls;			
+				}else{
+					$this->arrClass[$this->ordre][substr($class,0,$c)] = $cls;
+				}
+			}			
+		}
+						
 	}
 	
 	public function getClassVals($txt,$i=0){
@@ -610,10 +631,21 @@ class Gen_Moteur
         
         //Vérifie si le concept est un générateur
         if(isset($cpt["id_gen"])){
-			//récupère la class
-			$arrClass = $this->getClassVals($cpt['valeur']);
-			//récupère le concept
-			$cpt = $this->getAleaClass($arrClass["valeur"]);
+        	//vérivie s'il faut générer la forme
+        	if(substr_count($cpt['valeur'], "[")>1){
+        		//génére l'expression
+				$m = new Gen_Moteur();
+				$m->arrDicos = $this->arrDicos;		
+				//génére la classe
+				$m->Generation($cpt['valeur']);
+				//récupère le rexre
+				$cpt = $m->texte;
+           	}else{
+				//récupère la class
+				$arrClass = $this->getClassVals($cpt['valeur']);
+				//récupère le concept
+				$cpt = $this->getAleaClass($arrClass["valeur"]);
+        	}
 		}
 		
 		return $cpt; 			

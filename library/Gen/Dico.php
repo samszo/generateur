@@ -185,6 +185,9 @@ class Gen_Dico
 			case 'conjugaisons':
 				$this->dbConj = new Model_DbTable_Conjugaisons();
 				$this->dbTrm = new Model_DbTable_Terminaisons();
+				//ajoute le lien entre le dictionnaire général et le dictionnaire de référende
+				$this->dbDicos = new Model_DbTable_DicosDicos();
+				$this->dbDicos->ajouterDicoGenDicoRef($idDico,$idDico);
 				break;
 			case 'déterminants':
 				$this->bDtm = new Model_DbTable_Determinants();
@@ -795,20 +798,20 @@ class Gen_Dico
 		if(strpos($chaine, "_")){
 			$type = substr($chaine,0,strpos($chaine, "_"));
 			$fin = strpos($chaine, "_")+1;
-		}
-		if(substr($chaine,0,5)=="carac"){
-			$type = "carac";
-			$fin = 5;
-		}
-		if(strpos($chaine, "-")){
-			$type = substr($chaine,0,strpos($chaine, "-"));
-			$fin = strpos($chaine, "-")+1;
-		}
-		if(strpos($chaine, ".")){
-			$type = substr($chaine,0,strpos($chaine, "."));
-			$fin = strpos($chaine, "-")+1;
-		}
-		
+		}else{
+			if(substr($chaine,0,5)=="carac"){
+				$type = "carac";
+				$fin = 5;
+			}
+			if(strpos($chaine, "-")){
+				$type = substr($chaine,0,strpos($chaine, "-"));
+				$fin = strpos($chaine, "-")+1;
+			}
+			if(strpos($chaine, ".")){
+				$type = substr($chaine,0,strpos($chaine, "."));
+				$fin = strpos($chaine, "-")+1;
+			}
+		}		
 		return array("lib"=>$type, "fin"=>$fin);
 	}
 	

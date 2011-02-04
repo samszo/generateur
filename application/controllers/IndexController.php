@@ -16,24 +16,25 @@ class IndexController extends Zend_Controller_Action
 	    $this->view->dicos = $dicos->fetchAll();		 
     	
 		//pour le débuggage
-		/*
+		// 
 		$moteur = new Gen_Moteur();
 		$arrDicos = array(
-			"concepts"=>17
+			"concepts"=>"26,27"
 			,"syntagmes"=>4
 			,"pronoms_complement"=>13
-			,"conjugaisons"=>11
+			,"conjugaisons"=>25
 			,"pronoms"=>14
 			,"déterminants"=>15
 			,"negations"=>16);		
 		$moteur->arrDicos = $arrDicos;		
-		$moteur->Generation("[3100000|v_chanter]");
-		*/
-		$dico = new Gen_Dico();
+		//$moteur->Generation("[thl-météo-01]");
+		//
+		//$dico = new Gen_Dico();
 		//$dico->GetMacToXml(19);
-		//$dico->SaveBdd(19, 11);
-	    
-	    
+		//$dico->SaveBdd(21,11);
+		//$dbD = new Model_DbTable_Dicos();
+        //$dbD->supprimerDico(22);		
+
     }
 
     public function modifierAction()
@@ -172,11 +173,11 @@ class IndexController extends Zend_Controller_Action
 	        $table = new Model_DbTable_Concepts();
 			$Rowset = $table->find($id);
 			$parent = $Rowset->current();
-			if($parent->type!="" && $parent->type!="age"){
+			if($parent->type!="" && $parent->type!="age" && $parent->type!="thl"){
 				//charge les enfants suivant le type de concept
 				if($parent->type=="a")$tType="Adjectifs";
 				if($parent->type=="v")$tType="Verbes";
-				if($parent->type=="m" || $parent->type!="dis" || $parent->type!="carac")$tType="Substantifs";
+				if($parent->type=="m" || $parent->type=="dis" || $parent->type=="carac")$tType="Substantifs";
 				if($parent->type=="s")$tType="Syntagmes";
 				$enfants = $parent->findManyToManyRowset('Model_DbTable_'.$tType,
 	                                                 'Model_DbTable_Concepts'.$tType);
@@ -216,11 +217,7 @@ class IndexController extends Zend_Controller_Action
 			$types = array("parent"=>$type);	            	
 			$this->view->title = "Modification du verbe (".$id.")";
 			$this->view->libAjout = "";
-			//récupère les modèles de conjugaison pour ce dictionnaire
-			$dbConj = new Model_DbTable_Conjugaisons();
-			$RsConjs = $dbConj->obtenirConjugaisonListeModeles($parent['id_dico']);
-			//ajout du formulaire pour modifier l'élément parent
-        	$form = new Form_Verbe(array("id"=>$id,"RsConjs"=>$RsConjs));
+        	$form = new Form_Verbe(array("id"=>$id));
 		    $form->envoyer->setLabel('Modifier');
 	        $form->populate($parent->toArray());
 		    $this->view->form = $form;		    
