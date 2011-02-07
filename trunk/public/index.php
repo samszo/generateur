@@ -3,6 +3,7 @@ date_default_timezone_set('Europe/Paris');
 
 define ("WEB_ROOT","http://localhost/generateur");
 define ("ROOT_PATH","c:\wamp\www\generateur");
+define ("WEB_ROOT_AJAX",WEB_ROOT."/public");
 
 
 // Define path to application directory

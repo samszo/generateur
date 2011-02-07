@@ -9,6 +9,7 @@ echo $this->doctype();
     <?php echo $this->headTitle(); ?>
 	<?php echo $this->headLink()->prependStylesheet($this->baseUrl().'/css/site.css'); ?>    
 	<?php echo $this->headScript()->prependFile($this->baseUrl().'/js/jquery-1.4.4.min.js'); ?>    
+	<?php echo $this->headScript()->prependFile($this->baseUrl().'/js/ihm.js'); ?>    
 </head>
 <body>
     <div id="content">
