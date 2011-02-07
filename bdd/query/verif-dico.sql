@@ -1,4 +1,4 @@
-SELECT COUNT(*) nb, id_dico, c.type
+SELECT c.id_dico, d.nom 'nom du dico', COUNT(*) 'nb de concepts', c.type
 FROM gen_concepts c
-WHERE id_dico IN (17,22) 
+INNER JOIN gen_dicos d ON d.id_dico = c.id_dico
 GROUP BY id_dico, type

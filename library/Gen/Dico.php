@@ -635,7 +635,7 @@ class Gen_Dico
 			$p = $accords[1];
 		}else{
 			$s = "";
-			if($accords[0]==0){
+			if($accords[0]==="0"){
 				$p = "";
 			}else{
 				$p = $accords[0];				
