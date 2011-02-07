@@ -8,6 +8,9 @@ class Form_Generateur extends Zend_Form
 
         $id = new Zend_Form_Element_Hidden('id');
         $id->setValue($options["id"]);
+
+        $idDico = new Zend_Form_Element_Hidden('idDico');
+        $idDico->setValue($options["idDico"]);
         
       	$valeur = new Zend_Form_Element_Textarea('valeur');
       	$valeur->setRequired(true);
@@ -19,7 +22,7 @@ class Form_Generateur extends Zend_Form
 		$dbDico = new Model_DbTable_Dicos();			        
         
 		$this->setAttrib('enctype', 'multipart/form-data');
-        $this->addElements(array($id, $valeur, $envoyer));
+        $this->addElements(array($id, $idDico, $valeur, $envoyer));
     }
         
 }

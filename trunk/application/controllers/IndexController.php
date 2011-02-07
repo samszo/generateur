@@ -19,7 +19,7 @@ class IndexController extends Zend_Controller_Action
 		// 
 		$moteur = new Gen_Moteur();
 		$arrDicos = array(
-			"concepts"=>"26,27"
+			"concepts"=>"29,27"
 			,"syntagmes"=>4
 			,"pronoms_complement"=>13
 			,"conjugaisons"=>25
@@ -27,10 +27,10 @@ class IndexController extends Zend_Controller_Action
 			,"déterminants"=>15
 			,"negations"=>16);		
 		$moteur->arrDicos = $arrDicos;		
-		$moteur->Generation("{TRAV_01} <[0|caract1] >[010030000|v_consacrer]< [s_maintenant 1]> [143#] [4|m_enseignement]< [11|m_chant]>");
+		$moteur->Generation("[69|m_pierre] roulées [019000000|v_apporter] [32|m_odeur] [=1|a_confus 1]");
 		//
 		//$dico = new Gen_Dico();
-		//$dico->GetMacToXml(19);
+		//$dico->GetMacToXml(26);
 		//$dico->SaveBdd(21,11);
 		//$dbD = new Model_DbTable_Dicos();
         //$dbD->supprimerDico(22);		
@@ -190,7 +190,7 @@ class IndexController extends Zend_Controller_Action
 			$this->view->title = "Modification du concept (".$id.")";
 			$this->view->libAjout = "Ajouter ".$types["enfant"];
 			//ajout du formulaire pour modifier l'élément parent
-			$form = new Form_Concept(array("id"=>$id));
+			$form = new Form_Concept(array("id"=>$id,"idDico"=>$parent->id_dico));
 		    $form->envoyer->setLabel('Modifier');
 	        $form->populate($parent->toArray());
 		    $this->view->form = $form;		    
@@ -231,7 +231,7 @@ class IndexController extends Zend_Controller_Action
 			$this->view->title = "Modification du generateur (".$id.")";
 			$this->view->libAjout = "";
 			//ajout du formulaire pour modifier l'élément parent
-        	$form = new Form_Generateur(array("id"=>$id));
+        	$form = new Form_Generateur(array("id"=>$id,"idDico"=>$parent->id_dico));
 		    $form->envoyer->setLabel('Modifier');
 	        $form->populate($parent->toArray());
 		    $this->view->form = $form;		    

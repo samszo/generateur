@@ -35,6 +35,7 @@ class MoteurController extends Zend_Controller_Action
 				$this->view->Generation = $moteur->texte;
 				$this->view->NbItem = $moteur->ordre;
 				$this->view->Potentiel = $moteur->potentiel;
+				$this->view->Detail = $moteur->detail;
 	        }
 	    }
 	    

@@ -38,6 +38,7 @@ class Gen_Moteur
 	var $arrDicos;
 	var $ordre;
 	var $potentiel=0;
+	var $detail;
 	
 	/**
 	 * Le constructeur initialise le moteur.
@@ -53,6 +54,7 @@ class Gen_Moteur
 		
 		$this->arrClass = array();
 		$this->ordre = 0;
+		$this->arrClass[$this->ordre]["generation"][] = $texte;
 		
 		//parcourt l'ensemble de la chaine
 		for($i = 0; $i < strlen($texte); $i++)
@@ -62,16 +64,7 @@ class Gen_Moteur
         	//est-ce le début d'une classe
         	if($c == "["){
         		//on récupère la valeur de la classe et la position des caractères dans la chaine
-        		$arrClass = $this->getClassVals($texte, $i);
-        		$this->class = $arrClass["valeur"];        		
-        		
-        		//on boucle sur les class
-        		foreach($arrClass["arr"] as $cls){
-        			$this->getClass($cls);
-        		}
-        			        		
-        		//on passe à la chaine suivante
-	        	$i=$arrClass["fin"];
+        		$i = $this->traiteClass($texte, $i);
         	}else{
         		//on ajoute le caractère
 				$this->arrClass[$this->ordre]["texte"] = $c;
@@ -79,7 +72,10 @@ class Gen_Moteur
         }
                 
         //on calcule le texte
-        if($getTexte)$this->genereTexte();
+        if($getTexte){
+        	$this->genereTexte();
+        	$this->detail = $this->arrayVersHTML($this->arrClass);
+        }
 
 	}
 		
@@ -171,21 +167,24 @@ class Gen_Moteur
 				$numP = $arr["determinant_verbe"][2];
 				//gestion de la place du sujet
 				if($numP>=6 && $numP<=9){
-					//récupération du substantif de référence
-					$ordre = $this->ordre - $arr["determinant_verbe"][7];
-					$sub = $this->arrClass[$ordre]["substantif"];			
+					//récupération des infos du vecteur de référence
+				    if(isset($this->arrClass["vecteur"])){
+				    	$i = $arr["determinant_verbe"][7];
+			    		$pluriel = $this->arrClass["vecteur"][$i]["pluriel"];     	
+			    		$genre = $this->arrClass["vecteur"][$i]["genre"];     	
+					}
 					//récupère la génération du pronom
 					$m = new Gen_Moteur();
 					$m->arrDicos = $this->arrDicos;		
 					//précise le genre
-					$m->arrClass[0]["genre"]=$this->arrClass[$ordre]["genre"];
+					$m->arrClass[0]["genre"]=$genre;
 					//précise le nombre	
-					$m->arrClass[0]["genre"]=$this->arrClass[$ordre]["pluriel"];	
+					$m->arrClass[0]["genre"]=$pluriel;	
 					//génére la classe
 					$m->Generation($arrP["lib"]);
 					//récupère le pronom
 					$arr["prosuj"] = $m->texte;
-					if($this->arrClass[$ordre]["pluriel"])					
+					if($pluriel)					
 						$arr["terminaison"] = 6;
 					else
 						$arr["terminaison"] = 3;
@@ -408,6 +407,8 @@ class Gen_Moteur
 	
 	public function getClass($class){
 
+		$this->arrClass[$this->ordre]["class"][] = $class;
+
 		//vérifie si la class est un déterminant
 		if(is_numeric($class)){
 			$this->getDeterminant($class);
@@ -472,8 +473,11 @@ class Gen_Moteur
 		if(is_string($cls)){
 			$this->arrClass[$this->ordre]["texte"] = $cls;			
 		}elseif(isset($cls->arrClass)){
-			$this->arrClass = $cls->arrClass;
-			$this->ordre = $cls->ordre;
+			//ajoute le class générée
+			foreach($cls->arrClass as $c){
+				$this->ordre ++;				
+				$this->arrClass[$this->ordre] = $c;
+			}
 		}else{
 			$this->getClassType($cls);
 		}		
@@ -499,6 +503,8 @@ class Gen_Moteur
 
 		//on récupère la valeur de la classe
         $class = substr($txt, $deb+1, -(strlen($txt)-$fin));
+		$this->arrClass[$this->ordre]["class"][] = $class;
+        
         
         //on récupère la définition de l'accord 
         $arr = explode("||",$class);
@@ -636,20 +642,27 @@ class Gen_Moteur
 			
 	        $syn = $arrClass["lib"];
 	        if(substr($syn,0,1)== "["){
-	        	$arrClass = $this->getClassVals($syn);
-	        	$this->class = $arrClass["valeur"];        		
-	        	//on boucle sur les class
-	        	foreach($arrClass["arr"] as $cls){
-	        			$this->getClass($cls);
-	        	}
+	        	$this->traiteClass($syn);
 	        }else{
 		        $this->arrClass[$this->ordre]["syntagme"] = $syn;
-	        	
 	        }
 		}else{
 	        $arrClass = $this->getAleaClass($class);
-	        $this->arrClass[$this->ordre]["syntagme"] = $arrClass["lib"];			
+	        if(isset($arrClass["lib"])){
+	        	$this->arrClass[$this->ordre]["syntagme"] = $arrClass["lib"];			
+	        }else{
+	        	$this->traiteClass($arrClass["valeur"]);
+	        }
 		}
+	}
+	
+	public function traiteClass($class, $i=0){
+
+		$arrClass = $this->getClassVals($class,$i);	        	
+		foreach($arrClass["arr"] as $cls){
+			$this->getClass($cls);
+        }	        	
+		return $arrClass["fin"];
 	}
 	
 	public function getNegation($class){
@@ -717,16 +730,11 @@ class Gen_Moteur
 				$m->arrDicos = $this->arrDicos;		
 				//génére la classe
 				$m->Generation($cpt['valeur'],false);
-				//récupère le texte
-				//$cpt = $m->texte;
 				//récupère les class générée
 				$cpt = $m;
 				$this->potentiel += $m->potentiel;
         	}else{
-				//récupère la class
-				$arrClass = $this->getClassVals($cpt['valeur']);
-				//récupère le concept
-				$cpt = $this->getAleaClass($arrClass["valeur"]);
+        		$this->traiteClass($cpt['valeur']);
         	}
 		}
 		
@@ -801,6 +809,44 @@ class Gen_Moteur
 		}
 
 	}	
+
+
+	function arrayVersHTML($tab, $col1 = "Cl&eacute;", $col2 = "Valeur", $bordure = 1)
+	{
+ 		//http://www.phpsources.org/scripts471-PHP.htm
+ 		//modifier pour prendre en compte récursivement les tableaux   
+ 	    /* le chiffre doit être positif */
+	    $bordure = (int) $bordure;
+	    if ($bordure < 1) $bordure = 1;
+	
+	    /* le style CSS 
+	    (rappel : il est préférable d'utiliser une feuiille externe plutôt que des styles internes aux balises) */
+	    $style = "border: {$bordure}px solid black;"; // les accolades permettent de coller la valeur numérique à "px"
+	
+	    /* génération de la première ligne, avec les libellés balisés comme cellules d'entête */
+	    /* explications sur le scope="col" : l'accessibilité, lire l'article http://www.pompage.net/pompe/autableau/ */
+	    $aafficher = "<table style='border-collapse: collapse; $style'>\n<tr>
+	    <th scope='col' style='$style'>$col1</th> 
+	    <th scope='col' style='$style'>$col2</th>\n</tr>\n";
+	    
+	    /* génération de chaque ligne ; col de gauche : la clé, celle de droite : la valeur correspondante
+	    à chaque tour de boucle on ajoute le string généré à la suite du précédent (opérateur .=) */
+	    foreach($tab as $cle => $valeur)
+	    {
+	        $aafficher .= "<tr style='$style'>
+			    <td style='$style'>$cle</td>";
+		    if(is_array($valeur)){
+		    	$valeur = $this->arrayVersHTML($valeur);
+		    }
+		    $aafficher .= "<td style='$style'>$valeur</td>\n</tr>\n";
+	    }
+	    
+	    /* on ferme le tableau HTML (nécessaire pour la validité) */
+	    $aafficher .= "</table>\n";
+	    
+	    return $aafficher;
+	}
+	
 	
 }
 ?>
