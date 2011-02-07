@@ -27,7 +27,7 @@ class IndexController extends Zend_Controller_Action
 			,"déterminants"=>15
 			,"negations"=>16);		
 		$moteur->arrDicos = $arrDicos;		
-		//$moteur->Generation("[thl-météo-01]");
+		$moteur->Generation("{TRAV_01} <[0|caract1] >[010030000|v_consacrer]< [s_maintenant 1]> [143#] [4|m_enseignement]< [11|m_chant]>");
 		//
 		//$dico = new Gen_Dico();
 		//$dico->GetMacToXml(19);

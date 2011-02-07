@@ -9,21 +9,22 @@
 		<?php 
 		echo $this->form ;
 		if($this->types['parent']=="verbe"){
-			echo "<input type=\"button\" onclick=\"$('#resultat').load('".WEB_ROOT."/public/conjugaison/tester', {CacheForm:1
+			echo "<input type=\"button\" onclick=\"$('#resultat').load('".WEB_ROOT_AJAX."/conjugaison/tester', {CacheForm:1
 				,id_conj:".$this->form->getValue('id_conj')."
 				,elision:".$this->form->getValue('elision')."
 				,dicoIdCjg:".$this->form->getValue('dicoIdCjg')."
 				,prefix:'".$this->form->getValue('prefix')."'});\" value=\"tester\" >";
 		}
 		if($this->types['parent']=="generateur"){
-			echo "<input type=\"button\" onclick=\"$('#resultat').load('".WEB_ROOT
-			."/public/moteur/tester?CacheForm=1&dicoIdsDtm[]=15&dicoIdsNgt[]=16&dicoIdsPrSt[]=14&dicoIdsCjg[]=25&dicoIdsPrCp[]=13&dicoIdsStg[]=4&dicoIdsCpt[]=26&dicoIdsCpt[]=27&valeur="
+			echo "<input type=\"button\" onclick=\"GetAjax('".WEB_ROOT_AJAX
+			."/moteur/tester?CacheForm=1&dicoIdsDtm[]=15&dicoIdsNgt[]=16&dicoIdsPrSt[]=14&dicoIdsCjg[]=25&dicoIdsPrCp[]=13&dicoIdsStg[]=4&dicoIdsCpt[]=26&dicoIdsCpt[]=27&valeur="
 			.urlencode($this->form->getValue('valeur'))
-			."&envoyer=Tester');\" value=\"tester\" >";
+			."&envoyer=Tester')\" value=\"tester\" >";
 		}
 		?>
 		</td>
 		<td>
+			<div id="loadImage" ></div>
 			<div id="resultat"></div>
 			<table>
 			    <tr>
