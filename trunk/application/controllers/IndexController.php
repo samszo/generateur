@@ -26,14 +26,14 @@ class IndexController extends Zend_Controller_Action
 			,"pronoms"=>"13,14"
 			,"déterminants"=>15
 			,"negations"=>16);		
-		$moteur->arrDicos = $arrDicos;		
-		//$moteur->Generation("[31#] [010000000|v_découvrir] [38#] [12|m_vie 1] [28#] [113#][013000000|v_savoir] [43#]");
+		//$moteur->arrDicos = $arrDicos;		
+		//$moteur->Generation("[150#] [28#] [116#] [0|dis-sujet][v_avoir] [=x|a_vécu] [910000000|v_être] [113#][32|m_simulacre] [40#] [28#] [113#][056000020|v_avoir] [=x|a_pu] [090000000|v_vivre]");
 		//
-		$dico = new Gen_Dico();
+		//$dico = new Gen_Dico();
 		//$dico->GetMacToXml(26);
 		//$dico->SaveBdd(29,25);
 		//$dbD = new Model_DbTable_Dicos();
-        //$dbD->supprimerDico(22);		
+        //$dbD->supprimerDico(21);		
 
     }
 

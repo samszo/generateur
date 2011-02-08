@@ -157,55 +157,85 @@ class Gen_Moteur
 	
 	public function generePronom($arr){
 		
-		if($arr["determinant_verbe"][6]!=0){
-			//pronom indéfinie
-			$arr["prosuj"] = $this->getPronom($arr["determinant_verbe"][6],"sujet_indefini");
+		//vérifie la présence d'un d&terminant
+		if(!isset($arr["determinant_verbe"])){
+			//3eme personne sans pronom
+			$arr["prosuj"] = "";
 			$arr["terminaison"] = 3;
 		}else{
-			if($arr["determinant_verbe"][2]!=0){
-				//pronom définie
-				$numP = $arr["determinant_verbe"][2];
-				//gestion de la place du sujet
-				if($numP>=6 && $numP<=9){
-					//récupération des infos du vecteur de référence
-				    if(isset($this->arrClass["vecteur"])){
-				    	$i = $arr["determinant_verbe"][7];
-			    		$pluriel = $this->arrClass["vecteur"][$i]["pluriel"];     	
-			    		$genre = $this->arrClass["vecteur"][$i]["genre"];     	
-					}
-					if($pluriel)					
-						$arr["terminaison"] = 6;
-					else
-						$arr["terminaison"] = 3;
-					$arr["prosuj"] = $this->getPronom($arr["terminaison"],"sujet");
-				}else{
-					$arr["prosuj"] = $this->getPronom($numP,"sujet");
-					$arr["terminaison"] = $numP;
-				}
+			if($arr["determinant_verbe"][6]!=0){
+				//pronom indéfinie
+				$arr["prosuj"] = $this->getPronom($arr["determinant_verbe"][6],"sujet_indefini");
+				$arr["terminaison"] = 3;
 			}else{
-				//vérifie s'il y a d'autres déterminant
-				if(isset($this->arrClass["vecteur"])){
+				//pronom sujet			
+				if($arr["determinant_verbe"][2]==0){
+					//pas de pronom
 					$arr["prosuj"] = "";
-				    $i = $arr["determinant_verbe"][7];
-					if($this->arrClass["vecteur"][$i]["pluriel"]){     	
-						$arr["terminaison"] = 6;	
-					}else{
-						$arr["terminaison"] = 3;	
-					}
+					$arr["terminaison"] = 3;				
 				}else{
-					//pronom par défault
-					$arr["prosuj"] = $this->getPronom(3,"sujet");
-					$arr["terminaison"] = 3;
+					//pronom définie
+					$numP = $arr["determinant_verbe"][2];
+					$pr = "";
+					//définition des terminaisons et du pluriel
+					if($numP==6){
+						//il/elle singulier
+						$pr = "[a_il]";
+						$pluriel = false;
+						$arr["terminaison"] = 3;				
+					}	
+					if($numP==7){
+						//il/elle pluriel
+						$pr = "[a_il]";
+						$pluriel = true;
+						$arr["terminaison"] = 6;				
+					}	
+					if($numP==8){
+						//pas de pronom singulier
+						$pr = "[a_zéro]";
+						$pluriel = false;
+						$arr["terminaison"] = 3;				
+					}	
+					if($numP==9){
+						//pas de pronom pluriel
+						$pr = "[a_zéro]";
+						$pluriel = true;
+						$arr["terminaison"] = 6;				
+					}
+					if($numP==1 || $numP==2){
+						$pluriel = false;
+						$arr["terminaison"] = $numP;				
+					}
+					if($numP==4 || $numP==5){
+						$pluriel = true;
+						$arr["terminaison"] = $numP;				
+					}
+					
+					if($numP>=6){	
+						//calcul le vecteur
+						//nombre d’informations sur le vecteur - valeur indiquée + 1
+						$numSub = count($this->arrClass["vecteur"])-$arr["determinant_verbe"][7]+1;
+						//récupère le genre
+						$genre = $this->arrClass["vecteur"][$numSub]["genre"];     	
+						//génère le pronom
+						$m = new Gen_Moteur();
+						$m->arrDicos = $this->arrDicos;
+						$m->Generation($pr,false);
+						$m->arrClass[1]["genre"]=$genre;
+						$m->arrClass[1]["pluriel"]=$pluriel;						
+						$this->potentiel += $m->potentiel;						
+						$arr["prosuj"] = $m->genereTexte();
+					}else{
+						$arr["prosuj"] = $this->getPronom($numP,"sujet");
+					}
 				}
 			}
 			//pronom complément
 			if($arr["determinant_verbe"][3]!=0 && $arr["determinant_verbe"][4]!=0){
 				$numPC = $arr["determinant_verbe"][3].$arr["determinant_verbe"][4];
 				$arr["prodem"] = $this->getPronom($numPC,"complément");
-			}
-			
-		}
-				
+			}			
+		}		
 		return $arr;
 	}
 	
@@ -255,29 +285,28 @@ class Gen_Moteur
 
 	public function genereTerminaison($arr){
 		
-		$temps= $arr["determinant_verbe"][1];
-		
-		if($arr["determinant_verbe"][1]==1){
-			$temps= 0;
-		}
-		if($arr["determinant_verbe"][1]==7){
-			$temps= 0;
-		}
-		
-		$num = ($temps*6)+$arr["terminaison"]-1; 		
-		if($arr["determinant_verbe"][1]==8){
-			$num= 36;
-		}
-		if($arr["determinant_verbe"][1]==9){
-			$num= 37;
-		}
-		
-		//calcul le numéro de la conjugaison
-		//if($arr["terminaison"]==7)
-			
 		//par défaut la terminaison est 3eme personne du présent
-		if($num==-1)$num = 2;
+		$num = 2;
 		
+		if(isset($arr["determinant_verbe"])){
+			$temps= $arr["determinant_verbe"][1];
+			
+			if($arr["determinant_verbe"][1]==1){
+				$temps= 0;
+			}
+			if($arr["determinant_verbe"][1]==7){
+				$temps= 0;
+			}
+			
+			$num = ($temps*6)+$arr["terminaison"]-1; 		
+			if($arr["determinant_verbe"][1]==8){
+				$num= 36;
+			}
+			if($arr["determinant_verbe"][1]==9){
+				$num= 37;
+			}
+		}	
+					
 		$txt = $this->getTerminaison($arr["verbe"]["id_conj"],$num);
 
 		return $txt;
@@ -335,46 +364,49 @@ class Gen_Moteur
 			$arrEli = array("a", "e", "é", "ê", "i","y");
 			$arr["elision"] = in_array(substr($centre,0,1), $arrEli);
 		}
-
-		//génère la négation
-		if($arr["determinant_verbe"][0]!=0){
-			$arr["finneg"] = $this->getNegation($arr["determinant_verbe"][0]);
-			if($arr["elision"]==0){
-				$arr["debneg"] = "ne ";	
-			}else{
-				$arr["debneg"] = "n'";
-			}
-		}
 		
-		//construction de la forme verbale
-		$verbe = "";
-		//gextion de l'infinitif
-		if($arr["determinant_verbe"][1]==9){
-			$verbe = $centre;
-			if($arr["prodem"]!=""){
-				if($eli==0){
-					$verbe = $arr["prodem"]["lib"].$verbe; 
+		$verbe="";
+		if(isset($arr["determinant_verbe"])){
+			//génère la négation
+			if($arr["determinant_verbe"][0]!=0){
+				$arr["finneg"] = $this->getNegation($arr["determinant_verbe"][0]);
+				if($arr["elision"]==0){
+					$arr["debneg"] = "ne ";	
 				}else{
-					$verbe = $arr["prodem"]["lib_eli"].$verbe; 
+					$arr["debneg"] = "n'";
 				}
-				$eli=0;
-			}	
-			$verbe = $arr["finneg"].$verbe; 
-			if($arr["debneg"]!=""){
-				$verbe = $arr["debneg"].$verbe; 
-			}	
-		}		
-		//gestion de l'ordre inverse
-		if($arr["determinant_verbe"][6]==1){
-			$verbe = $centre."-";
-			$c = substr($centre,strlen($centre)-1);
-			if(($c == "e" || $c == "a") && $arr["terminaison"]==3){
-				$verbe .= "t-"; 
 			}
-			if($c == "e" && $arr["terminaison"]==1){
-				$verbe = substr($centre,-1)."é-"; 
+			
+			//construction de la forme verbale
+			$verbe = "";
+			//gextion de l'infinitif
+			if($arr["determinant_verbe"][1]==9){
+				$verbe = $centre;
+				if($arr["prodem"]!=""){
+					if($eli==0){
+						$verbe = $arr["prodem"]["lib"].$verbe; 
+					}else{
+						$verbe = $arr["prodem"]["lib_eli"].$verbe; 
+					}
+					$eli=0;
+				}	
+				$verbe = $arr["finneg"].$verbe; 
+				if($arr["debneg"]!=""){
+					$verbe = $arr["debneg"].$verbe; 
+				}	
+			}		
+			//gestion de l'ordre inverse
+			if($arr["determinant_verbe"][6]==1){
+				$verbe = $centre."-";
+				$c = substr($centre,strlen($centre)-1);
+				if(($c == "e" || $c == "a") && $arr["terminaison"]==3){
+					$verbe .= "t-"; 
+				}
+				if($c == "e" && $arr["terminaison"]==1){
+					$verbe = substr($centre,-1)."é-"; 
+				}
+				$verbe = $arr["debneg"]." ".$arr["prodem"]." ".$verbe." ".$arr["prosuj"]["lib"].$arr["prodem"]["lib"];
 			}
-			$verbe = $arr["debneg"]." ".$arr["prodem"]." ".$verbe." ".$arr["prosuj"]["lib"].$arr["prodem"]["lib"];
 		}
 		//gestion de l'ordre normal
 		if($verbe==""){
@@ -471,9 +503,13 @@ class Gen_Moteur
 			$this->arrClass[$this->ordre]["texte"] = $cls;			
 		}elseif(isset($cls->arrClass)){
 			//ajoute le class générée
-			foreach($cls->arrClass as $c){
-				$this->ordre ++;				
-				$this->arrClass[$this->ordre] = $c;
+			foreach($cls->arrClass as $k=>$c){
+				if($k=="vecteur"){
+					$this->arrClass["vecteur"][] = $c;
+				}else{
+					$this->ordre ++;				
+					$this->arrClass[$this->ordre] = $c;
+				}
 			}
 		}else{
 			$this->getClassType($cls);
@@ -543,12 +579,18 @@ class Gen_Moteur
         //récupère le numéro du blocage
         $num=substr($class,1);
 		
-        //récupère l'ordre
-        $ordre=count($this->arrClass["vecteur"])-$num;
+        if($num="x"){
+        	//on applique le masculin singulier
+	        $this->arrClass[$this->ordre]["pluriel"] = false; 
+	        $this->arrClass[$this->ordre]["genre"] = 1;         	
+        }else{
+	        //récupère l'ordre
+	        $ordre=count($this->arrClass["vecteur"])-$num;        
+	        //Récupère les informations de genre et de nombre
+	        $this->arrClass[$this->ordre]["pluriel"] = $this->arrClass["vecteur"][$ordre]["pluriel"]; 
+	        $this->arrClass[$this->ordre]["genre"] = $this->arrClass["vecteur"][$ordre]["genre"];         	
+        }
         
-        //Récupère les information de genre et de nombre
-        $this->arrClass[$this->ordre]["pluriel"] = $this->arrClass["vecteur"][$ordre]["pluriel"]; 
-        $this->arrClass[$this->ordre]["genre"] = $this->arrClass["vecteur"][$ordre]["genre"]; 
         
 	}
 	
@@ -720,7 +762,7 @@ class Gen_Moteur
         
         //Vérifie si le concept est un générateur
         if(isset($cpt["id_gen"])){
-        	//vérivie s'il faut générer la forme
+        	//vérifie s'il faut générer la forme
         	if(substr_count($cpt['valeur'], "[")>1){
         		//génére l'expression
 				$m = new Gen_Moteur();
