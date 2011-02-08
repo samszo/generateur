@@ -17,3 +17,7 @@ http://www.samszo.com/generateur/docs/concept_id_46987_idParent_27.png
 http://www.samszo.com/generateur/docs/id_46987_idParent_27.png
 
 == Créer une issue en cas de problème ==
+http://www.samszo.com/generateur/docs/generateur_issues_list.png
+
+== Créer une issue en cas de problème ==
+http://www.samszo.com/generateur/docs/generateur_issues_entry.png
