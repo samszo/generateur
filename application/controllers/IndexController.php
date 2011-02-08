@@ -23,15 +23,15 @@ class IndexController extends Zend_Controller_Action
 			,"syntagmes"=>4
 			,"pronoms_complement"=>13
 			,"conjugaisons"=>25
-			,"pronoms"=>14
+			,"pronoms"=>"13,14"
 			,"déterminants"=>15
 			,"negations"=>16);		
 		$moteur->arrDicos = $arrDicos;		
-		$moteur->Generation("[69|m_pierre] roulées [019000000|v_apporter] [32|m_odeur] [=1|a_confus 1]");
+		//$moteur->Generation("[31#] [010000000|v_découvrir] [38#] [12|m_vie 1] [28#] [113#][013000000|v_savoir] [43#]");
 		//
-		//$dico = new Gen_Dico();
+		$dico = new Gen_Dico();
 		//$dico->GetMacToXml(26);
-		//$dico->SaveBdd(21,11);
+		//$dico->SaveBdd(29,25);
 		//$dbD = new Model_DbTable_Dicos();
         //$dbD->supprimerDico(22);		
 

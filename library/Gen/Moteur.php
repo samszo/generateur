@@ -173,40 +173,37 @@ class Gen_Moteur
 			    		$pluriel = $this->arrClass["vecteur"][$i]["pluriel"];     	
 			    		$genre = $this->arrClass["vecteur"][$i]["genre"];     	
 					}
-					//récupère la génération du pronom
-					$m = new Gen_Moteur();
-					$m->arrDicos = $this->arrDicos;		
-					//précise le genre
-					$m->arrClass[0]["genre"]=$genre;
-					//précise le nombre	
-					$m->arrClass[0]["genre"]=$pluriel;	
-					//génére la classe
-					$m->Generation($arrP["lib"]);
-					//récupère le pronom
-					$arr["prosuj"] = $m->texte;
 					if($pluriel)					
 						$arr["terminaison"] = 6;
 					else
 						$arr["terminaison"] = 3;
+					$arr["prosuj"] = $this->getPronom($arr["terminaison"],"sujet");
 				}else{
 					$arr["prosuj"] = $this->getPronom($numP,"sujet");
 					$arr["terminaison"] = $numP;
 				}
-				//pronom complément
-				if($arr["determinant_verbe"][3]!=0 && $arr["determinant_verbe"][4]!=0){
-					$numPC = $arr["determinant_verbe"][3].$arr["determinant_verbe"][4];
-					$arr["prodem"] = $this->getPronom($numPC,"complément");
-				}
 			}else{
-				//vérifie si la class précédente est définie
-				if($this->arrClass[$this->ordre-1]){
-					//if()
+				//vérifie s'il y a d'autres déterminant
+				if(isset($this->arrClass["vecteur"])){
+					$arr["prosuj"] = "";
+				    $i = $arr["determinant_verbe"][7];
+					if($this->arrClass["vecteur"][$i]["pluriel"]){     	
+						$arr["terminaison"] = 6;	
+					}else{
+						$arr["terminaison"] = 3;	
+					}
 				}else{
 					//pronom par défault
 					$arr["prosuj"] = $this->getPronom(3,"sujet");
 					$arr["terminaison"] = 3;
 				}
 			}
+			//pronom complément
+			if($arr["determinant_verbe"][3]!=0 && $arr["determinant_verbe"][4]!=0){
+				$numPC = $arr["determinant_verbe"][3].$arr["determinant_verbe"][4];
+				$arr["prodem"] = $this->getPronom($numPC,"complément");
+			}
+			
 		}
 				
 		return $arr;
@@ -336,7 +333,7 @@ class Gen_Moteur
 		$eli = $arr["verbe"]["elision"];
 		if($eli==0){
 			$arrEli = array("a", "e", "é", "ê", "i","y");
-			$eli = in_array(substr($centre,0,1), $arrEli);
+			$arr["elision"] = in_array(substr($centre,0,1), $arrEli);
 		}
 
 		//génère la négation
