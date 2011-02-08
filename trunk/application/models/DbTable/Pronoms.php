@@ -23,7 +23,7 @@ class Model_DbTable_Pronoms extends Zend_Db_Table_Abstract
    public function obtenirPronomByDicoNumType($idDico,$num,$type)
     {
         $query = $this->select()
-            ->where( "id_dico IN (?)",$idDico)
+            ->where( "id_dico IN (".$idDico.")")
         	->where( "num = ?",$num)
         	->where( "type = ?",$type)
         	;

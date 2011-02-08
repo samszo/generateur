@@ -24,7 +24,7 @@ class MoteurController extends Zend_Controller_Action
 					,"syntagmes"=>implode(",", $form->getValue('dicoIdsStg'))
 					,"pronoms_complement"=>implode(",", $form->getValue('dicoIdsPrCp'))
 					,"conjugaisons"=>implode(",", $form->getValue('dicoIdsCjg'))
-					,"pronoms"=>implode(",", $form->getValue('dicoIdsPrSt'))
+					,"pronoms"=>implode(",", $form->getValue('dicoIdsPrSt')).",".implode(",", $form->getValue('dicoIdsPrCp'))
 					,"déterminants"=>implode(",", $form->getValue('dicoIdsDtm'))
 					,"negations"=>implode(",", $form->getValue('dicoIdsNgt'))		
 					);

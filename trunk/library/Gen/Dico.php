@@ -282,7 +282,7 @@ class Gen_Dico
 				}
 				break;
 			case 'concept':
-				$idC = $this->dbCon->ajouterConcept($this->id,$n['lib'],$n['type']);
+				$idC = $this->dbCon->ajouterConcept($this->id,$n['lib']."",$n['type']."");
 				if($n['type']=="thl"){
 					$to = 1;
 				}
