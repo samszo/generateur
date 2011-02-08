@@ -2,9 +2,11 @@
 
 = Suiver les étapes suivantes =
 
-  # Choisissez un des dictionnaires disponibles :
+  * Choisissez un des dictionnaires disponibles :
 http://www.samszo.com/generateur/public/index.php/index/modifier/type/dico/id/27
-http://www.samszo.com/generateur/public/index.php/index/modifier/type/dico/id/28
-  # Choisissez une expression à générer
 
-  # Tester l'expression
+http://www.samszo.com/generateur/public/index.php/index/modifier/type/dico/id/28
+
+  * Choisissez une expression à générer
+
+  * Tester l'expression
