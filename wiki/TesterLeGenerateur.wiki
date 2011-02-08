@@ -8,5 +8,6 @@ http://www.samszo.com/generateur/public/index.php/index/modifier/type/dico/id/27
 http://www.samszo.com/generateur/public/index.php/index/modifier/type/dico/id/28
 
   * Choisissez une expression à générer
+http://www.samszo.com/generateur/docs/modifier_type_dico_id_27.png
 
   * Tester l'expression
