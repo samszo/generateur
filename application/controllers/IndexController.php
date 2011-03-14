@@ -27,7 +27,7 @@ class IndexController extends Zend_Controller_Action
 			,"déterminants"=>15
 			,"negations"=>16);		
 		//$moteur->arrDicos = $arrDicos;		
-		//$moteur->Generation("[150#] [28#] [116#] [0|dis-sujet][v_avoir] [=x|a_vécu] [910000000|v_être] [113#][32|m_simulacre] [40#] [28#] [113#][056000020|v_avoir] [=x|a_pu] [090000000|v_vivre]");
+		//$moteur->Generation("[0|m_visage] [=1|caract9]< [4|m_mâchoire] [=1|a_carré]>");
 		//
 		//$dico = new Gen_Dico();
 		//$dico->GetMacToXml(26);
