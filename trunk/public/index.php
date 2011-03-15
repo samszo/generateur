@@ -28,10 +28,15 @@ $application = new Zend_Application(
     APPLICATION_PATH . '/configs/application.ini'
 );
 
+// Désactivez le plugin ErrorHandler :
+//$front = Zend_Controller_Front::getInstance();
+//$front->throwExceptions(true);
+// Désactivez le plugin ErrorHandler :
+//$front->setParam('noErrorHandler', true);        
+
 try {
 	$application->bootstrap()->run();
 }catch (Zend_Exception $e) {
 	echo "Récupère exception: " . get_class($e) . "\n";
     echo "Message: " . $e->getMessage() . "\n";
 }
-            

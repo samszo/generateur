@@ -34,11 +34,14 @@ class Gen_Moteur
 	var $xmlDesc;
 	var $texte;
 	var $class;
+	var $arrSegment;
 	var $arrClass;
 	var $arrDicos;
 	var $ordre;
+	var $segment;
 	var $potentiel=0;
 	var $detail;
+	var $typeChoix = "tout";
 	
 	/**
 	 * Le constructeur initialise le moteur.
@@ -54,6 +57,7 @@ class Gen_Moteur
 		
 		$this->arrClass = array();
 		$this->ordre = 0;
+		$this->segment = 0;
 		$this->arrClass[$this->ordre]["generation"][] = $texte;
 		
 		//parcourt l'ensemble de la chaine
@@ -61,10 +65,23 @@ class Gen_Moteur
         {
         	$this->ordre ++;
         	$c = $texte[$i];
-        	//est-ce le début d'une classe
         	if($c == "["){
+        		//c'est le début d'une classe
         		//on récupère la valeur de la classe et la position des caractères dans la chaine
         		$i = $this->traiteClass($texte, $i);
+        	}elseif($c == "="){
+        		//c'est le début d'une notification de format
+        		$i = $this->traiteFormat($texte, $i);
+        	}elseif($c == "F"){
+        		if($texte[$i+1]=="F"){
+	        		//c'est la fin du segment
+			        $this->arrSegment[$this->segment]["ordreFin"]= $this->ordre;
+					$this->segment ++;
+	        		$i++;
+	        	}else{
+	        		//on ajoute le caractère
+					$this->arrClass[$this->ordre]["texte"] = $c;
+	        	}
         	}else{
         		//on ajoute le caractère
 				$this->arrClass[$this->ordre]["texte"] = $c;
@@ -74,7 +91,6 @@ class Gen_Moteur
         //on calcule le texte
         if($getTexte){
         	$this->genereTexte();
-        	$this->detail = $this->arrayVersHTML($this->arrClass);
         }
 
 	}
@@ -83,8 +99,22 @@ class Gen_Moteur
 
 		$this->texte = "";
 		$txtCondi = true;
-		$this->ordre = 0;
-		foreach($this->arrClass as $arr){
+		
+		//vérifie la présence de segments
+		if(count($this->arrSegment)>0){
+			//choix aleatoire d'un segment
+			$a = rand(0, count($this->arrSegment)-1); 			
+			$ordreDeb = $this->arrSegment[$a]["ordreDeb"];
+			$ordreFin = $this->arrSegment[$a]["ordreFin"];
+		}else{
+			$ordreDeb = 0;
+			$ordreFin = count($this->arrClass)-1;
+		}
+		
+		for ($i = $ordreDeb; $i < $ordreFin; $i++) {
+			$this->ordre = $i;
+			$texte = "";
+			$arr = $this->arrClass[$i];
 			if(isset($arr["texte"])){
 				//vérifie le texte conditionnel
 				if($arr["texte"]=="<"){
@@ -96,13 +126,11 @@ class Gen_Moteur
 			        }
 				}elseif($arr["texte"]==">"){
 			        $txtCondi = true;
-				}else{
-					if($txtCondi){
-						if($arr["texte"]=="%"){
-							$this->texte .= "<br/>";	
-						}else{
-							$this->texte .= $arr["texte"];
-						}
+				}elseif($txtCondi){
+					if($arr["texte"]=="%"){
+						$texte .= "<br/>";	
+					}else{
+						$texte .= $arr["texte"];
 					}
 				}
 			}else{
@@ -131,14 +159,22 @@ class Gen_Moteur
 					}					
 					
 					if(isset($arr["syntagme"])){					
-						$this->texte .= $arr["syntagme"];
+						$texte .= $arr["syntagme"];
 					}					
 										
-					$this->texte .= $det.$sub." ".$adjs.$verbe;
+					$texte .= $det.$sub." ".$adjs.$verbe;
 				}					
+				$this->arrClass[$i]["texte"] = $texte;
+				$this->texte .= $texte;
 			}
-			$this->ordre ++;
 		}
+		//mise en forme du texte
+		$LT = strlen($this->texte);
+		//mise en forme poésie
+		
+		//création du tableau de génération
+		$this->detail = $this->arrayVersHTML($this->arrClass);
+		
 		
 	}
 	
@@ -465,12 +501,9 @@ class Gen_Moteur
 					if($cls)
 						$this->arrClass[$this->ordre]["default"][] = $cls;
 				break;
-			}			
-		}
-		
-		
-		//vérifie si la class est un caractère
-		if(substr($class,0,5)=="carac"){
+			}
+		}elseif(substr($class,0,5)=="carac"){
+			//la class est un caractère
 			$classSpe = str_replace("carac", "carac_", $class);
 			$this->getClassSpe($classSpe);
 		}else{
@@ -579,10 +612,12 @@ class Gen_Moteur
         //récupère le numéro du blocage
         $num=substr($class,1);
 		
-        if($num="x"){
+        if($num=="x" || !isset($this->arrClass["vecteur"])){
         	//on applique le masculin singulier
 	        $this->arrClass[$this->ordre]["pluriel"] = false; 
-	        $this->arrClass[$this->ordre]["genre"] = 1;         	
+	        $this->arrClass[$this->ordre]["genre"] = 1;
+			$this->arrClass["vecteur"][0]["pluriel"] = false; 
+	        $this->arrClass["vecteur"][0]["genre"] = 1;       	                 	
         }else{
 	        //récupère l'ordre
 	        $ordre=count($this->arrClass["vecteur"])-$num;        
@@ -654,20 +689,24 @@ class Gen_Moteur
         //récupération du substantif
         if(!$arrClass) $arrClass = $this->getAleaClass($class);
 
-        //ajoute le substantif
-        $this->arrClass[$this->ordre]["substantif"] = $arrClass;
-
-        //met à jour le genre et l'élision
-        $this->arrClass[$this->ordre]["genre"] = $arrClass["genre"];
-        $this->arrClass[$this->ordre]["elision"] = $arrClass["elision"];
-        
-        //vérifie si un déterminant est présent
-        if(!$this->arrClass[$this->ordre]["pluriel"])$this->arrClass[$this->ordre]["pluriel"]=false;
-        
-        //ajoute le vecteur
-        $this->arrClass["vecteur"][] = array("pluriel"=>$this->arrClass[$this->ordre]["pluriel"]
-        	,"genre"=>$this->arrClass[$this->ordre]["genre"]);
-        
+        if($arrClass){
+	        //ajoute le substantif
+	        $this->arrClass[$this->ordre]["substantif"] = $arrClass;
+	
+	        //met à jour le genre et l'élision
+        	if(count($arrClass["elision"])<1){
+	        	$to = 1;
+	        }
+	        $this->arrClass[$this->ordre]["genre"] = $arrClass["genre"];
+	        $this->arrClass[$this->ordre]["elision"] = $arrClass["elision"];
+	        
+	        //vérifie si un déterminant est présent
+	        if(!$this->arrClass[$this->ordre]["pluriel"])$this->arrClass[$this->ordre]["pluriel"]=false;
+	        
+	        //ajoute le vecteur
+	        $this->arrClass["vecteur"][] = array("pluriel"=>$this->arrClass[$this->ordre]["pluriel"]
+	        	,"genre"=>$this->arrClass[$this->ordre]["genre"]);
+        }        
         return $arrClass;
 	}
 
@@ -704,6 +743,42 @@ class Gen_Moteur
 		return $arrClass["fin"];
 	}
 	
+	public function traiteFormat($class, $i=0){
+
+		$deb = $i+1;
+		$fin = strpos($class,"$",$deb);
+
+		//on récupère les valeurs de format
+        $txt = substr($class, $deb, -(strlen($class)-$fin));
+
+        //enregistre le numéro du segment
+        $this->arrSegment[$this->segment]["num"] = $txt[0].$txt[1];
+        //enregistre l'indice de répétition
+        $this->arrSegment[$this->segment]["repetition"] = $txt[8];
+        //enregistre l'ordre de départ
+        $this->arrSegment[$this->segment]["ordreDeb"]= $this->ordre;
+        
+        //vérifie si le texte est en prose ou en poésie
+        $forme = $txt[9].$txt[10];
+        if($forme=="00"){
+			$this->arrClass[$this->ordre]["format"]["page"] = "prose";        	
+        }
+        if($forme=="01"){
+			$this->arrClass[$this->ordre]["format"]["page"] = "poésie en vers-régulier";        	
+        }
+        if($forme=="02"){
+			$this->arrClass[$this->ordre]["format"]["page"] = "poésie en vers-défini";        	
+        }
+        if($forme=="XX"){
+			$this->arrClass[$this->ordre]["format"]["page"] = "poésie en vers-libre";        	
+        }
+        if($forme=="03"){
+			$this->arrClass[$this->ordre]["format"]["page"] = "poésie en vers définis centrés";        	
+        }
+        
+        return $fin;
+	}
+	
 	public function getNegation($class){
 
         //récupère la définition de la class
@@ -738,12 +813,17 @@ class Gen_Moteur
         //récupération du verbe
         if(!$arrClass) $arrClass = $this->getAleaClass($class);
         
-		//ajoute le verbe
-        $this->arrClass[$this->ordre]["verbe"] = $arrClass;
-                
-        //met à jour l'élision
-        $this->arrClass[$this->ordre]["elision"] = $arrClass["elision"];
-        
+		if($arrClass){
+	        //ajoute le verbe
+	        $this->arrClass[$this->ordre]["verbe"] = $arrClass;
+	                
+	        //met à jour l'élision
+	        if(count($arrClass["elision"])<1){
+	        	$to = 1;
+	        }
+	        $this->arrClass[$this->ordre]["elision"] = $arrClass["elision"];
+		}
+		        
         return $arrClass;
 	}
 	
@@ -752,14 +832,31 @@ class Gen_Moteur
         //cherche la définition de la class
         $arrCpt = $this->getClassDef($class);
         
+        //cas des classes théoriques et des erreurs
+        if(count($arrCpt["dst"])<1){
+        	return false;
+        }
+        
         //enregistre le potentiel
         $this->potentiel += count($arrCpt["dst"]);
         
-        //choisi un concept aléatoirement
-        $a = rand(0, count($arrCpt["dst"])-1);
-        
-        $cpt = $arrCpt["dst"][$a];
-        
+        if($this->typeChoix=="tout"){
+        	$cpt ="";
+        	foreach($arrCpt["dst"] as $dst){
+        		$cpt = $this->getClassGen($dst);	
+        	}
+        }else{
+	        //choisi un concept aléatoirement
+	        $a = rand(0, count($arrCpt["dst"])-1);        
+	        $cpt = $this->getClassGen($arrCpt["dst"][$a]);
+        }
+                	
+		return $cpt; 			
+		
+	}
+
+	public function getClassGen($cpt){
+		
         //Vérifie si le concept est un générateur
         if(isset($cpt["id_gen"])){
         	//vérifie s'il faut générer la forme
@@ -774,6 +871,7 @@ class Gen_Moteur
 				$this->potentiel += $m->potentiel;
         	}else{
         		$this->traiteClass($cpt['valeur']);
+        		$cpt = false;
         	}
 		}
 		
@@ -786,14 +884,19 @@ class Gen_Moteur
         //récupère la définition de la class
 		$arrClass=explode("_", $class);
         $table = new Model_DbTable_Concepts();
-        $arrCpt = $table->obtenirConceptDescription($this->arrDicos['concepts'],$arrClass);
-		
+
+        try{
+    	    $arrCpt = $table->obtenirConceptDescription($this->arrDicos['concepts'],$arrClass);
+    	}catch (Zend_Exception $e) {
+    		$this->arrClass[$this->ordre]["ERREUR"] = get_class($e)."\n".$e->getMessage();
+    		$arrCpt = false;
+		}		
         return $arrCpt;
 	}
 
 	
 	
-	public function TraiteAction($chaine, $action){
+	public function traiteAction($chaine, $action){
 
 		//applique l'action défini dans la description du langage
 		switch ($action['type']) {
@@ -816,20 +919,20 @@ class Gen_Moteur
 							switch ($act['type']) {
 								case "VerifFin":
 									if($i==(count($arr)-1)){
-										$this->TraiteAction($frag, $act->action);					
+										$this->traiteAction($frag, $act->action);					
 									}else{
-										$this->TraiteAction($frag, $act->NoVerifAction);					
+										$this->traiteAction($frag, $act->NoVerifAction);					
 									}
 									break;								
 								case "VerifDeb":
 									if($i==0){
-										$this->TraiteAction($frag, $act->action);					
+										$this->traiteAction($frag, $act->action);					
 									}else{
-										$this->TraiteAction($frag, $act->NoVerifAction);					
+										$this->traiteAction($frag, $act->NoVerifAction);					
 									}
 									break;								
 								default:
-									$this->TraiteAction($frag, $act);								
+									$this->traiteAction($frag, $act);								
 									break;
 							}							
 						}
@@ -840,9 +943,9 @@ class Gen_Moteur
 				$c = substr($chaine, $action['deb'],$action['length']);
 				if($c==$action['val']){
 					//on exécute l'action suivante
-					$this->TraiteAction($chaine, $action->action);					
+					$this->traiteAction($chaine, $action->action);					
 				}else{
-					$this->TraiteAction($chaine, $action->NoVerifAction);					
+					$this->traiteAction($chaine, $action->NoVerifAction);					
 				}
 				break;
 		}
