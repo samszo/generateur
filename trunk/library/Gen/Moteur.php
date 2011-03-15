@@ -41,7 +41,8 @@ class Gen_Moteur
 	var $segment;
 	var $potentiel=0;
 	var $detail;
-	var $typeChoix = "tout";
+	var $typeChoix = "alea";
+	var $cache;
 	
 	/**
 	 * Le constructeur initialise le moteur.
@@ -53,7 +54,22 @@ class Gen_Moteur
 			
 	}
 
-	public function Generation($texte, $getTexte=true){
+	public function Generation($texte, $getTexte=true, $cache=false){
+		
+		if(!$cache){
+			$frontendOptions = array(
+		    	'lifetime' => 31536000, // temps de vie du cache de 1 an
+		        'automatic_serialization' => true
+			);
+		   	$backendOptions = array(
+				// Répertoire où stocker les fichiers de cache
+		        'cache_dir' => ROOT_PATH.'/tmp/'
+			);
+			// créer un objet Zend_Cache_Core
+			$this->cache = Zend_Cache::factory('Core','File',$frontendOptions,$backendOptions);		
+		}else{
+			$this->cache = $cache;		
+		}
 		
 		$this->arrClass = array();
 		$this->ordre = 0;
@@ -108,7 +124,7 @@ class Gen_Moteur
 			$ordreFin = $this->arrSegment[$a]["ordreFin"];
 		}else{
 			$ordreDeb = 0;
-			$ordreFin = count($this->arrClass)-1;
+			$ordreFin = count($this->arrClass);
 		}
 		
 		for ($i = $ordreDeb; $i < $ordreFin; $i++) {
@@ -164,9 +180,9 @@ class Gen_Moteur
 										
 					$texte .= $det.$sub." ".$adjs.$verbe;
 				}					
-				$this->arrClass[$i]["texte"] = $texte;
-				$this->texte .= $texte;
 			}
+			$this->arrClass[$i]["texte"] = $texte;
+			$this->texte .= $texte;
 		}
 		//mise en forme du texte
 		$LT = strlen($this->texte);
@@ -256,7 +272,7 @@ class Gen_Moteur
 						//génère le pronom
 						$m = new Gen_Moteur();
 						$m->arrDicos = $this->arrDicos;
-						$m->Generation($pr,false);
+						$m->Generation($pr,false,$this->cache);
 						$m->arrClass[1]["genre"]=$genre;
 						$m->arrClass[1]["pluriel"]=$pluriel;						
 						$this->potentiel += $m->potentiel;						
@@ -496,11 +512,6 @@ class Gen_Moteur
 				case "s":
 					$this->getSyntagme($class,false);
 					break;
-				default:
-					$cls = $this->getAleaClass($class);
-					if($cls)
-						$this->arrClass[$this->ordre]["default"][] = $cls;
-				break;
 			}
 		}elseif(substr($class,0,5)=="carac"){
 			//la class est un caractère
@@ -534,20 +545,28 @@ class Gen_Moteur
 		$cls = $this->getAleaClass($class);
 		if(is_string($cls)){
 			$this->arrClass[$this->ordre]["texte"] = $cls;			
-		}elseif(isset($cls->arrClass)){
-			//ajoute le class générée
-			foreach($cls->arrClass as $k=>$c){
-				if($k=="vecteur"){
-					$this->arrClass["vecteur"][] = $c;
-				}else{
-					$this->ordre ++;				
-					$this->arrClass[$this->ordre] = $c;
-				}
-			}
+		}elseif(get_class($cls)=="Gen_Moteur"){
+			$this->getClassMoteur($cls);
 		}else{
 			$this->getClassType($cls);
 		}		
 	}
+
+	public function getClassMoteur($moteur){
+
+		//ajoute le class générée
+		foreach($moteur->arrClass as $k=>$c){
+			if($k==="vecteur"){
+				foreach($c as $v){
+					$this->arrClass["vecteur"][] = $v;
+				}
+			}else{
+				$this->ordre ++;				
+				$this->arrClass[$this->ordre] = $c;
+			}
+		}
+	}
+	
 	
 	public function getClassType($cls){
 
@@ -564,11 +583,20 @@ class Gen_Moteur
 	
 	public function getClassVals($txt,$i=0){
 
+		if(!$txt){
+	        return array("deb"=>$i,"fin"=>$i,"valeur"=>$txt,"arr"=>$arr);
+		}
+		
 		$deb = strpos($txt,"[",$i);
 		$fin = strpos($txt,"]",$deb+1);
-
-		//on récupère la valeur de la classe
-        $class = substr($txt, $deb+1, -(strlen($txt)-$fin));
+		
+		//dan sle cas de ado par exemple = pas de crochet
+		if($deb===false){
+	        $class = $txt;
+		}else{
+			//on récupère la valeur de la classe
+	        $class = substr($txt, $deb+1, -(strlen($txt)-$fin));
+		}
 		$this->arrClass[$this->ordre]["class"][] = $class;
         
         
@@ -600,7 +628,6 @@ class Gen_Moteur
 	        //récupère la définition des adjectifs
 	        foreach($arrAdj as $a){
 		        $this->arrClass[$this->ordre]["adjectifs"][] = $this->getAleaClass($a);
-	        	
 	        }        	
         }else{
 	        $this->arrClass[$this->ordre]["adjectifs"][] = $this->getAleaClass($arr[0]);        	
@@ -616,12 +643,16 @@ class Gen_Moteur
         	//on applique le masculin singulier
 	        $this->arrClass[$this->ordre]["pluriel"] = false; 
 	        $this->arrClass[$this->ordre]["genre"] = 1;
-			$this->arrClass["vecteur"][0]["pluriel"] = false; 
-	        $this->arrClass["vecteur"][0]["genre"] = 1;       	                 	
+			$this->arrClass["vecteur"][] = array("pluriel"=>$this->arrClass[$this->ordre]["pluriel"]
+	        	,"genre"=>$this->arrClass[$this->ordre]["genre"]);       	                 	
         }else{
 	        //récupère l'ordre
 	        $ordre=count($this->arrClass["vecteur"])-$num;        
 	        //Récupère les informations de genre et de nombre
+        	if(!isset($this->arrClass["vecteur"][$ordre]["pluriel"])){
+        		$toto = 1;
+        	}
+	        
 	        $this->arrClass[$this->ordre]["pluriel"] = $this->arrClass["vecteur"][$ordre]["pluriel"]; 
 	        $this->arrClass[$this->ordre]["genre"] = $this->arrClass["vecteur"][$ordre]["genre"];         	
         }
@@ -658,8 +689,12 @@ class Gen_Moteur
         }       			
         //vérifie s'il faut chercher le déterminant
         if($class!=99 && $class!=0){
-	        $tDtr = new Model_DbTable_Determinants();
-        	$arrClass = $tDtr->obtenirDeterminantByDicoNumNombre($this->arrDicos["déterminants"],$class,$pluriel);        				
+        	$c = md5("getDeterminant_".$this->arrDicos["déterminants"]."_".$class."_".$pluriel);
+			if(!$arrClass = $this->cache->load($c)) {
+		        $tDtr = new Model_DbTable_Determinants();
+	        	$arrClass = $tDtr->obtenirDeterminantByDicoNumNombre($this->arrDicos["déterminants"],$class,$pluriel);        				
+			    $this->cache->save($arrClass, $c);
+			}
         }
         
         if($class==0){
@@ -694,14 +729,11 @@ class Gen_Moteur
 	        $this->arrClass[$this->ordre]["substantif"] = $arrClass;
 	
 	        //met à jour le genre et l'élision
-        	if(count($arrClass["elision"])<1){
-	        	$to = 1;
-	        }
 	        $this->arrClass[$this->ordre]["genre"] = $arrClass["genre"];
 	        $this->arrClass[$this->ordre]["elision"] = $arrClass["elision"];
 	        
 	        //vérifie si un déterminant est présent
-	        if(!$this->arrClass[$this->ordre]["pluriel"])$this->arrClass[$this->ordre]["pluriel"]=false;
+	        if(!isset($this->arrClass[$this->ordre]["pluriel"]))$this->arrClass[$this->ordre]["pluriel"]=false;
 	        
 	        //ajoute le vecteur
 	        $this->arrClass["vecteur"][] = array("pluriel"=>$this->arrClass[$this->ordre]["pluriel"]
@@ -714,10 +746,15 @@ class Gen_Moteur
 		
 		//vérifie si le syntagme direct #
 		if($direct){
-	        //récupère la définition de la class
-	        $table = new Model_DbTable_Syntagmes();
-	        $arrClass = $table->obtenirSyntagmeByDicoNum($this->arrDicos['syntagmes'],$class);
-			
+
+	        $c = md5("getSyntagme_".$this->arrDicos['syntagmes']."_".$class);
+			if(!$arrClass = $this->cache->load($c)) {
+	        	//récupère la définition de la class
+	        	$table = new Model_DbTable_Syntagmes();
+	        	$arrClass = $table->obtenirSyntagmeByDicoNum($this->arrDicos['syntagmes'],$class);
+				$this->cache->save($arrClass,$c);
+			}
+	        	        
 	        $syn = $arrClass["lib"];
 	        if(substr($syn,0,1)== "["){
 	        	$this->traiteClass($syn);
@@ -781,18 +818,27 @@ class Gen_Moteur
 	
 	public function getNegation($class){
 
-        //récupère la définition de la class
-        $table = new Model_DbTable_Negations();
-        $arrClass = $table->obtenirNegationByDicoNum($this->arrDicos['negations'],$class);
-		
+        $c = md5("getNegation_".$this->arrDicos['negations']."_".$class);
+		if(!$arrClass = $this->cache->load($c)) {
+        	//récupère la définition de la class
+        	$table = new Model_DbTable_Negations();
+        	$arrClass = $table->obtenirNegationByDicoNum($this->arrDicos['negations'],$class);
+			$this->cache->save($arrClass,$c);
+		}
+        
         return $arrClass["lib"];
 	}
 	
 	public function getPronom($class, $type){
 
-        //récupère la définition de la class
-        $table = new Model_DbTable_Pronoms();
-        $arrClass = $table->obtenirPronomByDicoNumType($this->arrDicos['pronoms'],$class,$type);
+
+        $c = md5("getPronom_".$this->arrDicos["pronoms"]."_".$class."_".$type);
+		if(!$arrClass = $this->cache->load($c)) {
+			//récupère la définition de la class
+       		$table = new Model_DbTable_Pronoms();
+        	$arrClass = $table->obtenirPronomByDicoNumType($this->arrDicos['pronoms'],$class,$type);
+			$this->cache->save($arrClass,$c);
+		}
 
 		return $arrClass;										
 
@@ -800,10 +846,19 @@ class Gen_Moteur
 
 	public function getTerminaison($idConj, $num){
 
-        //récupère la définition de la class
-        $table = new Model_DbTable_Terminaisons();
-        $arrClass = $table->obtenirConjugaisonByConjNum($idConj, $num);
 
+        $c = md5("getTerminaison_".$idConj."_".$num);
+		if(!$arrClass = $this->cache->load($c)) {
+			//récupère la définition de la class
+        	$table = new Model_DbTable_Terminaisons();
+        	$arrClass = $table->obtenirConjugaisonByConjNum($idConj, $num);
+			$this->cache->save($arrClass,$c);
+		}
+		
+		if(get_class($arrClass)=="Exception"){
+	        $this->arrClass[$this->ordre]["ERREUR"] = $arrClass->getMessage()."<br/><pre>".$arrClass->getTraceAsString()."</pre>";
+			return "";
+		}
 		return $arrClass["lib"];
 												
 	}
@@ -843,7 +898,7 @@ class Gen_Moteur
         if($this->typeChoix=="tout"){
         	$cpt ="";
         	foreach($arrCpt["dst"] as $dst){
-        		$cpt = $this->getClassGen($dst);	
+        		$this->getClassGen($dst);	
         	}
         }else{
 	        //choisi un concept aléatoirement
@@ -859,20 +914,15 @@ class Gen_Moteur
 		
         //Vérifie si le concept est un générateur
         if(isset($cpt["id_gen"])){
-        	//vérifie s'il faut générer la forme
-        	if(substr_count($cpt['valeur'], "[")>1){
-        		//génére l'expression
-				$m = new Gen_Moteur();
-				$m->arrDicos = $this->arrDicos;		
-				//génére la classe
-				$m->Generation($cpt['valeur'],false);
-				//récupère les class générée
-				$cpt = $m;
-				$this->potentiel += $m->potentiel;
-        	}else{
-        		$this->traiteClass($cpt['valeur']);
-        		$cpt = false;
-        	}
+        	//générer l'expression
+			$m = new Gen_Moteur();
+			$m->arrDicos = $this->arrDicos;		
+			//génére la classe
+			$m->Generation($cpt['valeur'],false,$this->cache);
+			//récupère les class générée
+			$this->getClassMoteur($m);
+			$this->potentiel += $m->potentiel;
+			$cpt = false;
 		}
 		
 		return $cpt; 			
@@ -881,14 +931,18 @@ class Gen_Moteur
 	
 	public function getClassDef($class){
 
-        //récupère la définition de la class
-		$arrClass=explode("_", $class);
-        $table = new Model_DbTable_Concepts();
 
-        try{
-    	    $arrCpt = $table->obtenirConceptDescription($this->arrDicos['concepts'],$arrClass);
-    	}catch (Zend_Exception $e) {
-    		$this->arrClass[$this->ordre]["ERREUR"] = get_class($e)."\n".$e->getMessage();
+        $c = md5("getClassDef_".$this->arrDicos['concepts']."_".$class);
+		if(!$arrCpt = $this->cache->load($c)) {
+			//récupère la définition de la class
+			$arrClass=explode("_", $class);
+	        $table = new Model_DbTable_Concepts();	
+	   	    $arrCpt = $table->obtenirConceptDescription($this->arrDicos['concepts'],$arrClass);
+			$this->cache->save($arrCpt,$c);
+		}
+		
+		if(get_class($arrCpt)=="Exception"){
+    		$this->arrClass[$this->ordre]["ERREUR"] = $arrCpt->getMessage()."<br/><pre>".$arrCpt->getTraceAsString()."</pre>";
     		$arrCpt = false;
 		}		
         return $arrCpt;
@@ -963,9 +1017,11 @@ class Gen_Moteur
 	
 	    /* le style CSS 
 	    (rappel : il est préférable d'utiliser une feuiille externe plutôt que des styles internes aux balises) */
-	    $style = "border: {$bordure}px solid black;"; // les accolades permettent de coller la valeur numérique à "px"
-	
-	    /* génération de la première ligne, avec les libellés balisés comme cellules d'entête */
+	    $style = "border: {$bordure}px solid black;font-style: bold;color:black;"; // les accolades permettent de coller la valeur numérique à "px"
+		$styleErr = "border: {$bordure}px solid black;font-style: bold;color:red;";
+		$styleTxt = "border: {$bordure}px solid black;font-style: bold;color:green;";
+		
+		/* génération de la première ligne, avec les libellés balisés comme cellules d'entête */
 	    /* explications sur le scope="col" : l'accessibilité, lire l'article http://www.pompage.net/pompe/autableau/ */
 	    $aafficher = "<table style='border-collapse: collapse; $style'>\n<tr>
 	    <th scope='col' style='$style'>$col1</th> 
@@ -980,7 +1036,13 @@ class Gen_Moteur
 		    if(is_array($valeur)){
 		    	$valeur = $this->arrayVersHTML($valeur);
 		    }
-		    $aafficher .= "<td style='$style'>$valeur</td>\n</tr>\n";
+		    if($cle==="ERREUR"){
+			    $aafficher .= "<td style='".$styleErr."'>$valeur</td>\n</tr>\n";
+		    }elseif($cle==="texte"){
+			    $aafficher .= "<td style='$styleTxt'>$valeur</td>\n</tr>\n";
+		    }else{
+			    $aafficher .= "<td style='$style'>$valeur</td>\n</tr>\n";
+		    }
 	    }
 	    
 	    /* on ferme le tableau HTML (nécessaire pour la validité) */

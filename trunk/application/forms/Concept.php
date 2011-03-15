@@ -20,7 +20,7 @@ class Form_Concept extends Zend_Form
 	        
 			$type = new Zend_Form_Element_Select('type', array(
 			    'multiOptions' => array("v"=>"verbe","a"=>"adjectif","m"=>"substantif","s"=>"syntagme"
-					,"dis"=>"distinction","carac"=>"caractère","thl"=>"théorie")));
+					,"dis"=>"distinction","carac"=>"caractère","thl"=>"théorie","univers"=>"univers")));
 	      	$type->setRequired(true);
 			$type->setLabel("Choisir un type");
 			

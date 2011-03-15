@@ -1,5 +1,6 @@
 <?php
 date_default_timezone_set('Europe/Paris');
+ini_set("memory_limit",'1600M');
 
 define ("WEB_ROOT","http://localhost/generateur");
 define ("ROOT_PATH","c:\wamp\www\generateur");
