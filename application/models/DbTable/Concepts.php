@@ -50,7 +50,7 @@ class Model_DbTable_Concepts extends Zend_Db_Table_Abstract
         $sql = $query->__toString();
 		$r = $this->fetchRow($query);        
     	if (!$r) {
-            $r = new Exception("La classe $lib de type $type n'a pas été trouvé dans le(s) dictionnaire(s) $idDico");
+            $r = new Exception("La classe - $lib - de type - $type - n'a pas été trouvé dans le(s) dictionnaire(s) - $idDico -");
         }
         return $r;
     }
@@ -58,12 +58,18 @@ class Model_DbTable_Concepts extends Zend_Db_Table_Abstract
     public function obtenirConceptDescription($idDico, $arrClass){
 
 			$cpt = $this->obtenirConceptByDicoLibType($idDico,$arrClass[1],$arrClass[0]);
+			//vérifie l'exeption
+			if(get_class($cpt)=="Exception"){
+				return $cpt;
+			}
+			
 			//cherche les enfants suivant le type de concept
 			$tType ="";
 			if($arrClass[0]=="a")$tType="Adjectifs";
 			if($arrClass[0]=="v")$tType="Verbes";
 			if($arrClass[0]=="m" || $arrClass[0]=="carac")$tType="Substantifs";
 			if($arrClass[0]=="s")$tType="Syntagmes";
+			if($arrClass[0]=="age" || $arrClass[0]=="univers")$tType="Generateurs";
 			if($tType!=""){
 				$enfants = $cpt->findManyToManyRowset('Model_DbTable_'.$tType,
 	                                                 'Model_DbTable_Concepts'.$tType);

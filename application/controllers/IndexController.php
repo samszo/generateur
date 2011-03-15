@@ -19,7 +19,7 @@ class IndexController extends Zend_Controller_Action
 		// 
 		$moteur = new Gen_Moteur();
 		$arrDicos = array(
-			"concepts"=>"29,28"
+			"concepts"=>"29,27"
 			,"syntagmes"=>4
 			,"pronoms_complement"=>13
 			,"conjugaisons"=>25
@@ -28,12 +28,10 @@ class IndexController extends Zend_Controller_Action
 			,"negations"=>16);
 		$moteur->arrDicos = $arrDicos;	
 		//$moteur->typeChoix = "alea";	
-		$moteur->Generation("[a_kjhqkjh]");
-		/*
-		$moteur->Generation("=01000000000$[thl-chanson-01]%[thl-chanson-01]%[thl-chanson-01]%[thl-chanson-01]%%[caract10]%[carac10]%%[thl-chanson-01]%[thl-chanson-01]%[thl-chanson-01]%[thl-chanson-01]%[thl-chanson-01]%%[carac10]%[caract10]%%[thl-chanson-01]%[thl-chanson-01]%[thl-chanson-01]%[thl-chanson-01]%%[carac10]%[caract10]FF
-=02000000000$[thl-paysage-01]%[thl-paysage-01]%[thl-paysage-01]%[thl-paysage-01]%%[caract10]%[carac10]%%[thl-météo-01]%[thl-météo-01]%[thl-météo-01]%[thl-paysage-01]%[thl-paysage-01]%%[carac10]%[caract10]%%[thl-paysage-01]%[thl-paysage-01]%[thl-paysage-01]%[thl-paysage-01]%%[carac10]%[caract10]FF
-=03000000000$[thl-psycho-01]%[thl-psycho-01]%[thl-psycho-01]%[thl-psycho-01]%%[caract10]%[carac10]%%[thl-météo-01]%[thl-météo-01]%[thl-météo-01]%[thl-psycho-01]%[thl-psycho-01]%%[carac10]%[caract10]%%[thl-psycho-01]%[thl-psycho-01]%[thl-psycho-01]%[thl-psycho-01]%%[carac10]%[caract10]FF");
-		*/
+		//$moteur->Generation("[age-ado]");
+
+		$moteur->Generation("=01000000000$[0|caract1] [0|caract2]%%[thl-présente-01]. [thl-présente-01]. [thl-psycho-04]. [thl-naissance-01].%%[thl-enfance-01]. [dis-Gchoix].%%[thl-adolescence-01].%%[dis-Gchoix]. [thl-maturité-01]. [dis-neutre]. [dis-Gchoix]. [thl-maturité-01]. [thl-maturité-01]. [thl-maturité-01]. [dis-neutre]. [dis-Gchoix]. [thl-maturité-01]. [dis-neutre]. [thl-maturité-01]. [thl-amours-01]. [thl-amours-01]. [thl-maturité-01]. [dis-neutre]. [thl-critique-01].%%[thl-mort-01]. [thl-conclusion-01]. [thl-conclusion-01].FF");
+		//
 		//$dico = new Gen_Dico();
 		//$dico->GetMacToXml(26);
 		//$dico->SaveBdd(29,25);
@@ -178,7 +176,7 @@ class IndexController extends Zend_Controller_Action
 	        $table = new Model_DbTable_Concepts();
 			$Rowset = $table->find($id);
 			$parent = $Rowset->current();
-			if($parent->type!="" && $parent->type!="age" && $parent->type!="thl"){
+			if(!is_numeric($parent->type) && $parent->type!="" && $parent->type!="age" && $parent->type!="thl" && $parent->type!="univers"){
 				//charge les enfants suivant le type de concept
 				if($parent->type=="a")$tType="Adjectifs";
 				if($parent->type=="v")$tType="Verbes";
