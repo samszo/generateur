@@ -50,7 +50,7 @@ class Model_DbTable_Concepts extends Zend_Db_Table_Abstract
         $sql = $query->__toString();
 		$r = $this->fetchRow($query);        
     	if (!$r) {
-            throw new Exception("La classe $lib de type $type n'a pas été trouvé dans le(s) dictionnaire(s) $idDico");
+            $r = new Exception("La classe $lib de type $type n'a pas été trouvé dans le(s) dictionnaire(s) $idDico");
         }
         return $r;
     }

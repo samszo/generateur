@@ -19,16 +19,21 @@ class IndexController extends Zend_Controller_Action
 		// 
 		$moteur = new Gen_Moteur();
 		$arrDicos = array(
-			"concepts"=>"29,27"
+			"concepts"=>"29,28"
 			,"syntagmes"=>4
 			,"pronoms_complement"=>13
 			,"conjugaisons"=>25
 			,"pronoms"=>"13,14"
 			,"déterminants"=>15
-			,"negations"=>16);		
-		//$moteur->arrDicos = $arrDicos;		
-		//$moteur->Generation("[0|m_visage] [=1|caract9]< [4|m_mâchoire] [=1|a_carré]>");
-		//
+			,"negations"=>16);
+		$moteur->arrDicos = $arrDicos;	
+		//$moteur->typeChoix = "alea";	
+		$moteur->Generation("[a_kjhqkjh]");
+		/*
+		$moteur->Generation("=01000000000$[thl-chanson-01]%[thl-chanson-01]%[thl-chanson-01]%[thl-chanson-01]%%[caract10]%[carac10]%%[thl-chanson-01]%[thl-chanson-01]%[thl-chanson-01]%[thl-chanson-01]%[thl-chanson-01]%%[carac10]%[caract10]%%[thl-chanson-01]%[thl-chanson-01]%[thl-chanson-01]%[thl-chanson-01]%%[carac10]%[caract10]FF
+=02000000000$[thl-paysage-01]%[thl-paysage-01]%[thl-paysage-01]%[thl-paysage-01]%%[caract10]%[carac10]%%[thl-météo-01]%[thl-météo-01]%[thl-météo-01]%[thl-paysage-01]%[thl-paysage-01]%%[carac10]%[caract10]%%[thl-paysage-01]%[thl-paysage-01]%[thl-paysage-01]%[thl-paysage-01]%%[carac10]%[caract10]FF
+=03000000000$[thl-psycho-01]%[thl-psycho-01]%[thl-psycho-01]%[thl-psycho-01]%%[caract10]%[carac10]%%[thl-météo-01]%[thl-météo-01]%[thl-météo-01]%[thl-psycho-01]%[thl-psycho-01]%%[carac10]%[caract10]%%[thl-psycho-01]%[thl-psycho-01]%[thl-psycho-01]%[thl-psycho-01]%%[carac10]%[caract10]FF");
+		*/
 		//$dico = new Gen_Dico();
 		//$dico->GetMacToXml(26);
 		//$dico->SaveBdd(29,25);
