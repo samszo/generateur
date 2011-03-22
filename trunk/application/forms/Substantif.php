@@ -22,7 +22,7 @@ class Form_Substantif extends Zend_Form
 		$s->setLabel('Définir le singulier');
 
 		$p = new Zend_Form_Element_Text('p');
-      	$p->setRequired(true);
+      	$p->setRequired(false);
 		$p->setLabel('Définir le pluriel');
 		
       	$g = new Zend_Form_Element_Select('genre', array(
