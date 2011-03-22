@@ -43,27 +43,28 @@ class Gen_Moteur
 	var $detail;
 	var $typeChoix = "alea";
 	var $cache;
+	var $forceCalcul;
 	
 	/**
 	 * Le constructeur initialise le moteur.
 	 * 	 */
-	public function __construct($urlDesc="") {
+	public function __construct($urlDesc="", $forceCalcul = false) {
 
 		if($urlDesc=="")$urlDesc=APPLICATION_PATH.'/configs/LangageDescripteur.xml';
 		$this->xmlDesc = simplexml_load_file($urlDesc);	
-			
+		$this->forceCalcul = $forceCalcul;	
 	}
 
 	public function Generation($texte, $getTexte=true, $cache=false){
 		
 		if(!$cache){
 			$frontendOptions = array(
-		    	'lifetime' => 31536000, // temps de vie du cache de 1 an
+		    	'lifetime' => 31536000, //  temps de vie du cache de 1 an
 		        'automatic_serialization' => true
 			);
 		   	$backendOptions = array(
 				// Répertoire où stocker les fichiers de cache
-		        'cache_dir' => ROOT_PATH.'/tmp/'
+		   		'cache_dir' => ROOT_PATH.'/tmp/'
 			);
 			// créer un objet Zend_Cache_Core
 			$this->cache = Zend_Cache::factory('Core','File',$frontendOptions,$backendOptions);		
@@ -74,12 +75,11 @@ class Gen_Moteur
 		$this->arrClass = array();
 		$this->ordre = 0;
 		$this->segment = 0;
-		$this->arrClass[$this->ordre]["generation"][] = $texte;
+		//$this->arrClass[$this->ordre]["generation"][] = $texte;
 		
 		//parcourt l'ensemble de la chaine
 		for($i = 0; $i < strlen($texte); $i++)
         {
-        	$this->ordre ++;
         	$c = $texte[$i];
         	if($c == "["){
         		//c'est le début d'une classe
@@ -102,6 +102,7 @@ class Gen_Moteur
         		//on ajoute le caractère
 				$this->arrClass[$this->ordre]["texte"] = $c;
         	}
+        	$this->ordre ++;
         }
                 
         //on calcule le texte
@@ -124,72 +125,75 @@ class Gen_Moteur
 			$ordreFin = $this->arrSegment[$a]["ordreFin"];
 		}else{
 			$ordreDeb = 0;
-			$ordreFin = count($this->arrClass);
+			$ordreFin = count($this->arrClass)-1;
 		}
 		
-		for ($i = $ordreDeb; $i < $ordreFin; $i++) {
+		for ($i = $ordreDeb; $i <= $ordreFin; $i++) {
 			$this->ordre = $i;
 			$texte = "";
-			$arr = $this->arrClass[$i];
-			if(isset($arr["texte"])){
-				//vérifie le texte conditionnel
-				if($arr["texte"]=="<"){
-			        //choisi s'il faut afficher
-			        $this->potentiel ++;
-			        $a = rand(0, 1000);
-			        if($a>500){
-			        	$txtCondi = false;
-			        }
-				}elseif($arr["texte"]==">"){
-			        $txtCondi = true;
-				}elseif($txtCondi){
-					if($arr["texte"]=="%"){
-						$texte .= "<br/>";	
-					}else{
-						$texte .= $arr["texte"];
-					}
-				}
-			}else{
-				if($txtCondi){
-					$det = "";
-					$sub = "";
-					$adjs = "";
-					$verbe = "";
-					 
-					if(isset($arr["determinant"])){
-						$det = $this->genereDeterminant($arr);					
-					}
-					
-					if(isset($arr["substantif"])){					
-						$sub = $this->genereSubstantif($arr);
-					}					
-					
-					if(isset($arr["adjectifs"])){					
-						foreach($arr["adjectifs"] as $adj){
-							$adjs .= $this->genereAdjectif($arr, $adj);
+			if($arr = $this->arrClass[$i]){
+				if(isset($arr["texte"])){
+					//vérifie le texte conditionnel
+					if($arr["texte"]=="<"){
+				        //choisi s'il faut afficher
+				        $this->potentiel ++;
+				        $a = rand(0, 1000);
+				        if($a>500){
+				        	$txtCondi = false;
+				        }
+					}elseif($arr["texte"]==">"){
+				        $txtCondi = true;
+					}elseif($txtCondi){
+						if($arr["texte"]=="%"){
+							$texte .= "<br/>";	
+						}else{
+							$texte .= $arr["texte"];
 						}
 					}
-	
-					if(isset($arr["verbe"])){					
-						$verbe = $this->genereVerbe($arr);
+				}else{
+					if($txtCondi){
+						$det = "";
+						$sub = "";
+						$adjs = "";
+						$verbe = "";
+						 
+						if(isset($arr["determinant"])){
+							$det = $this->genereDeterminant($arr);					
+						}
+						
+						if(isset($arr["substantif"])){					
+							$sub = $this->genereSubstantif($arr);
+						}					
+						
+						if(isset($arr["adjectifs"])){					
+							foreach($arr["adjectifs"] as $adj){
+								$adjs .= $this->genereAdjectif($arr, $adj);
+							}
+						}
+		
+						if(isset($arr["verbe"])){					
+							$verbe = $this->genereVerbe($arr);
+						}					
+						
+						if(isset($arr["syntagme"])){					
+							$texte .= $arr["syntagme"];
+						}					
+											
+						$texte .= $det.$sub.$adjs.$verbe;
 					}					
-					
-					if(isset($arr["syntagme"])){					
-						$texte .= $arr["syntagme"];
-					}					
-										
-					$texte .= $det.$sub." ".$adjs.$verbe;
-				}					
+				}
+				if($texte!=""){
+					$this->arrClass[$i]["texte"] = $texte;
+					$this->texte .= $texte;
+				}
 			}
-			$this->arrClass[$i]["texte"] = $texte;
-			$this->texte .= $texte;
 		}
 		//mise en forme du texte
 		$LT = strlen($this->texte);
 		//mise en forme poésie
 		
 		//création du tableau de génération
-		$this->detail = $this->arrayVersHTML($this->arrClass);
+		$this->detail = "ordreDeb=$ordreDeb ordreFin=$ordreFin<br/>".$this->arrayVersHTML($this->arrClass);
 		
 		
 	}
@@ -197,8 +201,8 @@ class Gen_Moteur
 	public function genereSubstantif($arr){
 
 		$txt = $arr["substantif"]["s"];
-		
-		if($arr["pluriel"]){												
+		$vecteur = $this->getVecteur("pluriel",-1);
+		if($vecteur["pluriel"]){												
 			$txt = $arr["substantif"]["p"];
 		}
 		
@@ -294,24 +298,43 @@ class Gen_Moteur
 	public function genereDeterminant($arr){
 
 		$det = "";
-		
-		if(isset($arr["genre"])){			
+		if($vecteur = $this->getVecteur("elision", 1)){			
 			//calcul le déterminant
-			if($arr["elision"]==0 && $arr["genre"]==1){
+			if($vecteur["elision"]==0 && $vecteur["genre"]==1){
 				$det = $arr["determinant"][0]["lib"]." ";
 			}
-			if($arr["elision"]==0 && $arr["genre"]==2){
+			if($vecteur["elision"]==0 && $vecteur["genre"]==2){
 				$det = $arr["determinant"][1]["lib"]." ";
 			}
-			if($arr["elision"]==1 && $arr["genre"]==1){
+			if($vecteur["elision"]==1 && $vecteur["genre"]==1){
 				$det = $arr["determinant"][2]["lib"];
 			}
-			if($arr["elision"]==1 && $arr["genre"]==2){
+			if($vecteur["elision"]==1 && $vecteur["genre"]==2){
 				$det = $arr["determinant"][3]["lib"];
 			}
 		}
 		
 		return $det;
+	}
+	
+	public function getVecteur($type,$dir){
+		
+		$vecteur = false;
+		if($dir>0){
+			for ($i = $this->ordre; $i < count($this->arrClass); $i++) {
+				if(isset($this->arrClass[$i]["vecteur"][$type])){
+					return $this->arrClass[$i]["vecteur"];						
+				}
+			}
+		}
+		if($dir<0){
+			for ($i = $this->ordre; $i >= 0; $i--) {
+				if(isset($this->arrClass[$i]["vecteur"][$type])){
+					return $this->arrClass[$i]["vecteur"];						
+				}
+			}
+		}
+		return $vecteur;
 	}
 	
 	public function genereAdjectif($arr,$adj){
@@ -556,14 +579,8 @@ class Gen_Moteur
 
 		//ajoute le class générée
 		foreach($moteur->arrClass as $k=>$c){
-			if($k==="vecteur"){
-				foreach($c as $v){
-					$this->arrClass["vecteur"][] = $v;
-				}
-			}else{
-				$this->ordre ++;				
-				$this->arrClass[$this->ordre] = $c;
-			}
+			$this->ordre ++;
+			$this->arrClass[$this->ordre] = $c;
 		}
 	}
 	
@@ -597,7 +614,7 @@ class Gen_Moteur
 			//on récupère la valeur de la classe
 	        $class = substr($txt, $deb+1, -(strlen($txt)-$fin));
 		}
-		$this->arrClass[$this->ordre]["class"][] = $class;
+		//$this->arrClass[$this->ordre]["class"][] = $class;
         
         
         //on récupère la définition de l'accord 
@@ -690,6 +707,7 @@ class Gen_Moteur
         //vérifie s'il faut chercher le déterminant
         if($class!=99 && $class!=0){
         	$c = md5("getDeterminant_".$this->arrDicos["déterminants"]."_".$class."_".$pluriel);
+        	if($this->forceCalcul)$this->cache->remove($c);
 			if(!$arrClass = $this->cache->load($c)) {
 		        $tDtr = new Model_DbTable_Determinants();
 	        	$arrClass = $tDtr->obtenirDeterminantByDicoNumNombre($this->arrDicos["déterminants"],$class,$pluriel);        				
@@ -700,22 +718,22 @@ class Gen_Moteur
         if($class==0){
         	//vérifie si le determinant n'est pas transmis
         	for($i = $this->ordre-1; $i > 0; $i--){
-        		if(isset($this->arrClass[$i]["determinant"])){
+        		if(isset($this->arrClass[$i]["vecteur"])){
 	        		if(intval($this->arrClass[$i]["determinant"])!=0){
 						$arrClass = $this->arrClass[$i]["determinant"];
-						$pluriel = $this->arrClass[$i]["pluriel"];
+						$pluriel = $this->arrClass[$i]["vecteur"]["pluriel"];
 						$i=-1;        				
 	        		}
         		}
         	}
         }
+
+		//ajoute le vecteur
+		$this->arrClass[$this->ordre]["vecteur"]["pluriel"] = $pluriel; 
         
         //ajoute le déterminant
 		$this->arrClass[$this->ordre]["determinant"] = $arrClass;
-        
-		//met à jour le nombre
-		$this->arrClass[$this->ordre]["pluriel"] = $pluriel; 
-                
+                        
         return $arrClass;
 	}
 	
@@ -725,19 +743,14 @@ class Gen_Moteur
         if(!$arrClass) $arrClass = $this->getAleaClass($class);
 
         if($arrClass){
+        	
+	        //ajoute le vecteur
+	        $this->arrClass[$this->ordre]["vecteur"]["genre"] = $arrClass["genre"];
+	        $this->arrClass[$this->ordre]["vecteur"]["elision"] = $arrClass["elision"];
+        	        	
 	        //ajoute le substantif
 	        $this->arrClass[$this->ordre]["substantif"] = $arrClass;
-	
-	        //met à jour le genre et l'élision
-	        $this->arrClass[$this->ordre]["genre"] = $arrClass["genre"];
-	        $this->arrClass[$this->ordre]["elision"] = $arrClass["elision"];
-	        
-	        //vérifie si un déterminant est présent
-	        if(!isset($this->arrClass[$this->ordre]["pluriel"]))$this->arrClass[$this->ordre]["pluriel"]=false;
-	        
-	        //ajoute le vecteur
-	        $this->arrClass["vecteur"][] = array("pluriel"=>$this->arrClass[$this->ordre]["pluriel"]
-	        	,"genre"=>$this->arrClass[$this->ordre]["genre"]);
+		        	        
         }        
         return $arrClass;
 	}
@@ -748,7 +761,8 @@ class Gen_Moteur
 		if($direct){
 
 	        $c = md5("getSyntagme_".$this->arrDicos['syntagmes']."_".$class);
-			if(!$arrClass = $this->cache->load($c)) {
+        	if($this->forceCalcul)$this->cache->remove($c);
+	        if(!$arrClass = $this->cache->load($c)) {
 	        	//récupère la définition de la class
 	        	$table = new Model_DbTable_Syntagmes();
 	        	$arrClass = $table->obtenirSyntagmeByDicoNum($this->arrDicos['syntagmes'],$class);
@@ -819,7 +833,8 @@ class Gen_Moteur
 	public function getNegation($class){
 
         $c = md5("getNegation_".$this->arrDicos['negations']."_".$class);
-		if(!$arrClass = $this->cache->load($c)) {
+        if($this->forceCalcul)$this->cache->remove($c);
+        if(!$arrClass = $this->cache->load($c)) {
         	//récupère la définition de la class
         	$table = new Model_DbTable_Negations();
         	$arrClass = $table->obtenirNegationByDicoNum($this->arrDicos['negations'],$class);
@@ -833,7 +848,8 @@ class Gen_Moteur
 
 
         $c = md5("getPronom_".$this->arrDicos["pronoms"]."_".$class."_".$type);
-		if(!$arrClass = $this->cache->load($c)) {
+        if($this->forceCalcul)$this->cache->remove($c);
+        if(!$arrClass = $this->cache->load($c)) {
 			//récupère la définition de la class
        		$table = new Model_DbTable_Pronoms();
         	$arrClass = $table->obtenirPronomByDicoNumType($this->arrDicos['pronoms'],$class,$type);
@@ -848,7 +864,8 @@ class Gen_Moteur
 
 
         $c = md5("getTerminaison_".$idConj."_".$num);
-		if(!$arrClass = $this->cache->load($c)) {
+        if($this->forceCalcul)$this->cache->remove($c);
+        if(!$arrClass = $this->cache->load($c)) {
 			//récupère la définition de la class
         	$table = new Model_DbTable_Terminaisons();
         	$arrClass = $table->obtenirConjugaisonByConjNum($idConj, $num);
@@ -904,6 +921,7 @@ class Gen_Moteur
 	        //choisi un concept aléatoirement
 	        $a = rand(0, count($arrCpt["dst"])-1);        
 	        $cpt = $this->getClassGen($arrCpt["dst"][$a]);
+	        $cpt["idParent"] = $arrCpt["src"]["id_concept"];
         }
                 	
 		return $cpt; 			
@@ -933,7 +951,8 @@ class Gen_Moteur
 
 
         $c = md5("getClassDef_".$this->arrDicos['concepts']."_".$class);
-		if(!$arrCpt = $this->cache->load($c)) {
+        if($this->forceCalcul)$this->cache->remove($c);
+        if(!$arrCpt = $this->cache->load($c)) {
 			//récupère la définition de la class
 			$arrClass=explode("_", $class);
 	        $table = new Model_DbTable_Concepts();	
@@ -944,7 +963,8 @@ class Gen_Moteur
 		if(get_class($arrCpt)=="Exception"){
     		$this->arrClass[$this->ordre]["ERREUR"] = $arrCpt->getMessage()."<br/><pre>".$arrCpt->getTraceAsString()."</pre>";
     		$arrCpt = false;
-		}		
+		}
+		
         return $arrCpt;
 	}
 
@@ -1021,6 +1041,8 @@ class Gen_Moteur
 		$styleErr = "border: {$bordure}px solid black;font-style: bold;color:red;";
 		$styleTxt = "border: {$bordure}px solid black;font-style: bold;color:green;";
 		
+		$url = WEB_ROOT."/public/index.php/index/modifier/type/";
+		
 		/* génération de la première ligne, avec les libellés balisés comme cellules d'entête */
 	    /* explications sur le scope="col" : l'accessibilité, lire l'article http://www.pompage.net/pompe/autableau/ */
 	    $aafficher = "<table style='border-collapse: collapse; $style'>\n<tr>
@@ -1036,13 +1058,22 @@ class Gen_Moteur
 		    if(is_array($valeur)){
 		    	$valeur = $this->arrayVersHTML($valeur);
 		    }
-		    if($cle==="ERREUR"){
-			    $aafficher .= "<td style='".$styleErr."'>$valeur</td>\n</tr>\n";
-		    }elseif($cle==="texte"){
-			    $aafficher .= "<td style='$styleTxt'>$valeur</td>\n</tr>\n";
-		    }else{
-			    $aafficher .= "<td style='$style'>$valeur</td>\n</tr>\n";
+		    switch ($cle) {
+		    	case "ERREUR":
+			    	$aafficher .= "<td style='".$styleErr."'>$valeur</td>\n</tr>\n";
+			    	break;
+		    	case "texte":
+			    	$aafficher .= "<td style='$styleTxt'>$valeur</td>\n</tr>\n";
+			    	break;
+		    	case "substantif":
+		    		$admin = $url."substantif/id/".$tab["substantif"]["id_sub"]."/idParent/".$tab["substantif"]["idParent"];
+			    	$aafficher .= "<td style='$styleTxt'><a href='".$admin."'>admin</a> $valeur</td>\n</tr>\n";
+			    	break;
+		    	default:
+		    		$aafficher .= "<td style='$style'>$valeur</td>\n</tr>\n";
+		    	break;
 		    }
+		    
 	    }
 	    
 	    /* on ferme le tableau HTML (nécessaire pour la validité) */

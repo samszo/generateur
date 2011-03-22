@@ -62,26 +62,48 @@ class Model_DbTable_Concepts extends Zend_Db_Table_Abstract
 			if(get_class($cpt)=="Exception"){
 				return $cpt;
 			}
+			$arrCpt = $cpt->toArray();
 			
 			//cherche les enfants suivant le type de concept
 			$tType ="";
+			$arrEnf = array();
 			if($arrClass[0]=="a")$tType="Adjectifs";
 			if($arrClass[0]=="v")$tType="Verbes";
-			if($arrClass[0]=="m" || $arrClass[0]=="carac")$tType="Substantifs";
+			if($arrClass[0]=="m" || $arrClass[0]=="carac" || $arrClass[0]=="dis")$tType="Substantifs";
 			if($arrClass[0]=="s")$tType="Syntagmes";
 			if($arrClass[0]=="age" || $arrClass[0]=="univers")$tType="Generateurs";
 			if($tType!=""){
 				$enfants = $cpt->findManyToManyRowset('Model_DbTable_'.$tType,
 	                                                 'Model_DbTable_Concepts'.$tType);
 				$arrEnf = $enfants->toArray();
-			}else{
-				$arrEnf = array();
 			}
-			//cherche les généreteurs
+			//cherche les générateurs
 			$gens = $cpt->findManyToManyRowset('Model_DbTable_Generateurs',
 	                                                 'Model_DbTable_ConceptsGenerateurs');    	
-    		return array("src"=>$cpt->toArray(),"dst"=>array_merge($arrEnf,$gens->toArray()));
+			//cherche les générateurs
+			//$cptgens = $this->findGensByIdconcept($arrCpt["id_concept"]);    	
+			//return array("src"=>$arrCpt,"dst"=>array_merge($arrEnf,$gens->toArray(),$cptgens));
+			
+			return array("src"=>$arrCpt,"dst"=>array_merge($arrEnf,$gens->toArray()));
     }
+
+	/*
+     * Recherche les générateurs liés aux concept
+     *
+     * @param int $idConcept
+     */
+    public function findGensByIdconcept($idConcept)
+    {
+        $query = $this->select()
+        	->setIntegrityCheck(false) //pour pouvoir sélectionner des colonnes dans une autre table
+            ->from(array('cg' => 'gen_concepts_generateurs'))
+            ->joinInner(array('g' => 'gen_generateurs'),
+            	'g.id_gen = cg.id_gen',array('id_dico','valeur'))
+            ->where( "cg.id_concept = ?", $idConcept);
+    
+        return $this->fetchAll($query)->toArray(); 
+    }
+        
     
     public function existeConcept($idDico, $lib, $type)
     {

@@ -17,7 +17,7 @@ class IndexController extends Zend_Controller_Action
     	
 		//pour le débuggage
 		// 
-		$moteur = new Gen_Moteur();
+		$moteur = new Gen_Moteur("",true);
 		$arrDicos = array(
 			"concepts"=>"29,27"
 			,"syntagmes"=>4
@@ -29,8 +29,9 @@ class IndexController extends Zend_Controller_Action
 		$moteur->arrDicos = $arrDicos;	
 		//$moteur->typeChoix = "alea";	
 		//$moteur->Generation("[age-ado]");
-
-		$moteur->Generation("=01000000000$[0|caract1] [0|caract2]%%[thl-présente-01]. [thl-présente-01]. [thl-psycho-04]. [thl-naissance-01].%%[thl-enfance-01]. [dis-Gchoix].%%[thl-adolescence-01].%%[dis-Gchoix]. [thl-maturité-01]. [dis-neutre]. [dis-Gchoix]. [thl-maturité-01]. [thl-maturité-01]. [thl-maturité-01]. [dis-neutre]. [dis-Gchoix]. [thl-maturité-01]. [dis-neutre]. [thl-maturité-01]. [thl-amours-01]. [thl-amours-01]. [thl-maturité-01]. [dis-neutre]. [thl-critique-01].%%[thl-mort-01]. [thl-conclusion-01]. [thl-conclusion-01].FF");
+		//$moteur->Generation("[11|m_force 1]",true,0);
+		
+		$moteur->Generation("[12|m_beauté 1]",true,0);
 		//
 		//$dico = new Gen_Dico();
 		//$dico->GetMacToXml(26);
