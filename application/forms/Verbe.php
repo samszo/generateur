@@ -41,7 +41,7 @@ class Form_Verbe extends Zend_Form
 		$eli->setLabel("Définir l'élision:");
 
       	$prefix = new Zend_Form_Element_Text('prefix');
-      	$prefix->setRequired(true);
+      	$prefix->setRequired(false);
 		$prefix->setLabel('Définir un prefix:');
 		
         $envoyer = new Zend_Form_Element_Submit('envoyer');

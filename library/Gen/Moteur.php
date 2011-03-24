@@ -55,19 +55,23 @@ class Gen_Moteur
 		$this->forceCalcul = $forceCalcul;	
 	}
 
+	private function setCache(){
+		$frontendOptions = array(
+	    	'lifetime' => 31536000, //  temps de vie du cache de 1 an
+	        'automatic_serialization' => true
+		);
+	   	$backendOptions = array(
+			// Répertoire où stocker les fichiers de cache
+	   		'cache_dir' => ROOT_PATH.'/tmp/'
+		);
+		// créer un objet Zend_Cache_Core
+		$this->cache = Zend_Cache::factory('Core','File',$frontendOptions,$backendOptions);				
+	}
+	
 	public function Generation($texte, $getTexte=true, $cache=false){
 		
 		if(!$cache){
-			$frontendOptions = array(
-		    	'lifetime' => 31536000, //  temps de vie du cache de 1 an
-		        'automatic_serialization' => true
-			);
-		   	$backendOptions = array(
-				// Répertoire où stocker les fichiers de cache
-		   		'cache_dir' => ROOT_PATH.'/tmp/'
-			);
-			// créer un objet Zend_Cache_Core
-			$this->cache = Zend_Cache::factory('Core','File',$frontendOptions,$backendOptions);		
+			$this->setCache();
 		}else{
 			$this->cache = $cache;		
 		}
@@ -111,16 +115,40 @@ class Gen_Moteur
         }
 
 	}
+
+	public function Verification($texte, $getTexte=true, $cache=false){
 		
+		$this->setCache();
+						
+		$this->ordre = 0;
+		$this->typeChoix = "tout";
+		//parcourt l'ensemble de la chaine
+		for($i = 0; $i < strlen($texte); $i++)
+        {
+        	$c = $texte[$i];
+        	if($c == "["){
+        		//c'est le début d'une classe
+        		//on récupère la valeur de la classe et la position des caractères dans la chaine
+        		$i = $this->traiteClass($texte, $i);
+				$this->ordre ++;
+        	}
+        }                
+
+		$this->detail = $this->arrayVersHTML($this->arrClass);
+        
+	}
+	
 	public function genereTexte(){
 
 		$this->texte = "";
 		$txtCondi = true;
+		$imbCondi= false;
 		
 		//vérifie la présence de segments
 		if(count($this->arrSegment)>0){
 			//choix aleatoire d'un segment
-			$a = rand(0, count($this->arrSegment)-1); 			
+			mt_srand($this->make_seed());
+	        $a = mt_rand(0, count($this->arrSegment)-1);        
 			$ordreDeb = $this->arrSegment[$a]["ordreDeb"];
 			$ordreFin = $this->arrSegment[$a]["ordreFin"];
 		}else{
@@ -137,12 +165,53 @@ class Gen_Moteur
 					if($arr["texte"]=="<"){
 				        //choisi s'il faut afficher
 				        $this->potentiel ++;
-				        $a = rand(0, 1000);
+						mt_srand($this->make_seed());
+				        $a = mt_rand(0, 1000);        
 				        if($a>500){
 				        	$txtCondi = false;
+					        //vérifie si le texte conditionnel est imbriqué
+					        //pour sauter à la fin de la condition
+					        if(isset($this->arrClass[$i+2]["texte"]) && $this->arrClass[$i+2]["texte"]=="|"){
+					        	for ($j = $this->ordre; $j <= $ordreFin; $j++) {
+					        		if(isset($this->arrClass[$j]["texte"]) 
+					        			&& isset($this->arrClass[$j+1]["texte"])
+					        			&& isset($this->arrClass[$j+2]["texte"])){
+						        		if($this->arrClass[$j]["texte"]=="|" 
+						        			&& $this->arrClass[$j+1]["texte"]==$this->arrClass[$i+1]["texte"]
+						        			&& $this->arrClass[$j+2]["texte"]==">"){
+						        			$i=$j+2;
+						        			$j=$ordreFin;		
+						        		}
+					        		}else{
+					        			$j += 2;
+					        		}
+					        	}
+					        }				        	
+				        }else{
+					        //vérifie si le texte conditionnel est imbriqué
+					        //attention pas plus de 10 imbrications
+					        if(isset($this->arrClass[$this->ordre+2]["texte"]) && $this->arrClass[$this->ordre+2]["texte"]=="|"){
+					        	$imbCondi[$this->arrClass[$this->ordre+1]["texte"]] = true;
+					        	$i+=2;
+					        }
 				        }
 					}elseif($arr["texte"]==">"){
-				        $txtCondi = true;
+				        //vérifie les conditionnels imbriqué
+				        if($imbCondi){
+				        	if(isset($imbCondi[$this->arrClass[$this->ordre-1]["texte"]])){
+					        	$txtCondi = true;
+					        	if(substr($this->texte,$this->ordre-1,1)=="|"){
+						        	$this->texte = substr($this->texte,0,-2);
+					        	}
+					        	//supprime la condition imbriquée
+					        	unset($imbCondi[$this->arrClass[$this->ordre-1]["texte"]]);
+					        }else{
+					        	//cas des conditions dans condition imbriquée
+								$txtCondi = true;					        	
+					        }
+				        }else{
+							$txtCondi = true;
+				        }
 					}elseif($txtCondi){
 						if($arr["texte"]=="%"){
 							$texte .= "<br/>";	
@@ -215,9 +284,22 @@ class Gen_Moteur
 		
 		//vérifie la présence d'un d&terminant
 		if(!isset($arr["determinant_verbe"])){
-			//3eme personne sans pronom
-			$arr["prosuj"] = "";
-			$arr["terminaison"] = 3;
+			//vérifie la présence d'un verbe théorique
+			$verbeTheo = false;
+			for ($i = $this->ordre; $i >= 0; $i--) {
+				if($this->arrClass[$i]["class"][1]=="v_théorique"){
+					$arr["determinant_verbe"] = $this->arrClass[$i]["determinant_verbe"];
+					$verbeTheo = true;
+					//calcul le pronom
+					$arr = $this->generePronom($arr);
+					$i=-1;						
+				}
+			}
+			if(!$verbeTheo){
+				//3eme personne sans pronom
+				$arr["prosuj"] = "";
+				$arr["terminaison"] = 3;
+			}
 		}else{
 			if($arr["determinant_verbe"][6]!=0){
 				//pronom indéfinie
@@ -700,7 +782,7 @@ class Gen_Moteur
         
         //vérifie s'il faut chercher le pluriel
         $pluriel = false;
-        if($class > 50){
+        if($class >= 50){
         	$pluriel = true;
         	$class = $class-50;
         }       			
@@ -716,7 +798,10 @@ class Gen_Moteur
         }
         
         if($class==0){
+        	$class=0;
         	//vérifie si le determinant n'est pas transmis
+        	//la transmission se fait par [=x...]
+        	/*
         	for($i = $this->ordre-1; $i > 0; $i--){
         		if(isset($this->arrClass[$i]["vecteur"])){
 	        		if(intval($this->arrClass[$i]["determinant"])!=0){
@@ -726,6 +811,7 @@ class Gen_Moteur
 	        		}
         		}
         	}
+			*/
         }
 
 		//ajoute le vecteur
@@ -889,10 +975,6 @@ class Gen_Moteur
 	        //ajoute le verbe
 	        $this->arrClass[$this->ordre]["verbe"] = $arrClass;
 	                
-	        //met à jour l'élision
-	        if(count($arrClass["elision"])<1){
-	        	$to = 1;
-	        }
 	        $this->arrClass[$this->ordre]["elision"] = $arrClass["elision"];
 		}
 		        
@@ -908,26 +990,40 @@ class Gen_Moteur
         if(count($arrCpt["dst"])<1){
         	return false;
         }
-        
+		$this->arrClass[$this->ordre]["concept"]["idConcept"] = $arrCpt["src"]["id_concept"];
+		$this->arrClass[$this->ordre]["concept"]["idDico"] = $arrCpt["src"]["id_dico"];
+		
         //enregistre le potentiel
         $this->potentiel += count($arrCpt["dst"]);
         
         if($this->typeChoix=="tout"){
-        	$cpt ="";
+        	//pour la vérification
+        	$i=0;
         	foreach($arrCpt["dst"] as $dst){
-        		$this->getClassGen($dst);	
+        		$this->arrClass[$this->ordre][$i][] = $this->getClassGen($dst);	
+        		$i++;
         	}
+        	$cpt = false;
         }else{
 	        //choisi un concept aléatoirement
-	        $a = rand(0, count($arrCpt["dst"])-1);        
+	        //initialise le random
+			mt_srand($this->make_seed());
+        	
+	        $a = mt_rand(0, count($arrCpt["dst"])-1);        
 	        $cpt = $this->getClassGen($arrCpt["dst"][$a]);
-	        $cpt["idParent"] = $arrCpt["src"]["id_concept"];
+	        if($cpt)$cpt["idParent"] = $arrCpt["src"]["id_concept"];
         }
                 	
 		return $cpt; 			
 		
 	}
 
+	function make_seed()
+	{
+	  list($usec, $sec) = explode(' ', microtime());
+	  return (float) $sec + ((float) $usec * 100000);
+	}
+	
 	public function getClassGen($cpt){
 		
         //Vérifie si le concept est un générateur
@@ -1055,25 +1151,41 @@ class Gen_Moteur
 	    {
 	        $aafficher .= "<tr style='$style'>
 			    <td style='$style'>$cle</td>";
-		    if(is_array($valeur)){
-		    	$valeur = $this->arrayVersHTML($valeur);
-		    }
-		    switch ($cle) {
-		    	case "ERREUR":
-			    	$aafficher .= "<td style='".$styleErr."'>$valeur</td>\n</tr>\n";
-			    	break;
-		    	case "texte":
-			    	$aafficher .= "<td style='$styleTxt'>$valeur</td>\n</tr>\n";
-			    	break;
-		    	case "substantif":
-		    		$admin = $url."substantif/id/".$tab["substantif"]["id_sub"]."/idParent/".$tab["substantif"]["idParent"];
+			//cas particulier des tableaux d'adjectifs
+			if($cle==="adjectifs"){
+				foreach($valeur as $adj){
+		    		$admin = $url."adjectif/id/".$adj["id_adj"]."/idParent/".$adj["idParent"];
+		    		$valeur = $this->arrayVersHTML($adj);
 			    	$aafficher .= "<td style='$styleTxt'><a href='".$admin."'>admin</a> $valeur</td>\n</tr>\n";
+				}
+			}else{
+			    if(is_array($valeur)){
+			    	$valeur = $this->arrayVersHTML($valeur);
+			    }
+			    switch ($cle) {
+			    	case "ERREUR":
+				    	$aafficher .= "<td style='".$styleErr."'>$valeur</td>\n</tr>\n";
+				    	break;
+			    	case "texte":
+				    	$aafficher .= "<td style='$styleTxt'>$valeur</td>\n</tr>\n";
+				    	break;
+				    case "concept":
+			    		$admin = $url."concept/id/".$tab["concept"]["idConcept"]."/idParent/".$tab["concept"]["idDico"];
+				    	$aafficher .= "<td style='$styleTxt'><a href='".$admin."'>admin</a> $valeur</td>\n</tr>\n";
+				    	break;
+				    case "verbe":
+			    		$admin = $url."verbe/id/".$tab["verbe"]["id_verbe"]."/idParent/".$tab["verbe"]["idParent"];
+				    	$aafficher .= "<td style='$styleTxt'><a href='".$admin."'>admin</a> $valeur</td>\n</tr>\n";
+				    	break;
+				    case "substantif":
+			    		$admin = $url."substantif/id/".$tab["substantif"]["id_sub"]."/idParent/".$tab["substantif"]["idParent"];
+				    	$aafficher .= "<td style='$styleTxt'><a href='".$admin."'>admin</a> $valeur</td>\n</tr>\n";
+				    	break;
+			    	default:
+			    		$aafficher .= "<td style='$style'>$valeur</td>\n</tr>\n";
 			    	break;
-		    	default:
-		    		$aafficher .= "<td style='$style'>$valeur</td>\n</tr>\n";
-		    	break;
-		    }
-		    
+			    }
+			}
 	    }
 	    
 	    /* on ferme le tableau HTML (nécessaire pour la validité) */

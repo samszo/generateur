@@ -31,7 +31,8 @@ class IndexController extends Zend_Controller_Action
 		//$moteur->Generation("[age-ado]");
 		//$moteur->Generation("[11|m_force 1]",true,0);
 		
-		$moteur->Generation("[12|m_beauté 1]",true,0);
+		//$moteur->Generation("[12|m_fleur]: [98#] [s_complètement 1] [=1|a_couleur 1], [98#] [s_complètement 1] [=1|a_couleur 1]… [=1|dis-fleur]",true,0);
+		//$moteur->Verification("[12|m_fleur]: [98#] [s_complètement 1] [=1|a_couleur 1], [98#] [s_complètement 1] [=1|a_couleur 1]… [=1|dis-fleur]",true,0);
 		//
 		//$dico = new Gen_Dico();
 		//$dico->GetMacToXml(26);
