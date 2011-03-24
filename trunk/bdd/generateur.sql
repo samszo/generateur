@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 3.1.1
+-- version 3.2.0.1
 -- http://www.phpmyadmin.net
 --
 -- Serveur: localhost
--- Généré le : Mar 22 Mars 2011 à 21:57
--- Version du serveur: 5.1.30
--- Version de PHP: 5.2.8
+-- Généré le : Jeu 24 Mars 2011 à 19:19
+-- Version du serveur: 5.1.36
+-- Version de PHP: 5.2.5
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
@@ -9530,8 +9530,7 @@ INSERT INTO `gen_concepts` (`id_concept`, `id_dico`, `lib`, `type`) VALUES
 (54117, 30, 'pétale', 'dis'),
 (54118, 30, 'peuple', 'dis'),
 (54119, 30, 'plante', 'dis'),
-(54120, 30, 'point- ', 'dis'),
-(54121, 30, ',', ''),
+(54121, 30, 'point', 'dis'),
 (54122, 30, 'prep', 'dis'),
 (54123, 30, 'qualtige', 'dis'),
 (54124, 30, 'racine', 'dis'),
@@ -9541,7 +9540,7 @@ INSERT INTO `gen_concepts` (`id_concept`, `id_dico`, `lib`, `type`) VALUES
 (54128, 30, 'structure', 'dis'),
 (54129, 30, 'titre', 'dis'),
 (54130, 30, 'verbe-2', 'dis'),
-(54131, 30, '1', 'dis-verbe'),
+(54131, 30, 'verbe-1', 'dis'),
 (54132, 30, 'vertu', 'dis'),
 (54133, 30, 'zone', 'dis'),
 (54134, 30, 'astre-01', 'thl'),
