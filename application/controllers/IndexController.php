@@ -28,11 +28,8 @@ class IndexController extends Zend_Controller_Action
 			,"negations"=>16);
 		$moteur->arrDicos = $arrDicos;	
 		//$moteur->typeChoix = "alea";	
-		//$moteur->Generation("[age-ado]");
-		//$moteur->Generation("[11|m_force 1]",true,0);
+		//$moteur->Generation("[0|m_adolescent], [dis-sujet][v_lire] [62|m_revue] [=1|a_musical] [0|dis-journal] [61#] [0|dis-journal] [90#] [013000000|v_découvrir] [12|m_prose] [60|carac1] [0|carac2]<, [0|carac1] [0|carac2] [61#] [0|m_compagnie]>",true);
 		
-		//$moteur->Generation("[12|m_fleur]: [98#] [s_complètement 1] [=1|a_couleur 1], [98#] [s_complètement 1] [=1|a_couleur 1]… [=1|dis-fleur]",true,0);
-		//$moteur->Verification("[12|m_fleur]: [98#] [s_complètement 1] [=1|a_couleur 1], [98#] [s_complètement 1] [=1|a_couleur 1]… [=1|dis-fleur]",true,0);
 		//
 		//$dico = new Gen_Dico();
 		//$dico->GetMacToXml(26);
