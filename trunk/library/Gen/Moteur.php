@@ -31,6 +31,7 @@
 class Gen_Moteur
 {
 
+	var $urlDesc;
 	var $xmlDesc;
 	var $texte;
 	var $class;
@@ -50,8 +51,9 @@ class Gen_Moteur
 	 * 	 */
 	public function __construct($urlDesc="", $forceCalcul = false) {
 
-		if($urlDesc=="")$urlDesc=APPLICATION_PATH.'/configs/LangageDescripteur.xml';
-		$this->xmlDesc = simplexml_load_file($urlDesc);	
+		$this->urlDesc = $urlDesc;
+		if($this->urlDesc=="")$this->urlDesc=APPLICATION_PATH.'/configs/LangageDescripteur.xml';
+		$this->xmlDesc = simplexml_load_file($this->urlDesc);	
 		$this->forceCalcul = $forceCalcul;	
 	}
 
@@ -166,7 +168,7 @@ class Gen_Moteur
 				        //choisi s'il faut afficher
 				        $this->potentiel ++;
 						mt_srand($this->make_seed());
-				        $a = mt_rand(0, 1000);        
+				        $a = 100;//mt_rand(0, 1000);        
 				        if($a>500){
 				        	$txtCondi = false;
 					        //vérifie si le texte conditionnel est imbriqué
@@ -186,7 +188,7 @@ class Gen_Moteur
 					        			$j += 2;
 					        		}
 					        	}
-					        }				        	
+					        }
 				        }else{
 					        //vérifie si le texte conditionnel est imbriqué
 					        //attention pas plus de 10 imbrications
@@ -200,7 +202,8 @@ class Gen_Moteur
 				        if($imbCondi){
 				        	if(isset($imbCondi[$this->arrClass[$this->ordre-1]["texte"]])){
 					        	$txtCondi = true;
-					        	if(substr($this->texte,$this->ordre-1,1)=="|"){
+					        	$c = substr($this->texte,-2,1);
+					        	if($c=="|"){
 						        	$this->texte = substr($this->texte,0,-2);
 					        	}
 					        	//supprime la condition imbriquée
@@ -231,12 +234,16 @@ class Gen_Moteur
 						}
 						
 						if(isset($arr["substantif"])){					
-							$sub = $this->genereSubstantif($arr);
+							$sub = $this->genereSubstantif($arr);						
 						}					
 						
-						if(isset($arr["adjectifs"])){					
+						if(isset($arr["adjectifs"])){
+							//$k=0;					
 							foreach($arr["adjectifs"] as $adj){
+								//if($k>0)
+								$adjs .= " ";
 								$adjs .= $this->genereAdjectif($arr, $adj);
+								//$k++;
 							}
 						}
 		
@@ -245,7 +252,7 @@ class Gen_Moteur
 						}					
 						
 						if(isset($arr["syntagme"])){					
-							$texte .= $arr["syntagme"];
+							$texte .= $arr["syntagme"]["lib"];
 						}					
 											
 						$texte .= $det.$sub.$adjs.$verbe;
@@ -257,6 +264,12 @@ class Gen_Moteur
 				}
 			}
 		}
+		
+		//gestion des espace en trop
+		$this->texte = str_replace("  "," ",$this->texte);
+		$this->texte = str_replace("' ","'",$this->texte);
+		$this->texte = str_replace(" , ",", ",$this->texte);
+		
 		//mise en forme du texte
 		$LT = strlen($this->texte);
 		//mise en forme poésie
@@ -303,7 +316,7 @@ class Gen_Moteur
 		}else{
 			if($arr["determinant_verbe"][6]!=0){
 				//pronom indéfinie
-				$arr["prosuj"] = $this->getPronom($arr["determinant_verbe"][6],"sujet_indefini");
+				$arr["prosuj"] = $this->getPronom($arr["determinant_verbe"][7],"sujet_indefini");
 				$arr["terminaison"] = 3;
 			}else{
 				//pronom sujet			
@@ -350,31 +363,47 @@ class Gen_Moteur
 					}
 					
 					if($numP>=6){	
-						//calcul le vecteur
-						//nombre d’informations sur le vecteur - valeur indiquée + 1
-						$numSub = count($this->arrClass["vecteur"])-$arr["determinant_verbe"][7]+1;
 						//récupère le genre
-						$genre = $this->arrClass["vecteur"][$numSub]["genre"];     	
+						$genre = $this->getGenreVerbe($arr);     	
 						//génère le pronom
-						$m = new Gen_Moteur();
+						$m = new Gen_Moteur($this->urlDesc,$this->forceCalcul);
 						$m->arrDicos = $this->arrDicos;
 						$m->Generation($pr,false,$this->cache);
-						$m->arrClass[1]["genre"]=$genre;
-						$m->arrClass[1]["pluriel"]=$pluriel;						
-						$this->potentiel += $m->potentiel;						
-						$arr["prosuj"] = $m->genereTexte();
+						$m->arrClass[0]["genre"]=$genre;
+						$m->arrClass[0]["pluriel"]=$pluriel;						
+						$this->potentiel += $m->potentiel;
+						$m->genereTexte();						
+						$arr["prosuj"]["lib"] = $m->texte;
+						$arr["prosuj"]["lib_eli"] = $m->texte;
+						$arr["terminaison"] = 3;
 					}else{
 						$arr["prosuj"] = $this->getPronom($numP,"sujet");
 					}
 				}
 			}
 			//pronom complément
-			if($arr["determinant_verbe"][3]!=0 && $arr["determinant_verbe"][4]!=0){
+			if($arr["determinant_verbe"][3]!=0 || $arr["determinant_verbe"][4]!=0){
 				$numPC = $arr["determinant_verbe"][3].$arr["determinant_verbe"][4];
 				$arr["prodem"] = $this->getPronom($numPC,"complément");
 			}			
 		}		
 		return $arr;
+	}
+
+	public function getGenreVerbe($arrVerbe){
+		$nbVecteur= $this->getVecteurNb();
+		
+		//si pas de vecteur le genre est masculin
+		if($nbVecteur==0){
+			return 1;
+		}
+		
+		//nombre d’informations sur le vecteur - valeur indiquée + 1
+		$numSub = $nbVecteur-$arrVerbe["determinant_verbe"][7]+1;
+		//récupère le genre
+		$genre = $this->arrClass[$numSub]["vecteur"]["genre"];     	
+		
+		return $genre;
 	}
 	
 	public function genereDeterminant($arr){
@@ -399,6 +428,16 @@ class Gen_Moteur
 		return $det;
 	}
 	
+	public function getVecteurNb(){
+		$nbVecteur=0;
+		foreach($this->arrClass as $arr){
+			if(isset($arr["vecteur"])){
+				$nbVecteur++;
+			}
+		}
+		return $nbVecteur;		
+	}
+	
 	public function getVecteur($type,$dir){
 		
 		$vecteur = false;
@@ -421,18 +460,18 @@ class Gen_Moteur
 	
 	public function genereAdjectif($arr,$adj){
 
-		$txt = "";
+       	$txt = "";
 
 		//calcul le nombre
 		$n = "_s"; 		
-		if($arr["pluriel"]){												
+		if($arr["vecteur"]["pluriel"]){												
 			$n = "_p";
 		}
 		
 		//calcul le genre
 		$g = "m"; 		
-		if(isset($arr["genre"])){												
-			if($arr["genre"]==2) $g = "f";
+		if(isset($arr["vecteur"]["genre"])){												
+			if($arr["vecteur"]["genre"]==2) $g = "f";
 		}
 
 		$txt = $adj["prefix"].$adj[$g.$n];
@@ -446,7 +485,7 @@ class Gen_Moteur
 		$num = 2;
 		
 		if(isset($arr["determinant_verbe"])){
-			$temps= $arr["determinant_verbe"][1];
+			$temps= $arr["determinant_verbe"][1]-1;
 			
 			if($arr["determinant_verbe"][1]==1){
 				$temps= 0;
@@ -455,7 +494,8 @@ class Gen_Moteur
 				$temps= 0;
 			}
 			
-			$num = ($temps*6)+$arr["terminaison"]-1; 		
+			$num = ($temps*6)+$arr["terminaison"]-1;
+			 		
 			if($arr["determinant_verbe"][1]==8){
 				$num= 36;
 			}
@@ -463,6 +503,8 @@ class Gen_Moteur
 				$num= 37;
 			}
 		}	
+		//correction terminaison négative
+		if($num == -1)$num = 2;
 					
 		$txt = $this->getTerminaison($arr["verbe"]["id_conj"],$num);
 
@@ -738,22 +780,28 @@ class Gen_Moteur
         //récupère le numéro du blocage
         $num=substr($class,1);
 		
-        if($num=="x" || !isset($this->arrClass["vecteur"])){
+	    $nbVecteur= $this->getVecteurNb();
+        
+	    if($num=="x" || $nbVecteur == 0){
         	//on applique le masculin singulier
-	        $this->arrClass[$this->ordre]["pluriel"] = false; 
-	        $this->arrClass[$this->ordre]["genre"] = 1;
-			$this->arrClass["vecteur"][] = array("pluriel"=>$this->arrClass[$this->ordre]["pluriel"]
-	        	,"genre"=>$this->arrClass[$this->ordre]["genre"]);       	                 	
+	        $this->arrClass[$this->ordre]["vecteur"]["pluriel"] = false; 
+	        $this->arrClass[$this->ordre]["vecteur"]["genre"] = 1;
         }else{
-	        //récupère l'ordre
-	        $ordre=count($this->arrClass["vecteur"])-$num;        
+	        //récupère le vecteur
+	        $vecteur = $this->getVecteur("genre",-1);
 	        //Récupère les informations de genre et de nombre
-        	if(!isset($this->arrClass["vecteur"][$ordre]["pluriel"])){
-        		$toto = 1;
+        	if(!isset($vecteur["pluriel"])){
+        		$pluriel = false;
+        	}else{
+        		$pluriel = $vecteur["pluriel"];
         	}
-	        
-	        $this->arrClass[$this->ordre]["pluriel"] = $this->arrClass["vecteur"][$ordre]["pluriel"]; 
-	        $this->arrClass[$this->ordre]["genre"] = $this->arrClass["vecteur"][$ordre]["genre"];         	
+        	if(!isset($vecteur["genre"])){
+        		$genre = 1;
+        	}else{
+        		$genre = $vecteur["genre"];
+        	}
+        	$this->arrClass[$this->ordre]["vecteur"]["pluriel"] = $pluriel; 
+	        $this->arrClass[$this->ordre]["vecteur"]["genre"] = $genre;         	
         }
         
         
@@ -859,12 +907,12 @@ class Gen_Moteur
 	        if(substr($syn,0,1)== "["){
 	        	$this->traiteClass($syn);
 	        }else{
-		        $this->arrClass[$this->ordre]["syntagme"] = $syn;
+		        $this->arrClass[$this->ordre]["syntagme"] = $arrClass;
 	        }
 		}else{
 	        $arrClass = $this->getAleaClass($class);
 	        if(isset($arrClass["lib"])){
-	        	$this->arrClass[$this->ordre]["syntagme"] = $arrClass["lib"];			
+	        	$this->arrClass[$this->ordre]["syntagme"] = $arrClass;			
 	        }else{
 	        	$this->traiteClass($arrClass["valeur"]);
 	        }
@@ -1181,7 +1229,11 @@ class Gen_Moteur
 			    		$admin = $url."substantif/id/".$tab["substantif"]["id_sub"]."/idParent/".$tab["substantif"]["idParent"];
 				    	$aafficher .= "<td style='$styleTxt'><a href='".$admin."'>admin</a> $valeur</td>\n</tr>\n";
 				    	break;
-			    	default:
+				    case "syntagme":
+			    		$admin = $url."DicoSyntagme/id/".$tab["syntagme"]["id_syn"]."/idParent/".$tab["syntagme"]["id_dico"];
+				    	$aafficher .= "<td style='$styleTxt'><a href='".$admin."'>admin</a> $valeur</td>\n</tr>\n";
+				    	break;
+				    default:
 			    		$aafficher .= "<td style='$style'>$valeur</td>\n</tr>\n";
 			    	break;
 			    }
