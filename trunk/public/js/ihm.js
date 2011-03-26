@@ -14,6 +14,7 @@
 function GetAjax(url){
 	//$('#loadImage').show();
 	//$('#resultat').load(url, {limit: 25}, function(){$('#loadImage').hide();});
+	var ForceCalcul = $('input[name=ForceCalcul]').is(':checked')
 	$('#resultat').html("<b>CALCUL EN COURS</b>");
-	$('#resultat').load(url);
+	$('#resultat').load(url+"&ForceCalcul="+ForceCalcul);
 }

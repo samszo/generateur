@@ -3,7 +3,7 @@ class Model_DbTable_Syntagmes extends Zend_Db_Table_Abstract
 {
     protected $_name = 'gen_syntagmes';
     protected $_referenceMap    = array(
-        'Verbe' => array(
+        'Dico' => array(
             'columns'           => 'id_dico',
             'refTableClass'     => 'Model_DbTable_Dicos',
             'refColumns'        => 'id_dico'

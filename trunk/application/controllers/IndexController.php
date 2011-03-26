@@ -28,7 +28,7 @@ class IndexController extends Zend_Controller_Action
 			,"negations"=>16);
 		$moteur->arrDicos = $arrDicos;	
 		//$moteur->typeChoix = "alea";	
-		//$moteur->Generation("[0|m_adolescent], [dis-sujet][v_lire] [62|m_revue] [=1|a_musical] [0|dis-journal] [61#] [0|dis-journal] [90#] [013000000|v_découvrir] [12|m_prose] [60|carac1] [0|carac2]<, [0|carac1] [0|carac2] [61#] [0|m_compagnie]>",true);
+		//$moteur->Generation("[70|m_sens] [0190000|v_être] [54#] [0|m_paix]",true);
 		
 		//
 		//$dico = new Gen_Dico();
@@ -62,8 +62,8 @@ class IndexController extends Zend_Controller_Action
 	        $form->populate($parent->toArray());
 		    $this->view->form = $form;		    
 			if($parent['type']=='conjugaisons'){
-				$DB_conj = new Model_DbTable_Conjugaisons();
-				$select = $DB_conj->select()->order(array('modele'));
+				$DB_ = new Model_DbTable_Conjugaisons();
+				$select = $DB_->select()->order(array('modele'));
 				$enfants = $parent->findDependentRowset('Model_DbTable_Conjugaisons','Dico',$select);
 				$types = array("parent"=>"dico","enfant"=>"conjugaison");	            	
 				$this->view->libAjout = "Ajouter une nouvelle conjugaison";
@@ -79,12 +79,16 @@ class IndexController extends Zend_Controller_Action
 				$this->view->libAjout = "Ajouter un nouveau complément";
 			}
 			if($parent['type']=='syntagmes'){
-				$enfants = $parent->findDependentRowset('Model_DbTable_Syntagmes');
+				$DB_ = new Model_DbTable_Syntagmes();
+				$select = $DB_->select()->order(array('lib'));
+				$enfants = $parent->findDependentRowset('Model_DbTable_Syntagmes','Dico',$select);
 				$types = array("parent"=>"dico","enfant"=>"DicoSyntagme");	            	
 				$this->view->libAjout = "Ajouter un nouveau syntagme";
 			}
 			if($parent['type']=='concepts'){
-				$enfants = $parent->findDependentRowset('Model_DbTable_Concepts');
+				$DB_ = new Model_DbTable_Concepts();
+				$select = $DB_->select()->order(array('type','lib'));
+				$enfants = $parent->findDependentRowset('Model_DbTable_Concepts','Dico',$select);
 				$types = array("parent"=>"dico","enfant"=>"concept");	            	
 				$this->view->libAjout = "Ajouter un nouveau concept";
 			}

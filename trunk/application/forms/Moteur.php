@@ -27,9 +27,12 @@ class Form_Moteur extends Zend_Form
 	      	
 	        $envoyer = new Zend_Form_Element_Submit('envoyer');
 	        $envoyer->setAttrib('id', 'boutonenvoyer');
-	
+
+			$cbForceCalcul = new Zend_Form_Element_Checkbox('ForceCalcul');
+			$cbForceCalcul->setLabel('force le calcul ');		
+	        
 	        $this->setAttrib('enctype', 'multipart/form-data');
-	        $this->addElements(array($id, $CacheForm, $cbDicoDtm, $cbDicoNgt, $cbDicoPrSt, $cbDicoCjg, $cbDicoPrCp, $cbDicoStg, $cbDicoCpt, $valeur, $envoyer));
+	        $this->addElements(array($id, $CacheForm, $cbDicoDtm, $cbDicoNgt, $cbDicoPrSt, $cbDicoCjg, $cbDicoPrCp, $cbDicoStg, $cbDicoCpt, $valeur, $cbForceCalcul, $envoyer));
 
     	}catch (Zend_Exception $e) {
 	          echo "Récupère exception: " . get_class($e) . "\n";

@@ -18,7 +18,7 @@ class MoteurController extends Zend_Controller_Action
 	        $formData = $this->getRequest()->getQuery();
 	        if ($form->isValid($formData)) {
 	        	//calcul l'expresion saisie
-				$moteur = new Gen_Moteur("",true);
+				$moteur = new Gen_Moteur("",$form->getValue('ForceCalcul'));
 				$arrDicos = array(
 					"concepts"=>implode(",", $form->getValue('dicoIdsCpt'))
 					,"syntagmes"=>implode(",", $form->getValue('dicoIdsStg'))

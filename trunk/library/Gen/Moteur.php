@@ -81,7 +81,7 @@ class Gen_Moteur
 		$this->arrClass = array();
 		$this->ordre = 0;
 		$this->segment = 0;
-		//$this->arrClass[$this->ordre]["generation"][] = $texte;
+		$this->arrClass[$this->ordre]["generation"] = $texte;
 		
 		//parcourt l'ensemble de la chaine
 		for($i = 0; $i < strlen($texte); $i++)
@@ -295,6 +295,9 @@ class Gen_Moteur
 	
 	public function generePronom($arr){
 		
+		//par défaut la terminaison = 3
+		$arr["terminaison"] = 3;
+		
 		//vérifie la présence d'un d&terminant
 		if(!isset($arr["determinant_verbe"])){
 			//vérifie la présence d'un verbe théorique
@@ -375,7 +378,6 @@ class Gen_Moteur
 						$m->genereTexte();						
 						$arr["prosuj"]["lib"] = $m->texte;
 						$arr["prosuj"]["lib_eli"] = $m->texte;
-						$arr["terminaison"] = 3;
 					}else{
 						$arr["prosuj"] = $this->getPronom($numP,"sujet");
 					}
@@ -385,6 +387,19 @@ class Gen_Moteur
 			if($arr["determinant_verbe"][3]!=0 || $arr["determinant_verbe"][4]!=0){
 				$numPC = $arr["determinant_verbe"][3].$arr["determinant_verbe"][4];
 				$arr["prodem"] = $this->getPronom($numPC,"complément");
+		        if(substr($arr["prodem"]["lib"],0,1)== "["){
+					//récupère le genre
+					$genre = $this->getGenreVerbe($arr);     	
+					//génère le pronom
+					$m = new Gen_Moteur($this->urlDesc,$this->forceCalcul);
+					$m->arrDicos = $this->arrDicos;
+					$m->Generation($arr["prodem"]["lib"],false,$this->cache);
+					$m->arrClass[0]["genre"]=$genre;
+					$m->arrClass[0]["pluriel"]=$pluriel;						
+					$this->potentiel += $m->potentiel;
+					$m->genereTexte();						
+					$arr["prodem"]["lib"] = $m->texte;
+		        }
 			}			
 		}		
 		return $arr;
@@ -572,13 +587,17 @@ class Gen_Moteur
 				if($arr["elision"]==0){
 					$arr["debneg"] = "ne ";	
 				}else{
-					$arr["debneg"] = "n'";
+					if($arr["prodem"]!=""){
+						$arr["debneg"] = "ne ";
+					}else{
+						$arr["debneg"] = "n'";						
+					}
 				}
 			}
 			
 			//construction de la forme verbale
 			$verbe = "";
-			//gextion de l'infinitif
+			//gestion de l'infinitif
 			if($arr["determinant_verbe"][1]==9){
 				$verbe = $centre;
 				if($arr["prodem"]!=""){
@@ -989,7 +1008,11 @@ class Gen_Moteur
         	$arrClass = $table->obtenirPronomByDicoNumType($this->arrDicos['pronoms'],$class,$type);
 			$this->cache->save($arrClass,$c);
 		}
-
+		if(get_class($arrClass)=="Exception"){
+	        $this->arrClass[$this->ordre]["ERREUR"] = $arrClass->getMessage()."<br/><pre>".$arrClass->getTraceAsString()."</pre>";
+			return "";
+		}
+		
 		return $arrClass;										
 
 	}
