@@ -29,8 +29,9 @@ class Model_DbTable_Pronoms extends Zend_Db_Table_Abstract
         	;
 		$r = $this->fetchRow($query);        
     	if (!$r) {
-            throw new Exception("Count not find rs $id");
+            return new Exception("Le pronom - $num - de type - $type - n'a pas été trouvé");
         }
+        
         return $r->toArray();
     }
     
