@@ -568,6 +568,9 @@ class Gen_Dico
 					//vérifie si la	 chaine est un substantif
 					if(substr($chaine,1,1)=="(" && substr($chaine,3,1)==")" && strpos($chaine,"|")){
 						$this->SetSubstantif($chaine);
+					//vérifie si la	 chaine est un adjectif
+					}elseif(substr($chaine,1,1)==")" && strpos($chaine,"|")){
+						$this->SetAdjectif($chaine);
 					}else{
 						//création d'un générateur de concept
 						$this->SetGen($chaine);
