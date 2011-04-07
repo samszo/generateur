@@ -17,7 +17,7 @@
 		}
 		if($this->types['parent']=="generateur"){
 			echo "<input type=\"button\" onclick=\"GetAjax('".WEB_ROOT_AJAX
-			."/moteur/tester?CacheForm=1&dicoIdsDtm[]=15&dicoIdsNgt[]=16&dicoIdsPrSt[]=14&dicoIdsCjg[]=25&dicoIdsPrCp[]=13&dicoIdsStg[]=4&dicoIdsCpt[]=29&dicoIdsCpt[]="
+			."/moteur/tester?CacheForm=1&dicoIdsDtm[]=15&dicoIdsNgt[]=16&dicoIdsPrSt[]=14&dicoIdsCjg[]=25&dicoIdsPrCp[]=13&dicoIdsStg[]=4&dicoIdsCpt[]=34&dicoIdsCpt[]="
 			.$this->form->getValue('idDico')."&valeur="
 			.urlencode($this->form->getValue('valeur'))
 			."&envoyer=Tester')\" value=\"Tester\" >";
@@ -37,7 +37,7 @@
 				$val = urlencode($this->form->getValue('lib')); 
 			}
 			echo "<input type=\"button\" onclick=\"GetAjax('".WEB_ROOT_AJAX
-			."/moteur/tester?CacheForm=1&dicoIdsDtm[]=15&dicoIdsNgt[]=16&dicoIdsPrSt[]=14&dicoIdsCjg[]=25&dicoIdsPrCp[]=13&dicoIdsStg[]=4&dicoIdsCpt[]=29&dicoIdsCpt[]="
+			."/moteur/tester?CacheForm=1&dicoIdsDtm[]=15&dicoIdsNgt[]=16&dicoIdsPrSt[]=14&dicoIdsCjg[]=25&dicoIdsPrCp[]=13&dicoIdsStg[]=4&dicoIdsCpt[]=34&dicoIdsCpt[]="
 			.$this->form->getValue('idDico')."&valeur="
 			.$val
 			."&envoyer=Tester')\" value=\"Tester\" >";
