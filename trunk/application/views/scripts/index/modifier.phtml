@@ -67,6 +67,27 @@
 			        </td>
 			    </tr>
 			<?php endforeach; ?>
+
+			    <tr>
+			<?php foreach($this->cols1 as $col) : ?>
+			        <th><?php echo $col;?></th>
+			<?php endforeach; ?>
+			    </tr>  
+			<?php foreach($this->enfants1 as $enfant) : ?>
+			    <tr>
+				<?php foreach($this->cols1 as $col) : ?>
+			        <td><?php echo $this->escape($enfant[$col]);?></td>
+				<?php endforeach; ?>
+			        <td>
+			            <a href="<?php echo $this->url(array('controller'=>'index',
+			                'action'=>'modifier', 'idParent'=>$this->idParent, 'type'=>$this->types['enfant1'], 'id'=>$enfant1[$this->key[1]]));?>">Modifier</a>
+			            <a href="<?php echo $this->url(array('controller'=>'index',
+			                'action'=>'supprimer', 'idParent'=>$this->idParent, 'type'=>$this->types['enfant1'], 'id'=>$enfant1[$this->key[1]]));?>">Supprimer</a>
+			        </td>
+			    </tr>
+			<?php endforeach; ?>
+
+
 			</table>
 		</td>
 		<td style="vertical-align:top;" >

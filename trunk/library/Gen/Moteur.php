@@ -390,14 +390,15 @@ class Gen_Moteur
 					}
 					
 					if($numP>=6){	
-						//récupère le genre
-						$genre = $this->getGenreVerbe($arr);     	
+						//récupère le vecteur
+						$vecteur = $this->getVecteur("genre",-1,$arr["determinant_verbe"][7]);
+						$genre = $vecteur["genre"];     	
 						//génère le pronom
 						$m = new Gen_Moteur($this->urlDesc,$this->forceCalcul);
 						$m->arrDicos = $this->arrDicos;
 						$m->Generation($pr,false,$this->cache);
-						$m->arrClass[0]["genre"]=$genre;
-						$m->arrClass[0]["pluriel"]=$pluriel;						
+						$m->arrClass[0]["vecteur"]["genre"]=$genre;
+						$m->arrClass[0]["vecteur"]["pluriel"]=$pluriel;						
 						$this->potentiel += $m->potentiel;
 						$m->genereTexte();						
 						$arr["prosuj"]["lib"] = $m->texte;
@@ -478,6 +479,9 @@ class Gen_Moteur
 	}
 	
 	public function getVecteur($type,$dir,$num=1){
+		
+		//pour les verbes
+		if($num==0)$num=1;
 		
 		$vecteur = false;
 		$j = 1;
@@ -619,7 +623,7 @@ class Gen_Moteur
 			//génère la négation
 			if($arr["determinant_verbe"][0]!=0){
 				$arr["finneg"] = $this->getNegation($arr["determinant_verbe"][0]);
-				if($arr["elision"]==0){
+				if($eli==0){
 					$arr["debneg"] = "ne ";	
 				}else{
 					if($arr["prodem"]!=""){
@@ -642,8 +646,11 @@ class Gen_Moteur
 						$verbe = $arr["prodem"]["lib_eli"].$verbe; 
 					}
 					$eli=0;
-				}	
-				$verbe = $arr["finneg"].$verbe; 
+				}
+				if($arr["finneg"]!=""){	
+					$verbe = $arr["finneg"]." ".$verbe;
+					$arr["debneg"] = "ne ";
+				} 
 				if($arr["debneg"]!=""){
 					$verbe = $arr["debneg"].$verbe; 
 				}	
@@ -1132,6 +1139,12 @@ class Gen_Moteur
 	        $a = mt_rand(0, count($arrCpt["dst"])-1);        
 	        $cpt = $this->getClassGen($arrCpt["dst"][$a]);
 	        if($cpt)$cpt["idParent"] = $arrCpt["src"]["id_concept"];
+	        
+	        //vérifie s'il faut transférer le déterminant de verbe
+	        if($arrCpt["src"]["type"]=="v" && isset($this->arrClass[$this->ordre-1]["determinant_verbe"]) && !isset($this->arrClass[$this->ordre-1]["verbe"])){
+	        	$this->arrClass[$this->ordre]["determinant_verbe"]=$this->arrClass[$this->ordre-1]["determinant_verbe"];
+	        }
+	        
         }
                 	
 		return $cpt; 			
