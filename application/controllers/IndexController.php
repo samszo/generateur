@@ -20,7 +20,7 @@ class IndexController extends Zend_Controller_Action
 		//$this->modifierAction();
 		$moteur = new Gen_Moteur("",true);
 		$arrDicos = array(
-			"concepts"=>"37,34"
+			"concepts"=>"28,34"
 			,"syntagmes"=>4
 			,"pronoms_complement"=>13
 			,"conjugaisons"=>25
@@ -29,8 +29,8 @@ class IndexController extends Zend_Controller_Action
 			,"negations"=>16);
 		$moteur->arrDicos = $arrDicos;	
 		//$moteur->typeChoix = "alea";	
-		//$moteur->Generation("[090000000|v_craindre 1]");
-		
+		//$moteur->Generation("[020000100|v_être]");
+						
 		//
 		//$dico = new Gen_Dico();
 		//$dico->GetMacToXml(31);
