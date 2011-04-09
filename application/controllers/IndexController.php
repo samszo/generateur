@@ -17,6 +17,7 @@ class IndexController extends Zend_Controller_Action
     	
 		//pour le débuggage
 		// 
+		//$this->modifierAction();
 		$moteur = new Gen_Moteur("",true);
 		$arrDicos = array(
 			"concepts"=>"37,34"
@@ -28,7 +29,7 @@ class IndexController extends Zend_Controller_Action
 			,"negations"=>16);
 		$moteur->arrDicos = $arrDicos;	
 		//$moteur->typeChoix = "alea";	
-		$moteur->Generation("[010000300|v_appeler]");
+		//$moteur->Generation("[090000000|v_craindre 1]");
 		
 		//
 		//$dico = new Gen_Dico();
@@ -46,8 +47,13 @@ class IndexController extends Zend_Controller_Action
         $id = $this->_getParam('id', 0);
         $idParent = $this->_getParam('idParent', 0);
         $this->view->idParent = $id;
-        
-    	/*
+                
+        /*
+		$type = 'concept';//$this->_getParam('type', 0);
+        $id = '61629'; //$this->_getParam('id', 0);
+        $idParent = '37';//$this->_getParam('idParent', 0);
+        $this->view->idParent = $id;
+
         $echo =false;
         Zend_Debug::dump($id, $echo, $echo);
         Zend_Debug::dump($type, $label = null, $echo = true);
@@ -181,18 +187,27 @@ class IndexController extends Zend_Controller_Action
 			$parent = $Rowset->current();
 			if(!is_numeric($parent->type) && $parent->type!="" && $parent->type!="age" && $parent->type!="thl" && $parent->type!="univers"){
 				//charge les enfants suivant le type de concept
-				if($parent->type=="a")$tType="Adjectifs";
-				if($parent->type=="v")$tType="Verbes";
-				if($parent->type=="m" || $parent->type=="dis" || $parent->type=="carac")$tType="Substantifs";
-				if($parent->type=="s")$tType="Syntagmes";
-				$enfants = $parent->findManyToManyRowset('Model_DbTable_'.$tType,
+				if($parent->type=="dis" || $parent->type=="carac"){
+					$tType="Substantifs";
+					$enfants = $parent->findManyToManyRowset('Model_DbTable_'.$tType,
 	                                                 'Model_DbTable_Concepts'.$tType);
+					$tType1="Adjectifs";
+					$enfants1 = $parent->findManyToManyRowset('Model_DbTable_'.$tType1,
+	                                                 'Model_DbTable_Concepts'.$tType1);
+				}else{
+					if($parent->type=="a")$tType="Adjectifs";
+					if($parent->type=="v")$tType="Verbes";
+					if($parent->type=="m")$tType="Substantifs";
+					if($parent->type=="s")$tType="Syntagmes";
+					$enfants = $parent->findManyToManyRowset('Model_DbTable_'.$tType,
+		                                                 'Model_DbTable_Concepts'.$tType);
+				}
 			}
 			//ajout des généreteurs
 			$gens = $parent->findManyToManyRowset('Model_DbTable_Generateurs',
 	                                                 'Model_DbTable_ConceptsGenerateurs');
 			$this->view->gens = $gens;
-			$types = array("parent"=>"concept","enfant"=>strtolower(substr($tType,0,-1)));	            	
+			$types = array("parent"=>"concept","enfant"=>strtolower(substr($tType,0,-1)),"enfant1"=>strtolower(substr($tType1,0,-1)));	            	
 			$this->view->title = "Modification du concept (".$id.")";
 			$this->view->libAjout = "Ajouter ".$types["enfant"];
 			//ajout du formulaire pour modifier l'élément parent
@@ -314,9 +329,14 @@ class IndexController extends Zend_Controller_Action
 			$this->view->cols = $enfants->getTable()->info('cols');
 	        $this->view->key = $enfants->getTable()->info('primary');
 	    }
+        if(count($enfants1)>0){
+			$this->view->cols1 = $enfants1->getTable()->info('cols');
+	        $this->view->key1 = $enfants1->getTable()->info('primary');
+	    }
 	    $this->view->headTitle($this->view->title, 'PREPEND');
 		$this->view->parent = $parent;
 		$this->view->enfants = $enfants;
+		$this->view->enfants1 = $enfants1;
 		$this->view->types = $types;
 		
 		if ($this->getRequest()->isPost()) {
