@@ -45,6 +45,7 @@ class Gen_Moteur
 	var $typeChoix = "alea";
 	var $cache;
 	var $forceCalcul;
+	var $finLigne = "</br>";
 	
 	/**
 	 * Le constructeur initialise le moteur.
@@ -161,7 +162,8 @@ class Gen_Moteur
 		for ($i = $ordreDeb; $i <= $ordreFin; $i++) {
 			$this->ordre = $i;
 			$texte = "";
-			if($arr = $this->arrClass[$i]){
+			if(isset($this->arrClass[$i])){
+				$arr = $this->arrClass[$i];
 				if(isset($arr["texte"])){
 					//vérifie le texte conditionnel
 					if($arr["texte"]=="<"){
@@ -217,7 +219,7 @@ class Gen_Moteur
 				        }
 					}elseif($txtCondi){
 						if($arr["texte"]=="%"){
-							$texte .= "<br/>";	
+							$texte .= $this->finLigne;	
 						}else{
 							$texte .= $arr["texte"];
 						}
@@ -327,12 +329,14 @@ class Gen_Moteur
 			//vérifie la présence d'un verbe théorique
 			$verbeTheo = false;
 			for ($i = $this->ordre; $i >= 0; $i--) {
-				if($this->arrClass[$i]["class"][1]=="v_théorique"){
-					$arr["determinant_verbe"] = $this->arrClass[$i]["determinant_verbe"];
-					$verbeTheo = true;
-					//calcul le pronom
-					$arr = $this->generePronom($arr);
-					$i=-1;						
+				if(isset($this->arrClass[$i]) && isset($this->arrClass[$i]["class"][1])){
+					if($this->arrClass[$i]["class"][1]=="v_théorique"){
+						$arr["determinant_verbe"] = $this->arrClass[$i]["determinant_verbe"];
+						$verbeTheo = true;
+						//calcul le pronom
+						$arr = $this->generePronom($arr);
+						$i=-1;						
+					}
 				}
 			}
 			if(!$verbeTheo){
@@ -413,9 +417,10 @@ class Gen_Moteur
 				$numPC = $arr["determinant_verbe"][3].$arr["determinant_verbe"][4];
 				$arr["prodem"] = $this->getPronom($numPC,"complément");
 		        if(substr($arr["prodem"]["lib"],0,1)== "["){
-					//récupère le genre
-					$genre = $this->getGenreVerbe($arr);     	
-					//génère le pronom
+					//récupère le vecteur
+					$vecteur = $this->getVecteur("genre",-1,$arr["determinant_verbe"][7]);
+					$genre = $vecteur["genre"];     	
+		        	//génère le pronom
 					$m = new Gen_Moteur($this->urlDesc,$this->forceCalcul);
 					$m->arrDicos = $this->arrDicos;
 					$m->Generation($arr["prodem"]["lib"],false,$this->cache);
@@ -430,22 +435,6 @@ class Gen_Moteur
 		return $arr;
 	}
 
-	public function getGenreVerbe($arrVerbe){
-		$nbVecteur= $this->getVecteurNb();
-		
-		//si pas de vecteur le genre est masculin
-		if($nbVecteur==0){
-			return 1;
-		}
-		
-		//nombre d’informations sur le vecteur - valeur indiquée + 1
-		$numSub = $nbVecteur-$arrVerbe["determinant_verbe"][7]+1;
-		//récupère le genre
-		$genre = $this->arrClass[$numSub]["vecteur"]["genre"];     	
-		
-		return $genre;
-	}
-	
 	public function genereDeterminant($arr){
 
 		$det = "";
@@ -467,17 +456,7 @@ class Gen_Moteur
 		
 		return $det;
 	}
-	
-	public function getVecteurNb(){
-		$nbVecteur=0;
-		foreach($this->arrClass as $arr){
-			if(isset($arr["vecteur"])){
-				$nbVecteur++;
-			}
-		}
-		return $nbVecteur;		
-	}
-	
+		
 	public function getVecteur($type,$dir,$num=1){
 		
 		//pour les verbes
@@ -586,6 +565,24 @@ class Gen_Moteur
 		
 	}
 
+	function strpos_array($haystack, $needles) {
+	    //merci à http://www.php.net/manual/en/function.strpos.php#102773
+		if ( is_array($needles) ) {
+	        foreach ($needles as $str) {
+	            if ( is_array($str) ) {
+	                $pos = strpos_array($haystack, $str);
+	            } else {
+	                $pos = strpos($haystack, $str);
+	            }
+	            if ($pos !== FALSE) {
+	                return $pos;
+	            }
+	        }
+	    } else {
+	        return strpos($haystack, $needles);
+	    }
+	}
+	
 	
 	public function genereVerbe($arr){
 
@@ -614,8 +611,15 @@ class Gen_Moteur
 		//construction de l'élision
 		$eli = $arr["verbe"]["elision"];
 		if($eli==0){
+			//attention aux caractères bizares
 			$arrEli = array("a", "e", "é", "ê", "i","y");
-			if(in_array(substr($centre,0,1), $arrEli))$eli=1;
+			$arrEliCode = array(195);
+			$initial = $centre[0];
+			if(in_array($initial, $arrEli))$eli=1;
+			if($eli==0){
+				$initial = ord($initial);
+				if(in_array($initial, $arrEliCode))$eli=1;				
+			}
 		}
 		
 		$verbe="";
