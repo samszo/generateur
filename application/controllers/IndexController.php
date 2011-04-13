@@ -29,10 +29,11 @@ class IndexController extends Zend_Controller_Action
 			,"negations"=>16);
 		$moteur->arrDicos = $arrDicos;	
 		//$moteur->typeChoix = "alea";	
-		//$moteur->Generation("[020000100|v_être]");
-						
+		//$moteur->Generation("=05000000000$[thl-psycho-04]%[thl-psycho-04]%[thl-psycho-04]%[thl-psycho-04]%%[caract10]%[carac10]%%[thl-psycho-04]%[thl-psycho-04]%[thl-psycho-04]%[thl-psycho-04]%[thl-psycho-04]%%[carac10]%[caract10]%%[thl-psycho-04]%[thl-psycho-04]%[thl-psycho-04]%[thl-psycho-04]%%[carac10]%[caract10]%%[thl-psycho-04]%[thl-psycho-04]%[thl-psycho-04]%[thl-psycho-04]%%[caract10]FF");
+		$moteur->Verification("[thl-psycho-04]");
+		
 		//
-		//$dico = new Gen_Dico();
+		$dico = new Gen_Dico();
 		//$dico->GetMacToXml(31);
 		//$dico->SaveBdd(29,25);
 		//$dbD = new Model_DbTable_Dicos();
