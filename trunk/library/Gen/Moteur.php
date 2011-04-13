@@ -45,7 +45,11 @@ class Gen_Moteur
 	var $typeChoix = "alea";
 	var $cache;
 	var $forceCalcul;
-	var $finLigne = "</br>";
+	var $finLigne = "<br/>";
+	var $showErr = false;
+	var $maxNiv = 1000;
+	var $niv = 0;
+	var $arrDoublons = array();
 	
 	/**
 	 * Le constructeur initialise le moteur.
@@ -83,6 +87,11 @@ class Gen_Moteur
 		$this->ordre = 0;
 		$this->segment = 0;
 		$this->arrClass[$this->ordre]["generation"] = $texte;
+		$this->arrClass[$this->ordre]["niveau"] = $this->niv;
+		if($this->niv>$this->maxNiv){
+			$this->arrClass[$this->ordre]["ERREUR"] = "problème de boucle trop longue : ".$texte;			
+			throw new Exception("problème de boucle trop longue");			
+		}
 		
 		//parcourt l'ensemble de la chaine
 		for($i = 0; $i < strlen($texte); $i++)
@@ -224,6 +233,8 @@ class Gen_Moteur
 							$texte .= $arr["texte"];
 						}
 					}
+				}elseif(isset($arr["ERREUR"]) && $this->showErr){
+					$this->texte .= $this->arrayVersHTML($arr);
 				}else{
 					if($txtCondi){
 						$det = "";
@@ -257,7 +268,7 @@ class Gen_Moteur
 							$texte .= $arr["syntagme"]["lib"];
 						}					
 											
-						$texte .= $det.$sub.$adjs.$verbe;
+						$texte .= $det.$sub." ".$adjs.$verbe;
 					}					
 				}
 				if($texte!=""){
@@ -323,6 +334,7 @@ class Gen_Moteur
 		
 		//par défaut la terminaison = 3
 		$arr["terminaison"] = 3;
+		$pluriel = false;
 		
 		//vérifie la présence d'un d&terminant
 		if(!isset($arr["determinant_verbe"])){
@@ -645,7 +657,7 @@ class Gen_Moteur
 				$verbe = $centre;
 				if($arr["prodem"]!=""){
 					if($eli==0){
-						$verbe = $arr["prodem"]["lib"].$verbe; 
+						$verbe = $arr["prodem"]["lib"]." ".$verbe; 
 					}else{
 						$verbe = $arr["prodem"]["lib_eli"].$verbe; 
 					}
@@ -677,7 +689,7 @@ class Gen_Moteur
 			$verbe = $centre.$arr["finneg"];
 			if($arr["prodem"]!=""){
 				if($eli==0){
-					$verbe = $arr["prodem"]["lib"].$verbe; 
+					$verbe = $arr["prodem"]["lib"]." ".$verbe; 
 				}else{
 					$verbe = $arr["prodem"]["lib_eli"].$verbe; 
 					$eli=0;
@@ -688,7 +700,7 @@ class Gen_Moteur
 			}	
 			if($arr["prosuj"]!=""){
 				if($eli==0){
-					$verbe = $arr["prosuj"]["lib"].$verbe; 
+					$verbe = $arr["prosuj"]["lib"]." ".$verbe; 
 				}else{
 					$verbe = $arr["prosuj"]["lib_eli"].$verbe; 
 				}
@@ -700,6 +712,8 @@ class Gen_Moteur
 	
 	public function getClass($class){
 
+		if($class=="")return;
+		
 		$this->arrClass[$this->ordre]["class"][] = $class;
 
 		//vérifie si la class est un déterminant
@@ -790,7 +804,7 @@ class Gen_Moteur
 	public function getClassVals($txt,$i=0){
 
 		if(!$txt){
-	        return array("deb"=>$i,"fin"=>$i,"valeur"=>$txt,"arr"=>$arr);
+	        return "";
 		}
 		
 		$deb = strpos($txt,"[",$i);
@@ -992,8 +1006,6 @@ class Gen_Moteur
 	        $arrClass = $this->getAleaClass($class);
 	        if(isset($arrClass["lib"])){
 	        	$this->arrClass[$this->ordre]["syntagme"] = $arrClass;			
-	        }else{
-	        	$this->traiteClass($arrClass["valeur"]);
 	        }
 		}
 	}
@@ -1001,7 +1013,7 @@ class Gen_Moteur
 	public function traiteClass($class, $i=0){
 
 		$arrClass = $this->getClassVals($class,$i);	        	
-		foreach($arrClass["arr"] as $cls){
+		foreach($arrClass["arr"] as $cls){			
 			$this->getClass($cls);
         }	        	
 		return $arrClass["fin"];
@@ -1069,7 +1081,7 @@ class Gen_Moteur
 			$this->cache->save($arrClass,$c);
 		}
 		if(get_class($arrClass)=="Exception"){
-	        $this->arrClass[$this->ordre]["ERREUR"] = $arrClass->getMessage()."<br/><pre>".$arrClass->getTraceAsString()."</pre>";
+	        $this->arrClass[$this->ordre]["ERREUR"] = $arrClass->getMessage();//."<br/><pre>".$arrClass->getTraceAsString()."</pre>";
 			return "";
 		}
 		
@@ -1090,7 +1102,7 @@ class Gen_Moteur
 		}
 		
 		if(get_class($arrClass)=="Exception"){
-	        $this->arrClass[$this->ordre]["ERREUR"] = $arrClass->getMessage()."<br/><pre>".$arrClass->getTraceAsString()."</pre>";
+	        $this->arrClass[$this->ordre]["ERREUR"] = $arrClass->getMessage();//."<br/><pre>".$arrClass->getTraceAsString()."</pre>";
 			return "";
 		}
 		return $arrClass["lib"];
@@ -1167,9 +1179,14 @@ class Gen_Moteur
         if(isset($cpt["id_gen"])){
         	//générer l'expression
 			$m = new Gen_Moteur();
-			$m->arrDicos = $this->arrDicos;		
+			$m->niv = $this->niv+1;
+			$m->arrDicos = $this->arrDicos;
 			//génére la classe
 			$m->Generation($cpt['valeur'],false,$this->cache);
+			//vérifie que la classe n'a pas déjà été générée
+			if($this->in_multiarray($cpt['valeur'],$this->arrClass)){
+				$this->arrDoublons[] = array('niv'=>$this->niv,'ordre'=>$this->ordre,'valeur'=>$cpt['valeur'],'moteur'=>$m);		
+			}
 			//récupère les class générée
 			$this->getClassMoteur($m);
 			$this->potentiel += $m->potentiel;
@@ -1179,6 +1196,41 @@ class Gen_Moteur
 		return $cpt; 			
 		
 	}
+
+	function in_multiarray($elem, $array)
+    {
+        // if the $array is an array or is an object
+         if( is_array( $array ) || is_object( $array ) )
+         {
+             // if $elem is in $array object
+             if( is_object( $array ) )
+             {
+                 $temp_array = get_object_vars( $array );
+                 if( in_array( $elem, $temp_array ) )
+                     return TRUE;
+             }
+            
+             // if $elem is in $array return true
+             if( is_array( $array ) && in_array( $elem, $array ) )
+                 return TRUE;
+                
+            
+             // if $elem isn't in $array, then check foreach element
+             foreach( $array as $array_element )
+             {
+                 // if $array_element is an array or is an object call the in_multiarray function to this element
+                 // if in_multiarray returns TRUE, than return is in array, else check next element
+                 if( ( is_array( $array_element ) || is_object( $array_element ) ) && $this->in_multiarray( $elem, $array_element ) )
+                 {
+                     return TRUE;
+                     exit;
+                 }
+             }
+         }
+        
+         // if isn't in array return FALSE
+         return FALSE;
+    } 	
 	
 	public function getClassDef($class){
 
@@ -1194,7 +1246,7 @@ class Gen_Moteur
 		}
 		
 		if(get_class($arrCpt)=="Exception"){
-    		$this->arrClass[$this->ordre]["ERREUR"] = $arrCpt->getMessage()."<br/><pre>".$arrCpt->getTraceAsString()."</pre>";
+    		$this->arrClass[$this->ordre]["ERREUR"] = $arrCpt->getMessage();//."<br/><pre>".$arrCpt->getTraceAsString()."</pre>";
     		$arrCpt = false;
 		}
 		
