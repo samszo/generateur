@@ -6,32 +6,35 @@ $temps_debut = microtime(true);
 
 
 require_once('../public/config.php');
-require_once('../library/odtphp/odf.php');
 
+$ids = array(
+	array("id"=>61570, "titre"=> "0.Le Lilus Arythmeticus")
+	,array("id"=>61571, "titre"=> "1.La Polygonum")
+	,array("id"=>61572, "titre"=> "2.La Silène luminaris")
+	,array("id"=>61573, "titre"=> "3.La Bella Donna")
+	,array("id"=>61562, "titre"=> "2.Pychsellis Vipérine")
+	,array("id"=>61563, "titre"=> "3.Oxalis de Thalès")
+	,array("id"=>61564, "titre"=> "4.La Trifolia Sadica")
+	,array("id"=>61565, "titre"=> "5.La Purple Haze")
+	,array("id"=>61566, "titre"=> "6.L'Alchemille dentelée")
+	,array("id"=>61567, "titre"=> "7.La Dracocéphale")
+	,array("id"=>61568, "titre"=> "8.La Reographia Lucifera")
+	,array("id"=>61569, "titre"=> "9.La Pixacantha")
+	);	
+if(isset($_GET['id'])){
+	$num = $_GET['id'];
+}else{
+	$num = mt_rand(0, 10);
+}
+$id = $ids[$num]["id"];		
+
+$getHtml = true;
+	
 if(isset($_GET['nb']))
 	$nb = $_GET['nb'];
 else
 	$nb = 1;
 
-if(isset($_GET['id']))
-	$id = $_GET['id'];
-else
-	$id = 46990;
-
-$getHtml = true;
-	
-if(isset($_GET['odf'])){
-	$getOdf = true;
-	$getHtml = false;
-}else
-	$getOdf = false;
-
-if(isset($_GET['xml'])){
-	$getXml = true;
-	$getHtml = false;
-}else
-	$getXml = false;
-	
 if(isset($_GET['err']))
 	$err = true;
 else
@@ -40,11 +43,10 @@ else
 if(isset($_GET['dicos']))
 	$dicos = $_GET['dicos'];
 else
-	$dicos = "28,34,27";
+	$dicos = "34,37";
 	
 	
 if($getHtml)header ('Content-type: text/html; charset=utf-8');
-if($getXml)header ('Content-type: text/xml; charset=utf-8');
 
 	
 try {
@@ -55,12 +57,6 @@ try {
 	//récupère le nombre de fichier
 	$nbFic = count_files(ROOT_PATH.'/data/capture/','txt','');
 	
-	//vérifie si on fait un fichier
-	if($getOdf){
-		$pathModel = ROOT_PATH."/data/models/capture.odt";
-		$odf = new odf($pathModel);
-	}
-	
 	$arrDicos = array(
 		"concepts"=>$dicos
 		,"syntagmes"=>4
@@ -70,52 +66,42 @@ try {
 		,"déterminants"=>15
 		,"negations"=>16);
 	
-	//récupère la définition des chansons
+	//récupère la définition d'une plante
 	$dbConcepts = new Model_DbTable_Concepts();
 	$Rowset = $dbConcepts->find($id);
 	$parent = $Rowset->current();
-	//ajout des généreteurs
-	$defChansons = $parent->findManyToManyRowset('Model_DbTable_Generateurs','Model_DbTable_ConceptsGenerateurs');
-	$arrChansons = $defChansons->toArray();
+
+	//récupère les généreteurs
+	$defPlantes = $parent->findManyToManyRowset('Model_DbTable_Generateurs','Model_DbTable_ConceptsGenerateurs');
+	$arrPlantes = $defPlantes->toArray();
 	
-	//nimbre de chansons possible
-	$nbChan = count($arrChansons)-1;
+	//nombre de plante possible
+	$nbPlante = count($arrPlantes)-1;
 	
-	if($getOdf)$chansons = $odf->setSegment('chansons');
-	if($getXml)$xml = "<Directory>";
 	for ($itr = 0; $itr < $nb; $itr++) {
 		try {
-			$num = mt_rand(0, $nbChan);
-			$chanson = $arrChansons[$num];
+			$num = mt_rand(0, $nbPlante);
+			$plante = $arrPlantes[$num];
 			
-			if($getHtml){
+			if($err){
 				echo "<br/>".$itr." sur ".$nb;
 				echo " texte ".$num." sur ".$nbChan;
 			}
 			
-			if($getOdf)$chansons->setVars('chansons_titre', getipv6());
-
-			//calcul une chanson
+			//calcul une plante
 			$moteur = new Gen_Moteur();
 			$moteur->arrDicos = $arrDicos;	
 			//$moteur->finLigne = "\r\n";
 			$moteur->showErr = $err;
-			if($getHtml)echo "<br/>".$chanson['valeur']."<br/>";
+			if($err)echo "<br/>".$plante['valeur']."<br/>";
 
-			$moteur->Generation($chanson['valeur']);	
-			
-			if($getHtml)echo "<br/>".$moteur->texte."<br/>";
-			if($getXml) $xml .= "<chanson><paroles>".$moteur->texte."<titre1>".getipv6()."</titre1><titre2>Bientôt là...</titre2></paroles></chanson>";
-			
-			if($getOdf){
-				//ajoute le texte au doc
-				$chansons->setVars('chansons_texte', str_replace("<br/>","\n",$moteur->texte));
-				//enregistre l'item dans le document
-				$chansons->merge();
-			}
-						
+			$moteur->Generation($plante['valeur']);	
 			
 			if($getHtml){
+				echo "<br/>".$moteur->texte."<br/>";
+			}
+			
+			if($err){
 				//calcul le temps d'execution
 				$temps_fin = microtime(true);
 				echo ' Temps d\'execution : '.round($temps_fin - $temps_debut, 4)." s. ";
@@ -128,22 +114,16 @@ try {
 		}catch (Exception $e) {
 			echo "Récupère exception: " . get_class($e) . "<br/>";
 		    echo "Message: " . $e->getMessage() . "<br/>";
+		    echo print_r($moteur->arrClass);
+		    echo $moteur->detail;
 		}
 			
 	}
 	//finalise le document
-	if($getOdf){
-		$odf->mergeSegment($chansons);
-		$odf->exportAsAttachedFile();
-	}
-	if($getHtml){
+	if($err){
 		echo "<br/><br/>FIN DE GENERATION DES FICHIERS ".$itr." sur ".$nb;
 	}
-	if($getXml){
-		$xml .= "</Directory>";
-		echo $xml;
-	}
-	
+
 		
 }catch (Exception $e) {
     echo "Message: " . $e->getMessage() . "\n";
