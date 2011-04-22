@@ -842,8 +842,8 @@ class Gen_Moteur
         	$this->ordre ++;
         	//avec le vecteur
         	$this->arrClass[$this->ordre]["vecteur"] = $this->arrClass[($this->ordre-1)]["vecteur"]; 
-        	//récupère le substantif
-        	$this->getSubstantif($arr[1]);
+        	//récupère la class
+        	$this->getClass($arr[1]);
         	//redéfini l'ordre pour que l'adjectif soit placé avant
         	$this->ordre --;
         	//avec le nouveau vecteur
@@ -861,8 +861,10 @@ class Gen_Moteur
         }else{
 	        $this->arrClass[$this->ordre]["adjectifs"][] = $this->getAleaClass($arr[0]);        	
         }
-		
+		        
         if(count($arr)>1){
+	        //met à jour l'élision
+        	$this->arrClass[$this->ordre]["vecteur"]["elision"] = $this->arrClass[$this->ordre]["adjectifs"][0]["elision"];       	
         	//redéfini l'ordre pour que la suite de la génération
         	$this->ordre ++;
         }

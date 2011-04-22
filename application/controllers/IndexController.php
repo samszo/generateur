@@ -20,7 +20,7 @@ class IndexController extends Zend_Controller_Action
 		//$this->modifierAction();
 		$moteur = new Gen_Moteur("",true);
 		$arrDicos = array(
-			"concepts"=>"28,34"
+			"concepts"=>"37,34"
 			,"syntagmes"=>4
 			,"pronoms_complement"=>13
 			,"conjugaisons"=>25
@@ -29,7 +29,7 @@ class IndexController extends Zend_Controller_Action
 			,"negations"=>16);
 		$moteur->arrDicos = $arrDicos;	
 		//$moteur->typeChoix = "alea";	
-		//$moteur->Generation("=05000000000$[thl-psycho-04]%[thl-psycho-04]%[thl-psycho-04]%[thl-psycho-04]%%[caract10]%[carac10]%%[thl-psycho-04]%[thl-psycho-04]%[thl-psycho-04]%[thl-psycho-04]%[thl-psycho-04]%%[carac10]%[caract10]%%[thl-psycho-04]%[thl-psycho-04]%[thl-psycho-04]%[thl-psycho-04]%%[carac10]%[caract10]%%[thl-psycho-04]%[thl-psycho-04]%[thl-psycho-04]%[thl-psycho-04]%%[caract10]FF");
+		//$moteur->Generation("[12|a_poète@carac5]");
 		//$moteur->Verification("[thl-psycho-04]");
 		
 		//
