@@ -190,7 +190,7 @@ class Gen_Dico
 				$this->dbDicos->ajouterDicoGenDicoRef($idDico,$idDico);
 				break;
 			case 'déterminants':
-				$this->bDtm = new Model_DbTable_Determinants();
+				$this->dbDtm = new Model_DbTable_Determinants();
 				break;
 			case 'compléments':
 				$this->dbCpm = new Model_DbTable_Complements();

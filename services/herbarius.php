@@ -7,24 +7,92 @@ $temps_debut = microtime(true);
 
 require_once('../public/config.php');
 
-$ids = array(
-	array("id"=>61570, "titre"=> "0.Le Lilus Arythmeticus")
-	,array("id"=>61571, "titre"=> "1.La Polygonum")
-	,array("id"=>61572, "titre"=> "2.La Silène luminaris")
-	,array("id"=>61573, "titre"=> "3.La Bella Donna")
-	,array("id"=>61562, "titre"=> "2.Pychsellis Vipérine")
-	,array("id"=>61563, "titre"=> "3.Oxalis de Thalès")
-	,array("id"=>61564, "titre"=> "4.La Trifolia Sadica")
-	,array("id"=>61565, "titre"=> "5.La Purple Haze")
-	,array("id"=>61566, "titre"=> "6.L'Alchemille dentelée")
-	,array("id"=>61567, "titre"=> "7.La Dracocéphale")
-	,array("id"=>61568, "titre"=> "8.La Reographia Lucifera")
-	,array("id"=>61569, "titre"=> "9.La Pixacantha")
-	);	
+if(isset($_GET['langue'])){
+	$langue = $_GET['langue'];
+}else{
+	$langue = "fr";
+}
+
+if($langue=="fr"){
+	$ids = array(
+		array("id"=>61570, "titre"=> "0.Le Lilus Arythmeticus")
+		,array("id"=>61571, "titre"=> "1.La Polygonum")
+		,array("id"=>61572, "titre"=> "2.La Silène luminaris")
+		,array("id"=>61573, "titre"=> "3.La Bella Donna")
+		,array("id"=>61562, "titre"=> "2.Pychsellis Vipérine")
+		,array("id"=>61563, "titre"=> "3.Oxalis de Thalès")
+		,array("id"=>61564, "titre"=> "4.La Trifolia Sadica")
+		,array("id"=>61565, "titre"=> "5.La Purple Haze")
+		,array("id"=>61566, "titre"=> "6.L'Alchemille dentelée")
+		,array("id"=>61567, "titre"=> "7.La Dracocéphale")
+		,array("id"=>61568, "titre"=> "8.La Reographia Lucifera")
+		,array("id"=>61569, "titre"=> "9.La Pixacantha")
+		);
+	$arrDicos = array(
+		"concepts"=>"34,37"
+		,"syntagmes"=>4
+		,"pronoms_complement"=>13
+		,"conjugaisons"=>25
+		,"pronoms"=>"13,14"
+		,"déterminants"=>15
+		,"negations"=>16);
+		
+}
+if($langue=="en"){
+	$ids = array(
+		array("id"=>68948, "titre"=> "0.Lilus Arythmeticus")
+		,array("id"=>68949, "titre"=> "1.Polygonum")
+		,array("id"=>68950, "titre"=> "2.Silene luminaris")
+		,array("id"=>68951, "titre"=> "3.Bella Donna")
+		,array("id"=>68940, "titre"=> "2.Viperin Pychsellis")
+		,array("id"=>68941, "titre"=> "3.Thales' Oxalis")
+		,array("id"=>68942, "titre"=> "4.Trifolia Sadica")
+		,array("id"=>68943, "titre"=> "5.Purple Haze")
+		,array("id"=>68944, "titre"=> "6.Serrated Alchemilla")
+		,array("id"=>68945, "titre"=> "7.Dragonhead")
+		,array("id"=>68946, "titre"=> "8.Reographia Lucifera")
+		,array("id"=>68947, "titre"=> "9.Pixacantha")
+		);
+		
+	$arrDicos = array(
+		"concepts"=>"42,43"
+		,"syntagmes"=>41
+		,"pronoms_complement"=>13
+		,"conjugaisons"=>40
+		,"pronoms"=>"38,14"
+		,"déterminants"=>39
+		,"negations"=>16);
+}
+if($langue=="es"){
+	$ids = array(
+		array("id"=>83786, "titre"=> "0.Lágrimas")
+		,array("id"=>83787, "titre"=> "1.Polygonatum")
+		,array("id"=>83778, "titre"=> "2.Amaranthus Rivea")
+		,array("id"=>83779, "titre"=> "3.Dionaea muscipula")
+		,array("id"=>83788, "titre"=> "2.La Uña de gato")
+		,array("id"=>83789, "titre"=> "3.Peyotl")
+		,array("id"=>83780, "titre"=> "4.Anthurium")
+		,array("id"=>83781, "titre"=> "5.Verónica")
+		,array("id"=>83782, "titre"=> "6.La Prosera Borgeana")
+		,array("id"=>83783, "titre"=> "7.La Cleome Spinosa")
+		,array("id"=>83784, "titre"=> "8.Capanula Barbata")
+		,array("id"=>83785, "titre"=> "9.Physocarpus")
+		);
+				
+	$arrDicos = array(
+		"concepts"=>"58,59"
+		,"syntagmes"=>55
+		,"pronoms_complement"=>13
+		,"conjugaisons"=>54
+		,"pronoms"=>"57,14"
+		,"déterminants"=>56
+		,"negations"=>16);
+}
+
 if(isset($_GET['id'])){
 	$num = $_GET['id'];
 }else{
-	$num = mt_rand(0, 10);
+	$num = mt_rand(0, 11);
 }
 $id = $ids[$num]["id"];		
 
@@ -38,13 +106,7 @@ else
 if(isset($_GET['err']))
 	$err = true;
 else
-	$err = false;
-
-if(isset($_GET['dicos']))
-	$dicos = $_GET['dicos'];
-else
-	$dicos = "34,37";
-	
+	$err = false;	
 	
 if($getHtml)header ('Content-type: text/html; charset=utf-8');
 
@@ -56,16 +118,7 @@ try {
 
 	//récupère le nombre de fichier
 	$nbFic = count_files(ROOT_PATH.'/data/capture/','txt','');
-	
-	$arrDicos = array(
-		"concepts"=>$dicos
-		,"syntagmes"=>4
-		,"pronoms_complement"=>13
-		,"conjugaisons"=>25
-		,"pronoms"=>"13,14"
-		,"déterminants"=>15
-		,"negations"=>16);
-	
+			
 	//récupère la définition d'une plante
 	$dbConcepts = new Model_DbTable_Concepts();
 	$Rowset = $dbConcepts->find($id);
@@ -104,12 +157,12 @@ try {
 			if($err){
 				//calcul le temps d'execution
 				$temps_fin = microtime(true);
-				echo ' Temps d\'execution : '.round($temps_fin - $temps_debut, 4)." s. ";
+				echo '<br/> Temps d\'execution : '.round($temps_fin - $temps_debut, 4)." s. ";
 				$nomFic = "texte_".$id."_".($nbFic+$itr);
-				SaveFile(ROOT_PATH.'/data/capture/'.$nomFic.".txt",str_replace("<br/>","\n",$moteur->texte));
-				echo " <a href='".WEB_ROOT.'/data/capture/'.$nomFic.".txt'>".$nomFic."</a>";
-				SaveFile(ROOT_PATH.'/data/capture/'.$nomFic."_detail.html",$moteur->detail);
-				echo " <a href='".WEB_ROOT.'/data/capture/'.$nomFic."_detail.html'> detail</a><br/>";
+				SaveFile(ROOT_PATH.'/data/herbarius/'.$nomFic.".html",str_replace("<br/>","\n",$moteur->texte));
+				echo " <a href='".WEB_ROOT.'/data/herbarius/'.$nomFic.".html'>".$nomFic."</a>";
+				SaveFile(ROOT_PATH.'/data/herbarius/'.$nomFic."_detail.html",$moteur->detail);
+				echo " <a href='".WEB_ROOT.'/data/herbarius/'.$nomFic."_detail.html'> detail</a><br/>";
 			}
 		}catch (Exception $e) {
 			echo "Récupère exception: " . get_class($e) . "<br/>";
