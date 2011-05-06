@@ -1,6 +1,7 @@
 <?php
 $urlR="";
 $desc="";
+$form="";
 echo $this->doctype(); 
 ?>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
@@ -67,6 +68,7 @@ if($this->types['parent']=="syntagme"){
 ?>
 		<p><?php echo $urlR;?></p>
 		<p><?php echo $desc;?></p>
+		<p><?php echo $form;?></p>
         <?php echo $this->layout()->content; ?>
     </div>
 </body>

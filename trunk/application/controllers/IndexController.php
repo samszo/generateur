@@ -19,23 +19,33 @@ class IndexController extends Zend_Controller_Action
 		// 
 		//$this->modifierAction();
 		$moteur = new Gen_Moteur("",true);
+		//dico capture
 		$arrDicos = array(
-			"concepts"=>"37,34"
+			"concepts"=>"45,51"
 			,"syntagmes"=>4
-			,"pronoms_complement"=>13
-			,"conjugaisons"=>25
-			,"pronoms"=>"13,14"
-			,"déterminants"=>15
+			,"pronoms_complement"=>47
+			,"conjugaisons"=>44
+			,"pronoms"=>"48,14"
+			,"déterminants"=>46
 			,"negations"=>16);
+		//dico herbarius anglais
+		$arrDicos = array(
+		"concepts"=>"42,43"
+		,"syntagmes"=>41
+		,"pronoms_complement"=>13
+		,"conjugaisons"=>40
+		,"pronoms"=>"38,14"
+		,"déterminants"=>39
+		,"negations"=>16);
 		$moteur->arrDicos = $arrDicos;	
 		//$moteur->typeChoix = "alea";	
-		//$moteur->Generation("[12|a_poète@carac5]");
+		//$moteur->Generation("[m_livre 1@m_nf]%[m_livre 1@m_nf]");
 		//$moteur->Verification("[thl-psycho-04]");
 		
 		//
 		//$dico = new Gen_Dico();
-		//$dico->GetMacToXml(31);
-		//$dico->SaveBdd(29,25);
+		//$dico->GetMacToXml(31);		
+		//$dico->SaveBdd(45,"",-1);
 		//$dbD = new Model_DbTable_Dicos();
         //$dbD->supprimerDico(21);		
 
@@ -430,7 +440,7 @@ class IndexController extends Zend_Controller_Action
 	            $id = $this->getRequest()->getPost('id');
 	            $idDicoConj = $this->getRequest()->getPost('idDicoConj');
 	            $idDicoMerge = $this->getRequest()->getPost('idDicoMerge');
-	            echo "idDico = ".$id." idDicoConj = ".$idDicoConj."<br/>";
+	            echo "idDico = ".$id." idDicoConj = ".$idDicoConj." idDicoMerge = $idDicoMerge<br/>";
 			    $dico = new Gen_Dico();
 				$dico->SaveBdd($id, $idDicoConj,$idDicoMerge);
 	        	$this->_redirect('/index/modifier/id/'.$id.'/type/dico');

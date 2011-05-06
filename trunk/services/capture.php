@@ -16,7 +16,7 @@ else
 if(isset($_GET['id']))
 	$id = $_GET['id'];
 else
-	$id = 46990;
+	$id = 76293;
 
 $getHtml = true;
 	
@@ -40,7 +40,7 @@ else
 if(isset($_GET['dicos']))
 	$dicos = $_GET['dicos'];
 else
-	$dicos = "28,34,27";
+	$dicos = "45,49";//"45,48,49,50,51";
 	
 	
 if($getHtml)header ('Content-type: text/html; charset=utf-8');
@@ -64,10 +64,10 @@ try {
 	$arrDicos = array(
 		"concepts"=>$dicos
 		,"syntagmes"=>4
-		,"pronoms_complement"=>13
-		,"conjugaisons"=>25
-		,"pronoms"=>"13,14"
-		,"déterminants"=>15
+		,"pronoms_complement"=>47
+		,"conjugaisons"=>44
+		,"pronoms"=>"48,14"
+		,"déterminants"=>46
 		,"negations"=>16);
 	
 	//récupère la définition des chansons
@@ -105,7 +105,7 @@ try {
 			$moteur->Generation($chanson['valeur']);	
 			
 			if($getHtml)echo "<br/>".$moteur->texte."<br/>";
-			if($getXml) $xml .= "<chanson><paroles>".$moteur->texte."<titre1>".getipv6()."</titre1><titre2>Bientôt là...</titre2></paroles></chanson>";
+			if($getXml) $xml .= "<chanson><paroles>".$moteur->texte."</paroles><titre1>".getipv6()."</titre1><titre2>Bientôt là...</titre2></chanson>";
 			
 			if($getOdf){
 				//ajoute le texte au doc
@@ -118,7 +118,7 @@ try {
 			if($getHtml){
 				//calcul le temps d'execution
 				$temps_fin = microtime(true);
-				echo ' Temps d\'execution : '.round($temps_fin - $temps_debut, 4)." s. ";
+				echo '<br/>Temps d\'execution : '.round($temps_fin - $temps_debut, 4)." s. ";
 				$nomFic = "texte_".$id."_".($nbFic+$itr);
 				SaveFile(ROOT_PATH.'/data/capture/'.$nomFic.".txt",str_replace("<br/>","\n",$moteur->texte));
 				echo " <a href='".WEB_ROOT.'/data/capture/'.$nomFic.".txt'>".$nomFic."</a>";
@@ -165,37 +165,37 @@ function getipv6(){
 		.$listAlpha[mt_rand(0, 35)]
 		.$listAlpha[mt_rand(0, 35)]
 		.$listAlpha[mt_rand(0, 35)]
-		.":"
+		." : "
 		.$listAlpha[mt_rand(0, 35)]
 		.$listAlpha[mt_rand(0, 35)]
 		.$listAlpha[mt_rand(0, 35)]
 		.$listAlpha[mt_rand(0, 35)]
-		.":"
+		." : "
 		.$listAlpha[mt_rand(0, 35)]
 		.$listAlpha[mt_rand(0, 35)]
 		.$listAlpha[mt_rand(0, 35)]
 		.$listAlpha[mt_rand(0, 35)]
-		.":"
+		." : "
 		.$listAlpha[mt_rand(0, 35)]
 		.$listAlpha[mt_rand(0, 35)]
 		.$listAlpha[mt_rand(0, 35)]
 		.$listAlpha[mt_rand(0, 35)]
-		.":"
+		." : "
 		.$listAlpha[mt_rand(0, 35)]
 		.$listAlpha[mt_rand(0, 35)]
 		.$listAlpha[mt_rand(0, 35)]
 		.$listAlpha[mt_rand(0, 35)]
-		.":"
+		." : "
 		.$listAlpha[mt_rand(0, 35)]
 		.$listAlpha[mt_rand(0, 35)]
 		.$listAlpha[mt_rand(0, 35)]
 		.$listAlpha[mt_rand(0, 35)]
-		.":"
+		." : "
 		.$listAlpha[mt_rand(0, 35)]
 		.$listAlpha[mt_rand(0, 35)]
 		.$listAlpha[mt_rand(0, 35)]
 		.$listAlpha[mt_rand(0, 35)]
-		.":"
+		." : "
 		.$listAlpha[mt_rand(0, 35)]
 		.$listAlpha[mt_rand(0, 35)]
 		.$listAlpha[mt_rand(0, 35)]

@@ -226,6 +226,13 @@ class Gen_Moteur
 				        }else{
 							$txtCondi = true;
 				        }
+					}elseif($arr["texte"]=="{"){
+						//on saute les crochets de test
+					    for ($j = $this->ordre; $j <= $ordreFin; $j++) {
+					    	if($this->arrClass[$j]["texte"]=="}"){
+					    		$i = $j+1;	
+					    	}
+					    }
 					}elseif($txtCondi){
 						if($arr["texte"]=="%"){
 							$texte .= $this->finLigne;	
@@ -283,9 +290,12 @@ class Gen_Moteur
 		$this->texte = str_replace("' ","'",$this->texte);
 		$this->texte = str_replace(" , ",", ",$this->texte);
 		$this->texte = str_replace(" .",".",$this->texte);
+		$this->texte = str_replace(" 's","'s",$this->texte);
 		
-		//gestion des majuscules
-		$this->genereMajuscules();
+		//gestion des majuscules sauf pour twitter
+		if(strrpos($this->arrDicos["concepts"],"51")===false){
+			$this->genereMajuscules();
+		}
 		
 		//mise en forme du texte
 		$LT = strlen($this->texte);
@@ -315,7 +325,21 @@ class Gen_Moteur
 				create_function('$matches', 'return "! ".strtoupper($matches[1]);'), ucfirst($this->texte)
 			); 
 			
+			$this->texte = $this->sentence_cap("<br/> ",$this->texte);			
+			
 	}
+
+	function sentence_cap($impexp, $sentence_split) {
+	    //merci à http://fr.php.net/manual/fr/function.ucfirst.php#73895
+		$textbad=explode($impexp, $sentence_split);
+	    $newtext = array();
+	    foreach ($textbad as $sentence) {
+	        $sentencegood=ucfirst($sentence);
+	        $newtext[] = $sentencegood;
+	    }
+	    $textgood = implode($impexp, $newtext);
+	    return $textgood;
+	}	
 	
 	public function genereSubstantif($arr){
 
@@ -712,7 +736,22 @@ class Gen_Moteur
 	
 	public function getClass($class){
 
-		if($class=="")return;
+		if($class=="")return;		
+
+		//gestion du changement de position de la classe
+		$arr=explode("@", $class);
+        if(count($arr)>1){
+        	//change l'ordre pour que la class soit placée après
+        	$this->ordre ++;
+        	//avec le vecteur
+        	$this->arrClass[$this->ordre]["vecteur"] = $this->arrClass[($this->ordre-1)]["vecteur"]; 
+        	$this->getClass($arr[1]);
+        	//redéfini l'ordre pour que la class soit placée avant
+        	$this->ordre --;
+        	//avec le nouveau vecteur
+        	$this->arrClass[$this->ordre]["vecteur"] = $this->arrClass[($this->ordre+1)]["vecteur"]; 
+        	$class = $arr[0];
+        }
 		
 		$this->arrClass[$this->ordre]["class"][] = $class;
 
@@ -768,6 +807,7 @@ class Gen_Moteur
 
 	public function getClassSpe($class){
 
+				
 		$cls = $this->getAleaClass($class);
 		if(is_string($cls)){
 			$this->arrClass[$this->ordre]["texte"] = $cls;			
@@ -835,31 +875,16 @@ class Gen_Moteur
 	
 	public function getAdjectifs($class){
 
-        //récupère le substantif
-        $arr=explode("@", $class);
-        if(count($arr)>1){
-        	//change l'ordre pour que le substantif soit placé après
-        	$this->ordre ++;
-        	//avec le vecteur
-        	$this->arrClass[$this->ordre]["vecteur"] = $this->arrClass[($this->ordre-1)]["vecteur"]; 
-        	//récupère la class
-        	$this->getClass($arr[1]);
-        	//redéfini l'ordre pour que l'adjectif soit placé avant
-        	$this->ordre --;
-        	//avec le nouveau vecteur
-        	$this->arrClass[$this->ordre]["vecteur"] = $this->arrClass[($this->ordre+1)]["vecteur"]; 
-        }
-		
-        $d = strpos($arr[0],"∏");        
+        $d = strpos($class,"∏");        
         if($d){        	
         	//récupère les adjectifs
-	        $arrAdj=explode("∏", $arr[0]);        
+	        $arrAdj=explode("∏", $class);        
 	        //récupère la définition des adjectifs
 	        foreach($arrAdj as $a){
 		        $this->arrClass[$this->ordre]["adjectifs"][] = $this->getAleaClass($a);
 	        }        	
         }else{
-	        $this->arrClass[$this->ordre]["adjectifs"][] = $this->getAleaClass($arr[0]);        	
+	        $this->arrClass[$this->ordre]["adjectifs"][] = $this->getAleaClass($class);        	
         }
 		        
         if(count($arr)>1){
