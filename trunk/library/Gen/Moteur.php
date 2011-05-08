@@ -50,6 +50,8 @@ class Gen_Moteur
 	var $maxNiv = 1000;
 	var $niv = 0;
 	var $arrDoublons = array();
+	var $arrPosi;
+	var $arrCaract = array();
 	
 	/**
 	 * Le constructeur initialise le moteur.
@@ -291,6 +293,7 @@ class Gen_Moteur
 		$this->texte = str_replace(" , ",", ",$this->texte);
 		$this->texte = str_replace(" .",".",$this->texte);
 		$this->texte = str_replace(" 's","'s",$this->texte);
+		$this->texte = str_replace(" -","-",$this->texte);
 		
 		//gestion des majuscules sauf pour twitter
 		if(strrpos($this->arrDicos["concepts"],"51")===false){
@@ -739,20 +742,21 @@ class Gen_Moteur
 		if($class=="")return;		
 
 		//gestion du changement de position de la classe
-		$arr=explode("@", $class);
-        if(count($arr)>1){
+		$arrPosi=explode("@", $class);
+        if(count($arrPosi)>1){
+        	$this->arrPosi=explode("@", $class);
         	//change l'ordre pour que la class soit placée après
         	$this->ordre ++;
         	//avec le vecteur
         	$this->arrClass[$this->ordre]["vecteur"] = $this->arrClass[($this->ordre-1)]["vecteur"]; 
-        	$this->getClass($arr[1]);
+        	$this->getClass($this->arrPosi[1]);
         	//redéfini l'ordre pour que la class soit placée avant
         	$this->ordre --;
         	//avec le nouveau vecteur
         	$this->arrClass[$this->ordre]["vecteur"] = $this->arrClass[($this->ordre+1)]["vecteur"]; 
-        	$class = $arr[0];
+        	$class = $this->arrPosi[0];
         }
-		
+        
 		$this->arrClass[$this->ordre]["class"][] = $class;
 
 		//vérifie si la class est un déterminant
@@ -802,29 +806,42 @@ class Gen_Moteur
 				$this->getClassSpe($classSpe);
 			}			
 		}
-						
+
+        
+		
+		
 	}
 
 	public function getClassSpe($class){
 
-				
-		$cls = $this->getAleaClass($class);
-		if(is_string($cls)){
-			$this->arrClass[$this->ordre]["texte"] = $cls;			
-		}elseif(get_class($cls)=="Gen_Moteur"){
-			$this->getClassMoteur($cls);
-		}else{
-			$this->getClassType($cls);
-		}		
+		if(get_class($class)=="Gen_Moteur"){
+			$this->getClassMoteur($class);
+		}elseif(is_array($class)){
+			return $class;
+		}else{		
+			$cls = $this->getAleaClass($class);
+			if(is_string($cls)){
+				$this->arrClass[$this->ordre]["texte"] = $cls;			
+			}elseif(get_class($cls)=="Gen_Moteur"){
+				$this->getClassMoteur($cls);
+			}else{
+				$this->getClassType($cls);
+			}		
+		}
 	}
 
 	public function getClassMoteur($moteur){
 
-		//ajoute le class générée
+		//ajoute les classes générées
 		foreach($moteur->arrClass as $k=>$c){
 			$this->ordre ++;
 			$this->arrClass[$this->ordre] = $c;
 		}
+		//ajoute les caractères générées
+		foreach($moteur->arrCaract as $k=>$c){
+			$this->arrCaract[$k] = $c;
+		}
+		
 	}
 	
 	
@@ -885,16 +902,15 @@ class Gen_Moteur
 	        }        	
         }else{
 	        $this->arrClass[$this->ordre]["adjectifs"][] = $this->getAleaClass($class);        	
-        }
-		        
-        if(count($arr)>1){
-	        //met à jour l'élision
+        }               
+
+	    //met à jour l'élision dans le cas d'un changement de position
+		if(count($this->arrPosi)>1){
         	$this->arrClass[$this->ordre]["vecteur"]["elision"] = $this->arrClass[$this->ordre]["adjectifs"][0]["elision"];       	
         	//redéfini l'ordre pour que la suite de la génération
         	$this->ordre ++;
         }
         
-	
 	}
 	
 	public function getBlocage($class){
@@ -1156,6 +1172,24 @@ class Gen_Moteur
         //cherche la définition de la class
         $arrCpt = $this->getClassDef($class);
         
+        //cas des class caract
+        if(substr($class,0,7)=="carac_t"){
+        	//on vérifie que le caractère n'est pas déjà calculé
+        	if(isset($this->arrCaract[$class])){
+        		//on retourne le carac déjà choisi
+        		return $this->getClassSpe($this->arrCaract[$class]);
+        	}else{
+        		//on récupère les possibilité de caracX
+        		$classCarac = str_replace("carac_t","carac_",$class);
+		        $arrCptCarac = $this->getClassDef($classCarac);
+        		//on ajoute à la liste de choix les possibilité de caractX
+		        foreach($arrCptCarac["dst"] as $cptCarac){
+					$arrCpt["dst"][] = $cptCarac;        	
+		        }
+        	}
+        	
+        }
+        
         //cas des classes théoriques et des erreurs
         if(count($arrCpt["dst"])<1){
         	return false;
@@ -1180,8 +1214,17 @@ class Gen_Moteur
 			mt_srand($this->make_seed());
         	
 	        $a = mt_rand(0, count($arrCpt["dst"])-1);        
-	        $cpt = $this->getClassGen($arrCpt["dst"][$a]);
-	        if($cpt)$cpt["idParent"] = $arrCpt["src"]["id_concept"];
+	        
+	        $cpt = $this->getClassGen($arrCpt["dst"][$a],$class);
+	        
+	        if($cpt){
+	        	//conserve le parent pour le lien vers l'administration
+	        	$cpt["idParent"] = $arrCpt["src"]["id_concept"];
+		        //vérifie s'il faut conserver un caractx
+		        if(substr($class,0,7)=="carac_t"){
+		        	$this->arrCaract[$class] = $arrCpt["dst"][$a];
+		        }
+	        }
 	        
 	        //vérifie s'il faut transférer le déterminant de verbe
 	        if($arrCpt["src"]["type"]=="v" && isset($this->arrClass[$this->ordre-1]["determinant_verbe"]) && !isset($this->arrClass[$this->ordre-1]["verbe"])){
@@ -1200,21 +1243,32 @@ class Gen_Moteur
 	  return (float) $sec + ((float) $usec * 100000);
 	}
 	
-	public function getClassGen($cpt){
+	public function getClassGen($cpt,$class){
 		
         //Vérifie si le concept est un générateur
         if(isset($cpt["id_gen"])){
         	//générer l'expression
-			$m = new Gen_Moteur();
+			$m = new Gen_Moteur($this->xmlDesc,$this->forceCalcul);
 			$m->niv = $this->niv+1;
 			$m->arrDicos = $this->arrDicos;
+			$m->arrCaract = $this->arrCaract;
+						
 			//génére la classe
 			$m->Generation($cpt['valeur'],false,$this->cache);
-			//vérifie que la classe n'a pas déjà été générée
+			
+			/*vérifie que la classe n'a pas déjà été générée
 			if($this->in_multiarray($cpt['valeur'],$this->arrClass)){
 				$this->arrDoublons[] = array('niv'=>$this->niv,'ordre'=>$this->ordre,'valeur'=>$cpt['valeur'],'moteur'=>$m);		
 			}
-			//récupère les class générée
+			*/
+			
+	        //vérifie s'il faut conserver un caractx
+	        if(substr($class,0,7)=="carac_t"){
+	        	$this->arrCaract[$class] = $m;
+	        }
+			
+			
+			//récupère les classes générées
 			$this->getClassMoteur($m);
 			$this->potentiel += $m->potentiel;
 			$cpt = false;
