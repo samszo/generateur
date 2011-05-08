@@ -1,5 +1,5 @@
 <?php
-set_time_limit(1000);
+set_time_limit(10000);
 ini_set("memory_limit",'1600M');
 
 $temps_debut = microtime(true);
@@ -13,19 +13,36 @@ if(isset($_GET['nb']))
 else
 	$nb = 1;
 
-if(isset($_GET['id']))
-	$id = $_GET['id'];
+if(isset($_GET['gen']))
+	$gen = $_GET['gen'];
 else
-	$id = 76293;
-
-$getHtml = true;
+	$gen = 'chansons';
 	
+if($gen=="bios"){
+	$id = 76228;
+	$dico = 48;
+}
+if($gen=="chansons"){
+	$id = 76293;
+	$dico = 49;
+}
+if($gen=="critiques"){
+	$id = 76384;
+	$dico = 50;
+}	
+if($gen=="twitts"){
+	$id = 76446;
+	$dico = 51;
+}	
+
+
+
+$getHtml = true;	
 if(isset($_GET['odf'])){
 	$getOdf = true;
 	$getHtml = false;
 }else
 	$getOdf = false;
-
 if(isset($_GET['xml'])){
 	$getXml = true;
 	$getHtml = false;
@@ -38,9 +55,14 @@ else
 	$err = false;
 
 if(isset($_GET['dicos']))
-	$dicos = $_GET['dicos'];
+	$dicos = $_GET['dicos'].",".$dico;
 else
-	$dicos = "45,49";//"45,48,49,50,51";
+	$dicos = "45,".$dico;
+
+if(isset($_GET['force']))
+	$force = true;
+else
+	$force = false;
 	
 	
 if($getHtml)header ('Content-type: text/html; charset=utf-8');
@@ -70,42 +92,55 @@ try {
 		,"déterminants"=>46
 		,"negations"=>16);
 	
-	//récupère la définition des chansons
+	//récupère la définition des gènes
 	$dbConcepts = new Model_DbTable_Concepts();
 	$Rowset = $dbConcepts->find($id);
 	$parent = $Rowset->current();
 	//ajout des généreteurs
-	$defChansons = $parent->findManyToManyRowset('Model_DbTable_Generateurs','Model_DbTable_ConceptsGenerateurs');
-	$arrChansons = $defChansons->toArray();
+	$defGenes = $parent->findManyToManyRowset('Model_DbTable_Generateurs','Model_DbTable_ConceptsGenerateurs');
+	$arrGenes = $defGenes->toArray();
 	
-	//nimbre de chansons possible
-	$nbChan = count($arrChansons)-1;
+	//nombre de chansons possible
+	$nbGenes = count($arrGenes)-1;
 	
 	if($getOdf)$chansons = $odf->setSegment('chansons');
 	if($getXml)$xml = "<Directory>";
 	for ($itr = 0; $itr < $nb; $itr++) {
 		try {
-			$num = mt_rand(0, $nbChan);
-			$chanson = $arrChansons[$num];
+			$num = mt_rand(0, $nbGenes);
+			$gene = $arrGenes[$num];
 			
-			if($getHtml){
-				echo "<br/>".$itr." sur ".$nb;
-				echo " texte ".$num." sur ".$nbChan;
+			if($getHtml && $err){
+				echo "<br/>".($itr+1)." sur ".$nb;
+				echo " texte ".$num." sur ".$nbGenes."<br/>";
 			}
 			
 			if($getOdf)$chansons->setVars('chansons_titre', getipv6());
 
-			//calcul une chanson
-			$moteur = new Gen_Moteur();
+			//calcul une génération
+			$moteur = new Gen_Moteur("",$force);
 			$moteur->arrDicos = $arrDicos;	
 			//$moteur->finLigne = "\r\n";
 			$moteur->showErr = $err;
-			if($getHtml)echo "<br/>".$chanson['valeur']."<br/>";
+			if($getHtml && $err)echo $gene['valeur']."<br/><br/>";
 
-			$moteur->Generation($chanson['valeur']);	
+			$moteur->Generation($gene['valeur']);	
 			
-			if($getHtml)echo "<br/>".$moteur->texte."<br/>";
-			if($getXml) $xml .= "<chanson><paroles>".$moteur->texte."</paroles><titre1>".getipv6()."</titre1><titre2>Bientôt là...</titre2></chanson>";
+			if($gen=="chansons"){
+				$finTitre = strpos($moteur->texte,"<br/>");
+				$titre = ucfirst(substr($moteur->texte,0,$finTitre));
+				$texte = substr($moteur->texte,$finTitre);
+			}else{
+				$texte = $moteur->texte;				
+			}
+			
+			if($getHtml){
+				if($titre) echo "<H1>".$titre."</H1>";
+				echo $texte."<br/>";
+			}
+			if($getXml){
+				$xml .= "<chanson><paroles>".$texte."</paroles><titre1>".getipv6()."</titre1><titre2>".$titre."</titre2></chanson>";
+			}
 			
 			if($getOdf){
 				//ajoute le texte au doc
@@ -115,11 +150,11 @@ try {
 			}
 						
 			
-			if($getHtml){
+			if($getHtml && $err){
 				//calcul le temps d'execution
 				$temps_fin = microtime(true);
 				echo '<br/>Temps d\'execution : '.round($temps_fin - $temps_debut, 4)." s. ";
-				$nomFic = "texte_".$id."_".($nbFic+$itr);
+				$nomFic = "texte_".$gen."_".$id."_".($nbFic+$itr);
 				SaveFile(ROOT_PATH.'/data/capture/'.$nomFic.".txt",str_replace("<br/>","\n",$moteur->texte));
 				echo " <a href='".WEB_ROOT.'/data/capture/'.$nomFic.".txt'>".$nomFic."</a>";
 				SaveFile(ROOT_PATH.'/data/capture/'.$nomFic."_detail.html",$moteur->detail);
@@ -136,8 +171,8 @@ try {
 		$odf->mergeSegment($chansons);
 		$odf->exportAsAttachedFile();
 	}
-	if($getHtml){
-		echo "<br/><br/>FIN DE GENERATION DES FICHIERS ".$itr." sur ".$nb;
+	if($getHtml && $err){
+		echo "<br/><br/>FIN DE GENERATION ".$itr." sur ".$nb;
 	}
 	if($getXml){
 		$xml .= "</Directory>";

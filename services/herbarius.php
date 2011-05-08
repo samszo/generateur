@@ -40,22 +40,21 @@ if($langue=="fr"){
 }
 if($langue=="en"){
 	$ids = array(
-		array("id"=>68948, "titre"=> "0.Lilus Arythmeticus")
-		,array("id"=>68949, "titre"=> "1.Polygonum")
-		,array("id"=>68950, "titre"=> "2.Silene luminaris")
-		,array("id"=>68951, "titre"=> "3.Bella Donna")
-		,array("id"=>68940, "titre"=> "2.Viperin Pychsellis")
-		,array("id"=>68941, "titre"=> "3.Thales' Oxalis")
-		,array("id"=>68942, "titre"=> "4.Trifolia Sadica")
-		,array("id"=>68943, "titre"=> "5.Purple Haze")
-		,array("id"=>68944, "titre"=> "6.Serrated Alchemilla")
-		,array("id"=>68945, "titre"=> "7.Dragonhead")
-		,array("id"=>68946, "titre"=> "8.Reographia Lucifera")
-		,array("id"=>68947, "titre"=> "9.Pixacantha")
+		array("id"=>84213, "titre"=> "0.Lilus Arythmeticus")
+		,array("id"=>84214, "titre"=> "1.Polygonum")
+		,array("id"=>84215, "titre"=> "2.Silene luminaris")
+		,array("id"=>84216, "titre"=> "3.Bella Donna")
+		,array("id"=>84205, "titre"=> "2.Viperin Pychsellis")
+		,array("id"=>84206, "titre"=> "3.Thales' Oxalis")
+		,array("id"=>84207, "titre"=> "4.Trifolia Sadica")
+		,array("id"=>84208, "titre"=> "5.Purple Haze")
+		,array("id"=>84209, "titre"=> "6.Serrated Alchemilla")
+		,array("id"=>84210, "titre"=> "7.Dragonhead")
+		,array("id"=>84211, "titre"=> "8.Reographia Lucifera")
+		,array("id"=>84212, "titre"=> "9.Pixacantha")
 		);
-		
 	$arrDicos = array(
-		"concepts"=>"42,43"
+		"concepts"=>"42,65"
 		,"syntagmes"=>41
 		,"pronoms_complement"=>13
 		,"conjugaisons"=>40
@@ -65,27 +64,26 @@ if($langue=="en"){
 }
 if($langue=="es"){
 	$ids = array(
-		array("id"=>83786, "titre"=> "0.Lágrimas")
-		,array("id"=>83787, "titre"=> "1.Polygonatum")
-		,array("id"=>83778, "titre"=> "2.Amaranthus Rivea")
-		,array("id"=>83779, "titre"=> "3.Dionaea muscipula")
-		,array("id"=>83788, "titre"=> "2.La Uña de gato")
-		,array("id"=>83789, "titre"=> "3.Peyotl")
-		,array("id"=>83780, "titre"=> "4.Anthurium")
-		,array("id"=>83781, "titre"=> "5.Verónica")
-		,array("id"=>83782, "titre"=> "6.La Prosera Borgeana")
-		,array("id"=>83783, "titre"=> "7.La Cleome Spinosa")
-		,array("id"=>83784, "titre"=> "8.Capanula Barbata")
-		,array("id"=>83785, "titre"=> "9.Physocarpus")
-		);
-				
+		array("id"=>91588, "titre"=> "0.Lágrimas")
+		,array("id"=>91589, "titre"=> "1.Polygonatum")
+		,array("id"=>91579, "titre"=> "2.Amaranthus Rivea")
+		,array("id"=>91580, "titre"=> "3.Dionaea muscipula")
+		,array("id"=>91590, "titre"=> "2.La Uña de gato")
+		,array("id"=>91591, "titre"=> "3.Peyotl")
+		,array("id"=>91581, "titre"=> "4.Anthurium")
+		,array("id"=>91582, "titre"=> "5.Verónica")
+		,array("id"=>91583, "titre"=> "6.La Prosera Borgeana")
+		,array("id"=>91584, "titre"=> "7.La Cleome Spinosa")
+		,array("id"=>91585, "titre"=> "8.Capanula Barbata")
+		,array("id"=>91586, "titre"=> "9.Physocarpus")
+		);		
 	$arrDicos = array(
-		"concepts"=>"58,59"
-		,"syntagmes"=>55
+		"concepts"=>"71,66"
+		,"syntagmes"=>68
 		,"pronoms_complement"=>13
-		,"conjugaisons"=>54
-		,"pronoms"=>"57,14"
-		,"déterminants"=>56
+		,"conjugaisons"=>67
+		,"pronoms"=>"70,14"
+		,"déterminants"=>69
 		,"negations"=>16);
 }
 

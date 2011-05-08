@@ -13,42 +13,46 @@ class IndexController extends Zend_Controller_Action
 	    $this->view->title = "Mes Dictionnaires";
 	    $this->view->headTitle($this->view->title, 'PREPEND');
 	    $dicos = new Model_DbTable_Dicos();
-	    $this->view->dicos = $dicos->fetchAll();		 
+	    $select = $dicos->select()->order(array('nom'));	    
+	    $this->view->dicos = $dicos->fetchAll($select);		 
     	
 		//pour le débuggage
 		// 
 		//$this->modifierAction();
 		$moteur = new Gen_Moteur("",true);
 		//dico capture
+		//twitter = 51
+		//chanson = 49
 		$arrDicos = array(
-			"concepts"=>"45,51"
+			"concepts"=>"45,49"
 			,"syntagmes"=>4
 			,"pronoms_complement"=>47
 			,"conjugaisons"=>44
 			,"pronoms"=>"48,14"
 			,"déterminants"=>46
 			,"negations"=>16);
-		//dico herbarius anglais
+		/*dico herbarius anglais
 		$arrDicos = array(
-		"concepts"=>"42,43"
-		,"syntagmes"=>41
-		,"pronoms_complement"=>13
-		,"conjugaisons"=>40
-		,"pronoms"=>"38,14"
-		,"déterminants"=>39
-		,"negations"=>16);
-		$moteur->arrDicos = $arrDicos;	
+			"concepts"=>"42,43"
+			,"syntagmes"=>41
+			,"pronoms_complement"=>13
+			,"conjugaisons"=>40
+			,"pronoms"=>"38,14"
+			,"déterminants"=>39
+			,"negations"=>16);
+		*/
+		//$moteur->arrDicos = $arrDicos;	
 		//$moteur->typeChoix = "alea";	
-		//$moteur->Generation("[m_livre 1@m_nf]%[m_livre 1@m_nf]");
-		//$moteur->Verification("[thl-psycho-04]");
+		//$moteur->Generation("[0|a_joyeux@m_noël]");
+		//$moteur->Verification("[caract2]");
 		
 		//
 		//$dico = new Gen_Dico();
 		//$dico->GetMacToXml(31);		
-		//$dico->SaveBdd(45,"",-1);
+		//$dico->SaveBdd(62,"",50);
 		//$dbD = new Model_DbTable_Dicos();
-        //$dbD->supprimerDico(21);		
-
+        //$dbD->supprimerDico(60);		
+		
     }
 
     public function modifierAction()
@@ -644,8 +648,8 @@ class IndexController extends Zend_Controller_Action
 	        	}
 	        	if($type=="concept"){
 					$dbCpt = new Model_DbTable_Concepts();
-					$dbCpt->ajouterConcept($form->getValue('id'),$form->getValue('lib'),$form->getValue('type'));
-					$this->_redirect('/index/modifier/type/dico/id/'.$id);
+					$idNew = $dbCpt->ajouterConcept($form->getValue('id'),$form->getValue('lib'),$form->getValue('type'));
+					$this->_redirect('/index/modifier/type/concept/id/'.$idNew.'/idParent/'.$id);
 	        	}
 	        	if($type=="adjectif"){
 					$dbCpt = new Model_DbTable_Concepts();
@@ -697,7 +701,7 @@ class IndexController extends Zend_Controller_Action
 					$dbCptSub = new Model_DbTable_ConceptsSubstantifs();
 					$dbCptSub->ajouterConceptSubstantif($cpt['id_concept'], $idSub);
 
-					$this->_redirect('/index/modifier/type/concept/id/'.$id);
+					$this->_redirect('/index/modifier/type/concept/id/'.$cpt['id_concept'].'/idParent/'.$id);
 	        	}
 	        	if($type=="syntagme"){
 					$dbCpt = new Model_DbTable_Concepts();

@@ -29,7 +29,8 @@ class MoteurController extends Zend_Controller_Action
 					,"negations"=>implode(",", $form->getValue('dicoIdsNgt'))		
 					);
 				//print_r($arrDicos);		
-				$moteur->arrDicos = $arrDicos;		
+				$moteur->arrDicos = $arrDicos;
+						
 				$moteur->Generation($form->getValue('valeur'));
 	        		        	
 				$this->view->Generation = $moteur->texte;
