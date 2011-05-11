@@ -28,7 +28,7 @@ class Model_DbTable_Syntagmes extends Zend_Db_Table_Abstract
             ;
 		$r = $this->fetchRow($query);        
     	if (!$r) {
-            throw new Exception("Count not find rs $id");
+            return new Exception("Impossible de trouver le sntagme $num dans le dictionnaire $idDico");
         }
         return $r->toArray();
     }
