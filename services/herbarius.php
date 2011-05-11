@@ -64,21 +64,21 @@ if($langue=="en"){
 }
 if($langue=="es"){
 	$ids = array(
-		array("id"=>91588, "titre"=> "0.Lágrimas")
-		,array("id"=>91589, "titre"=> "1.Polygonatum")
-		,array("id"=>91579, "titre"=> "2.Amaranthus Rivea")
-		,array("id"=>91580, "titre"=> "3.Dionaea muscipula")
-		,array("id"=>91590, "titre"=> "2.La Uña de gato")
-		,array("id"=>91591, "titre"=> "3.Peyotl")
-		,array("id"=>91581, "titre"=> "4.Anthurium")
-		,array("id"=>91582, "titre"=> "5.Verónica")
-		,array("id"=>91583, "titre"=> "6.La Prosera Borgeana")
-		,array("id"=>91584, "titre"=> "7.La Cleome Spinosa")
-		,array("id"=>91585, "titre"=> "8.Capanula Barbata")
-		,array("id"=>91586, "titre"=> "9.Physocarpus")
+		array("id"=>99071, "titre"=> "0.Lágrimas")
+		,array("id"=>99072, "titre"=> "1.Polygonatum")
+		,array("id"=>99061, "titre"=> "2.Amaranthus Rivea")
+		,array("id"=>99062, "titre"=> "3.Dionaea muscipula")
+		,array("id"=>99073, "titre"=> "2.La Uña de gato")
+		,array("id"=>99074, "titre"=> "3.Peyotl")
+		,array("id"=>99063, "titre"=> "4.Anthurium")
+		,array("id"=>99064, "titre"=> "5.Verónica")
+		,array("id"=>99065, "titre"=> "6.La Prosera Borgeana")
+		,array("id"=>99066, "titre"=> "7.La Cleome Spinosa")
+		,array("id"=>99067, "titre"=> "8.Capanula Barbata")
+		,array("id"=>99068, "titre"=> "9.Physocarpus")
 		);		
 	$arrDicos = array(
-		"concepts"=>"71,66"
+		"concepts"=>"73,74"
 		,"syntagmes"=>68
 		,"pronoms_complement"=>13
 		,"conjugaisons"=>67

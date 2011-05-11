@@ -22,9 +22,9 @@ class IndexController extends Zend_Controller_Action
 		$moteur = new Gen_Moteur("",true);
 		//dico capture
 		//twitter = 51
-		//chanson = 49
+		//chanson = 72
 		$arrDicos = array(
-			"concepts"=>"45,49"
+			"concepts"=>"45,72"
 			,"syntagmes"=>4
 			,"pronoms_complement"=>47
 			,"conjugaisons"=>44
@@ -41,10 +41,20 @@ class IndexController extends Zend_Controller_Action
 			,"déterminants"=>39
 			,"negations"=>16);
 		*/
-		//$moteur->arrDicos = $arrDicos;	
+		/*herbarius espagnol
+		$arrDicos = array(
+		"concepts"=>"73,74"
+		,"syntagmes"=>68
+		,"pronoms_complement"=>13
+		,"conjugaisons"=>67
+		,"pronoms"=>"70,14"
+		,"déterminants"=>69
+		,"negations"=>16);
+		*/	
+		$moteur->arrDicos = $arrDicos;	
 		//$moteur->typeChoix = "alea";	
-		//$moteur->Generation("[0|a_joyeux@m_noël]");
-		//$moteur->Verification("[caract2]");
+		//$moteur->Generation("[caract2]");
+		$moteur->Verification("[thl-peau-01]");
 		
 		//
 		//$dico = new Gen_Dico();

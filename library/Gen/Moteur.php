@@ -52,6 +52,7 @@ class Gen_Moteur
 	var $arrDoublons = array();
 	var $arrPosi;
 	var $arrCaract = array();
+	var $verif = false;
 	
 	/**
 	 * Le constructeur initialise le moteur.
@@ -133,7 +134,7 @@ class Gen_Moteur
 	public function Verification($texte, $getTexte=true, $cache=false){
 		
 		$this->setCache();
-						
+		$this->verif = true;				
 		$this->ordre = 0;
 		$this->typeChoix = "tout";
 		//parcourt l'ensemble de la chaine
@@ -841,7 +842,16 @@ class Gen_Moteur
 		foreach($moteur->arrCaract as $k=>$c){
 			$this->arrCaract[$k] = $c;
 		}
-		
+		if($this->verif){
+			//ajoute les doublons
+			foreach($moteur->arrDoublons as $k=>$c){
+				if(in_array($c, $this->arrDoublons)){
+					$this->arrClass[$this->ordre]["doublons"] = $c;
+				}else{
+					$this->arrDoublons[] = $c;
+				}
+			}
+		}		
 	}
 	
 	
@@ -1036,6 +1046,13 @@ class Gen_Moteur
 	        	//récupère la définition de la class
 	        	$table = new Model_DbTable_Syntagmes();
 	        	$arrClass = $table->obtenirSyntagmeByDicoNum($this->arrDicos['syntagmes'],$class);
+				if(get_class($arrClass)=="Exception"){
+		    		$this->arrClass[$this->ordre]["ERREUR"] = $arrClass->getMessage();//."<br/><pre>".$arrCpt->getTraceAsString()."</pre>";
+		    		$arrClass = array("lib" => "");
+				}else{	   	    
+			   	    $this->cache->save($arrClass,$c);
+				}
+	        	
 				$this->cache->save($arrClass,$c);
 			}
 	        	        
@@ -1056,8 +1073,18 @@ class Gen_Moteur
 	public function traiteClass($class, $i=0){
 
 		$arrClass = $this->getClassVals($class,$i);	        	
-		foreach($arrClass["arr"] as $cls){			
-			$this->getClass($cls);
+		foreach($arrClass["arr"] as $cls){
+			if($this->verif){
+				//vérifie si la class est dans le tableau
+				if(in_array($cls, $this->arrDoublons)){
+					$this->arrClass[$this->ordre]["doublons"] = $cls;
+				}else{
+					$this->arrDoublons[] = $cls;
+					$this->getClass($cls);
+				}
+			}else{
+				$this->getClass($cls);
+			}
         }	        	
 		return $arrClass["fin"];
 	}
@@ -1252,6 +1279,10 @@ class Gen_Moteur
 			$m->niv = $this->niv+1;
 			$m->arrDicos = $this->arrDicos;
 			$m->arrCaract = $this->arrCaract;
+			if($this->verif){
+				$m->verif = $this->verif;
+				$m->arrDoublons = $this->arrDoublons;
+			}
 						
 			//génére la classe
 			$m->Generation($cpt['valeur'],false,$this->cache);
@@ -1323,14 +1354,14 @@ class Gen_Moteur
 			$arrClass=explode("_", $class);
 	        $table = new Model_DbTable_Concepts();	
 	   	    $arrCpt = $table->obtenirConceptDescription($this->arrDicos['concepts'],$arrClass);
-			$this->cache->save($arrCpt,$c);
+			if(get_class($arrCpt)=="Exception"){
+	    		$this->arrClass[$this->ordre]["ERREUR"] = $arrCpt->getMessage();//."<br/><pre>".$arrCpt->getTraceAsString()."</pre>";
+	    		$arrCpt = false;
+			}else{	   	    
+		   	    $this->cache->save($arrCpt,$c);
+			}
 		}
-		
-		if(get_class($arrCpt)=="Exception"){
-    		$this->arrClass[$this->ordre]["ERREUR"] = $arrCpt->getMessage();//."<br/><pre>".$arrCpt->getTraceAsString()."</pre>";
-    		$arrCpt = false;
-		}
-		
+				
         return $arrCpt;
 	}
 
