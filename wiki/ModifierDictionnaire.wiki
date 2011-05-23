@@ -1,13 +1,11 @@
 #processus de modification du dictionnaire
 
-= Introduction =
+= Suivre les étapes suivantes =
 
-Add your content here.
+== Choisissez un des dictionnaires disponibles ==
+http://www.samszo.com/generateur/public/index.php/index/modifier/type/dico/id/27
 
+http://www.samszo.com/generateur/public/index.php/index/modifier/type/dico/id/28
 
-= Details =
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+== Choisissez une expression à générer ==
+http://www.samszo.com/generateur/docs/modifier_type_dico_id_27.png
