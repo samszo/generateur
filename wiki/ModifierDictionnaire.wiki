@@ -3,9 +3,9 @@
 = Suivre les étapes suivantes =
 
 == Choisissez un des dictionnaires disponibles ==
-http://www.samszo.com/generateur/public/index.php/index/modifier/type/dico/id/27
+http://www.samszo.com/generateur/public/index.php
 
-http://www.samszo.com/generateur/public/index.php/index/modifier/type/dico/id/28
 
-== Choisissez une expression à générer ==
+
+== Choisissez une expression à modifier ==
 http://www.samszo.com/generateur/docs/modifier_type_dico_id_27.png
