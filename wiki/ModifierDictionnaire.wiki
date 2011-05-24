@@ -4,8 +4,7 @@
 
 == Choisissez un des dictionnaires disponibles ==
 http://www.samszo.com/generateur/public/index.php
-
-
+http://www.samszo.com/generateur/docs/generateur_public_index_php.png
 
 == Choisissez une expression à modifier ==
 http://www.samszo.com/generateur/docs/modifier_type_dico_id_27.png
