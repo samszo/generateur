@@ -40,21 +40,21 @@ if($langue=="fr"){
 }
 if($langue=="en"){
 	$ids = array(
-		array("id"=>84213, "titre"=> "0.Lilus Arythmeticus")
-		,array("id"=>84214, "titre"=> "1.Polygonum")
-		,array("id"=>84215, "titre"=> "2.Silene luminaris")
-		,array("id"=>84216, "titre"=> "3.Bella Donna")
-		,array("id"=>84205, "titre"=> "2.Viperin Pychsellis")
-		,array("id"=>84206, "titre"=> "3.Thales' Oxalis")
-		,array("id"=>84207, "titre"=> "4.Trifolia Sadica")
-		,array("id"=>84208, "titre"=> "5.Purple Haze")
-		,array("id"=>84209, "titre"=> "6.Serrated Alchemilla")
-		,array("id"=>84210, "titre"=> "7.Dragonhead")
-		,array("id"=>84211, "titre"=> "8.Reographia Lucifera")
-		,array("id"=>84212, "titre"=> "9.Pixacantha")
+		array("id"=>121123, "titre"=> "0.Acidum Ordinatri")
+		,array("id"=>121124, "titre"=> "1.Multifolia Proustiana")
+		,array("id"=>121115, "titre"=> "2.Lennon Nicotiana")
+		,array("id"=>121116, "titre"=> "3.Cannabis Sativa")
+		,array("id"=>121125, "titre"=> "2.Nymphaea Hybrida")
+		,array("id"=>121126, "titre"=> "3.Lophophora")
+		,array("id"=>121117, "titre"=> "4.Coronae Digitalis")
+		,array("id"=>121118, "titre"=> "5.Adonis Aestivalis")
+		,array("id"=>121119, "titre"=> "6.Psychotria")
+		,array("id"=>121120, "titre"=> "7.Psychonautica")
+		,array("id"=>121121, "titre"=> "8.Cosmos Newtonia")
+		,array("id"=>121122, "titre"=> "9.Ayahuasca")
 		);
 	$arrDicos = array(
-		"concepts"=>"42,65"
+		"concepts"=>"42,88"
 		,"syntagmes"=>41
 		,"pronoms_complement"=>13
 		,"conjugaisons"=>40
@@ -62,23 +62,24 @@ if($langue=="en"){
 		,"déterminants"=>39
 		,"negations"=>16);
 }
+
 if($langue=="es"){
 	$ids = array(
-		array("id"=>99071, "titre"=> "0.Lágrimas")
-		,array("id"=>99072, "titre"=> "1.Polygonatum")
-		,array("id"=>99061, "titre"=> "2.Amaranthus Rivea")
-		,array("id"=>99062, "titre"=> "3.Dionaea muscipula")
-		,array("id"=>99073, "titre"=> "2.La Uña de gato")
-		,array("id"=>99074, "titre"=> "3.Peyotl")
-		,array("id"=>99063, "titre"=> "4.Anthurium")
-		,array("id"=>99064, "titre"=> "5.Verónica")
-		,array("id"=>99065, "titre"=> "6.La Prosera Borgeana")
-		,array("id"=>99066, "titre"=> "7.La Cleome Spinosa")
-		,array("id"=>99067, "titre"=> "8.Capanula Barbata")
-		,array("id"=>99068, "titre"=> "9.Physocarpus")
+		array("id"=>120894, "titre"=> "0.Lágrimas")
+		,array("id"=>120895, "titre"=> "1.Polygonatum")
+		,array("id"=>120885, "titre"=> "2.Amaranthus Rivea")
+		,array("id"=>120886, "titre"=> "3.Dionaea muscipula")
+		,array("id"=>120896, "titre"=> "2.La Uña de gato")
+		,array("id"=>120897, "titre"=> "3.Peyotl")
+		,array("id"=>120887, "titre"=> "4.Anthurium")
+		,array("id"=>120888, "titre"=> "5.Verónica")
+		,array("id"=>120889, "titre"=> "6.La Prosera Borgeana")
+		,array("id"=>120890, "titre"=> "7.La Cleome Spinosa")
+		,array("id"=>120891, "titre"=> "8.Capanula Barbata")
+		,array("id"=>120892, "titre"=> "9.Physocarpus")
 		);		
 	$arrDicos = array(
-		"concepts"=>"73,74"
+		"concepts"=>"73,86"
 		,"syntagmes"=>68
 		,"pronoms_complement"=>13
 		,"conjugaisons"=>67
@@ -86,7 +87,6 @@ if($langue=="es"){
 		,"déterminants"=>69
 		,"negations"=>16);
 }
-
 if(isset($_GET['id'])){
 	$num = $_GET['id'];
 }else{
@@ -105,6 +105,10 @@ if(isset($_GET['err']))
 	$err = true;
 else
 	$err = false;	
+if(isset($_GET['timeMax']))
+	$timeMax = $_GET['timeMax'];
+else
+	$timeMax = 16;	
 	
 if($getHtml)header ('Content-type: text/html; charset=utf-8');
 
@@ -144,6 +148,7 @@ try {
 			$moteur->arrDicos = $arrDicos;	
 			//$moteur->finLigne = "\r\n";
 			$moteur->showErr = $err;
+			$moteur->timeMax = $timeMax;
 			if($err)echo "<br/>".$plante['valeur']."<br/>";
 
 			$moteur->Generation($plante['valeur']);	

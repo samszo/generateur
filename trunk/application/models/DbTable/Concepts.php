@@ -65,8 +65,9 @@ class Model_DbTable_Concepts extends Zend_Db_Table_Abstract
 			$arrCpt = $cpt->toArray();
 			
 			//cherche les enfants suivant le type de concept
-			$tType ="";
 			$arrEnf = array();
+			/*
+			$tType ="";
 			if($arrClass[0]=="a")$tType="Adjectifs";
 			if($arrClass[0]=="v")$tType="Verbes";
 			if($arrClass[0]=="m" || $arrClass[0]=="carac" || $arrClass[0]=="dis")$tType="Substantifs";
@@ -77,6 +78,20 @@ class Model_DbTable_Concepts extends Zend_Db_Table_Abstract
 	                                                 'Model_DbTable_Concepts'.$tType);
 				$arrEnf = $enfants->toArray();
 			}
+			*/
+			$enfants = $cpt->findManyToManyRowset('Model_DbTable_Adjectifs', 'Model_DbTable_ConceptsAdjectifs');
+			$arr = $enfants->toArray();
+			if(count($arr)>0)$arrEnf = array_merge($arrEnf,$arr);
+			$enfants = $cpt->findManyToManyRowset('Model_DbTable_Verbes', 'Model_DbTable_ConceptsVerbes');
+			$arr = $enfants->toArray();
+			if(count($arr)>0)$arrEnf = array_merge($arrEnf,$arr);
+			$enfants = $cpt->findManyToManyRowset('Model_DbTable_Substantifs', 'Model_DbTable_ConceptsSubstantifs');
+			$arr = $enfants->toArray();
+			if(count($arr)>0)$arrEnf = array_merge($arrEnf,$arr);
+			$enfants = $cpt->findManyToManyRowset('Model_DbTable_Syntagmes', 'Model_DbTable_ConceptsSyntagmes');
+			$arr = $enfants->toArray();
+			if(count($arr)>0)$arrEnf = array_merge($arrEnf,$arr);
+			
 			//cherche les générateurs
 			$gens = $cpt->findManyToManyRowset('Model_DbTable_Generateurs',
 	                                                 'Model_DbTable_ConceptsGenerateurs');    	

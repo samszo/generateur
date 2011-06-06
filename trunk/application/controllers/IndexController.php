@@ -17,9 +17,10 @@ class IndexController extends Zend_Controller_Action
 	    $this->view->dicos = $dicos->fetchAll($select);		 
     	
 		//pour le débuggage
-		// 
+		/* 
 		//$this->modifierAction();
 		$moteur = new Gen_Moteur("",true);
+		$moteur->showErr = true;
 		//dico capture
 		//twitter = 51
 		//chanson = 72
@@ -31,19 +32,19 @@ class IndexController extends Zend_Controller_Action
 			,"pronoms"=>"48,14"
 			,"déterminants"=>46
 			,"negations"=>16);
-		/*dico herbarius anglais
+		//dico herbarius anglais
 		$arrDicos = array(
-			"concepts"=>"42,43"
+			"concepts"=>"42,75"
 			,"syntagmes"=>41
 			,"pronoms_complement"=>13
 			,"conjugaisons"=>40
 			,"pronoms"=>"38,14"
 			,"déterminants"=>39
 			,"negations"=>16);
-		*/
-		/*herbarius espagnol
+		//
+		//herbarius espagnol
 		$arrDicos = array(
-		"concepts"=>"73,74"
+		"concepts"=>"73,86"
 		,"syntagmes"=>68
 		,"pronoms_complement"=>13
 		,"conjugaisons"=>67
@@ -51,10 +52,10 @@ class IndexController extends Zend_Controller_Action
 		,"déterminants"=>69
 		,"negations"=>16);
 		*/	
-		$moteur->arrDicos = $arrDicos;	
+		//$moteur->arrDicos = $arrDicos;	
 		//$moteur->typeChoix = "alea";	
-		//$moteur->Generation("[caract2]");
-		$moteur->Verification("[thl-peau-01]");
+		//$moteur->Generation("[dis-fleur]");
+		//$moteur->Verification("[thl-peau-01]");
 		
 		//
 		//$dico = new Gen_Dico();

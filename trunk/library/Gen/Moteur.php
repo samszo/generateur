@@ -53,6 +53,8 @@ class Gen_Moteur
 	var $arrPosi;
 	var $arrCaract = array();
 	var $verif = false;
+	var $timeDeb;
+	var $timeMax = 100;
 	
 	/**
 	 * Le constructeur initialise le moteur.
@@ -82,6 +84,7 @@ class Gen_Moteur
 		
 		if(!$cache){
 			$this->setCache();
+			$this->timeDeb = microtime(true);
 		}else{
 			$this->cache = $cache;		
 		}
@@ -99,6 +102,17 @@ class Gen_Moteur
 		//parcourt l'ensemble de la chaine
 		for($i = 0; $i < strlen($texte); $i++)
         {
+        	//sortie de boucle quand trop long
+        	$t = microtime(true)-$this->timeDeb;
+        	if($t > $this->timeMax){
+        		$this->arrClass[$this->ordre]["ERREUR"] = "problème d'exécution trop longue : ".substr($texte, 0, $i)." ~ ".substr($texte, $i);			
+			    //on ajoute les caractères
+				$this->ordre ++;
+        		$this->arrClass[$this->ordre]["texte"] = "~";
+			    $this->arrSegment[$this->segment]["ordreFin"]= $this->ordre;
+				break; 
+        	}
+
         	$c = $texte[$i];
         	if($c == "["){
         		//c'est le début d'une classe
@@ -439,6 +453,7 @@ class Gen_Moteur
 						$genre = $vecteur["genre"];     	
 						//génère le pronom
 						$m = new Gen_Moteur($this->urlDesc,$this->forceCalcul);
+						$m->timeDeb = $this->timeDeb;
 						$m->arrDicos = $this->arrDicos;
 						$m->Generation($pr,false,$this->cache);
 						$m->arrClass[0]["vecteur"]["genre"]=$genre;
@@ -462,6 +477,7 @@ class Gen_Moteur
 					$genre = $vecteur["genre"];     	
 		        	//génère le pronom
 					$m = new Gen_Moteur($this->urlDesc,$this->forceCalcul);
+					$m->timeDeb = $this->timeDeb;
 					$m->arrDicos = $this->arrDicos;
 					$m->Generation($arr["prodem"]["lib"],false,$this->cache);
 					$m->arrClass[0]["genre"]=$genre;
@@ -857,7 +873,7 @@ class Gen_Moteur
 	
 	public function getClassType($cls){
 
-		if(isset($cls["id_conj"])){
+		if(isset($cls["id_adj"])){
 		    $this->arrClass[$this->ordre]["adjectifs"][] = $cls;
 		}
 		if(isset($cls["id_sub"])){
@@ -1276,6 +1292,7 @@ class Gen_Moteur
         if(isset($cpt["id_gen"])){
         	//générer l'expression
 			$m = new Gen_Moteur($this->xmlDesc,$this->forceCalcul);
+			$m->timeDeb = $this->timeDeb;
 			$m->niv = $this->niv+1;
 			$m->arrDicos = $this->arrDicos;
 			$m->arrCaract = $this->arrCaract;
