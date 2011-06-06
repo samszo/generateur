@@ -140,7 +140,7 @@ try {
 			}
 			if($getXml){
 				if($gen=="chansons")
-					$xml .= "<chanson><paroles><![CDATA[".$texte."]]></paroles><titre1>".getipv6()."</titre1><titre2><![CDATA[".$titre."]]>s</titre2></chanson>";
+					$xml .= "<chanson><paroles><![CDATA[".$texte."]]></paroles><titre1>".getipv6()."</titre1><titre2><![CDATA[".$titre."]]></titre2></chanson>";
 				if($gen=="bios")
 					$xml .= "<bio><codeIP>".getipv6()."</codeIP><titre><![CDATA[".$titre."]]></titre><description><![CDATA[".$texte."]]></description></bio>";
 				if($gen=="critiques")
