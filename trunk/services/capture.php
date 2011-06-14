@@ -19,16 +19,16 @@ else
 	$gen = 'chansons';
 	
 if($gen=="bios"){
-	$id = 76228;
-	$dico = 48;
+	$id = 120746;
+	$dico = 84;
 }
 if($gen=="chansons"){
 	$id = 91698;
 	$dico = 72;
 }
 if($gen=="critiques"){
-	$id = 76384;
-	$dico = 50;
+	$id = 120613;
+	$dico = 82;
 }	
 if($gen=="twitts"){
 	$id = 76446;
@@ -126,7 +126,7 @@ try {
 
 			$moteur->Generation($gene['valeur']);	
 			
-			if($gen=="chansons" || $gen=="bios" ){
+			if($gen=="chansons" || $gen=="bios"  || $gen=="critiques" ){
 				$finTitre = strpos($moteur->texte,"<br/>");
 				$titre = ucfirst(substr($moteur->texte,0,$finTitre));
 				$texte = substr($moteur->texte,$finTitre);
@@ -144,7 +144,7 @@ try {
 				if($gen=="bios")
 					$xml .= "<bio><codeIP>".getipv6()."</codeIP><titre><![CDATA[".$titre."]]></titre><description><![CDATA[".$texte."]]></description></bio>";
 				if($gen=="critiques")
-					$xml .= "<critique><codeIP>".getipv6()."</codeIP><description><![CDATA[".$texte."]]></description></critique>";
+					$xml .= "<critique><codeIP>".getipv6()."</codeIP><titre><![CDATA[".$titre."]]></titre><description><![CDATA[".$texte."]]></description></critique>";
 			}
 			
 			if($getOdf){

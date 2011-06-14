@@ -30,9 +30,12 @@ class Form_Moteur extends Zend_Form
 
 			$cbForceCalcul = new Zend_Form_Element_Checkbox('ForceCalcul');
 			$cbForceCalcul->setLabel('force le calcul ');		
-	        
+
+			$TempsMax = new Zend_Form_Element_Text('TempsMax');
+			$TempsMax->setLabel('Temps max');		
+			
 	        $this->setAttrib('enctype', 'multipart/form-data');
-	        $this->addElements(array($id, $CacheForm, $cbDicoDtm, $cbDicoNgt, $cbDicoPrSt, $cbDicoCjg, $cbDicoPrCp, $cbDicoStg, $cbDicoCpt, $valeur, $cbForceCalcul, $envoyer));
+	        $this->addElements(array($id, $CacheForm, $cbDicoDtm, $cbDicoNgt, $cbDicoPrSt, $cbDicoCjg, $cbDicoPrCp, $cbDicoStg, $cbDicoCpt, $valeur, $cbForceCalcul, $TempsMax, $envoyer));
 
     	}catch (Zend_Exception $e) {
 	          echo "Récupère exception: " . get_class($e) . "\n";
