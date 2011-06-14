@@ -54,7 +54,7 @@ class Gen_Moteur
 	var $arrCaract = array();
 	var $verif = false;
 	var $timeDeb;
-	var $timeMax = 100;
+	var $timeMax = 10000;
 	
 	/**
 	 * Le constructeur initialise le moteur.

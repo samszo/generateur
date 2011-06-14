@@ -14,6 +14,7 @@ class Model_DbTable_Dicos extends Zend_Db_Table_Abstract
 		,'Model_DbTable_Pronoms'
 		,'Model_DbTable_Negations'
 		,'Model_DbTable_Verbes'
+		,'Model_DbTable_Generateurs'
 		);
 
     public function getItemsDico($id)

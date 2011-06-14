@@ -73,7 +73,8 @@ class MoteurController extends Zend_Controller_Action
 					,"negations"=>implode(",", $form->getValue('dicoIdsNgt'))		
 					);
 				//print_r($arrDicos);		
-				$moteur->arrDicos = $arrDicos;		
+				$moteur->arrDicos = $arrDicos;
+				if($form->getValue('TempsMax'))$moteur->$timeMax = $form->getValue('TempsMax');		
 				$moteur->Verification($form->getValue('valeur'));
 	        		        	
 				$this->view->NbItem = $moteur->ordre;
