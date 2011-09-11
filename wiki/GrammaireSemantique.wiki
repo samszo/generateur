@@ -1,14 +1,10 @@
-
-<center>Principes de la génération littéraire {{fn Cette version est une version de travail basée à la fois sur les algorithmes écrits en Hypertalk et ceux écrits en Java. Au fur et à mesure de la description seront soulevés des points qui gagnareaient à être modifiés dans l’algorithme définitif. Ces points seront en caractère Arial soulignés.}}</center>
-
-
-
-:© Jean-Pierre BALPE 2002
+=Principes de la génération littéraire=
+:© Jean-Pierre BALPE
 
 
 
 
-= 1. Définitions préliminaires :{{fn Attention dans cette version les descripteurs de verbes sont présentés APRES le terme alors que dans la réalité des dictionnaires ils sont placés avant : sous [v_chanter|0180000] , lire en fait [0180000|v_chanter].}} =
+= 1. Définitions préliminaires=
 
 == 1.1. La génération automatique : ==
 
@@ -2748,109 +2744,85 @@
 :Il faut, sur le même modèle établir un tableau des verbes pour chacune des autres langues envisagées.
 
 
-:(NB : tableau à jour à la date du 14 avril 2010)
+:
 
 
 = DS_conjugaisons =
-=  =
-= terminaisons =
-= ai,as,a,avons,avez,ont,avais,avais,avait,avions,aviez,avaient,eus,eus,eut,eûmes,eûtes,eurent,aurai,auras,aura,aurons,aurez,auront,aurais,aurais,aurait,aurions,auriez,auraient,aie,aies,ait,ayions,ayiez,aient,(1.avoir),ayant,avoir =
-= suis,es,est,sommes,êtes,sont,étais,étais,était,étions,étiez,étaient,fus,fus,fut,fûmes,fûtes,furent,serai,seras,sera,serons,serez,seront,serais,serais,serait,serions,seriez,seraient,sois,sois,soit,soyions,soyiez,soient,(2.être),étant,être =
-= is,is,it,isons,ites,isent,isais,isais,isait,isions,isiez,isaient,is,is,it,îmes,îtes,irent,irai,iras,ira,irons,irez,iront,irais,irais,irait,irions,iriez,iraient,ise,ises,ise,isions,isiez,isent,(3.dire),isant,ire =
-= ette,ettes,ette,etons,etez,ettent,etais,etais,etait,etions,etiez,etaient,etai,etas,eta,etâmes,etâtes,etèrent,etterai,etteras,ettera,etterons,etterez,etteront,etterais,etterais,etterait,etterions,etteriez,etteraient,ette,ettes,ette,etions,etiez,ettent,(4.jeter),etant,eter =
-= -,5 =
-= e,es,e,ons,ez,ent,ais,ais,ait,ions,iez,aient,ai,as,a,âmes,âtes,èrent,erai,eras,era,erons,erez,eront,erais,erais,erait,erions,eriez,eraient,e,e,e,ions,iez,ent,(6.aimer),ant,er =
-= ce,ces,ce,çons,cez,cent,çais,çais,çait,cions,ciez,çaient,çai,ças,ça,çâmes,çâtes,cèrent,cerai,ceras,cera,cerons,cerez,ceront,cerais,cerais,cerait,cerions,ceriez,ceraient,ce,ces,ce,cions,ciez,cent,(7.placer),çant,cer =
-= e,es,e,eons,ez,ent,eais,eais,eait,ions,iez,eaient,eai,eas,ea,eâmes,eâtes,èrent,erai,eras,era,erons,erez,eront,erais,erais,erait,erions,eriez,eraient,e,es,e,ions,iez,ent,(8.manger),eant,er =
-= -,9 =
-= ète,ètes,ète,étons,étez,ètent,étais,étais,était,étions,étiez,étaient,étai,étas,éta,étâmes,étâtes,étèrent,éterai,éteras,étera,éterons,éterez,éteront,éterais,éterais,éterait,éterions,éteriez,éteraient,ète,ètes,ète,étions,étiez,ètent,(10.inquiéter),étant,éter =
-= elle,elles,elle,elons,elez,ellent,elais,elais,elait,elions,eliez,elaient,elai,elas,ela,elâmes,elâtes,elèrent,ellerai,elleras,ellera,ellerons,ellerez,elleront,ellerais,ellerais,ellerait,ellerions,elleriez,elleraient,elle,elles,elle,elions,eliez,ellent,(11.appeler),elant,eler =
-= ète,ètes,ète,etons,etez,ètent,etais,etais,etait,etions,etiez,etaient,etai,etas,eta,etâmes,etâtes,etèrent,èterai,èteras,ètera,èterons,èterez,èteront,èterais,èterais,èterait,èterions,èteriez,èteraient,ète,ètes,ète,etions,etiez,ètent,(12.acheter),etant,eter =
-= èle,èles,èle,élons,élez,élent,élais,élais,élait,élions,éliez,élaient,élai,élas,éla,élâmes,élâtes,élèrenl,élerai,éleras,élera,élerons,élerez,éleront,élerais,élerais,élerait,élerions,éleriez,éleraient,èle,èles,èle,élions,éliez,élent,(13.révéler),élant,éler =
-= ège,èges,ège,égeons,égez,ègent,égeais,égeais,égeait,égions,égiez,égeaient,égeai,égeas,égea,égeâmes,égeâtes,égèrent,égerai,égeras,égera,égeront,égerez,égeront,égerais,égerais,égerait,égerions,égeriez,égeraient,ège,èges,ège,égions,égiez,ègent,(14.protéger),égeant,éger =
-= ère,ères,ère,érons,érez,èrent,érais,érais,érair,érions,ériez,éraient,érai,éras,éra,érâmes,érâtes,érèrent,érerai,éreras,érera,érerons,érerez,éreront,érerais,érerais,érerair,érerions,éreriez,éreraient,ère,ères,ère,érions,ériez,èrent,(15.exagérer),érant,érer =
-= aie,aies,aie,ayons,ayez,aient,ayais,ayais,ayait,ayions,ayiez,ayaient,ayai,ayas,aya,ayâmes,ayâtes,ayèrent,aierai,aieras,aiera,aierons,aierez,aieront,aierais,aierais,aierait,aierions,aieriez,aieriont,aie,aies,aie,ayions,ayiez,aient,(16.essayer),ayant,ayer =
-= ie,ies,ie,yons,yez,ient,yais,yais,yait,yions,yiez,yaient,yai,yas,ya,yâmes,yâtes,yèrent,ierai,ieras,iera,ierons,ierez,ieront,ierais,ierais,ierait,ierions,ieriez,ieraient,ie,ies,ie,yions,uiez,ient,(17.broyer),yant,yer =
-= cris,cris,crit,crivons,crivez,crivent,crivais,crivais,crivait,crivions,criviez,crivaient,crivis,crivis,crivit,crivîmes,crivîtes,crivirent,crirai,criras,crira,crirons,crirez,criront,crirais,crirais,crirait,cririons,cririez,criraient,crive,crives,crive,crivions,criviez,crivent,(18.écrire),crivant,crire =
-= is,is,it,issons,issez,issent,issais,issais,issait,issions,issiez,issaient,is,is,it,îmes,îtes,irent,irai,iras,ira,irons,irez,iront,irais,irais,irait,irions,iriez,iraient,isse,isses,isse,issions,issiez,issent,(19.finir),issant,ir =
-= e,es,e,ons,ez,ent,ais,ais,ait,ions,iez,aient,is,is,it,îmes,îtes,irent,irai,iras,ira,irons,irez,iront,irais,irais,irait,irions,iriez,iraient,e,es,e,ions,iez,ent,(20.couvrir),ant,ir =
-= is,is,it,ions,iez,ient,iais,iais,iait,iions,iiez,iaient,is,is,it,îmes,îtes,irent,irai,iras,ira,irons,irez,iront,irais,irais,irait,irions,iriez,iraient,ie,ies,ie,iions,iiez,ient,(21.rire),iant,ire =
-= vais,vas,va,allons,allez,vont,allais,allais,allait,allions,alliez,allaient,allai,allas,alla,allâmes,allâtes,allèrent,irai,iras,ira,irons,irez,iront,irais,irais,irait,irions,iriez,iraient,aille,ailles,aille,allions,alliez,aillent,(22.aller),allant,aller =
-= iens,iens,ient,enons,enez,iennent,enais,enais,enait,enions,eniez,enaient,ins,ins,int,înmes,întes,inrent,iendrai,iendras,iendra,iendrons,iendrez,iendront,iendrais,iendrais,iendrait,iendrions,iendriez,iendraient,ienne,iennes,ienne,enions,eniez,iennent,(23.tenir),enant,enir =
-= is,is,it,ivons,ivez,ivent,ivais,ivais,ivait,ivions,iviez,ivaient,écus,écus,écut,écûmes,écûtes,écurent,ivrai,ivras,ivra,ivrons,ivrez,ivront,ivrais,ivrais,ivrait,virions,ivriez,ivraient,ive,ives,ive,ivions,iviez,ivent,(24.vivre),ivant,ivre =
-= s,s,t,tons,tez,tent,tais,tais,tait,tions,tiez,taient,tis,tis,tit,tîmes,tîtes,tirent,tirai,tiras,tira,tirons,tirez,tiront,tirais,tirais,tirait,tirions,tiriez,tiraient,te,tes,te,tions,tiez,tent,(25.sentir),tant,tir =
-= ins,ins,int,ignons,ignez,ignent,ignais,ignais,ignait,ignions,igniez,ignaient,ignis,ignis,ignit,ignîmes,ignîtes,ignirent,indrai,indras,indra,indrons,indrez,indront,indrais,indrais,indrait,indrions,indriez,indraient,igne,ignes,igne,ignions,igniez,ignent,(26.feindre-craindre),ignant,indre =
-= e,es,e,ons,ez,ent,ais,ais,ait,ions,iez,aient,is,is,it,îmes,îtes,irent,irai,iras,ira,irons,irez,iront,irais,irais,irait,irions,iriez,iraient,e,es,e,ions,iez,ent,(27.couvrir),ant,ir =
-= iers,iers,iert,érons,érez,ièrent,érais,érais,érait,érions,ériez,éraient,is,is,it,îmes,îtes,irent,errai,erras,erra,errons,errez,erront,errais,errais,errait,errions,erriez,erraient,ière,ières,ière,érions,iériez,ièrent,(28.quérir),érant,érir =
-= oie,oies,oie,oyons,oyez,oient,oyais,oyais,oyait,oyions,oyiez,oyaient,oyai,oyas,oya,oyâmes,oyâtes,oyèrent,oierai,oieras,oiera,oierons,oierez,oieront,oierais,oierais,oierait,oierions,oieriez,oieraient,oie,oies,oie,oyions,oyiez,oient,(29.broyer),oyant,oyer =
-= ois,ois,oit,uvons,uvez,oivent,uvais,uvais,uvait,uvions,uviez,uvaient,us,us,ut,ûmes,ûtes,urent,oirai,oiras,oira,oirons,oirez,oiront,oirais,oirais,oirait,oirions,oiriez,oiraient,oive,oives,oive,uvions,uviez,oivent,(30.boire),uvant,oire =
-= ains,ains,aint,aignons,aignez,aignent,aignais,aignais,aignait,aignions,aigniez,aignaient,aignis,aignis,aignit,aignîmes,aignîtes,aignirent,aindrai,aindras,aindra,aindrons,aindrez,aindront,aindrais,aindrais,aindrait,aindrions,aindriez,aindraient,aigne,aignes,aigne,aignions,aigniez,aignent,(31.craindre),aignant,aindre =
-= s,s,t,mons,mez,ment,mais,mais,mait,mions,miez,maient,mis,mis,mit,mîmes,mîtes,mirent,mirai,miras,mira,mirons,mirez,miront,mirais,mirais,mirait,mirions,miriez,miraient,me,mes,me,mions,miez,ment,(32.dormir),mant,mir =
-= s,s,t,ons,ez,ent,ais,ais,ait,ions,iez,aient,us,us,ut,ûmes,ûtes,urent,rai,ras,ra,rons,rez,ront,rais,rais,rait,rions,riez,raient,e,es,e,ions,iez,ent,(33.courir),ant,ir =
-= eurs,eurs,eurt,ourons,ourez,eurent,ourais,ourais,ourait,ourions,ouriez,ouraient,ourus,ourus,ourut,ourûmes,ourûtes,oururent,ourrai,ourras,ourra,ourrons,ourrez,ourront,ourrais,ourrais,ourrait,ourrions,ourriez,ourraient,eure,eures,eure,ourions,ouriez,eurent,(34.mourir),ourant,ourir =
-= s,s,t,vons,vez,vent,vais,vais,vait,vions,viez,vaient,vis,vis,vit,vîmes,vîtes,virent,virai,viras,vira,virons,virez,viront,virais,virais,virait,virions,viriez,viraient,ve,ves,ve,vions,viez,vent,(35.servir),vant,vir =
-= uis,uis,uit,uyons,uyez,uient,uyais,uyais,uyait,uyions,uyiez,uyaient,uis,uis,uit,uîmes,uîtes,uirent,uirai,uiras,uira,uirons,uirez,uiront,uirais,uirais,uirait,uirions,uiriez,uiraient,uie,uies,uie,uyions,uyiez,uient,(36.fuir),uyant,uir =
-= -,(37.ouïr) =
-= çois,çois,çoit,cevons,cevez,çoivent,cevais,cevais,cevait,cevions,ceviez,cevaient,çus,çus,çut,çûmes,çûtes,çurent,cevrai,cevras,cevra,cevrons,cevrez,cevront,cevrais,cevrais,cevrait,cevrions,cevriez,cevraient,çoive,çoives,çoive,cevions,ceviez,çoivent,(38.recevoir),cevant,cevoir =
-= ois,ois,oit,oyons,oyez,oient,oyais,oyais,oyait,oyions,ouiez,oyaient,is,is,it,îmes,îtes,irent,errai,erras,erra,errons,errez,erront,errais,errais,errait,errions,erriez,erraient,oie,oies,oie,oyions,oyiez,oient,(19.voir),oyant,oir =
-= -,(40.pourvoir) =
-= sais,sais,sait,savons,savez,savent,savais,savais,savait,savions,saviez,savaient,sus,sus,sut,sûmes,sûtes,surent,saurai,sauras,saura,saurons,saurez,sauront,saurais,saurais,saurait,saurions,sauriez,sauraient,sache,saches,sache,sachions,sachiez,sachent,(41.savoir),sachant,savoir =
-= dois,dois,doit,devons,devez,doivent,devais,devais,devait,devions,deviez,devaient,dus,dus,dut,dûmes,dûtes,durent,devrai,devras,devra,devrons,devrez,devront,devrais,devrais,devrait,devrions,devriez,devraient,doive,doives,doive,devions,deviez,doivent,(42.devoir),devant,devoir =
-= eux,eux,eut,ouvons,ouvez,euvent,ouvais,ouvais,ouvait,ouvions,ouviez,ouvaient,us,us,ut,ûmes,ûtes,urent,ourrai,ourras,ourra,ourrons,ourrez,ourront,ourrais,ourrais,ourrait,ourrions,ourriez,ourraient,uisse,uisses,uisse,uissions,uissiez,uissent,(43.pouvoir),ouvant,ouvoir =
-= -,(44.mouvoir) =
-= - ,- ,eut,- ,- ,- ,- ,- ,euvait,- ,- ,- ,- ,- ,ut,- ,- ,- ,- ,- ,euvra,- ,- ,- ,- ,- ,euvrait,- ,- ,- ,- ,- ,euve,- ,- ,- ,(45.pleuvoir),euvant,euvoir =
-= - ,- ,faut,- ,- ,- ,- ,- ,fallait,- ,- ,- ,- ,- ,fallut,- ,- ,- ,- ,- ,faudra,- ,- ,- ,- ,- ,faudrait,- ,- ,- ,- ,- ,faille,- ,- ,- ,(46.falloir),- ,falloir =
-= vaux,vaux,vaut,valons,valez,valent,valais,valais,valait,valions,valiez,valaient,valus,valus,valut,valûmes,valûtes,valurent,vaudrai,vaudras,vaudra,vaudrons,vaudrez,vaudront,vaudrais,vaudrais,vaudrait,vaudrions,vaudriez,vaudraient,vaille,vailles,vaille,valions,valiez,vaillent,(47.valoir),valant,valoir =
-= eux,eux,eut,oulons,oulez,eulent,oulais,oulais,oulait,oulions,ouliez,oulaient,oulus,oulus,oulut,oulûmes,oulûtes,oulurent,oudrai,oudras,oudra,oudrons,oudrez,oudront,oudrais,oudrais,oudrait,oudrions,oudriez,oudraient,euille,euilles,euille,oulions,ouliez,euillent,(48.vouloir),oulant,ouloir =
-= ieds,ieds,ied,eyons,eyez,eyent,eyais,eyais,eyait,eyions,eyiez,eyaient,is,is,it,îmes,îtes,irentiérai,iéras,iéra,iérons,iérez,iérontiérais,iérais,iérait,iérions,iériez,iéraient,eye,eyes,eye,eyions,eyiez,eyent,(49.asseoir),eyant,eoir =
-= -,(50..seoir) =
-= -,(51.surseoir) =
-= -,(52.choir) =
-= ds,ds,d,dons,dez,dent,dais,dais,dait,dions,diez,daient,dis,dis,dit,dîmes,dîtes,dirent,drai,dras,dra,drons,drez,dront,drais,drais,drait,drions,driez,draient,de,des,de,dions,diez,dent,(53.rendre),dant,dre =
-= ends,ends,end,enons,enez,ennent,enais,enais,enait,enions,eniez,enaient,is,is,it,îmes,îtes,irent,endrai,endras,endra,endrons,endrez,endront,endrais,endrais,endrait,endrions,endriez,endraient,enne,ennes,enne,enions,eniez,ennent,(54.prendre),enant,endre =
-= bats,bats,bat,battons,battez,battent,battais,battais,battait,battions,battiez,battaient,battis,battis,battit,battîmes,battîtes,battirent,battrai,battras,battra,battrons,battrez,battront,battrais,battrais,battrait,battrions,battriez,battraient,batte,battes,batte,battions,battiez,battent,(55.battre),battant,battre =
-= ets,ets,et,ettons,ettez,ettent,ettais,ettais,ettait,ettions,ettiez,ettaient,is,is,it,îmes,îtes,irent,ettrai,ettras,ettra,ettrons,ettrez,ettront,ettrais,ettrais,ettrait,ettrions,ettriez,ettraient,ette,ettes,ette,ettions,ettiez,ettent,(56.mettre),ettant,ettre =
-= eins,eins,eint,eignons,eignez,eignent,eignais,eignais,eignait,eignions,eigniez,eignaient,eignis,eignis,eignit,eignîmes,eignîtes,eignirent,eindrai,eindras,eindra,eindrons,eindrez,eindront,eindrais,eindrais,eindrait,eindrions,eindriez,eindraient,eigne,eignes,eigne,eignions,eigniez,eignent,(57.peindre),eignant,eindre =
-= e,es,e,ons,ez,ent,ais,ais,ait,ions,iez,aient,is,is,it,îmes,îtes,irent,erai,eras,era,erons,erez,eront,erais,erais,erait,erions,eriez,eraient,e,es,e,ions,iez,ent,(58.cueillir),ant,ir =
-= ains,ains,aint,aignons,aignez,aignent,aignais,aignais,aignait,aignions,aigniez,aingnaient,aignis,aignis,aignit,aignîmes,aignîtes,aignirent,aindrai,aindras,aindra,aindrons,aindrez,aindront,aindrais,aindrais,aindrait,aindrions,aindriez,aindraient,aigne,aignes,aigne,aignions,aigniez,aignent,(59.craindre),aignant,aindre =
-= s,s,,ons,ez,ent,ais,ais,ait,ions,iez,aient,,,,,,èrent,rai,ras,ra,rons,rez,ront,rais,rais,rait,rions,riez,raient,e,es,e,ions,iez,ent,(60foutre),ant,re =
-= is,is,it,yons,yez,ient,yais,yais,yait,yions,yiez,yaient,- ,- ,- ,- ,- ,- ,irai,iras,ira,irons,irez,iront,irais,irais,irait,irions,iriez,iraient,ie,ies,ie,yions,yiez,ient,(61.traire),yant,ire =
-= fais,fais,fait,faisons,faites,font,faisais,faisais,faisait,faisions,faisiez,faisaient,fis,fis,fit,fîmes,fîtes,firent,ferai,feras,fera,ferons,ferez,feront,ferais,ferais,ferait,ferions,feriez,feraient,fasse,fasses,fasse,fassions,fassiez,fassent,(62.faire),faisant,faire =
-= ais,ais,ait,aisons,aisez,aisent,aisais,aisais,aisait,aisions,aisiez,aisaient,us,us,ut,ûmes,ûtes,urent,airai,airas,aira,airons,airez,airont,airais,airais,airait,airions,airiez,airaient,aise,aises,aise,aisions,aisiez,aisent,(63.taire),aisant,aire =
-= ais,ais,aît,aissons,aissez,aissent,aissais,aissais,aissait,aissions,aissiez,aissaient,us,us,ut,ûmes,ûtes,urent,aîtrai,aîtras,aîtra,aîtrons,aîtrez,aîtront,aîtrais,aîtrais,aîtrait,aîtrions,aîtriez,aîtraient,aisse,aisses,aisse,aissions,aissiez,aissent,(64.connaître),aissant,aître =
-= is,is,ît,issons,issez,issent,issais,issais,issait,issions,issiez,issaient,quis,quis,quît,quîmes,quîtes,quirent,îtrai,îtras,îtra,îtrons,îtrez,îtront,îtrais,îtrais,îtrait,îtrions,îtriez,îtraient,isse,isses,isse,issions,issiez,issent,(65.naître),issant,ître =
-= cs,cs,c,quons,quez,quent,quais,quais,quait,quionq,quiez,quaient,quis,quis,quit,quîmes,quîtes,quirent,crai,cras,cra,crons,crez,cront,crais,crais,crait,crions,criez,craient,que,ques,que,quions,quiez,quent,(66.vaincre),quant,cre =
-= oîs,oîs,oît,oissons,oissez,oissent,oissais,oissais,oissait,oissions,oissiez,oissaient,ûs,ûs,ût,ûmes,ûtes,ûrent,oîtrai,oîtras,oîtra,oîtrons,oîtrez,oîtront,oisse,oisses,oisse,oissions,oissiez,oissent,(67.croître),oisssant,oître =
-= ois,ois,oit,oyons,oyez,oient,oyais,oyais,oyait,oyions,oyiez,oyaient,us,us,ut,ûmes,ûtes,urent,oirai,oiras,oira,oirons,oirez,oiront,oirais,oirais,oirait,oirions,oiriez,oiraient,oie,oies,oie,oyions,oyiez,oient,(68.croire),oyant,oire =
-= ois,ois,oit,uvons,uvez,oivent,uvais,uvais,uvait,uvions,uviez,uvaient,us,us,ut,ûmes,ûtes,urent,oirai,oiras,oira,oirons,oirez,oiront,oirias,oirais,oirait,oirions,oiriez,oiraient,oive,oives,oive,uvions,uviez,oivent,(69.boire),uvant,oire =
-= ème,èmes,ème,emons,emez,èment,émais,émais,émait,émions,émiez,émaient,émai,émas,éma,émâmes,émâtes,émèrent,émerai,émeras,émera,émerons,émerez,émeront,émerais,émerais,émerait,émerions,émeriez,émeraient,ème,èmes,ème,émions,émiez,èment,(70.semer),emant,emer =
-= -,71 =
-= ous,ous,out,olvons,olvez,olvent,olvais,olvais,olvait,olvions,olviez,olvaient,oudrai,oudras,oudra,oudrons,oudrez,oudront,oudrais,oudrais,oudrait,oudrions,oudriez,oudraient,olve,olves,olve,olvions,olviez,olvent,(72.absoudre),olvant,oudre =
-= ègue,ègues,ègue,éguons,éguez,èguent,éguais,éguais,éguait,éguions,éguiez,éguaient,éguai,éguas,égua,éguâmes,éguâtes,éguèrent,éguerai,égueras,éguera,éguerons,éguerez,égueront,éguerais,éguerais,éguerait,éguerions,égueriez,égueraient,ègue,ègues,ègue,éguions,éguiez,èguent,(73.léguer),éguant,éguer =
-= èche,èches,èche,échons,échez,èchent,échais,échais,échait,échions,échiez,échaient,échai,échas,écha,échâmes,échâtes,échèrent,écherai,écheras,échera,écherons,écherez,écheront,écherais,écherais,écherait,écherions,écheriez,écheraient,èche,èches,èche,échions,échiez,èchent,(74.lécher),échant,écher =
-= s,s,t,vons,vez,vent,vais,vais,vait,vions,viez,vaient,vis,vis,vit,vîmes,vîtes,virent,vrai,vras,vra,vrons,vrez,vront,vrais,vrais,vrait,vrions,vriez,vraient,ve,ves,ve,vions,viez,vent,(75.suivre),vant,vre =
-= us,us,ut,uons,uez,uent,uais,uais,uait,uions,uiez,uaient,us,us,ut,ûmes,ûtes,urent,urai,uras,ura,urons,urez,uront,urais,urais,urait,urions,uriez,uraient,ue,ues,ue,uions,uiez,uent,(76.conclure),uant,ure =
-= is,is,it,isons,isez,isent,isais,isais,isait,isions,isiez,isaient,us,us,ut,ûmes,ûtes,urent,irai,iras,ira,irons,irez,iront,irais,irais,irait,irions,iriez,iraient,ise,ises,ise,isions,isiez,isent,(77.lire),isant,ire =
-= ais,ais,ait,aïssons,aïssez,aïssent,aïssais,aïssais,aïssait,aïssions,aïssiez,aïssaient,aïs,aïs,aït,aïmes,aïtes,aïrent,aïrai,aïras,aïra,aïrons,aïrez,aïront,aïrais,aïrais,aïrait,aïrions,aïriez,aïraient,aïsse,aïsses,aïsse,aïssions,aïssiez,aïssent,(78.haïr),aïssant,aïr =
-= ètre,ètres,ètre,étrons,étrez,ètrent,étrais,étrais,étrait,étrions,étriez,étraient,étrai,étras,étra,étrâmes,étrâtes,étrèrent,étrerai,étreras,étrera,étrerons,étrerez,étreront,étrerais,étrerais,étrerait,étrerions,étreriez,étreraient,ètre,ètres,ètre,étrions,étriez,ètrent,(79.pénétrer),étrant,étrer =
-= is,is,it,ivons,ivez,ivent,ivais,ivais,ivait,ivions,iviez,ivaient,ivis,ivis,ivît,ivîmes,ivîtes,ivirent,irai,iras,ira,irons,irez,iront,irais,irais,irait,irions,iriez,iraient,ive,ives,ive,ivions,iviez,ivent,(80.écrire),ivant,ire =
-= is,is,it,isons,isez,isent,isais,isais,isait,isions,isiez,isaient,is,is,it,îmes,îtes,irent,irai,iras,ira,irons,irez,iront,irais,irais,irait,irions,iriez,iraient,ise,ises,ise,isions,isiez,isent,(81.confire),isant,ire =
-= uis,uis,uit,uisons,uisez,uisent,uisais,uisais,uisait,uisions,uisiez,uisaient,uisis,uisis,uisit,uisîmes,uisîtes,uisirent,uirai,uiras,uira,uirons,uirez,uiront,uirais,uirais,uirait,uirions,uiriez,uiraient,uise,uises,uise,uisions,uisiez,uisent,(82.cuire),uisant,uire =
-= ève,èves,ève,evons,evez,èvent,evais,evais,evait,evions,eviez,evaient,evai,evas,eva,evâmes,evâtes,evèrent,éverai,éveras,évera,éverons,éverez,éveront,éverais,éverais,éverait,éverions,éveriez,éveraient,ève,èves,ève,evions,eviez,èvent,(83.lever),evant,ever =
-= ède,èdes,ède,édons,édons,èdent,édais,édais,édait,édions,édiez,édaient,édai,édas,éda,édâmes,édâtes,édèrent,éderai,éderas,édera,éderons,éderez,éderont,éderais,éderais,éderait,éderions,éderiez,éderaient,ède,èdes,ède,édions,édiez,èdent,(84.céder),édant,éder =
-= ègne,ègnes,ègne,égnons,égnez,ègnent,égnais,égnais,égnait,égnions,égniez,égnaient,égnai,égnas,égna,égnâmes,égnâtes,égnèrent,égnerai,égneras,égnera,égnerons,égnerez,égneront,égnerais,égnerais,égnerait,égnerions,égneriez,égneraient,ègne,ègnes,ègne,égnions,égniez,ègnent,(85.imprégner),égnant,égner =
-= ère,ères,ère,érons,érez,èrent,érais,érais,érait,érions,ériez,éraient,érai,éras,éra,érâmes,érâtes,érèrent,érerai,éreras,érera,érerons,érerez,éreront,érerais,érerais,érerait,érerions,éreriez,éreraient,ère,ères,ère,érions,ériez,èrent,(86.vociférer),érant,érer =
-= ène,ènes,ène,enons,enez,ènent,enais,enais,enait,enions,eniez,enaient,enai,enas,ena,enâmes,enâtes,enèrent,énerai,éneras,énera,énerons,énerez,éneront,énerais,énerais,énerait,énerions,éneriez,éneraient,ène,ènes,ène,enions,eniez,ènent,(87.mener),enant,ener =
-= èse,èses,èse,esons,esez,èsent,esais,esais,esait,esions,esiez,esaient,esai,esas,esa,esâmes,esâtes,esèrent,éserai,éseras,ésera,éserons,éserez,éseront,éserais,éserais,éserait,éserions,éseriez,éseraient,èse,èses,èse,esions,esiez,èsent,(88.peser),esant,eser =
-= ègle,ègles,ègle,églons,églez,èglent,églais,églais,églait,églions,égliez,églaient,églai,églas,égla,églâmes,églâtes,églèrent,églerai,égleras,églera,églerons,églerez,égleront,églerais,églerais,églerait,églerions,égleriez,égleraient,ègle,ègles,ègle,églions,égliez,èglent,(89.régler),églant,égler =
-= oie,oies,oie,oyons,oyez,oient,oyais,oyais,oyait,oyions,oyiez,oyaient,oyai,oyas,oya,oyâmes,oyâtes,oyèrent,errai,erras,erra,errons,errez,erront,errais,errais,errait,errions,erriez,erraient,oie,oies,oie,oyions,oyiez,oient,(90.envoyer),oyant,oyer =
-= s,s,t,ons,ez,ent,ais,ais,ait,ions,iez,aient,is,is,it,îmes,îtes,irent,rai,ras,ra,rons,rez,ront,rais,rais,rait,rions,riez,raient,e,es,e,ions,iez,ent,(91.rompre),ant,re =
-=  =
+== terminaisons ==
+ai,as,a,avons,avez,ont,avais,avais,avait,avions,aviez,avaient,eus,eus,eut,eûmes,eûtes,eurent,aurai,auras,aura,aurons,aurez,auront,aurais,aurais,aurait,aurions,auriez,auraient,aie,aies,ait,ayions,ayiez,aient,(1.avoir),ayant,avoir 
+
+suis,es,est,sommes,êtes,sont,étais,étais,était,étions,étiez,étaient,fus,fus,fut,fûmes,fûtes,furent,serai,seras,sera,serons,serez,seront,serais,serais,serait,serions,seriez,seraient,sois,sois,soit,soyions,soyiez,soient,(2.être),étant,être 
+
+is,is,it,isons,ites,isent,isais,isais,isait,isions,isiez,isaient,is,is,it,îmes,îtes,irent,irai,iras,ira,irons,irez,iront,irais,irais,irait,irions,iriez,iraient,ise,ises,ise,isions,isiez,isent,(3.dire),isant,ire 
+
+ette,ettes,ette,etons,etez,ettent,etais,etais,etait,etions,etiez,etaient,etai,etas,eta,etâmes,etâtes,etèrent,etterai,etteras,ettera,etterons,etterez,etteront,etterais,etterais,etterait,etterions,etteriez,etteraient,ette,ettes,ette,etions,etiez,ettent,(4.jeter),etant,eter
+
+e,es,e,ons,ez,ent,ais,ais,ait,ions,iez,aient,ai,as,a,âmes,âtes,èrent,erai,eras,era,erons,erez,eront,erais,erais,erait,erions,eriez,eraient,e,e,e,ions,iez,ent,(6.aimer),ant,er 
+
+ce,ces,ce,çons,cez,cent,çais,çais,çait,cions,ciez,çaient,çai,ças,ça,çâmes,çâtes,cèrent,cerai,ceras,cera,cerons,cerez,ceront,cerais,cerais,cerait,cerions,ceriez,ceraient,ce,ces,ce,cions,ciez,cent,(7.placer),çant,cer 
+
+e,es,e,eons,ez,ent,eais,eais,eait,ions,iez,eaient,eai,eas,ea,eâmes,eâtes,èrent,erai,eras,era,erons,erez,eront,erais,erais,erait,erions,eriez,eraient,e,es,e,ions,iez,ent,(8.manger),eant,er 
+
+ète,ètes,ète,étons,étez,ètent,étais,étais,était,étions,étiez,étaient,étai,étas,éta,étâmes,étâtes,étèrent,éterai,éteras,étera,éterons,éterez,éteront,éterais,éterais,éterait,éterions,éteriez,éteraient,ète,ètes,ète,étions,étiez,ètent,(10.inquiéter),étant,éter 
+
+elle,elles,elle,elons,elez,ellent,elais,elais,elait,elions,eliez,elaient,elai,elas,ela,elâmes,elâtes,elèrent,ellerai,elleras,ellera,ellerons,ellerez,elleront,ellerais,ellerais,ellerait,ellerions,elleriez,elleraient,elle,elles,elle,elions,eliez,ellent,(11.appeler),elant,eler 
+
+ète,ètes,ète,etons,etez,ètent,etais,etais,etait,etions,etiez,etaient,etai,etas,eta,etâmes,etâtes,etèrent,èterai,èteras,ètera,èterons,èterez,èteront,èterais,èterais,èterait,èterions,èteriez,èteraient,ète,ètes,ète,etions,etiez,ètent,(12.acheter),etant,eter 
+
+èle,èles,èle,élons,élez,élent,élais,élais,élait,élions,éliez,élaient,élai,élas,éla,élâmes,élâtes,élèrenl,élerai,éleras,élera,élerons,élerez,éleront,élerais,élerais,élerait,élerions,éleriez,éleraient,èle,èles,èle,élions,éliez,élent,(13.révéler),élant,éler
+
+ège,èges,ège,égeons,égez,ègent,égeais,égeais,égeait,égions,égiez,égeaient,égeai,égeas,égea,égeâmes,égeâtes,égèrent,égerai,égeras,égera,égeront,égerez,égeront,égerais,égerais,égerait,égerions,égeriez,égeraient,ège,èges,ège,égions,égiez,ègent,(14.protéger),égeant,éger
+
+ère,ères,ère,érons,érez,èrent,érais,érais,érair,érions,ériez,éraient,érai,éras,éra,érâmes,érâtes,érèrent,érerai,éreras,érera,érerons,érerez,éreront,érerais,érerais,érerair,érerions,éreriez,éreraient,ère,ères,ère,érions,ériez,èrent,(15.exagérer),érant,érer
+
+aie,aies,aie,ayons,ayez,aient,ayais,ayais,ayait,ayions,ayiez,ayaient,ayai,ayas,aya,ayâmes,ayâtes,ayèrent,aierai,aieras,aiera,aierons,aierez,aieront,aierais,aierais,aierait,aierions,aieriez,aieriont,aie,aies,aie,ayions,ayiez,aient,(16.essayer),ayant,ayer
+
+ie,ies,ie,yons,yez,ient,yais,yais,yait,yions,yiez,yaient,yai,yas,ya,yâmes,yâtes,yèrent,ierai,ieras,iera,ierons,ierez,ieront,ierais,ierais,ierait,ierions,ieriez,ieraient,ie,ies,ie,yions,uiez,ient,(17.broyer),yant,yer
+
+cris,cris,crit,crivons,crivez,crivent,crivais,crivais,crivait,crivions,criviez,crivaient,crivis,crivis,crivit,crivîmes,crivîtes,crivirent,crirai,criras,crira,crirons,crirez,criront,crirais,crirais,crirait,cririons,cririez,criraient,crive,crives,crive,crivions,criviez,crivent,(18.écrire),crivant,crire
+
+is,is,it,issons,issez,issent,issais,issais,issait,issions,issiez,issaient,is,is,it,îmes,îtes,irent,irai,iras,ira,irons,irez,iront,irais,irais,irait,irions,iriez,iraient,isse,isses,isse,issions,issiez,issent,(19.finir),issant,ir
+
+e,es,e,ons,ez,ent,ais,ais,ait,ions,iez,aient,is,is,it,îmes,îtes,irent,irai,iras,ira,irons,irez,iront,irais,irais,irait,irions,iriez,iraient,e,es,e,ions,iez,ent,(20.couvrir),ant,ir
+
+is,is,it,ions,iez,ient,iais,iais,iait,iions,iiez,iaient,is,is,it,îmes,îtes,irent,irai,iras,ira,irons,irez,iront,irais,irais,irait,irions,iriez,iraient,ie,ies,ie,iions,iiez,ient,(21.rire),iant,ire
+
+vais,vas,va,allons,allez,vont,allais,allais,allait,allions,alliez,allaient,allai,allas,alla,allâmes,allâtes,allèrent,irai,iras,ira,irons,irez,iront,irais,irais,irait,irions,iriez,iraient,aille,ailles,aille,allions,alliez,aillent,(22.aller),allant,aller
+
+iens,iens,ient,enons,enez,iennent,enais,enais,enait,enions,eniez,enaient,ins,ins,int,înmes,întes,inrent,iendrai,iendras,iendra,iendrons,iendrez,iendront,iendrais,iendrais,iendrait,iendrions,iendriez,iendraient,ienne,iennes,ienne,enions,eniez,iennent,(23.tenir),enant,enir
+
+is,is,it,ivons,ivez,ivent,ivais,ivais,ivait,ivions,iviez,ivaient,écus,écus,écut,écûmes,écûtes,écurent,ivrai,ivras,ivra,ivrons,ivrez,ivront,ivrais,ivrais,ivrait,virions,ivriez,ivraient,ive,ives,ive,ivions,iviez,ivent,(24.vivre),ivant,ivre
+
+s,s,t,tons,tez,tent,tais,tais,tait,tions,tiez,taient,tis,tis,tit,tîmes,tîtes,tirent,tirai,tiras,tira,tirons,tirez,tiront,tirais,tirais,tirait,tirions,tiriez,tiraient,te,tes,te,tions,tiez,tent,(25.sentir),tant,tir
+
+ins,ins,int,ignons,ignez,ignent,ignais,ignais,ignait,ignions,igniez,ignaient,ignis,ignis,ignit,ignîmes,ignîtes,ignirent,indrai,indras,indra,indrons,indrez,indront,indrais,indrais,indrait,indrions,indriez,indraient,igne,ignes,igne,ignions,igniez,ignent,(26.feindre-craindre),ignant,indre
+
+e,es,e,ons,ez,ent,ais,ais,ait,ions,iez,aient,is,is,it,îmes,îtes,irent,irai,iras,ira,irons,irez,iront,irais,irais,irait,irions,iriez,iraient,e,es,e,ions,iez,ent,(27.couvrir),ant,ir
+
+iers,iers,iert,érons,érez,ièrent,érais,érais,érait,érions,ériez,éraient,is,is,it,îmes,îtes,irent,errai,erras,erra,errons,errez,erront,errais,errais,errait,errions,erriez,erraient,ière,ières,ière,érions,iériez,ièrent,(28.quérir),érant,érir
+
+oie,oies,oie,oyons,oyez,oient,oyais,oyais,oyait,oyions,oyiez,oyaient,oyai,oyas,oya,oyâmes,oyâtes,oyèrent,oierai,oieras,oiera,oierons,oierez,oieront,oierais,oierais,oierait,oierions,oieriez,oieraient,oie,oies,oie,oyions,oyiez,oient,(29.broyer),oyant,oyer
+
+ois,ois,oit,uvons,uvez,oivent,uvais,uvais,uvait,uvions,uviez,uvaient,us,us,ut,ûmes,ûtes,urent,oirai,oiras,oira,oirons,oirez,oiront,oirais,oirais,oirait,oirions,oiriez,oiraient,oive,oives,oive,uvions,uviez,oivent,(30.boire),uvant,oire
+
+ains,ains,aint,aignons,aignez,aignent,aignais,aignais,aignait,aignions,aigniez,aignaient,aignis,aignis,aignit,aignîmes,aignîtes,aignirent,aindrai,aindras,aindra,aindrons,aindrez,aindront,aindrais,aindrais,aindrait,aindrions,aindriez,aindraient,aigne,aignes,aigne,aignions,aigniez,aignent,(31.craindre),aignant,aindre
+
+s,s,t,mons,mez,ment,mais,mais,mait,mions,miez,maient,mis,mis,mit,mîmes,mîtes,mirent,mirai,miras,mira,mirons,mirez,miront,mirais,mirais,mirait,mirions,miriez,miraient,me,mes,me,mions,miez,ment,(32.dormir),mant,mir
+
+s,s,t,ons,ez,ent,ais,ais,ait,ions,iez,aient,us,us,ut,ûmes,ûtes,urent,rai,ras,ra,rons,rez,ront,rais,rais,rait,rions,riez,raient,e,es,e,ions,iez,ent,(33.courir),ant,ir
+
+eurs,eurs,eurt,ourons,ourez,eurent,ourais,ourais,ourait,ourions,ouriez,ouraient,ourus,ourus,ourut,ourûmes,ourûtes,oururent,ourrai,ourras,ourra,ourrons,ourrez,ourront,ourrais,ourrais,ourrait,ourrions,ourriez,ourraient,eure,eures,eure,ourions,ouriez,eurent,(34.mourir),ourant,ourir
+
+s,s,t,vons,vez,vent,vais,vais,vait,vions,viez,vaient,vis,vis,vit,vîmes,vîtes,virent,virai,viras,vira,virons,virez,viront,virais,virais,virait,virions,viriez,viraient,ve,ves,ve,vions,viez,vent,(35.servir),vant,vir
+
+uis,uis,uit,uyons,uyez,uient,uyais,uyais,uyait,uyions,uyiez,uyaient,uis,uis,uit,uîmes,uîtes,uirent,uirai,uiras,uira,uirons,uirez,uiront,uirais,uirais,uirait,uirions,uiriez,uiraient,uie,uies,uie,uyions,uyiez,uient,(36.fuir),uyant,uir-,(37.ouïr)
+
+ois,ois,oit,oyons,oyez,oient,oyais,oyais,oyait,oyions,ouiez,oyaient,is,is,it,îmes,îtes,irent,errai,erras,erra,errons,errez,erront,errais,errais,errait,errions,erriez,erraient,oie,oies,oie,oyions,oyiez,oient,(19.voir),oyant,oir 
+
+
 = Annexe 2 : Liste des descripteurs de la version Hypercard =
 
 :Le choix des symboles dans cette liste est arbitraire et peut être, en fonction des contraintes de tel ou tel langage informatique, complètement différent.
-
-
 
 {|
 |:[ 
