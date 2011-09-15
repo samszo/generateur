@@ -32,11 +32,10 @@ if($langue=="fr"){
 		"concepts"=>"34,37"
 		,"syntagmes"=>4
 		,"pronoms_complement"=>13
-		,"conjugaisons"=>25
+		,"conjugaisons"=>44
 		,"pronoms"=>"13,14"
-		,"déterminants"=>15
-		,"negations"=>16);
-		
+		,"déterminants"=>46
+		,"negations"=>16);				
 }
 if($langue=="en"){
 	$ids = array(

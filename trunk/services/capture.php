@@ -19,20 +19,20 @@ else
 	$gen = 'chansons';
 	
 if($gen=="bios"){
-	$id = 120746;
-	$dico = 84;
+	$id = 150144;
+	$dico = 93;
 }
 if($gen=="chansons"){
-	$id = 91698;
-	$dico = 72;
+	$id = 150248;
+	$dico = 94;
 }
 if($gen=="critiques"){
 	$id = 120613;
 	$dico = 82;
 }	
 if($gen=="twitts"){
-	$id = 76446;
-	$dico = 51;
+	$id = 150342;
+	$dico = 96;
 }	
 
 
@@ -57,7 +57,7 @@ else
 if(isset($_GET['dicos']))
 	$dicos = $_GET['dicos'].",".$dico;
 else
-	$dicos = "45,".$dico;
+	$dicos = "34,".$dico;
 
 if(isset($_GET['force']))
 	$force = true;
@@ -86,12 +86,12 @@ try {
 	$arrDicos = array(
 		"concepts"=>$dicos
 		,"syntagmes"=>4
-		,"pronoms_complement"=>47
+		,"pronoms_complement"=>13
 		,"conjugaisons"=>44
-		,"pronoms"=>"48,14"
+		,"pronoms"=>"13,14"
 		,"déterminants"=>46
 		,"negations"=>16);
-	
+		
 	//récupère la définition des gènes
 	$dbConcepts = new Model_DbTable_Concepts();
 	$Rowset = $dbConcepts->find($id);

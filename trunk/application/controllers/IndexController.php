@@ -17,21 +17,24 @@ class IndexController extends Zend_Controller_Action
 	    $this->view->dicos = $dicos->fetchAll($select);		 
     	
 		//pour le débuggage
-		/* 
+		// 
 		//$this->modifierAction();
 		$moteur = new Gen_Moteur("",true);
 		$moteur->showErr = true;
 		//dico capture
-		//twitter = 51
+		//twitter = 96
 		//chanson = 72
+		//bios = 93	
+		//critique = 82
 		$arrDicos = array(
-			"concepts"=>"45,72"
+			"concepts"=>"34,96"
 			,"syntagmes"=>4
-			,"pronoms_complement"=>47
+			,"pronoms_complement"=>13
 			,"conjugaisons"=>44
-			,"pronoms"=>"48,14"
+			,"pronoms"=>"13,14"
 			,"déterminants"=>46
 			,"negations"=>16);
+		/*
 		//dico herbarius anglais
 		$arrDicos = array(
 			"concepts"=>"42,75"
@@ -52,15 +55,15 @@ class IndexController extends Zend_Controller_Action
 		,"déterminants"=>69
 		,"negations"=>16);
 		*/	
-		//$moteur->arrDicos = $arrDicos;	
+		$moteur->arrDicos = $arrDicos;	
 		//$moteur->typeChoix = "alea";	
-		//$moteur->Generation("[dis-fleur]");
+		//$moteur->Generation("[dis-sujet][v_vivre] [106#] [12|m_musique  2]");
 		//$moteur->Verification("[thl-peau-01]");
 		
 		//
-		//$dico = new Gen_Dico();
+		$dico = new Gen_Dico();
 		//$dico->GetMacToXml(31);		
-		//$dico->SaveBdd(62,"",50);
+		//$dico->SaveBdd(98,44,34);
 		//$dbD = new Model_DbTable_Dicos();
 	    //$dbD->supprimerDico(8);
     }
@@ -445,28 +448,37 @@ class IndexController extends Zend_Controller_Action
     
     public function sauvegarderAction()
     {
-		$this->view->title = "Sauvegarde du dictionaire XML dans la BDD";
-	    $this->view->headTitle($this->view->title, 'PREPEND');
-
-	    if ($this->getRequest()->isPost()) {
-	        $calculer = $this->getRequest()->getPost('sauvegarder');
-	        if ($calculer == 'Oui') {
-	            $id = $this->getRequest()->getPost('id');
-	            $idDicoConj = $this->getRequest()->getPost('idDicoConj');
-	            $idDicoMerge = $this->getRequest()->getPost('idDicoMerge');
-	            echo "idDico = ".$id." idDicoConj = ".$idDicoConj." idDicoMerge = $idDicoMerge<br/>";
-			    $dico = new Gen_Dico();
-				$dico->SaveBdd($id, $idDicoConj,$idDicoMerge);
-	        	$this->_redirect('/index/modifier/id/'.$id.'/type/dico');
-	        }else{
-	        	$this->_redirect('/');
-	        }
-	    } else {
-	        $id = $this->_getParam('id', 0);
-	        $dicos = new Model_DbTable_Dicos();
-	        $this->view->dico = $dicos->obtenirDico($id);
-	    }
-    }
+    	try{
+	    	$this->view->title = "Sauvegarde du dictionaire XML dans la BDD";
+		    $this->view->headTitle($this->view->title, 'PREPEND');
+	
+		    if ($this->getRequest()->isPost()) {
+		        $calculer = $this->getRequest()->getPost('sauvegarder');
+		        if ($calculer == 'Oui') {
+		            $id = $this->getRequest()->getPost('id');
+		            $idDicoConj = $this->getRequest()->getPost('idDicoConj');
+		            $idDicoMerge = $this->getRequest()->getPost('idDicoMerge');
+		            echo "idDico = ".$id." idDicoConj = ".$idDicoConj." idDicoMerge = $idDicoMerge<br/>";
+    		set_time_limit(600); 
+		            $dico = new Gen_Dico();
+					$dico->SaveBdd($id, $idDicoConj,$idDicoMerge);
+		        	$this->_redirect('/index/modifier/id/'.$id.'/type/dico');
+		        }else{
+		        	$this->_redirect('/');
+		        }
+		    } else {
+		        $id = $this->_getParam('id', 0);
+		        $dicos = new Model_DbTable_Dicos();
+		        $this->view->dico = $dicos->obtenirDico($id);
+		    }
+		}catch (Zend_Exception $e) {
+	          // Appeler Zend_Loader::loadClass() sur une classe non-existante
+	          //entrainera la levée d'une exception dans Zend_Loader
+	          echo "Récupère exception: " . get_class($e) . "\n";
+	          echo "Message: " . $e->getMessage() . "\n";
+	          // puis tout le code nécessaire pour récupérer l'erreur
+		}
+   	}
     
     public function creerxmlAction()
     {
