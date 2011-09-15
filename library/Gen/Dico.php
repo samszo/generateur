@@ -247,7 +247,10 @@ class Gen_Dico
 	}
 	
 	private function SaveItem($k,$n){
-
+		echo $k."<br/>";
+		print_r($n);
+		echo "<br/>";
+		
 		switch ($k) {
 			case 'conjugaison':
 				$pkV = $this->dbConj->ajouterConjugaison($this->id,$n['num'],$n['modele']);

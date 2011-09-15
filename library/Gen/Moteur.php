@@ -142,7 +142,7 @@ class Gen_Moteur
         if($getTexte){
         	$this->genereTexte();
         }
-
+		$t = $this->texte;
 	}
 
 	public function Verification($texte, $getTexte=true, $cache=false){
@@ -303,7 +303,9 @@ class Gen_Moteur
 		}
 		
 		//gestion des espace en trop
-		$this->texte = preg_replace('/\s\s+/', ' ', $this->texte);
+		//$this->texte = preg_replace('/\s\s+/', ' ', $this->texte); //problème avec à qui devient illisible ???
+		$this->texte = str_replace("  "," ",$this->texte);
+		
 		$this->texte = str_replace("' ","'",$this->texte);
 		$this->texte = str_replace(" , ",", ",$this->texte);
 		$this->texte = str_replace(" .",".",$this->texte);
@@ -311,7 +313,7 @@ class Gen_Moteur
 		$this->texte = str_replace(" -","-",$this->texte);
 		
 		//gestion des majuscules sauf pour twitter
-		if(strrpos($this->arrDicos["concepts"],"51")===false){
+		if(strrpos($this->arrDicos["concepts"],"96")===false){
 			$this->genereMajuscules();
 		}
 		
@@ -321,7 +323,6 @@ class Gen_Moteur
 		
 		//création du tableau de génération
 		$this->detail = "ordreDeb=$ordreDeb ordreFin=$ordreFin<br/>".$this->arrayVersHTML($this->arrClass);
-		
 		
 	}
 
@@ -1062,7 +1063,7 @@ class Gen_Moteur
 	        	//récupère la définition de la class
 	        	$table = new Model_DbTable_Syntagmes();
 	        	$arrClass = $table->obtenirSyntagmeByDicoNum($this->arrDicos['syntagmes'],$class);
-				if(get_class($arrClass)=="Exception"){
+				if(is_object($arrClass) && get_class($arrClass)=="Exception"){
 		    		$this->arrClass[$this->ordre]["ERREUR"] = $arrClass->getMessage();//."<br/><pre>".$arrCpt->getTraceAsString()."</pre>";
 		    		$arrClass = array("lib" => "");
 				}else{	   	    
@@ -1166,7 +1167,7 @@ class Gen_Moteur
         	$arrClass = $table->obtenirPronomByDicoNumType($this->arrDicos['pronoms'],$class,$type);
 			$this->cache->save($arrClass,$c);
 		}
-		if(get_class($arrClass)=="Exception"){
+		if(is_object($arrClass) && get_class($arrClass)=="Exception"){
 	        $this->arrClass[$this->ordre]["ERREUR"] = $arrClass->getMessage();//."<br/><pre>".$arrClass->getTraceAsString()."</pre>";
 			return "";
 		}
@@ -1187,7 +1188,7 @@ class Gen_Moteur
 			$this->cache->save($arrClass,$c);
 		}
 		
-		if(get_class($arrClass)=="Exception"){
+		if(is_object($arrClass) && get_class($arrClass)=="Exception"){
 	        $this->arrClass[$this->ordre]["ERREUR"] = $arrClass->getMessage();//."<br/><pre>".$arrClass->getTraceAsString()."</pre>";
 			return "";
 		}
@@ -1371,7 +1372,7 @@ class Gen_Moteur
 			$arrClass=explode("_", $class);
 	        $table = new Model_DbTable_Concepts();	
 	   	    $arrCpt = $table->obtenirConceptDescription($this->arrDicos['concepts'],$arrClass);
-			if(get_class($arrCpt)=="Exception"){
+			if(is_object($arrCpt) && get_class($arrCpt)=="Exception"){
 	    		$this->arrClass[$this->ordre]["ERREUR"] = $arrCpt->getMessage();//."<br/><pre>".$arrCpt->getTraceAsString()."</pre>";
 	    		$arrCpt = false;
 			}else{	   	    

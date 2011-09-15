@@ -6,3 +6,7 @@ RewriteCond %{REQUEST_FILENAME} -l [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^.*$ - [NC,L]
 RewriteRule ^.*$ index.php [NC,L]
+#AuthName "Page d'administration protégée"
+#AuthType Basic
+#AuthUserFile "/home/samszo/www/generateur/public/.htpasswd"
+#Require valid-user
