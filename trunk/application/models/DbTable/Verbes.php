@@ -28,6 +28,20 @@ class Model_DbTable_Verbes extends Zend_Db_Table_Abstract
         return $row->toArray();
     }
     
+    public function obtenirVerbeByIdConcept($id)
+    {
+        $query = $this->select()
+			->from( array("v" => "gen_verbes") )                           
+			->setIntegrityCheck(false) //pour pouvoir sélectionner des colonnes dans une autre table
+            ->joinInner(array('va' => 'gen_concepts_verbes'),
+                'va.id_verbe = v.id_verbe AND va.id_concept = '.$id)
+            
+            ;
+
+        return $this->fetchAll($query)->toArray(); 
+    }
+    
+    
     public function ajouterVerbe($idDico, $idConj, $eli, $prefix)
     {
     	$id = $this->existeVerbe($idDico, $idConj, $eli, $prefix);

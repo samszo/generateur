@@ -63,7 +63,7 @@ class IndexController extends Zend_Controller_Action
 		//
 		$dico = new Gen_Dico();
 		//$dico->GetMacToXml(31);		
-		//$dico->SaveBdd(98,44,34);
+		//$dico->SaveBdd(100,44,99);
 		//$dbD = new Model_DbTable_Dicos();
 	    //$dbD->supprimerDico(8);
     }
