@@ -50,6 +50,39 @@ class MoteurController extends Zend_Controller_Action
 	    
     }
 
+    public function genererAction()
+    {
+	    try{
+	    	
+		    if ($this->getRequest()->isGet()) {
+	        	//calcul l'expresion saisie
+				$moteur = new Gen_Moteur("",$this->_getParam('ForceCalcul'));
+				$arrDicos = array(
+					"concepts"=>implode(",", $this->_getParam('dicoIdsCpt'))
+					,"syntagmes"=>implode(",", $this->_getParam('dicoIdsStg'))
+					,"pronoms_complement"=>implode(",", $this->_getParam('dicoIdsPrCp'))
+					,"conjugaisons"=>implode(",", $this->_getParam('dicoIdsCjg'))
+					,"pronoms"=>implode(",", $this->_getParam('dicoIdsPrSt')).",".implode(",", $this->_getParam('dicoIdsPrCp'))
+					,"déterminants"=>implode(",", $this->_getParam('dicoIdsDtm'))
+					,"negations"=>implode(",", $this->_getParam('dicoIdsNgt'))		
+					);
+				//print_r($arrDicos);		
+				$moteur->arrDicos = $arrDicos;
+							
+				$moteur->Generation($this->_getParam('valeur'));
+		        		        	
+				$this->view->Generation = $moteur->texte;
+		    }
+		    
+	    }catch (Zend_Exception $e) {
+	          // Appeler Zend_Loader::loadClass() sur une classe non-existante
+	          //entrainera la levée d'une exception dans Zend_Loader
+	          echo "Récupère exception: " . get_class($e) . "\n";
+	          echo "Message: " . $e->getMessage() . "\n";
+	          // puis tout le code nécessaire pour récupérer l'erreur
+		}	    
+    }
+    
     public function verifierAction()
     {
     try{
