@@ -9,14 +9,14 @@ define ("WEB_ROOT_AJAX",WEB_ROOT."/public");
 
 // Define path to application directory
 defined('APPLICATION_PATH')
-    || define('APPLICATION_PATH', realpath(dirname(__FILE__) . '/../application'));
+    || define('APPLICATION_PATH', ROOT_PATH . '/application');
 
 // Define application environment
 defined('APPLICATION_ENV')
     || define('APPLICATION_ENV', (getenv('APPLICATION_ENV') ? getenv('APPLICATION_ENV') : 'production'));
 
 
-set_include_path(APPLICATION_PATH.'/../library');       
+set_include_path(ROOT_PATH.'/library');       
 set_include_path(get_include_path().PATH_SEPARATOR."C:\wamp\www\ZendFramework-1.12.0\library");
 set_include_path(get_include_path().PATH_SEPARATOR."C:\wamp\www\ZendFramework-1.12.0\extras\library");
 
