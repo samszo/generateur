@@ -4,8 +4,7 @@ ini_set("memory_limit",'1600M');
 
 $temps_debut = microtime(true);
 
-
-require_once('../public/config.php');
+require_once('../application/configs/config.php');
 
 if(isset($_GET['langue'])){
 	$langue = $_GET['langue'];

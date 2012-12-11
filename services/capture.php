@@ -5,7 +5,7 @@ ini_set("memory_limit",'1600M');
 $temps_debut = microtime(true);
 
 
-require_once('../public/config.php');
+require_once('../application/configs/config.php');
 require_once('../library/odtphp/odf.php');
 
 if(isset($_GET['nb']))
