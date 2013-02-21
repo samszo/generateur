@@ -36,7 +36,6 @@ if($gen=="twitts"){
 }	
 
 
-
 $getHtml = true;	
 if(isset($_GET['odf'])){
 	$getOdf = true;
@@ -68,6 +67,7 @@ else
 if($getHtml)header ('Content-type: text/html; charset=utf-8');
 if($getXml)header ('Content-type: text/xml; charset=utf-8');
 
+
 	
 try {
 
@@ -95,6 +95,7 @@ try {
 	//récupère la définition des gènes
 	$dbConcepts = new Model_DbTable_Concepts();
 	$Rowset = $dbConcepts->find($id);
+
 	$parent = $Rowset->current();
 	//ajout des généreteurs
 	$defGenes = $parent->findManyToManyRowset('Model_DbTable_Generateurs','Model_DbTable_ConceptsGenerateurs');
@@ -183,6 +184,8 @@ try {
 		$xml .= "</Directory>";
 		echo $xml;
 	}
+/*
+	*/
 	
 		
 }catch (Exception $e) {
@@ -286,6 +289,5 @@ function count_files($folder, $ext, $subfolders)
      closedir($rep);
      return $nb_files;
 } 
-
 
 ?>	
