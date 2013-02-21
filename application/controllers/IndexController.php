@@ -372,7 +372,7 @@ class IndexController extends Zend_Controller_Action
 	        if ($form->isValid($formData)) {
 	        	if($type=='dico'){
 					$dbDic = new Model_DbTable_Dicos();
-					$dbDic->modifierDico($form->getValue('id_dico'),$form->getValue('nom'),$form->getValue('url'),$form->getValue('type'),$form->getValue('url_source'));
+					$dbDic->modifierDico($form->getValue('id_dico'),$form->getValue('nom'),$form->getValue('langue'),$form->getValue('url'),$form->getValue('type'),$form->getValue('url_source'));
 	        	}
 	        	if($type=="conjugaison"){
 					$dbCo = new Model_DbTable_Conjugaisons();

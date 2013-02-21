@@ -7,9 +7,13 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 		$moduleLoader = new Zend_Application_Module_Autoloader(array(
 			'namespace' => '',
 			'basePath' => APPLICATION_PATH));
-
+		
 		$loader = Zend_Loader_Autoloader::getInstance();
-		$loader->registerNamespace(array('Gen_'));
+		$loader->registerNamespace(array('Gen_', "Flux_"));
+
+	    //pour pouvoir charger les classe à la fois dans le serveur amf et avec l'autoloader
+		$moduleLoader->addResourceType('dbgen', 'Model/DbTable', 'Model_DbTable');
+		
 		return $moduleLoader;
 	}
 

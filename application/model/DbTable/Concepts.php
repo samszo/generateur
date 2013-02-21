@@ -1,4 +1,10 @@
 <?php
+/**
+ * Classe ORM qui représente la table 'Concepts'.
+ *
+ * @copyright  2010 Samuel Szoniecky
+ * @license    "New" BSD License
+ */
 class Model_DbTable_Concepts extends Zend_Db_Table_Abstract
 {
     protected $_name = 'gen_concepts';
@@ -18,6 +24,13 @@ class Model_DbTable_Concepts extends Zend_Db_Table_Abstract
         )
     );	
 	
+    /**
+     * Récupère un concept par son identifiant.
+     *
+     * @param integer $id
+     *
+     * @return array
+     */
     public function obtenirConcept($id)
     {
         $id = (int)$id;
@@ -28,6 +41,13 @@ class Model_DbTable_Concepts extends Zend_Db_Table_Abstract
         return $row->toArray();
     }
 
+    /**
+     * Récupère les concepts par dictionnaire.
+     *
+     * @param integer $id
+     *
+     * @return array
+     */
     public function obtenirConceptByDico($id)
     {
         $id = (int)$id;
@@ -40,6 +60,15 @@ class Model_DbTable_Concepts extends Zend_Db_Table_Abstract
         return $rs->toArray();
     }
 
+    /**
+     * Récupère les concepts par type.
+     *
+     * @param integer $idDico
+     * @param string $lib
+     * @param string $type
+     *
+     * @return array
+     */
     public function obtenirConceptByDicoLibType($idDico,$lib,$type)
     {
         $query = $this->select()
@@ -55,6 +84,14 @@ class Model_DbTable_Concepts extends Zend_Db_Table_Abstract
         return $r;
     }
     
+    /**
+     * Récupère les concepts par type.
+     *
+     * @param integer $idDico
+     * @param array $arrClass
+     *
+     * @return array
+     */
     public function obtenirConceptDescription($idDico, $arrClass){
 
 			$cpt = $this->obtenirConceptByDicoLibType($idDico,$arrClass[1],$arrClass[0]);
@@ -106,6 +143,8 @@ class Model_DbTable_Concepts extends Zend_Db_Table_Abstract
      * Recherche les générateurs liés aux concept
      *
      * @param int $idConcept
+     * 
+     * @return array
      */
     public function findGensByIdconcept($idConcept)
     {
@@ -120,6 +159,15 @@ class Model_DbTable_Concepts extends Zend_Db_Table_Abstract
     }
         
     
+    /**
+     * Vérifie si un concept existe.
+     *
+     * @param integer $idDico
+     * @param string $lib
+     * @param string $type
+     *
+     * @return integer
+     */
     public function existeConcept($idDico, $lib, $type)
     {
 		$select = $this->select();
@@ -132,6 +180,16 @@ class Model_DbTable_Concepts extends Zend_Db_Table_Abstract
         return $id;
     }    
     
+    /**
+     * Ajoute un concept
+     *
+     * @param integer $idDico
+     * @param string $lib
+     * @param string $type
+     * @param boolean $existe
+     *
+     * @return integer
+     */
     public function ajouterConcept($idDico, $lib, $type, $existe=true)
     {
     	$id = false;
@@ -148,6 +206,14 @@ class Model_DbTable_Concepts extends Zend_Db_Table_Abstract
     	return $id;
     }
     
+    /**
+     * Modifier un concept
+     *
+     * @param integer $idDico
+     * @param string $lib
+     * @param string $type
+     *
+     */
     public function modifierConcept($id, $lib, $type)
     {
         $data = array(
@@ -157,6 +223,12 @@ class Model_DbTable_Concepts extends Zend_Db_Table_Abstract
         $this->update($data, 'id_concept = '. (int)$id);
     }
 
+    /**
+     * Supprime un concept
+     *
+     * @param integer $id
+     *
+     */
     public function supprimerConcept($id)
     {
     	foreach($this->_dependentTables as $t){
@@ -166,6 +238,12 @@ class Model_DbTable_Concepts extends Zend_Db_Table_Abstract
     	$this->delete('id_concept =' . (int)$id);
     }
 
+    /**
+     * Supprime les concept d'un dicotionnaire
+     *
+     * @param integer $id
+     * 
+     */
     public function supprimerDico($id)
     {
     	$arr = $this->obtenirConceptByDico($id);
