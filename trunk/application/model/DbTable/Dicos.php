@@ -17,7 +17,7 @@ class Model_DbTable_Dicos extends Zend_Db_Table_Abstract
 		,'Model_DbTable_Generateurs'
 		);
 
-    public function getItemsDico($id)
+	public function getItemsDico($id)
     {
         $id = (int)$id;
 		$Rowset = $this->find($id);
@@ -45,8 +45,7 @@ class Model_DbTable_Dicos extends Zend_Db_Table_Abstract
 	public function obtenirDicoType($type)
     {
 		$select = $this->select();
-		$select->from($this, array('id_dico','maj','nom'))
-			->where('type = ?', $type);
+		$select->where('type = ?', $type);
 	    $rs = $this->fetchAll($select);        
     	if (!$rs) {
             throw new Exception("Count not find rs $id");
@@ -77,10 +76,11 @@ class Model_DbTable_Dicos extends Zend_Db_Table_Abstract
         return $this->insert($data);
     }
     
-    public function modifierDico($id, $nom, $url, $type, $urlS)
+    public function modifierDico($id, $nom, $langue, $url, $type, $urlS)
     {
         $data = array(
             'nom' => $nom,
+            'langue' => $langue,
         	'url' => $url,
             'url_source' => $urlS,
         	'type' => $type,

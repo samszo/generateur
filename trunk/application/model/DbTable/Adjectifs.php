@@ -22,19 +22,6 @@ class Model_DbTable_Adjectifs extends Zend_Db_Table_Abstract
         }
         return $row->toArray();
     }
-
-    public function obtenirAdjectifByIdConcept($id)
-    {
-        $query = $this->select()
-			->from( array("a" => "gen_adjectifs") )                           
-			->setIntegrityCheck(false) //pour pouvoir sélectionner des colonnes dans une autre table
-            ->joinInner(array('ca' => 'gen_concepts_adjectifs'),
-                'ca.id_adj = a.id_adj AND ca.id_concept = '.$id)
-            
-            ;
-
-        return $this->fetchAll($query)->toArray(); 
-    }
     
 	public function existeAdjectif($idDico, $eli, $prefix, $ms, $fs, $mp, $fp)
     {
@@ -68,20 +55,6 @@ class Model_DbTable_Adjectifs extends Zend_Db_Table_Abstract
     	 	$id = $this->insert($data);
     	}
     	return $id;
-    }
-
-    /**
-     * Recherche une entrée avec la clef primaire spécifiée
-     * et modifie cette entrée avec les nouvelles données.
-     *
-     * @param integer $id
-     * @param array $data
-     *
-     * @return integer
-     */
-    public function edit($id, $data)
-    {        
-        return $this->update($data, 'id_adj = ' . $id);
     }
     
     public function modifierAdjectif($id,  $eli, $prefix, $ms, $fs, $mp, $fp)
