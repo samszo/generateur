@@ -10,10 +10,11 @@ class MoteurController extends Zend_Controller_Action
     {
     try{
     	
-        $form = new Form_Moteur();
-	    $form->envoyer->setLabel('Tester');
+    	$form = new Form_Moteur();
+    	//
+    	$form->envoyer->setLabel('Tester');
 	    $this->view->form = $form;
-
+	    
 	    if ($this->getRequest()->isGet()) {
 	        $formData = $this->getRequest()->getQuery();
 	        if ($form->isValid($formData)) {
@@ -39,6 +40,7 @@ class MoteurController extends Zend_Controller_Action
 				$this->view->Detail = $moteur->detail;
 	        }
 	    }
+		//
 	    
     }catch (Zend_Exception $e) {
           // Appeler Zend_Loader::loadClass() sur une classe non-existante

@@ -3,7 +3,7 @@ class Form_Moteur extends Zend_Form
 {
     public function __construct($options = null)
     {
-    	try{    	
+    	try{
 	        parent::__construct($options);
 	        $this->setMethod('get');
 	        $this->setName('moteur');
@@ -11,9 +11,9 @@ class Form_Moteur extends Zend_Form
 	        $CacheForm = new Zend_Form_Element_Hidden('CacheForm');
 	        $CacheForm->setValue(false);
 	        
-        	$dbDico = new Model_DbTable_Dicos();
+	        $dbDico = new Model_DbTable_Dicos();
 	
-			$cbDicoCpt = $this->getChoixDico($dbDico, "concepts", "Cpt");		
+	        $cbDicoCpt = $this->getChoixDico($dbDico, "concepts", "Cpt");		
 			$cbDicoDtm = $this->getChoixDico($dbDico, "déterminants", "Dtm");		
 			$cbDicoStg = $this->getChoixDico($dbDico, "syntagmes", "Stg");		
 			$cbDicoPrCp = $this->getChoixDico($dbDico, "pronoms_complement", "PrCp");		
@@ -21,7 +21,7 @@ class Form_Moteur extends Zend_Form
 			$cbDicoPrSt = $this->getChoixDico($dbDico, "pronoms_sujet", "PrSt");		
 			$cbDicoNgt = $this->getChoixDico($dbDico, "négations", "Ngt");		
 			
-	      	$valeur = new Zend_Form_Element_Textarea('valeur');
+			$valeur = new Zend_Form_Element_Textarea('valeur');
 	      	$valeur->setRequired(true);
 			$valeur->setLabel('Définir une valeur à générer');
 	      	
@@ -46,18 +46,22 @@ class Form_Moteur extends Zend_Form
     
     function getChoixDico($dbDico, $type, $nom){
 		
-		$arrDicos = $dbDico->obtenirDicoType($type);
-    	$multiOptions = array();
-		foreach ($arrDicos as $dico) {
-		    $multiOptions[$dico["id_dico"]] = $dico["nom"];
+    	try{
+	    	$arrDicos = $dbDico->obtenirDicoType($type);
+	    	$multiOptions = array();
+	    	foreach ($arrDicos as $dico) {
+			    $multiOptions[$dico["id_dico"]] = $dico["nom"];
+			}
+			$mcbDico = new Zend_Form_Element_MultiCheckbox('dicoIds'.$nom, array(
+			    'multiOptions' => $multiOptions
+			));
+			$mcbDico->setLabel('Définir les dictionnaires de '.$type);		
+	    	$mcbDico->setRequired(true);
+    	}catch (Zend_Exception $e) {
+	          echo "Récupère exception: " . get_class($e) . "\n";
+	          echo "Message: " . $e->getMessage() . "\n";
 		}
-		$mcbDico = new Zend_Form_Element_MultiCheckbox('dicoIds'.$nom, array(
-		    'multiOptions' => $multiOptions
-		));
-		$mcbDico->setLabel('Définir les dictionnaires de '.$type);		
-    	$mcbDico->setRequired(true);
-    	
-		return $mcbDico;
+	    return $mcbDico;
 		
     }
     
