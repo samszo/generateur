@@ -117,7 +117,7 @@ try {
 
 
 	//récupère le nombre de fichier
-	$nbFic = count_files(ROOT_PATH.'/data/capture/','txt','');
+	$nbFic = count_files(ROOT_PATH.'/data/herbarius/','txt','');
 			
 	//récupère la définition d'une plante
 	$dbConcepts = new Model_DbTable_Concepts();
@@ -130,7 +130,7 @@ try {
 	
 	//nombre de plante possible
 	$nbPlante = count($arrPlantes)-1;
-	
+	//
 	for ($itr = 0; $itr < $nb; $itr++) {
 		try {
 			$num = mt_rand(0, $nbPlante);
@@ -177,7 +177,7 @@ try {
 	if($err){
 		echo "<br/><br/>FIN DE GENERATION DES FICHIERS ".$itr." sur ".$nb;
 	}
-
+	//
 		
 }catch (Exception $e) {
     echo "Message: " . $e->getMessage() . "\n";
