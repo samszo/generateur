@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:ViewStack xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:co="compo.*"
+	creationComplete="Init()" resizeToContent="true"
+	width="100%" height="100%" xmlns:s="library://ns.adobe.com/flex/spark">
+	<mx:Script>
+        <![CDATA[
+			import compo.*;
+			
+			import mx.collections.ArrayCollection;
+			import mx.collections.ArrayList;
+			import mx.collections.IViewCursor;
+			import mx.collections.Sort;
+			import mx.collections.SortField;
+			import mx.containers.Form;
+			import mx.containers.FormItem;
+			import mx.containers.TitleWindow;
+			import mx.controls.Alert;
+			import mx.controls.CheckBox;
+			import mx.controls.ComboBox;
+			import mx.controls.DataGrid;
+			import mx.controls.dataGridClasses.DataGridColumn;
+			import mx.controls.listClasses.IDropInListItemRenderer;
+			import mx.events.CloseEvent;
+			import mx.events.DataGridEvent;
+			import mx.events.FlexEvent;
+			import mx.managers.CursorManager;
+			import mx.managers.PopUpManager;
+			import mx.rpc.AsyncToken;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.rpc.http.HTTPService;
+			
+			import spark.components.ComboBox;
+
+	/**
+	 * paramétrage de l'objet
+	 */
+	[Bindable] public var endPoint:String;
+	[Bindable] public var idExi:String;
+	[Bindable] public var bInit:Boolean=true;
+	[Bindable] public var bInsert:Boolean=true;
+	[Bindable] public var twAR:twAjoutRef;
+	[Bindable] public var idOeu:int;	
+	[Bindable] public var arrDicoGen:Array;	
+	[Bindable] public var arrDicoCon:Array;	
+	[Bindable] public var arrDicoDet:Array;	
+	[Bindable] public var arrDicoSyn:Array;	
+	[Bindable] public var arrDicoPrC:Array;	
+	[Bindable] public var arrDicoPrS:Array;	
+	[Bindable] public var arrDicoNeg:Array;	
+
+			private function findItemHandler(e:Object):void {
+				var item:Object=e.result[0];
+				if(item){
+					UpdLib.text=item.lib;
+				}
+			}
+			
+			private function findDicoHandler(e:Object):void {
+				if(!e)return;
+				var dp:Array = e.result as Array;
+				if(dp[0].type=="concepts")arrDicoGen=dp;
+				if(dp[0].type=="conjugaisons")arrDicoCon=dp;
+				if(dp[0].type=="déterminants")arrDicoDet=dp;
+				if(dp[0].type=="syntagmes")arrDicoSyn=dp;
+				if(dp[0].type=="pronoms_complement")arrDicoPrC=dp;
+				if(dp[0].type=="pronoms_sujet")arrDicoPrS=dp;
+				if(dp[0].type=="négations")arrDicoNeg=dp;
+			}
+			
+			public function Init():void 
+			{
+			    //chargement des données
+			    if(bInit){
+					RO.findByIdOeu(idOeu);
+					ROD.obtenirDicoType("concepts");
+					ROD.obtenirDicoType("conjugaisons");
+					ROD.obtenirDicoType("déterminants");
+					ROD.obtenirDicoType("syntagmes");
+					ROD.obtenirDicoType("pronoms_complement");
+					ROD.obtenirDicoType("pronoms_sujet");
+					ROD.obtenirDicoType("négations");
+				}
+			    if(bInsert)selectedChild=insert;
+			        
+			}
+			
+			private function updateItem():void
+			{
+				//création du tableau de valeur
+				var vn:Array = new Array();
+				
+				vn["lib"] = UpdLib.text;
+				
+				RO.edit(idOeu,vn);	
+			}
+			
+			private function insertAnnuler():void {
+				if(this.bInsert){
+					twAR.ferme();
+				}else{
+					this.selectedChild = view;
+				}
+			}
+			
+			private function insertItem():void {
+			
+				//création du tableau de param
+				var pArr:Array = new Array;
+				var val:String="";
+			    var frmC:Array = insertForm.getChildren();
+				//boucle sur chaque composant du modèle
+			    for each(var ctl:Object in frmC){
+			    	//récupère l'identifiant de la valeur
+			    	var ctlId:String=ctl.id;
+					//récupère le contrôle d'édition
+					var ctlVal:Object=ctl.getChildAt(0);
+					//vérifie le type pour récupérer les modifs
+			    	if(ctlVal.className=="cbGroupeMot"){
+			    		val=ctlVal.cb.selectedItem[ctl.id];
+			    	}
+			    	if(ctlVal.className=="TextInput" || ctlVal.className=="TextArea"){
+			    		val=ctlVal.text;
+			    	}
+			    	//vérifie si le champ est obligatoire
+			    	if(!VerifChampOblig(val, ctlVal))return;
+			    	//incrémente le tableau
+					pArr[ctlId]=val;
+			   	}
+			   	
+				RO.ajouter(pArr);
+				
+			}
+			
+			private function VerifChampOblig(val:String, ctlVal:Object):Boolean{
+				
+				if(val!="")return true;
+			
+				var verif:Boolean=true;
+				
+				if(ctlVal.id=="lib"){
+					Alert.show("Le libellé est obligatoire.");
+					return false;
+				}
+				
+				return verif;
+			}
+			
+			private function insertItemHandler(e:Object):void
+			{
+				idOeu = e.result;
+				this.selectedChild = view;
+				RO.getAll();
+				if(twAR){
+					Alert.show("Veuillez choisir les dictionnaires associés à cette oeuvre.");
+				}
+			}
+			
+			private function fillGridHandler(e:Object, dg:DataGrid):void
+			{
+				if(!e)return;
+			    dg.dataProvider = e.result as Array;
+			}
+			
+			private function deleteClickHandler(event:CloseEvent):void
+			{
+			    if (event.detail == Alert.YES) 
+			    {
+					RO.remove(idOeu);
+			    }
+			}
+			
+			public function faultHandlerService(fault:FaultEvent):void
+			{
+				Alert.show(fault.fault.faultCode.toString(), "FaultHandlerService");
+			}
+			 
+			public function resultHandlerService(result:ResultEvent):void
+			{
+				RO.getAll();
+			}
+			
+			private function DicoHandler(e:Object):void
+			{
+				vsDico.selectedChild = viewDico;
+			    ROC.findByIdOeuvre(idOeu);
+			}
+			
+			private function deleteDico():void {
+			    
+			    if (this.dgDico.selectedItem)
+			    {
+			        Alert.show("Confirmez-vous la suppression du dictionnaire pour cette oeuvre ?",
+			        "Confirmation Suppression", 3, this, deleteDicoClickHandler);
+			    }
+			    
+			}
+			private function deleteDicoClickHandler(event:CloseEvent):void
+			{
+			    if (event.detail == Alert.YES) 
+			    {
+					ROC.remove(idOeu, dgDico.selectedItem['id_dico']);
+			    }
+			}
+			private function AjouterDicoOeuvre():void
+			{
+				if(cbDicoGen.selectedIndex!=-1)ROC.ajouter(idOeu, cbDicoGen.selectedItem['id_dico']) else Alert.show("Veuillez sélectionner un dictionnaire");
+					
+					/*
+				"  prompt="général" />
+					<s:ComboBox id="cbDicoCon"  prompt="conjugaisons" />
+					<s:ComboBox id="cbDicoDet"  prompt="déterminants" />
+					<s:ComboBox id="cbDicoSyn"  prompt="syntagmes" />
+					<s:ComboBox id="cbDicoPrC"  prompt="pronoms compléments" />
+					<s:ComboBox id="cbDicoPrS"  prompt="pronoms sujets" />
+					<s:ComboBox id="cbDicoNeg"  prompt="négations" />
+					*/
+			}
+			private function selectDicoDefautLangue():void{
+				var l:String = "fr";
+				var filtreDicoLangueDefaut:Function = function(item:*, index:int, array:Array):void {
+					if(item.defaut==1 && item.langue == l) this.selectedIndex=index;
+				};
+				arrDicoGen.filter(filtreDicoLangueDefaut,cbDicoGen);
+				arrDicoCon.filter(filtreDicoLangueDefaut,cbDicoCon);
+				arrDicoDet.filter(filtreDicoLangueDefaut,cbDicoDet);
+				arrDicoSyn.filter(filtreDicoLangueDefaut,cbDicoSyn);
+				arrDicoPrC.filter(filtreDicoLangueDefaut,cbDicoPrC);
+				arrDicoPrS.filter(filtreDicoLangueDefaut,cbDicoPrS);
+				arrDicoNeg.filter(filtreDicoLangueDefaut,cbDicoNeg);
+
+			}
+        ]]>
+    </mx:Script>
+    
+	<mx:RemoteObject id="RO"
+	    	source="Model_DbTable_Oeuvres" destination="zend" 
+	    	endpoint="{endPoint}"
+	    	showBusyCursor="true"
+	    	fault="faultHandlerService(event)">
+	 	<mx:method name="findByIdOeu"  result="findItemHandler(event)"/>  	
+	 	<mx:method name="edit"  result="resultHandlerService(event)"/>  	
+	 	<mx:method name="remove"  result="resultHandlerService(event)"/>  	
+	 	<mx:method name="ajouter"  result="insertItemHandler(event)"/>  	
+	 	<mx:method name="csv"  result="resultHandlerService(event)"/>  	
+	</mx:RemoteObject>
+
+	<mx:RemoteObject id="ROC"
+	    	source="Model_DbTable_OeuvresDicos" destination="zend" 
+	    	endpoint="{endPoint}"
+	    	showBusyCursor="true"
+	    	fault="faultHandlerService(event)">
+	 	<mx:method name="findByIdOeuvre"  result="fillGridHandler(event,dgDico)"/>  	
+	 	<mx:method name="remove"  result="DicoHandler(event)"/>  	
+	 	<mx:method name="ajouter"  result="DicoHandler(event)"/>  	
+	</mx:RemoteObject>
+
+	<mx:RemoteObject id="ROD"
+					 source="Model_DbTable_Dicos" destination="zend" 
+					 endpoint="{endPoint}"
+					 showBusyCursor="true"
+					 fault="faultHandlerService(event)">
+		<mx:method name="obtenirDicoType" result="findDicoHandler(event)"/>  	
+	</mx:RemoteObject>
+
+	<mx:Canvas id="view" width="100%" height="100%">
+		<mx:VBox width="100%" height="100%">
+			
+			<mx:HBox width="100%">
+				<mx:Label fontSize="16" text="Titre de l'oeuvre :" /><mx:TextInput id="UpdLib" /><mx:Button label="Modifier" click="updateItem()" />
+			</mx:HBox>
+	
+			<mx:Panel title="Dictionnaires associés" width="100%" height="100%" layout="absolute">
+				<mx:ViewStack id="vsDico" left="10" right="10" top="30" bottom="10">
+					<mx:VBox id="viewDico" width="100%" height="100%" verticalAlign="top">
+						<mx:HBox height="24">
+							<mx:LinkButton click="vsDico.selectedChild = insertDico;" width="20" icon="@Embed('images/AddRecord.png')" toolTip="Ajouter un dictionnaire à cette oeuvre" />
+							<mx:LinkButton click="deleteDico()" width="20" icon="@Embed('images/DeleteRecord.png')" toolTip="Supprimer un dictionnaire pour cette oeuvre" />							
+						</mx:HBox>							
+						<mx:DataGrid width="100%" id="dgDico">
+							<mx:columns>
+								<mx:DataGridColumn headerText="Nom" dataField="nom" />
+								<mx:DataGridColumn headerText="Id Dico" dataField="id_dico" visible="false"/>
+							</mx:columns>
+						</mx:DataGrid>					
+					</mx:VBox>
+					<mx:VBox id="insertDico" width="100%" height="100%"  >
+						<mx:Label text="Choisissez une langue :"/>
+						<mx:ComboBox id="cbLangue"  prompt="langue" change="selectDicoDefautLangue()" editable="true">
+							
+						</mx:ComboBox>							
+						<mx:Label text="Ou choisissez un dictionnaire par type :"/>
+						<mx:ComboBox id="cbDicoGen"  prompt="concepts" dataProvider="{arrDicoGen}" labelField="nom" />
+						<mx:ComboBox id="cbDicoCon"  prompt="conjugaisons" dataProvider="{arrDicoCon}" labelField="nom" />
+						<mx:ComboBox id="cbDicoDet"  prompt="déterminants" dataProvider="{arrDicoDet}" labelField="nom" />
+						<mx:ComboBox id="cbDicoSyn"  prompt="syntagmes" dataProvider="{arrDicoSyn}" labelField="nom" />
+						<mx:ComboBox id="cbDicoPrC"  prompt="pronoms compléments" dataProvider="{arrDicoPrC}" labelField="nom" />
+						<mx:ComboBox id="cbDicoPrS"  prompt="pronoms sujets" dataProvider="{arrDicoPrS}" labelField="nom" />
+						<mx:ComboBox id="cbDicoNeg"  prompt="négations" dataProvider="{arrDicoNeg}" labelField="nom" />
+						<mx:HBox>
+							<mx:Button label="Enregistrer" click="AjouterDicoOeuvre();" />
+							<mx:Button label="Annuler" click="vsDico.selectedChild = viewDico;" />				
+						</mx:HBox>							
+					</mx:VBox>
+				</mx:ViewStack>											
+			</mx:Panel>
+		</mx:VBox>
+	</mx:Canvas>
+	<mx:Canvas id="insert" width="100%" height="100%" >
+		<mx:VBox x="6" top="12" width="100%" height="100%">			
+			<mx:Form width="100%" height="100%" id="insertForm">			                    		
+	            <mx:FormItem label="Nom:" id="lib" >
+	            	<mx:TextInput />
+	            </mx:FormItem>
+			</mx:Form>			
+			<mx:HBox>
+				<mx:Button label="Enregistrer" click="insertItem()" />
+				<mx:Button label="Annuler" click="insertAnnuler()" />				
+			</mx:HBox>
+		</mx:VBox>
+	</mx:Canvas>
+
+	 
+</mx:ViewStack>
