@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" 
+			   xmlns:co="compo.*"
+			   minWidth="955" minHeight="600"
+			   creationComplete="init();" >	
+	<fx:Script>
+		<![CDATA[
+			import compo.dgOeuvres;
+			public const ENDPOINT_URL = "http://localhost/generateur/services/admin.php";
+
+			private function init():void {
+				//roConcept.obtenirConceptByDico(73);
+			}
+			public function ShowSelection(idOeu:int):void{
+				dgOeuParam.visible=true;
+				dgOeuParam.idOeu =idOeu;
+				dgOeuParam.bInit = true;
+				dgOeuParam.Init();
+			}
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+	</fx:Declarations>
+	<mx:Canvas left="5" right="-5" top="5" bottom="-5">
+		
+		<s:HGroup>
+			<s:Label fontSize="16" text="Sélectionner une oeuvre:"/>
+			<co:cbGroupeMot id="gmOeuvre" titre="une oeuvre" bRemove="true" keyName="id_oe" objSource="dgOeuvres" objName="Model_DbTable_Oeuvres" endPoint="{ENDPOINT_URL}" />						
+		</s:HGroup>
+		<mx:TabNavigator y="24" width="100%" height="100%">
+			<s:NavigatorContent width="100%" height="100%" id="ncParam" label="Paramètrer">				
+				<co:dgOeuvres id="dgOeuParam" x="0" y="0" width="100%" height="100%" visible="false" bInit="false" bInsert="false" endPoint="{ENDPOINT_URL}">
+				</co:dgOeuvres>
+			</s:NavigatorContent>
+			<s:NavigatorContent width="100%" height="100%" label="Ecrire">
+			</s:NavigatorContent>
+		</mx:TabNavigator>
+		
+	</mx:Canvas>
+	
+</s:Application>
