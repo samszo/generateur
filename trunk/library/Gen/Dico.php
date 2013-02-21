@@ -74,6 +74,17 @@ class Gen_Dico
 			
 	}
 
+	public function setDicoByDrive(){
+
+		try {
+			
+		}catch (Zend_Exception $e) {
+	          echo "Récupère exception: " . get_class($e) . "\n";
+	          echo "Message: " . $e->getMessage() . "\n";
+		}
+		
+	}
+	
 	public function GetMacToXml($idDico){
 
 	try {
