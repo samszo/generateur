@@ -70,43 +70,38 @@ class Flux_Gdata extends Flux_Site{
 			if(!$this->dbCG)$this->dbCG = new Model_DbTable_ConceptsGenerateurs($this->db);
 			
 			$this->getUser(array("login"=>$this->login,"flux"=>"gdata"));
-			$this->getGraine(array("titre"=>"Google data","class"=>"Flux_Gdata","url"=>"????"));
-			//TODO ajouter la utigraine 
 			
 			$date = new Zend_Date();
 			
 			foreach ($arr as $nSS=>$vSS){
 				//ajouter un dico correspondant au classeur
-				$idD = $this->dbD->ajouter(array("url"=>$vSS['url'],"titre"=>$vSS['titre'],"tronc"=>$docTronc,"pubDate"=>$date->get("c")));
-				//TODO ajouter la grainedoc 
+				//$idD = $this->dbD->ajouter(array("url"=>$vSS['url'],"titre"=>$vSS['titre'],"tronc"=>$docTronc,"pubDate"=>$date->get("c")));
 				
 				$i = 0;
+				$nomDico="";
+				$nomConcept="";				
 				foreach ($vSS['feuilles'] as $nWS=>$vWS) {
-					//ajouter un document correspondant à la feuille
-					$idDF = $this->dbD->ajouter(array("url"=>$vWS['url'],"titre"=>$vWS['titre'],"tronc"=>$idD,"pubDate"=>$date->get("c")));
-					//TODO ajouter la grainedoc 
 					$j = 0;
-					if($idDF>44){
-						foreach ($vWS['values'] as $v) {
-							if(isset($v['cest'])){
-								$tag = $v['cest'];
-								$poids = $v['_cokwr'];
-								//on ajoute le tag
-								$idT = $this->dbT->ajouter(array("code"=>$tag));
-								//on ajoute le lien entre le tag et le doc avec le poids
-								$this->dbTD->ajouter(array("tag_id"=>$idT, "doc_id"=>$idDF,"poids"=>$poids));
-								//on ajoute le lein entre le tag l'utilisateur et le doc
-								$this->dbUTD->ajouter(array("uti_id"=>$this->user, "tag_id"=>$idT, "doc_id"=>$idDF,"maj"=>$date->get("c")));						
-								$j ++;
-							}
+					//pour chaque ligne de la feuille
+					foreach ($vWS['values'] as $v) {
+						if($nomDico!=$v['dictionnaire']){
+							//création du dictionnaire
+							$idD = $this->dbD->ajouterDico($vWS['titre'], $v['dictionnaire'], "concepts","","",$v['langue']);								
+							$nomDico=$v['dictionnaire'];
 						}
-						$i += $j;					
-						//ajoute un lien entre l'utilisateur et le document avec un poids correspondant au nombre de tag
-						$this->dbUD->ajouter(array("uti_id"=>$this->user, "doc_id"=>$idDF,"poids"=>$j));													
+						if($nomConcept!=$v['concept']){
+							//création du concept
+							$idC = $this->dbC->ajouterConcept($idD, $v['concept'], "dis");								
+							$nomConcept=$v['concept'];				
+						}
+						//création du générateur
+						$idG = $this->dbG->ajouterGenerateur($idD, $v['proverbe']);
+						//lien avec le concept
+						$idG = $this->dbCG->ajouterConceptGenerateur($idC, $idG);
+						
 					}
+					$i += $j;					
 				}
-				//ajoute un lien entre l'utilisateur et le document avec un poids correspodant au nombre de tag
-				$this->dbUD->ajouter(array("uti_id"=>$this->user, "doc_id"=>$idD,"poids"=>$i));							
 			}
 	
 			
