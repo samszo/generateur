@@ -42,6 +42,25 @@ class Model_DbTable_Dicos extends Zend_Db_Table_Abstract
         return $items;
     }
 	
+    /**
+     * Vérifie si une entrée existe.
+     *
+     * @param array $data
+     *
+     * @return integer
+     */
+    public function existe($data)
+    {
+		$select = $this->select();
+		$select->from($this, array('id_dico'));
+		foreach($data as $k=>$v){
+			$select->where($k.' = ?', $v);
+		}
+	    $rows = $this->fetchAll($select);        
+	    if($rows->count()>0)$id=$rows[0]->id_dico; else $id=false;
+        return $id;
+    } 
+        
 	public function obtenirDicoType($type)
     {
 		$select = $this->select();
@@ -63,7 +82,7 @@ class Model_DbTable_Dicos extends Zend_Db_Table_Abstract
         return $row->toArray();
     }
 
-    public function ajouterDico($url, $nom, $type, $urlS="", $pathS="")
+    public function ajouterDico($url, $nom, $type, $urlS="", $pathS="", $langue="")
     {
         //mettre utf8_decode pour php 5.3
     	$data = array(
@@ -71,9 +90,13 @@ class Model_DbTable_Dicos extends Zend_Db_Table_Abstract
     		'url' => $url,
             'url_source' => $urlS,
             'path_source' => $pathS,
-    		'type' => $type
+    		'type' => $type,
+    		'langue' => $langue
         );
-        return $this->insert($data);
+    	$idDico = $this->existe($data); 
+    	if(!$idDico)
+        	$idDico = $this->insert($data);
+    	return $idDico;
     }
     
     public function modifierDico($id, $nom, $langue, $url, $type, $urlS)
