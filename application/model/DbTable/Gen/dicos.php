@@ -258,6 +258,36 @@ class Model_DbTable_Gen_dicos extends Zend_Db_Table_Abstract
 
         return $this->fetchAll($query)->toArray(); 
     }
+    /**
+     * retourne les différentes langues du dictiionnaire
+     *
+     *
+     * @return array
+     */
+    public function getLangue()
+    {
+    	$query = $this->select()
+	    	->distinct()
+	    	->from(array('d' => 'gen_dicos'), 'langue')
+    		->order('langue');
     
+    	return $this->fetchAll($query)->toArray();
+    }
+    /**
+     * retourne les différentes type de dictiionnaire
+     *
+     *
+     * @return array
+     */
+    public function getType()
+    {
+    	$query = $this->select()
+    	->distinct()
+    	->from(array('d' => 'gen_dicos'), 'type')
+    	->order('type');
+    	 
+    	return $this->fetchAll($query)->toArray();
+    }
     
+       
 }
