@@ -138,7 +138,7 @@ class Model_DbTable_Gen_oeuvres extends Zend_Db_Table_Abstract
      *
      * @return array
      */
-    public function findById_oeu($id_oeu)
+    public function findByIdOeu($id_oeu)
     {
         $query = $this->select()
                     ->from( array("g" => "gen_oeuvres") )                           

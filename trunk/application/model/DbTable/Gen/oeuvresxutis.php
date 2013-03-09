@@ -1,18 +1,17 @@
 <?php
 /**
- * Ce fichier contient la classe Gen_oeuvres_dicos.
+ * Ce fichier contient la classe Gen_oeuvres_utis.
  *
  * @copyright  2013 Samuel Szoniecky
  * @license    "New" BSD License
- */
-
-class Model_DbTable_Gen_oeuvresxdicos extends Zend_Db_Table_Abstract
+*/
+class Model_DbTable_Gen_oeuvres_utis extends Zend_Db_Table_Abstract
 {
     
     /**
      * Nom de la table.
      */
-    protected $_name = 'gen_oeuvres_dicos';
+    protected $_name = 'gen_oeuvres_utis';
     
     /**
      * Clef primaire de la table.
@@ -28,7 +27,7 @@ class Model_DbTable_Gen_oeuvresxdicos extends Zend_Db_Table_Abstract
     );	
     
     /**
-     * Vérifie si une entrée Gen_oeuvres_dicos existe.
+     * Vérifie si une entrée Gen_oeuvres_utis existe.
      *
      * @param array $data
      *
@@ -47,29 +46,26 @@ class Model_DbTable_Gen_oeuvresxdicos extends Zend_Db_Table_Abstract
     } 
         
     /**
-     * Ajoute une entrée Gen_oeuvres_dicos.
+     * Ajoute une entrée Gen_oeuvres_utis.
      *
-     * @param int $idOeu
-     * @param array $params
+     * @param array $data
      * @param boolean $existe
      *  
      * @return integer
      */
-    public function ajouter($idOeu, $params, $existe=true)
+    public function ajouter($data, $existe=true)
     {
-    	foreach ($params as $idDico) {
-   	    	$id=false;
-   	    	$data= array("id_oeu"=>$idOeu, "id_dico"=>$idDico);
-	    	if($existe)$id = $this->existe($data);
-	    	if(!$id){
-	    	 	$id = $this->insert($data);
-	    	}
+    	
+    	$id=false;
+    	if($existe)$id = $this->existe($data);
+    	if(!$id){
+    	 	$id = $this->insert($data);
     	}
     	return $id;
     } 
            
     /**
-     * Recherche une entrée Gen_oeuvres_dicos avec la clef primaire spécifiée
+     * Recherche une entrée Gen_oeuvres_utis avec la clef primaire spécifiée
      * et modifie cette entrée avec les nouvelles données.
      *
      * @param integer $id
@@ -80,32 +76,44 @@ class Model_DbTable_Gen_oeuvresxdicos extends Zend_Db_Table_Abstract
     public function edit($id, $data)
     {        
    	
-    	$this->update($data, 'gen_oeuvres_dicos.id_oeu = ' . $id);
+    	$this->update($data, 'gen_oeuvres_utis.id_oeu = ' . $id);
     }
     
     /**
-     * Recherche une entrée Gen_oeuvres_dicos avec la clef primaire spécifiée
+     * Recherche une entrée Gen_oeuvres_utis avec la clef primaire spécifiée
      * et supprime cette entrée.
      *
-     * @param integer $idOeu
-     * @param integer $idDico
+     * @param integer $id
      *
      * @return void
      */
-    public function remove($idOeu, $idDico)
+    public function remove($id)
     {
-    	$this->delete('gen_oeuvres_dicos.id_oeu = ' . $idOeu.' AND gen_oeuvres_dicos.id_dico = ' . $idDico);
+    	$this->delete('gen_oeuvres_utis.id_oeu = ' . $id);
+    }
+
+    /**
+     * Recherche les entrées de Gen_oeuvres_utis avec la clef de lieu
+     * et supprime ces entrées.
+     *
+     * @param integer $idLieu
+     *
+     * @return void
+     */
+    public function removeLieu($idLieu)
+    {
+		$this->delete('id_lieu = ' . $idLieu);
     }
     
     /**
-     * Récupère toutes les entrées Gen_oeuvres_dicos avec certains critères
+     * Récupère toutes les entrées Gen_oeuvres_utis avec certains critères
      * de tri, intervalles
      */
     public function getAll($order=null, $limit=0, $from=0)
     {
    	
     	$query = $this->select()
-                    ->from( array("gen_oeuvres_dicos" => "gen_oeuvres_dicos") );
+                    ->from( array("gen_oeuvres_utis" => "gen_oeuvres_utis") );
                     
         if($order != null)
         {
@@ -122,38 +130,34 @@ class Model_DbTable_Gen_oeuvresxdicos extends Zend_Db_Table_Abstract
 
     
     	/**
-     * Recherche une entrée Gen_oeuvres_dicos avec la valeur spécifiée
+     * Recherche une entrée Gen_oeuvres_utis avec la valeur spécifiée
      * et retourne cette entrée.
      *
      * @param int $id_oeu
      *
      * @return array
      */
-    public function findByIdOeu($id_oeu)
+    public function findById_oeu($id_oeu)
     {
         $query = $this->select()
-        	->from( array("od" => "gen_oeuvres_dicos") )                           
-	        ->setIntegrityCheck(false) //pour pouvoir sélectionner des colonnes dans une autre table
-        ->joinInner(array('d' => 'gen_dicos'),
-        		'd.id_dico = od.id_dico')
-        ->where( "od.id_oeu = ?", $id_oeu )
-    	->order("d.type");
-        
+                    ->from( array("g" => "gen_oeuvres_utis") )                           
+                    ->where( "g.id_oeu = ?", $id_oeu );
+
         return $this->fetchAll($query)->toArray(); 
     }
     	/**
-     * Recherche une entrée Gen_oeuvres_dicos avec la valeur spécifiée
+     * Recherche une entrée Gen_oeuvres_utis avec la valeur spécifiée
      * et retourne cette entrée.
      *
-     * @param int $id_dico
+     * @param int $uti_id
      *
      * @return array
      */
-    public function findById_dico($id_dico)
+    public function findByUti_id($uti_id)
     {
         $query = $this->select()
-                    ->from( array("g" => "gen_oeuvres_dicos") )                           
-                    ->where( "g.id_dico = ?", $id_dico );
+                    ->from( array("g" => "gen_oeuvres_utis") )                           
+                    ->where( "g.uti_id = ?", $uti_id );
 
         return $this->fetchAll($query)->toArray(); 
     }
