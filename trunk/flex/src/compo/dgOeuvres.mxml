@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:ViewStack xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:co="compo.*"
-	creationComplete="Init()" resizeToContent="true"
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:co="compo.*"
+	creationComplete="Init()" 
 	width="100%" height="100%" xmlns:s="library://ns.adobe.com/flex/spark">
 	<mx:Script>
         <![CDATA[
@@ -23,6 +23,7 @@
 			import mx.events.CloseEvent;
 			import mx.events.DataGridEvent;
 			import mx.events.FlexEvent;
+			import mx.events.ListEvent;
 			import mx.managers.CursorManager;
 			import mx.managers.PopUpManager;
 			import mx.rpc.AsyncToken;
@@ -35,7 +36,6 @@
 	/**
 	 * paramétrage de l'objet
 	 */
-	[Bindable] public var endPoint:String;
 	[Bindable] public var idExi:String;
 	[Bindable] public var bInit:Boolean=true;
 	[Bindable] public var bInsert:Boolean=true;
@@ -48,6 +48,8 @@
 	[Bindable] public var arrDicoPrC:Array;	
 	[Bindable] public var arrDicoPrS:Array;	
 	[Bindable] public var arrDicoNeg:Array;	
+	[Bindable] public var arrLangue:Array;
+	[Bindable] public var arrType:Array;
 
 			private function findItemHandler(e:Object):void {
 				var item:Object=e.result[0];
@@ -73,15 +75,18 @@
 			    //chargement des données
 			    if(bInit){
 					RO.findByIdOeu(idOeu);
-					ROD.obtenirDicoType("concepts");
-					ROD.obtenirDicoType("conjugaisons");
-					ROD.obtenirDicoType("déterminants");
-					ROD.obtenirDicoType("syntagmes");
-					ROD.obtenirDicoType("pronoms_complement");
-					ROD.obtenirDicoType("pronoms_sujet");
-					ROD.obtenirDicoType("négations");
+					ROODU.findByIdOeu(idOeu);
+					ROD.findByType("concepts");
+					ROD.findByType("conjugaisons");
+					ROD.findByType("déterminants");
+					ROD.findByType("syntagmes");
+					ROD.findByType("pronoms_complement");
+					ROD.findByType("pronoms_sujet");
+					ROD.findByType("négations");
+					ROD.getLangue();
+					ROD.getType();
 				}
-			    if(bInsert)selectedChild=insert;
+			    if(bInsert)vsParam.selectedChild=insert;
 			        
 			}
 			
@@ -99,7 +104,7 @@
 				if(this.bInsert){
 					twAR.ferme();
 				}else{
-					this.selectedChild = view;
+					vsParam.selectedChild = view;
 				}
 			}
 			
@@ -127,7 +132,6 @@
 			    	//incrémente le tableau
 					pArr[ctlId]=val;
 			   	}
-			   	
 				RO.ajouter(pArr);
 				
 			}
@@ -149,10 +153,16 @@
 			private function insertItemHandler(e:Object):void
 			{
 				idOeu = e.result;
-				this.selectedChild = view;
+				vsParam.selectedChild = view;
 				RO.getAll();
+				//on ajoute l'utilisateur à l'oeuvre
+				var pArr:Array = new Array;
+				pArr["id_oeu"]=idOeu;
+				pArr["uti_id"]=this.parentApplication.uti.idUti;
+				ROOU.ajouter(pArr); 
 				if(twAR){
 					Alert.show("Veuillez choisir les dictionnaires associés à cette oeuvre.");
+					twAR.ferme();
 				}
 			}
 			
@@ -172,7 +182,12 @@
 			
 			public function faultHandlerService(fault:FaultEvent):void
 			{
-				Alert.show(fault.fault.faultCode.toString(), "FaultHandlerService");
+				var str:String;
+				str = "Code: "+fault.fault.faultCode.toString()+"\n"+
+					"Detail: "+fault.fault.faultDetail.toString()+"\n"+
+					"String: "+fault.fault.faultString.toString()+"\n";
+				
+				Alert.show(str, "ERREUR : Oeuvres");
 			}
 			 
 			public function resultHandlerService(result:ResultEvent):void
@@ -183,7 +198,7 @@
 			private function DicoHandler(e:Object):void
 			{
 				vsDico.selectedChild = viewDico;
-			    ROC.findByIdOeuvre(idOeu);
+				ROODU.findByIdOeu(idOeu);
 			}
 			
 			private function deleteDico():void {
@@ -199,27 +214,33 @@
 			{
 			    if (event.detail == Alert.YES) 
 			    {
-					ROC.remove(idOeu, dgDico.selectedItem['id_dico']);
+					ROODU.remove(idOeu, dgDico.selectedItem['id_dico'], this.parentApplication.uti.idUti);
 			    }
 			}
 			private function AjouterDicoOeuvre():void
 			{
-				if(cbDicoGen.selectedIndex!=-1)ROC.ajouter(idOeu, cbDicoGen.selectedItem['id_dico']) else Alert.show("Veuillez sélectionner un dictionnaire");
+				var params:Array=new Array();
+				if(cbDicoGen.selectedIndex!=-1)params.push(cbDicoGen.selectedItem['id_dico']);
+
+				if(cbDicoCon.selectedIndex!=-1)params.push(cbDicoCon.selectedItem['id_dico']);
+
+				if(cbDicoDet.selectedIndex!=-1)params.push(cbDicoDet.selectedItem['id_dico']);
+
+				if(cbDicoSyn.selectedIndex!=-1)params.push(cbDicoSyn.selectedItem['id_dico']);
+
+				if(cbDicoPrC.selectedIndex!=-1)params.push(cbDicoPrC.selectedItem['id_dico']);
+
+				if(cbDicoPrS.selectedIndex!=-1)params.push(cbDicoPrS.selectedItem['id_dico']);
+
+				if(cbDicoNeg.selectedIndex!=-1)params.push(cbDicoNeg.selectedItem['id_dico']);
+				
+				ROODU.ajouter(idOeu, this.parentApplication.uti.idUti, params);
 					
-					/*
-				"  prompt="général" />
-					<s:ComboBox id="cbDicoCon"  prompt="conjugaisons" />
-					<s:ComboBox id="cbDicoDet"  prompt="déterminants" />
-					<s:ComboBox id="cbDicoSyn"  prompt="syntagmes" />
-					<s:ComboBox id="cbDicoPrC"  prompt="pronoms compléments" />
-					<s:ComboBox id="cbDicoPrS"  prompt="pronoms sujets" />
-					<s:ComboBox id="cbDicoNeg"  prompt="négations" />
-					*/
 			}
 			private function selectDicoDefautLangue():void{
-				var l:String = "fr";
+				var l:String = cbLangue.selectedItem["langue"];
 				var filtreDicoLangueDefaut:Function = function(item:*, index:int, array:Array):void {
-					if(item.defaut==1 && item.langue == l) this.selectedIndex=index;
+					if(item.general==1 && item.langue == l) this.selectedIndex=index;
 				};
 				arrDicoGen.filter(filtreDicoLangueDefaut,cbDicoGen);
 				arrDicoCon.filter(filtreDicoLangueDefaut,cbDicoCon);
@@ -230,95 +251,197 @@
 				arrDicoNeg.filter(filtreDicoLangueDefaut,cbDicoNeg);
 
 			}
-        ]]>
+			
+			protected function getLangueHandler(e:ResultEvent):void
+			{
+				if(!e)return;
+				arrLangue = e.result as Array;
+			}
+			
+			
+			protected function editHandler(event:ResultEvent):void
+			{
+				this.parentApplication.gmOeuvre.init();
+			}
+			
+			protected function ajouterDicoclickHandler(event:MouseEvent):void
+			{
+				var pArr:Array = new Array;
+
+				if(nomDico.text==""){
+					Alert.show("Veuillez donner un nom à votre dictionnaire.","Ajout dictionnaire");
+					return;
+				}
+				if(cbDicoType.selectedIndex==-1){
+					Alert.show("Veuillez sélectionner un type de dictionnaire.","Ajout dictionnaire");
+					return;
+				}
+				if(cbLangueAjout.selectedIndex==-1){
+					if(cbLangueAjout.text!="choisissez une langue"){
+						pArr["langue"]=cbLangueAjout.text;						
+					}else{
+						Alert.show("Veuillez sélectionner une langue pour votre dictionnaire.","Ajout dictionnaire");
+						return;						
+					}
+				}else{
+					pArr["langue"]=cbLangueAjout.selectedLabel;
+				}
+				
+				pArr["nom"]=nomDico.text;
+				pArr["type"]=cbDicoType.selectedLabel;
+				
+				ROD.ajouter(pArr,false);
+			}
+			
+			protected function getTypeHandler(e:ResultEvent):void
+			{
+				if(!e)return;
+				arrType = e.result as Array;
+			}
+			
+			protected function ajouterDico_resultHandler(event:ResultEvent):void
+			{
+				var params:Array=new Array();
+				params.push(event.result);
+				ROOD.ajouter(idOeu, this.parentApplication.uti.idUti, params);				
+			}
+									
+			protected function dgDico_clickHandler(event:MouseEvent):void
+			{
+				var item:Object=event.currentTarget.selectedItem;
+				if(item){
+					detailDico.oItem = item;
+				}
+				
+			}
+			
+			protected function ajoutDicoUti_resultHandler(event:ResultEvent):void
+			{
+				// TODO Auto-generated method stub
+				
+			}
+			
+			protected function ajoutOeuvreUti_resultHandler(event:ResultEvent):void
+			{
+				// TODO Auto-generated method stub
+				
+			}
+			
+		]]>
     </mx:Script>
     
 	<mx:RemoteObject id="RO"
-	    	source="Model_DbTable_Oeuvres" destination="zend" 
-	    	endpoint="{endPoint}"
+	    	source="Model_DbTable_Gen_oeuvres" destination="zend" 
 	    	showBusyCursor="true"
 	    	fault="faultHandlerService(event)">
-	 	<mx:method name="findByIdOeu"  result="findItemHandler(event)"/>  	
-	 	<mx:method name="edit"  result="resultHandlerService(event)"/>  	
+		<mx:method name="findByIdOeu"  result="findItemHandler(event)"/>  	
+	 	<mx:method name="edit" result="editHandler(event)"   />  	
 	 	<mx:method name="remove"  result="resultHandlerService(event)"/>  	
 	 	<mx:method name="ajouter"  result="insertItemHandler(event)"/>  	
 	 	<mx:method name="csv"  result="resultHandlerService(event)"/>  	
 	</mx:RemoteObject>
 
-	<mx:RemoteObject id="ROC"
-	    	source="Model_DbTable_OeuvresDicos" destination="zend" 
-	    	endpoint="{endPoint}"
+	<mx:RemoteObject id="ROODU"
+	    	source="Model_DbTable_Gen_oeuvresxdicosxutis" destination="zend" 
 	    	showBusyCursor="true"
 	    	fault="faultHandlerService(event)">
-	 	<mx:method name="findByIdOeuvre"  result="fillGridHandler(event,dgDico)"/>  	
+		<mx:method name="findByIdOeu"  result="fillGridHandler(event,dgDico)"/>  	
 	 	<mx:method name="remove"  result="DicoHandler(event)"/>  	
 	 	<mx:method name="ajouter"  result="DicoHandler(event)"/>  	
 	</mx:RemoteObject>
 
 	<mx:RemoteObject id="ROD"
-					 source="Model_DbTable_Dicos" destination="zend" 
-					 endpoint="{endPoint}"
+					 source="Model_DbTable_Gen_dicos" destination="zend" 
 					 showBusyCursor="true"
 					 fault="faultHandlerService(event)">
-		<mx:method name="obtenirDicoType" result="findDicoHandler(event)"/>  	
+		<mx:method name="findByType" result="findDicoHandler(event)"/>  	
+		<mx:method name="getLangue" result="getLangueHandler(event)" />  	
+		<mx:method name="getType" result="getTypeHandler(event)" />  	
+		<mx:method name="ajouter" result="ajouterDico_resultHandler(event)"  />  	
 	</mx:RemoteObject>
-
-	<mx:Canvas id="view" width="100%" height="100%">
-		<mx:VBox width="100%" height="100%">
-			
+	
+	<mx:RemoteObject id="ROOU"
+					 source="Model_DbTable_Gen_oeuvresxutis" destination="zend" 
+					 showBusyCursor="true"
+					 fault="faultHandlerService(event)">
+		<mx:method name="ajouter" result="ajoutOeuvreUti_resultHandler(event)" />  	
+	</mx:RemoteObject>
+	
+	<mx:ViewStack id="vsParam" width="100%" height="100%" >			
+		<mx:Canvas id="view" width="100%" height="100%">
 			<mx:HBox width="100%">
 				<mx:Label fontSize="16" text="Titre de l'oeuvre :" /><mx:TextInput id="UpdLib" /><mx:Button label="Modifier" click="updateItem()" />
 			</mx:HBox>
-	
-			<mx:Panel title="Dictionnaires associés" width="100%" height="100%" layout="absolute">
-				<mx:ViewStack id="vsDico" left="10" right="10" top="30" bottom="10">
-					<mx:VBox id="viewDico" width="100%" height="100%" verticalAlign="top">
-						<mx:HBox height="24">
-							<mx:LinkButton click="vsDico.selectedChild = insertDico;" width="20" icon="@Embed('images/AddRecord.png')" toolTip="Ajouter un dictionnaire à cette oeuvre" />
-							<mx:LinkButton click="deleteDico()" width="20" icon="@Embed('images/DeleteRecord.png')" toolTip="Supprimer un dictionnaire pour cette oeuvre" />							
-						</mx:HBox>							
-						<mx:DataGrid width="100%" id="dgDico">
-							<mx:columns>
-								<mx:DataGridColumn headerText="Nom" dataField="nom" />
-								<mx:DataGridColumn headerText="Id Dico" dataField="id_dico" visible="false"/>
-							</mx:columns>
-						</mx:DataGrid>					
-					</mx:VBox>
-					<mx:VBox id="insertDico" width="100%" height="100%"  >
-						<mx:Label text="Choisissez une langue :"/>
-						<mx:ComboBox id="cbLangue"  prompt="langue" change="selectDicoDefautLangue()" editable="true">
-							
-						</mx:ComboBox>							
-						<mx:Label text="Ou choisissez un dictionnaire par type :"/>
-						<mx:ComboBox id="cbDicoGen"  prompt="concepts" dataProvider="{arrDicoGen}" labelField="nom" />
-						<mx:ComboBox id="cbDicoCon"  prompt="conjugaisons" dataProvider="{arrDicoCon}" labelField="nom" />
-						<mx:ComboBox id="cbDicoDet"  prompt="déterminants" dataProvider="{arrDicoDet}" labelField="nom" />
-						<mx:ComboBox id="cbDicoSyn"  prompt="syntagmes" dataProvider="{arrDicoSyn}" labelField="nom" />
-						<mx:ComboBox id="cbDicoPrC"  prompt="pronoms compléments" dataProvider="{arrDicoPrC}" labelField="nom" />
-						<mx:ComboBox id="cbDicoPrS"  prompt="pronoms sujets" dataProvider="{arrDicoPrS}" labelField="nom" />
-						<mx:ComboBox id="cbDicoNeg"  prompt="négations" dataProvider="{arrDicoNeg}" labelField="nom" />
-						<mx:HBox>
-							<mx:Button label="Enregistrer" click="AjouterDicoOeuvre();" />
-							<mx:Button label="Annuler" click="vsDico.selectedChild = viewDico;" />				
-						</mx:HBox>							
-					</mx:VBox>
-				</mx:ViewStack>											
-			</mx:Panel>
-		</mx:VBox>
-	</mx:Canvas>
-	<mx:Canvas id="insert" width="100%" height="100%" >
-		<mx:VBox x="6" top="12" width="100%" height="100%">			
-			<mx:Form width="100%" height="100%" id="insertForm">			                    		
-	            <mx:FormItem label="Nom:" id="lib" >
-	            	<mx:TextInput />
-	            </mx:FormItem>
+			<mx:TabNavigator y="24" width="100%" height="100%">
+				<s:NavigatorContent width="100%" height="100%" id="ncParam" label="Paramétrer">
+							<mx:VBox width="100%" height="100%">						
+								<mx:Panel title="Dictionnaires associés" width="100%" height="100%" layout="absolute">
+									<mx:ViewStack id="vsDico" width="100%" height="100%" >
+										<mx:VBox id="viewDico" width="100%" height="100%" >
+											<mx:HBox height="24">
+												<mx:LinkButton click="vsDico.selectedChild = insertDico;" width="20" icon="@Embed('images/AddRecord.png')" toolTip="Ajouter un dictionnaire à cette oeuvre" />
+												<mx:LinkButton click="deleteDico()" width="20" icon="@Embed('images/DeleteRecord.png')" toolTip="Supprimer un dictionnaire pour cette oeuvre" />							
+											</mx:HBox>							
+											<mx:DataGrid width="100%" id="dgDico" click="dgDico_clickHandler(event)" >
+												<mx:columns>
+													<mx:DataGridColumn headerText="Nom" dataField="nom" />
+													<mx:DataGridColumn headerText="Type" dataField="type" />
+													<mx:DataGridColumn headerText="Langue" dataField="langue" />
+													<mx:DataGridColumn headerText="Id Dico" dataField="id_dico" visible="false"/>
+												</mx:columns>
+											</mx:DataGrid>
+											<co:gDico id="detailDico" />
+										</mx:VBox>
+										<mx:HBox id="insertDico" width="100%" height="100%" >
+											<mx:VBox borderStyle="solid" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2" width="100%" height="100%">
+												<mx:Label text="Sélectionner les dictionnaires par défaut d'une langue :"/>
+												<mx:ComboBox id="cbLangue"  prompt="langue" labelField="langue" change="selectDicoDefautLangue()" dataProvider="{arrLangue}" />
+												<mx:Label text="ou choisissez un dictionnaire par type :"/>
+												<mx:ComboBox id="cbDicoGen"  prompt="concepts" dataProvider="{arrDicoGen}" labelField="nom" />
+												<mx:ComboBox id="cbDicoCon"  prompt="conjugaisons" dataProvider="{arrDicoCon}" labelField="nom" />
+												<mx:ComboBox id="cbDicoDet"  prompt="déterminants" dataProvider="{arrDicoDet}" labelField="nom" />
+												<mx:ComboBox id="cbDicoSyn"  prompt="syntagmes" dataProvider="{arrDicoSyn}" labelField="nom" />
+												<mx:ComboBox id="cbDicoPrC"  prompt="pronoms compléments" dataProvider="{arrDicoPrC}" labelField="nom" />
+												<mx:ComboBox id="cbDicoPrS"  prompt="pronoms sujets" dataProvider="{arrDicoPrS}" labelField="nom" />
+												<mx:ComboBox id="cbDicoNeg"  prompt="négations" dataProvider="{arrDicoNeg}" labelField="nom" />
+												<mx:HBox>
+													<mx:Button label="Enregistrer" click="AjouterDicoOeuvre();" />										
+													<mx:Button label="Annuler" click="vsDico.selectedChild = viewDico;" />				
+												</mx:HBox>
+											</mx:VBox>
+											<mx:VBox borderStyle="solid" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2" width="100%" height="100%">
+												<mx:Label text="Créer un dictionnaire :"/>
+												<mx:HBox><mx:Label text="Nom :" /><mx:TextInput id="nomDico" /></mx:HBox>
+												<mx:HBox>
+													<mx:Label text="Type :" /><mx:ComboBox id="cbDicoType"  prompt="choisissez un type" dataProvider="{arrType}" labelField="type" />
+												</mx:HBox>
+												<mx:ComboBox id="cbLangueAjout"  prompt="choisissez une langue" labelField="langue" dataProvider="{arrLangue}" editable="true" />											
+												<mx:HBox>
+													<mx:Button label="Ajouter" click="ajouterDicoclickHandler(event)"/>
+													<mx:Button label="Annuler" click="vsDico.selectedChild = viewDico;" />															
+												</mx:HBox>
+											</mx:VBox>
+										</mx:HBox>
+									</mx:ViewStack>											
+								</mx:Panel>
+							</mx:VBox>
+				</s:NavigatorContent>
+				<s:NavigatorContent width="100%" height="100%" label="Ecrire">
+				</s:NavigatorContent>
+			</mx:TabNavigator>
+		</mx:Canvas>
+		<mx:VBox id="insert" width="100%" height="600">			
+			<mx:Form id="insertForm" >			                    		
+				<mx:FormItem label="Nom de l'oeuvre :" id="lib" >
+					<mx:TextInput />
+				</mx:FormItem>
 			</mx:Form>			
-			<mx:HBox>
+			<mx:HBox >
 				<mx:Button label="Enregistrer" click="insertItem()" />
 				<mx:Button label="Annuler" click="insertAnnuler()" />				
 			</mx:HBox>
 		</mx:VBox>
-	</mx:Canvas>
+	</mx:ViewStack>
 
 	 
-</mx:ViewStack>
+</mx:VBox>

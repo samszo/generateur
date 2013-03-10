@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml"  creationComplete="init()" >
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml"  creationComplete="init()" width="100%">
 	<mx:Script>
         <![CDATA[
     import mx.events.CloseEvent;
@@ -14,7 +14,6 @@
 	/**
 	 * paramétrage de l'objet
 	 */
-	[Bindable] public var endPoint:String;
 	[Bindable] public var objName:String;
 	[Bindable] public var objMethode:String="getAll";
 	[Bindable] public var objParam:String;
@@ -75,7 +74,6 @@
 		if(objSource==""){
 			var twAMC:twAjoutMotClef= twAjoutMotClef(
 	            PopUpManager.createPopUp(this, twAjoutMotClef, true));
-			twAMC.endPoint=this.endPoint;
 			twAMC.objName=this.objName;
 			twAMC.titre = "Ajouter "+titre;
 			twAMC.objSource = this;
@@ -91,7 +89,6 @@
 			twAR.objRef=objSource;
 			twAR.titre = "Ajouter "+titre;
 			twAR.objSource = this;
-			twAR.endPoint = this.endPoint;
 			twAR.bInsert = true;					
 	        PopUpManager.centerPopUp(twAR);
 			
@@ -100,7 +97,12 @@
 
 	public function faultHandlerService(fault:FaultEvent):void
 	{
-		Alert.show(fault.fault.faultCode.toString(), "FaultHandlerService");
+		var str:String;
+		str = "Code: "+fault.fault.faultCode.toString()+"\n"+
+			"Detail: "+fault.fault.faultDetail.toString()+"\n"+
+			"String: "+fault.fault.faultString.toString()+"\n";
+		
+		Alert.show(str, "ERREUR : Groupe de mot "+annonce);
 	}
 
     public function onChange():void 
@@ -122,13 +124,16 @@
 	{
 	    if (event.detail == Alert.YES) 
 	    {
+			if(objName=="Model_DbTable_Gen_oeuvres"){
+				this.parentApplication.ShowSelection(-1);
+			}			
 			ROS.remove(cb.selectedItem[keyName]);
 	    }
 	}
 	
 	private function changeItem():void
 	{
-		if(objName=="Model_DbTable_Oeuvres"){
+		if(objName=="Model_DbTable_Gen_oeuvres"){
 			this.parentApplication.ShowSelection(cb.selectedItem["id_oeu"])
 		}
 	}
@@ -137,14 +142,13 @@
     </mx:Script>
 	<mx:RemoteObject id="ROS"
 	    	source="{objName}" destination="zend" 
-	    	endpoint="{endPoint}"
 	    	showBusyCursor="true"
 	    	fault="faultHandlerService(event)">
 	 	<mx:method name="getAll"  result="fillHandler(event)"/>  	
 	 	<mx:method name="remove"  result="init()" />
 	</mx:RemoteObject>
  
-<mx:ComboBox id="cb" change="changeItem()" prompt="{annonce}" />
+<mx:ComboBox id="cb" change="changeItem()" prompt="{annonce}" width="100%" />
 <mx:LinkButton visible="{bRemove}" width="20" click="removeItem()"
 			   icon="@Embed('images/DeleteRecord.png')" toolTip="{'Supprimer '+titre}"/>
 <mx:LinkButton id="btnAddNew" visible="{bAjout}" width="20" click="AjoutMot()"

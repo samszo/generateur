@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 width="100%" height="100%"
+		 >
+	<s:layout>
+		<s:VerticalLayout paddingBottom="3" paddingLeft="3" paddingRight="3" paddingTop="3"/>
+	</s:layout>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.rpc.http.HTTPService;
+			import mx.controls.Alert;
+			
+			[Bindable] public var oItem:Object;
+
+			public function faultHandlerService(fault:FaultEvent):void
+			{
+				var str:String;
+				str = "Code: "+fault.fault.faultCode.toString()+"\n"+
+					"Detail: "+fault.fault.faultDetail.toString()+"\n"+
+					"String: "+fault.fault.faultString.toString()+"\n";
+				
+				Alert.show(str, "ERREUR : Détail Dico");
+			}
+			
+			protected function enregistrer_clickHandler(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				
+			}
+			
+			protected function importer_clickHandler(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				
+			}
+			
+			protected function exporter_clickHandler(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				
+			}
+			
+		]]>
+	</fx:Script>
+		
+	<fx:Declarations>
+		<s:RemoteObject id="ROD"
+						 source="Model_DbTable_Gen_dicos" destination="zend" 
+						 showBusyCursor="true"
+						 fault="faultHandlerService(event)">
+			<s:method name="edit" />  	
+		</s:RemoteObject>
+	</fx:Declarations>
+	<s:HGroup width="100%" verticalAlign="middle">
+		<s:Label id="type"  text="{oItem.type}"/><s:TextInput id="nom" width="100%" text="{oItem.nom}"/><s:TextInput id="langue" text="{oItem.langue}"/>		
+	</s:HGroup>
+	<s:HGroup width="100%" verticalAlign="middle">
+		<s:Button label="Enregistrer" click="enregistrer_clickHandler(event)"/>
+		<s:Button label="Importer" click="importer_clickHandler(event)"  />
+		<s:Button label="Exporter" click="exporter_clickHandler(event)"  />
+	</s:HGroup>
+	<s:BorderContainer width="100%" height="100%" id="detail">
+	</s:BorderContainer>
+</s:Group>

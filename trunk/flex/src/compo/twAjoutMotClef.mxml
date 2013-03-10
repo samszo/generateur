@@ -59,7 +59,7 @@
 	    	source="{objName}" destination="zend" 
 	    	endpoint="{endPoint}"
 	    	showBusyCursor="true"
-	    	fault="faultHandlerService(event)">
+			fault="faultHandlerService(event)">
 	 	<mx:method name="ajouter"  result="ajouterHandler(event)"/>  	
 	</mx:RemoteObject>
 	<mx:VBox left="10" top="10" bottom="10" right="10">
