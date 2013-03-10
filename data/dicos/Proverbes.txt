@@ -1,0 +1,156 @@
+2.Proverbes
+=00100000000$[12|carac1] [0100000|v_être] [12|carac1] [11|carac1].FF
+=00200000000$[12|carac1] [0100000|v_être] [12|carac1] [61|m_autre].FF
+=00300000000$[12|carac1] [0100000|v_être] [12|m_début 1] [11|carac1].FF
+=00400000000$[12|carac1] [0100000|v_être] [12|m_intelligence 2] [11|carac1].FF
+=00500000000$[12|carac1] [0100000|v_être] [12|m_rêve 2] [11|carac1].FF
+=00600000000$[12|carac1] [0100000|v_être] [12|m_suite 2] [11|carac1] [93#] [60|a_autre@m_moyen].FF
+=00700000000$[12|carac1] [0100000|v_être]< [32|carac1]> [=1|dia-quali-02].FF
+=00800000000$[12|carac1] [0100000|v_être] [4|caract2] [28#] [116#] [12|caract2] [0100000|v_être] [4|carac1]<  [61#] réciproquement>.FF
+=00900000000$[12|carac1] [0100000|v_être] [4|caract2] [28#] [116#] [12|caract2] [0100000|v_être] [4|caract1]<  [61#] réciproquement>.FF
+=01000000000$[126#] [5100000|v_exister] [12|carac1].FF
+=01000000000$[126#] [9100000|v_exister] [63#] [12|carac1].FF
+=01100000000$[12|carac1] [11|caract1] [0100000|v_être] [34#] [12|caract1] [11|carac1].FF
+=01200000000$[12|carac1] [129#] [0|carac1] [0100000|v_être] [32|carac1] [129#] [0|carac1].FF
+=01300000000$[12|carac1] [61#] [12|carac1] [thl-acte-04].FF
+=01400000000$[12|carac1] [9100000|v_apporter 1] [126#] [40#] [=x|a_grand].FF
+=01500000000$[12|carac1] [=1|a_seul] [0100000|v_sauver].FF
+=01600000000$[12|carac1] [=1|dia-quali-06] [div-bouger] [12|carac1] [=1|dia-quali-06].FF
+=01700000000$[12|carac1] [div-bouger] [12|carac1], [12|carac1] [12|carac1].FF
+=01800000000$[12|carac1] [div-bouger] [12|carac1].FF
+=01900000000$[12|carac1] [div-faire].FF
+=02000000000$[0|m_rien] [9100000|v_être] [=1|dia-quali-07] [116#] [12|carac1].FF
+=02000000000$[12|carac1] [thl-acte-01].FF
+=02100000000$[12|carac1], [12|carac1] [61#] [12|carac1] [div-être].FF
+=02200000000$[12|carac1], [12|carac1] [61#] [12|carac1] [thl-acte-04].FF
+=02300000000$[12|caract1] [0100000|v_créer 1] [12|caract1].FF
+=02400000000$[12|caract1] [0100000|v_être] [12|m_loi 1], [12|carac1]< [0100000|v_être]> l'accident.FF
+=02500000000$[12|caract1] [0100000|v_être] [12|m_loi 1].FF
+=02600000000$[12|caract1] [0100000|v_être] [12|m_loi 1], [12|carac1] [0100000|v_être] [12|m_désespoir 1] [11|caract1].FF
+=02700000000$[12|caract1] [0100000|v_être] [4|carac1] [28#] [116#] [12|carac1] [0100000|v_être] [4|caract1] < [61#] réciproquement.>FF
+=02800000000$[12|dis-métier] [div-bouger] [12|carac1] [11|dis-métier].FF
+=02900000000$[12|dis-métier] [thl-acte-01].FF
+=03000000000$[129#] [0|carac1] [12|carac1] [4100000|v_valoir].FF
+=03100000000$[12|m_amour 1] [11|carac1] [61#] [=2|a_celui] [11|carac1] [div-être].FF
+=03200000000$[12|m_chemin 1] [11|carac1] [0100000|v_être] [=3|dis-comp-01].FF
+=03300000000$[12|m_désir 2] [11|carac1] [0100000|v_être] [=2|a_étrange 1].FF
+=03400000000$[12|m_humain 1] [0100000|v_être] [34#] [dis-chose-2].FF
+=03500000000$[12|m_humain 1] [9100000|v_chercher] [12|carac1] [116#] [106#] [0900000|v_ignorer 1] [12|carac1].FF
+=03600000000$[12|m_humain 1] [=1|dia-quali-03] [thl-acte-01].FF
+=03700000000$[12|m_humain 1] [dil-action].FF
+=03800000000$[12|m_nm]  [11|m_nf]  [61#] [=2|a_celui] [11|m_nm]  [div-être].FF
+=03900000000$[12|m_ordre] [1100000|v_créer] [12|carac1].FF
+=04000000000$[129#] [0|carac1], [12|dis-métier] [0100000|v_être] [dia-quali-04].FF
+=04100000000$[0|carac1], [0|carac1] [61#] [0|carac1] [thl-acte-04].FF
+=04200000000$[12|m_propre] [11|carac1] [0100000|v_être] [12|carac1].FF
+=04300000000$[12|m_valeur 2] [11|carac1] [0100000|v_être] [38#] [12|carac1].FF
+=04400000000$[12|m_visage 1] [11|carac1] [0100000|v_être] [=2|dia-quali-02], [=2|a_celui] [11|carac1] [=1|dia-quali-02].FF
+=04500000000$[133#] [12|carac1] [div-bouger] [12|carac1], [12|carac1] [div-bouger] [12|carac1].FF
+=04600000000$[133#] [12|carac1] [div-ennuyer], [0730000|v_occuper]-[148#] [11|carac1].FF
+=04700000000$[18|carac1] [129#] [0|carac1].FF
+=04800000000$[21|carac1], [21|carac1].FF
+=04900000000$[23#] [12|carac1], [0120000|v_éviter] [116#] [14|carac1] [9100200|v_baiser].FF
+=05000000000$[12|carac1] [0100000|v_craindre 1] [12|carac1], [v_grandir 1] [93#] [0|carac1]  [61#] [0100000|v_finir 1] [s_souvent 1] [38#] [12|carac1].FF
+=05100000000$[24#] [10|carac1], [101#] [10|carac1].FF
+=05200000000$[24#] [60|m_homme] [0190000|v_désirer 1] [12|carac1], [151#] [101#] [12|carac1].FF
+=05300000000$[34#] [12|carac1], [12|carac1] [0100000|v_être] [0|carac1].FF
+=05400000000$[34#] [12|carac1], [12|carac1] [0100000|v_être] [=1|dia-quali-02].FF
+=05500000000$[34#] [12|carac1], [12|carac1] [5100000|v_être] [12|m_ordure 1] [11|carac1].FF
+=05600000000$[4|carac1] [thl-acte-02].FF
+=05700000000$[50#] [12|carac1]<1| [61#]<2| [50#]|2> [12|carac1]|1> [thl-acte-06].FF
+=05800000000$[50|m_nm][=1|a_celui] [122#] [3190000|v_parler] [10|carac1] [div-ignorer] [11|carac1].FF
+=05900000000$[54#] [16|carac1], ne gît pas [16|carac1].FF
+=06000000000$[12|carac1] [0100000|v_craindre 1] [12|carac1].FF
+=06100000000$[12|carac1] [0100000|v_être] [12|m_bruit 4] [11|carac1].FF
+=07000000000$[12|carac1] [0100000|v_craindre 1] [12|caract1], [76#] [v_grandir 1] [38#] [12|caract1]  [61#] [0100000|v_finir 1] [s_souvent 1] [38#] [12|carac1].FF
+=07100000000$[0|carac1] : [0|carac1].FF
+=08000000000$[12|carac1] [0100000|v_craindre 1] [12|caract1], [76#] [v_grandir 1] [93#] [12|caract1]<  [61#] [0100000|v_finir 1] [s_souvent 1] [38#] [12|carac1]>.FF
+=09000000000$[12|carac1] [0100000|v_être] [11|carac1] [=1|dia-quali-02].FF
+=10000000000$[0100003|v_finir] [93#] s'habituer [4|carac1].FF
+=10000000000$[0|carac1] [61#] [dis-chose].FF
+=10100000000$[12|carac1] [0100000|v_être] [=1|a_entré] [38#] [12|m_monde] [93#] [12|carac1].FF
+=10200000000$[12|carac1] [0100000|v_être] [=1|a_indistinct 1], [12|carac1] [0100000|v_être] [=1|a_indistinct 1].FF
+=10300000000$[12|carac1] [0100000|v_être] [=1|dia-quali-02], [12|carac1]< [0100000|v_être]> [=1|dia-quali-06].FF
+=10400000000$[12|carac1] [0100000|v_être] [=1|dia-quali-02], [12|carac1] [=1|dia-quali-05].FF
+=10500000000$[12|carac1] [0100000|v_être] [dis-comp-02] [11|carac1].FF
+=10600000000$[12|carac1] [0100000|v_être] [thl-acte-03].FF
+=10700000000$[12|carac1] [0100000|v_faire] [103#] [20|dis-métier] [116#] [12|carac1].FF
+=10800000000$[12|carac1] [0100000|v_pouvoir] [24#], [12|carac1] [0100000|v_pouvoir] [150#].FF
+=10900000000$[12|carac1] [1100000|v_être] [1#] [0900000|v_prendre], [76#] [1#] subir.FF
+=11000000000$[0|carac1], [0|carac1] [61#] [0|carac1] [thl-acte-04].FF
+=11100000000$[12|carac1] [0100000|v_aller] [s_souvent 1] [153#] [12|carac1].FF
+=11200000000$[12|carac1] [5100000|v_être] [106#] [62|dis-métier].FF
+=11300000000$[12|dis-métier] bouffe [11|carac1].FF
+=11400000000$[12|carac1] [9100000|div-faire-3] [126#] [40#] [=x|a_grand].FF
+=12000000000$[0|m_dieu] [0100000|v_préférer] [12|carac1] [4|carac1].FF
+=12400000000$[12|caract1] [0100000|v_être] [12|m_loi 1], [12|carac1]< [0100000|v_être]> son accident.FF
+=12400000000$[79#] [0100000|v_valoir] [0|carac1] [129#] [0|carac1] [116#] [0|carac1] [129#] [0|carac1].FF
+=13000000000$[0|m_humain 1], [dis-chose-2].FF
+=13600000000$[0|m_humain 1] [=1|dia-quali-03] [thl-acte-01].FF
+=13900000000$[12|m_ordre] [1100000|v_créer] [10|carac1].FF
+=14000000000$[0|m_jeu] [10|carac1], [0|m_jeu] [10|carac1].FF
+=15000000000$[0|m_métier] [=1|a_mort 2] [thl-acte-01].FF
+=15100000000$[0|dis-métier] [=1|a_mort 2] [thl-acte-01].FF
+=16000000000$[1#] [0|carac1], [0|carac1].FF
+=17000000000$[1#] [17|carac1], [17|carac1].FF
+=18000000000$[1#] [23|carac1] [23|carac1].FF
+=19000000000$[100#] [9101000|v_connaître] [79#] [116#] [12|carac1].FF
+=20000000000$[0100003|v_pouvoir] confier [12|carac1] [4|carac1].FF
+=20000000000$[100#] [9101000|v_connaître] [79#] [116#] [12|dis-métier].FF
+=21000000000$[109#] [11|carac1], [109#] [11|carac1].FF
+=21100000000$[71#] [11|carac1], [71#] [11|carac1].FF
+=21200000000$[147#] [0|carac1], [147#] [0|carac1].FF
+=22000000000$[10|carac1] [1#] [0|carac1] [9132400|v_avoir] [113#][32|m_pas].FF
+=23000000000$[1100001|v_être] [12|carac1] [76#] [12|carac1] [122#] [0100000|v_faire] [12|carac1].FF
+=24000000000$[1100001|v_être] [12|carac1] [76#] [12|carac1] [122#] [0100000|v_faire] [dis-avenir].FF
+=25000000000$[1130000|v_être] [10|carac1] [116#] [12|carac1] [9600000|v_savoir] vaincre.FF
+=26000000000$[1130000|v_falloir] [0900000|v_montrer] [12|carac1] [=1|a_nu 1] [76#] [dil-habit].FF
+=26100000000$[1100001|v_être] [12|carac1] [113#][0130001|v_falloir] [0900000|v_montrer] [=1|a_nu 1] [76#] [62|m_corps 2].FF
+=27000000000$[122#] gratte [12|carac1], irrite [12|carac1].FF
+=28000000000$[122#] [0100000|v_chercher] [12|carac1], [0100000|v_trouver] [12|carac1].FF
+=29000000000$[122#] [0100000|v_être] arrivé [93#] [12|carac1] [0102300|v_aller] [93#] [12|carac1].FF
+=30000000000$[0101003|v_venger] [103#] [93#] [0|carac1] [116#] [93#] [0|carac1].FF
+=30000000000$[122#] [0100000|v_parler] [10|carac1] [0100000|v_ignorer] [12|carac1].FF
+=31000000000$[122#] [0100000|v_parler] [10|carac1] [0100000|v_ignorer] [150#] [11|carac1].FF
+=32000000000$[122#] [0100000|v_voler] [32|m_babiole 1], [0100000|v_pouvoir] [0900000|v_voler] [32|dis-bête].FF
+=32100000000$[12|dis-métier] [0100000|v_désirer 1] [12|dis-métier].FF
+=33000000000$[122#] [div-bouger] [12|carac1] [0100000|v_éviter] [12|carac1].FF
+=34000000000$[122#] [div-bouger], [div-bouger].FF
+=35000000000$[126#] ne plait [146#] [4|carac1] [116#] [12|carac1].FF
+=36000000000$[126#] [40#] [28#] [122#] [0100000|v_être] [0|carac1] [9100000|v_être] [0|carac1].FF
+=37000000000$[126#] [40#] [=x|a_grand] [9100000|v_exiger] [10|carac1].FF
+=37100000000$[126#] [9100000|v_exiger] [12|carac1].FF
+=38000000000$[126#] [40#] [=x|a_grand] [9100000|div-faire-3] [12|carac1].FF
+=40000000000$[0101003|v_venger] [79#] [93#] [12|carac1] [116#] [93#] [12|carac1].FF
+=50000000000$[0900000|div-craindre] [12|carac1], [0100001|v_être] [0900000|div-craindre] [12|carac1].FF
+=60000000000$[0900000|div-faire-2] [12|carac1] [1100000|v_être] [0900000|div-faire-2] [12|carac1].FF
+=61000000000$[0900000|div-faire-2] [20|carac1] [1100000|v_être] [0900000|div-faire-2] [12|carac1].FF
+=70000000000$[0|carac1] [1100000|v_être] [0|m_vice].FF
+=80000000000$[0|carac1] [129#] [0|carac1], [0|carac1] [129#] [0|carac1].FF
+=90000000000$[0|carac1] [61#] [dis-chose] [thl-acte-04].FF
+=91000000000$[0900000|v_faire] [0900000|v_sourire 1] [0100000|v_être] [12|a_seul@m_façon] [40#] [0900000|v_comprendre 1].FF
+=91100000000$[12|carac1] [0100000|v_faire] [12|carac1] [54|m_patte].FF
+=92000000000$[1132400|v_avoir] [10|m_bonheur 1] [1#] [0900000|div-vivre] [129#] [0|m_douleur 2] [40#] [0900000|div-vivre].FF
+=92100000000$[1132400|v_avoir] [10|m_bonheur 1] [129#] [0|m_douleur 2].FF
+=93000000000$[1132400|v_avoir] [10|carac1] [1#] [0900000|v_préférer] [12|carac1].FF
+=94000000000$[12|carac1] [0100000|v_être] [32|dis-douleur] [122#] [thl-acte-01].FF
+=95000000000$[62|m_homme] [18#] secrètent [11|carac1].FF
+=95100000000$[62|dis-personne] [thl-acte-05]< [s_toujours 1]>.FF
+=95200000000$[70#] [90#] [0100000|v_passer] [12|dis-métier], [12|dis-métier] [1100000|v_venir].FF
+=95300000000$[70#] [90#] [dil-ya] [0|carac1], [0|carac1] [1100000|v_être] [71#].FF
+=95400000000$[71#] [11|carac1] [71#] [11|carac1].FF
+=95500000000$[79#] [0100000|v_valoir] relever [11|carac1] [116#] [11|carac1].FF
+=95600000000$[79#] [0100000|v_valoir] [0900000|v_chercher] [12|carac1] [116#] [12|carac1].FF
+=95700000000$[79#] [0100000|v_valoir] [0|carac1] [=1|dia-quali-02], [116#] [0|carac1] [=1|dia-quali-02].FF
+=95800000000$[79#] [0100000|v_valoir] [0|caract1] [129#] [0|carac1] [116#] [0|carac1] [129#] [0|caract1].FF
+=95900000000$[79#] [0100000|v_valoir] [12|carac1] [116#] [12|carac1].FF
+=96000000000$[32|m_homme] [0100000|v_être] [103#] [32|m_homme] [93#] [62|caract1] [113#][0130000|v_taire] [116#] [93#] [62|caract1] [113#][0130000|v_dire].FF
+=96100000000$[79#] [0100000|v_valoir] [12|carac1] [116#] [7|carac1].FF
+=96200000000$[90#] [1132400|v_avoir] [10|carac1], [dil-ya] [10|carac1].FF
+=96300000000$[9132400|v_avoir] [116#] [12|carac1] [122#] [0100000|div-sauver].FF
+=96400000000$[dil-ya] [10|carac1] [129#] [0|carac1], [84#] [10|carac1] [129#] [0|carac1].FF
+=96500000000$[dil-ya] [10|carac1] [18#] [=1|dia-quali-02] [116#] [12|carac1].FF
+=96600000000$[dil-ya] [81#] [10|carac1] [38#] [12|carac1] [116#] [10|carac1] [38#] [12|carac1].FF
+=96700000000$[79#] [0100000|v_valoir] [32|carac1] [=1|dia-quali-02], [113#][32|carac1] [=1|dia-quali-07].FF
+
+eof

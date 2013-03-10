@@ -19,14 +19,11 @@ class Model_DbTable_Gen_oeuvres extends Zend_Db_Table_Abstract
      */
     protected $_primary = 'id_oeu';
 
-    protected $_referenceMap    = array(
-        'Lieux' => array(
-            'columns'           => 'id_lieu',
-            'refTableClass'     => 'Models_DbTable_Gevu_lieux',
-            'refColumns'        => 'id_lieu'
-        )
-    );	
-    
+    protected $_dependentTables = array(
+       "Model_DbTable_Gen_oeuvresxutis"
+       ,"Model_DbTable_Gen_oeuvresxdicos"
+       );
+               
     /**
      * Vérifie si une entrée Gen_oeuvres existe.
      *
@@ -60,6 +57,7 @@ class Model_DbTable_Gen_oeuvres extends Zend_Db_Table_Abstract
     	$id=false;
     	if($existe)$id = $this->existe($data);
     	if(!$id){
+    		if(!isset($data['maj']))$data['maj'] = new Zend_Db_Expr('NOW()');
     	 	$id = $this->insert($data);
     	}
     	return $id;
@@ -90,21 +88,15 @@ class Model_DbTable_Gen_oeuvres extends Zend_Db_Table_Abstract
      */
     public function remove($id)
     {
+    	//suppression des données lieés
+    	$dt = $this->getDependentTables();
+    	foreach($dt as $t){
+    		$dbT = new $t($this->_db);
+    		$dbT->delete('id_oeu = ' . $id);
+    	}
     	$this->delete('gen_oeuvres.id_oeu = ' . $id);
     }
 
-    /**
-     * Recherche les entrées de Gen_oeuvres avec la clef de lieu
-     * et supprime ces entrées.
-     *
-     * @param integer $idLieu
-     *
-     * @return void
-     */
-    public function removeLieu($idLieu)
-    {
-		$this->delete('id_lieu = ' . $idLieu);
-    }
     
     /**
      * Récupère toutes les entrées Gen_oeuvres avec certains critères

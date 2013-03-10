@@ -5,7 +5,7 @@
  * @copyright  2013 Samuel Szoniecky
  * @license    "New" BSD License
 */
-class Model_DbTable_Gen_dicos_utis extends Zend_Db_Table_Abstract
+class Model_DbTable_Gen_dicosxutis extends Zend_Db_Table_Abstract
 {
     
     /**

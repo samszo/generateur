@@ -5,7 +5,7 @@
  * @copyright  2013 Samuel Szoniecky
  * @license    "New" BSD License
 */
-class Model_DbTable_Gen_oeuvres_utis extends Zend_Db_Table_Abstract
+class Model_DbTable_Gen_oeuvresxutis extends Zend_Db_Table_Abstract
 {
     
     /**
@@ -17,14 +17,6 @@ class Model_DbTable_Gen_oeuvres_utis extends Zend_Db_Table_Abstract
      * Clef primaire de la table.
      */
     protected $_primary = 'id_oeu';
-
-    protected $_referenceMap    = array(
-        'Lieux' => array(
-            'columns'           => 'id_lieu',
-            'refTableClass'     => 'Models_DbTable_Gevu_lieux',
-            'refColumns'        => 'id_lieu'
-        )
-    );	
     
     /**
      * Vérifie si une entrée Gen_oeuvres_utis existe.

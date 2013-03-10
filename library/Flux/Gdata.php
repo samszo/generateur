@@ -86,7 +86,7 @@ class Flux_Gdata extends Flux_Site{
 					foreach ($vWS['values'] as $v) {
 						if($nomDico!=$v['dictionnaire']){
 							//création du dictionnaire
-							$idD = $this->dbD->ajouterDico($vWS['titre'], $v['dictionnaire'], "concepts","","",$v['langue']);								
+							$idD = $this->dbD->ajouterDico('aucune', $v['dictionnaire'], "concepts","","",$v['langue']);								
 							$nomDico=$v['dictionnaire'];
 						}
 						if($nomConcept!=$v['concept']){

@@ -13,7 +13,6 @@
 			import compo.*;
 
 			[Bindable] public var titre:String="";
-			[Bindable] public var endPoint:String="";
 			[Bindable] public var objRef:String="";
 			[Bindable] public var objSource:Object;
 			[Bindable] public var bInsert:Boolean=true;
@@ -21,12 +20,13 @@
 			private function Init():void{
 				if(objRef=="dgOeuvres"){
 					var objE:dgOeuvres = new dgOeuvres;
-					objE.endPoint = this.endPoint;
 					objE.id = "objRef";
 					objE.bInit = false;
 					objE.bInsert = this.bInsert;
 					objE.twAR = this;
 					main.addChild(objE);					
+					this.height = 160;
+					this.width = 400;
 				}
 			}
 			public function ferme():void{
@@ -37,5 +37,5 @@
 			}
         ]]>
     </mx:Script>
-    <mx:VBox id="main" paddingTop="6" paddingBottom="6" paddingLeft="6" paddingRight="6"  />
+    <mx:VBox id="main" paddingTop="6" paddingBottom="6" paddingLeft="6" paddingRight="6" width="100%" height="100%"  />
 </mx:TitleWindow>

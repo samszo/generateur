@@ -19,14 +19,11 @@ class Model_DbTable_Gen_oeuvresxdicos extends Zend_Db_Table_Abstract
      */
     protected $_primary = 'id_oeu';
 
-    protected $_referenceMap    = array(
-        'Lieux' => array(
-            'columns'           => 'id_lieu',
-            'refTableClass'     => 'Models_DbTable_Gevu_lieux',
-            'refColumns'        => 'id_lieu'
-        )
-    );	
-    
+    protected $_dependentTables = array(
+       "Model_DbTable_Gen_oeuvresxutis"
+       ,"Model_DbTable_Gen_oeuvresxdicos"
+       );
+        
     /**
      * Vérifie si une entrée Gen_oeuvres_dicos existe.
      *
@@ -50,13 +47,15 @@ class Model_DbTable_Gen_oeuvresxdicos extends Zend_Db_Table_Abstract
      * Ajoute une entrée Gen_oeuvres_dicos.
      *
      * @param int $idOeu
+     * @param int $idUti
      * @param array $params
      * @param boolean $existe
      *  
      * @return integer
      */
-    public function ajouter($idOeu, $params, $existe=true)
+    public function ajouter($idOeu, $idUti, $params, $existe=true)
     {
+    	$dbDU = new Model_DbTable_Gen_dicosxutis();
     	foreach ($params as $idDico) {
    	    	$id=false;
    	    	$data= array("id_oeu"=>$idOeu, "id_dico"=>$idDico);
@@ -64,6 +63,8 @@ class Model_DbTable_Gen_oeuvresxdicos extends Zend_Db_Table_Abstract
 	    	if(!$id){
 	    	 	$id = $this->insert($data);
 	    	}
+	    	//ajoute l'utilisateur au dictionnaire
+	    	$dbDU->ajouter(array("id_dico"=>$id,"uti_id"=>$idUti));
     	}
     	return $id;
     } 
