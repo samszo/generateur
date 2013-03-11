@@ -53,13 +53,11 @@ class Model_DbTable_Gen_oeuvresxdicosxutis extends Zend_Db_Table_Abstract
     	
     	foreach ($params as $idDico) {
     		$id=false;
-    		$data= array("id_oeu"=>$idOeu, "id_dico"=>$idDico, "uti_id"=>$idDico, 'crea' => new Zend_Db_Expr('NOW()'));
+    		$data= array("id_oeu"=>$idOeu, "id_dico"=>$idDico, "uti_id"=>$idUti, 'crea' => new Zend_Db_Expr('NOW()'));
     		if($existe)$id = $this->existe($data);
     		if(!$id){
     			$id = $this->insert($data);
     		}
-    		//ajoute l'utilisateur au dictionnaire
-    		$dbDU->ajouter(array("id_dico"=>$id,"uti_id"=>$idUti));
     	}
     	 
     	return $id;
@@ -85,12 +83,12 @@ class Model_DbTable_Gen_oeuvresxdicosxutis extends Zend_Db_Table_Abstract
      * et supprime cette entrée.
      *
      * @param int $idOeu
-     * @param int $idUti
      * @param integer $idDico
+     * @param int $idUti
      *
      * @return void
      */
-    public function remove($idOeu, $idUti, $idDico)
+    public function remove($idOeu, $idDico, $idUti)
     {
     	$this->delete('id_oeu = ' . $idOeu.' AND id_dico = ' . $idDico.' AND uti_id = ' . $idUti);
     }
@@ -133,22 +131,28 @@ class Model_DbTable_Gen_oeuvresxdicosxutis extends Zend_Db_Table_Abstract
 
     
     	/**
-     * Recherche une entrée Gen_oeuvres_dicos_utis avec la valeur spécifiée
+     * Recherche une entrée Gen_oeuvres_dicos avec la valeur spécifiée
      * et retourne cette entrée.
      *
      * @param int $id_oeu
      *
      * @return array
      */
-    public function findById_oeu($id_oeu)
+    public function findByIdOeu($id_oeu)
     {
         $query = $this->select()
-                    ->from( array("g" => "gen_oeuvres_dicos_utis") )                           
-                    ->where( "g.id_oeu = ?", $id_oeu );
-
+        	->from( array("odu" => "gen_oeuvres_dicos_utis") )                           
+	        ->setIntegrityCheck(false) //pour pouvoir sélectionner des colonnes dans une autre table
+        ->joinInner(array('d' => 'gen_dicos'),
+        		'd.id_dico = odu.id_dico')
+        ->where( "odu.id_oeu = ?", $id_oeu )
+        ->group("d.id_dico")
+    	->order("d.type");
+        
         return $this->fetchAll($query)->toArray(); 
     }
-    	/**
+
+    /**
      * Recherche une entrée Gen_oeuvres_dicos_utis avec la valeur spécifiée
      * et retourne cette entrée.
      *
