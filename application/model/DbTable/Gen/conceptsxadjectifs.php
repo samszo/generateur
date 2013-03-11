@@ -134,22 +134,6 @@ class Model_DbTable_Gen_conceptsxadjectifs extends Zend_Db_Table_Abstract
      * Recherche une entrée Gen_concepts_adjectifs avec la valeur spécifiée
      * et retourne cette entrée.
      *
-     * @param int $id_concept
-     *
-     * @return array
-     */
-    public function findById_concept($id_concept)
-    {
-        $query = $this->select()
-                    ->from( array("g" => "gen_concepts_adjectifs") )                           
-                    ->where( "g.id_concept = ?", $id_concept );
-
-        return $this->fetchAll($query)->toArray(); 
-    }
-    	/**
-     * Recherche une entrée Gen_concepts_adjectifs avec la valeur spécifiée
-     * et retourne cette entrée.
-     *
      * @param int $id_adj
      *
      * @return array
