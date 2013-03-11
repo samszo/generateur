@@ -6,6 +6,9 @@ try {
 	$application->bootstrap();
 
 	/*
+	$dbODU = new Model_DbTable_Gen_oeuvresxdicosxutis();
+	$dbODU->findByIdOeu(6);
+
 	$a = new Auth_LoginManager();
 	$user = new Auth_LoginVO();
 	$user->username='samszo';
