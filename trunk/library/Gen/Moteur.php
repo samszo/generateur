@@ -27,7 +27,6 @@
  * @copyright  Copyright (c) 2010 J-P Balpe (http://www.balpe.com)
  * @license    http://framework.generateur.com/license/Artistic/GPL License
  */
-
 class Gen_Moteur
 {
 
@@ -56,9 +55,13 @@ class Gen_Moteur
 	var $timeDeb;
 	var $timeMax = 10000;
 	
-	/**
-	 * Le constructeur initialise le moteur.
-	 * 	 */
+    /**
+     * Fonction du moteur
+     *
+     * @param string $urlDesc
+     * @param string $forceCalcul
+     *
+     */
 	public function __construct($urlDesc="", $forceCalcul = false) {
 
 		$this->urlDesc = $urlDesc;
@@ -67,6 +70,11 @@ class Gen_Moteur
 		$this->forceCalcul = $forceCalcul;	
 	}
 
+    /**
+     * Fonction du moteur
+     *
+     *
+     */
 	private function setCache(){
 		$frontendOptions = array(
 	    	'lifetime' => 31536000, //  temps de vie du cache de 1 an
@@ -80,6 +88,33 @@ class Gen_Moteur
 		$this->cache = Zend_Cache::factory('Core','File',$frontendOptions,$backendOptions);				
 	}
 	
+    /**
+     * Fonction du moteur
+     *
+     * @param string $texte
+     * @param array $arrDicos
+     * 
+     * @return string
+     */
+	public function Tester($texte, $arrDicos){
+
+		$this->forceCalcul = true;
+		$this->arrDicos = $arrDicos;	
+		$this->showErr = true;
+
+		$this->Generation($texte);	
+		
+		return $this->texte;				
+	}
+	
+	/**
+     * Fonction du moteur
+     *
+     * @param string $texte
+     * @param boolean $getTexte
+     * @param boolean $cache
+     *
+     */
 	public function Generation($texte, $getTexte=true, $cache=false){
 		
 		if(!$cache){
@@ -145,6 +180,14 @@ class Gen_Moteur
 		$t = $this->texte;
 	}
 
+    /**
+     * Fonction du moteur
+     *
+     * @param string $texte
+     * @param boolean $getTexte
+     * @param boolean $cache
+     *
+     */
 	public function Verification($texte, $getTexte=true, $cache=false){
 		
 		$this->setCache();
@@ -164,9 +207,14 @@ class Gen_Moteur
         }                
 
 		$this->detail = $this->arrayVersHTML($this->arrClass);
-        
+       
 	}
 	
+    /**
+     * Fonction du moteur
+     *
+     *
+     */
 	public function genereTexte(){
 
 		$this->texte = "";
@@ -326,6 +374,11 @@ class Gen_Moteur
 		
 	}
 
+    /**
+     * Fonction du moteur
+     *
+     *
+     */
 	public function genereMajuscules(){
 		//merci à http://uk.php.net/manual/fr/function.preg-replace-callback.php#101774
 
@@ -348,6 +401,13 @@ class Gen_Moteur
 			
 	}
 
+    /**
+     * Fonction du moteur
+     *
+     * @param string $impexp
+     * @param boolean $sentence_split
+     *
+     */
 	function sentence_cap($impexp, $sentence_split) {
 	    //merci à http://fr.php.net/manual/fr/function.ucfirst.php#73895
 		$textbad=explode($impexp, $sentence_split);
@@ -360,6 +420,12 @@ class Gen_Moteur
 	    return $textgood;
 	}	
 	
+    /**
+     * Fonction du moteur
+     *
+     * @param array $arr
+     *
+     */
 	public function genereSubstantif($arr){
 
 		$txt = $arr["substantif"]["s"];
@@ -373,6 +439,12 @@ class Gen_Moteur
 		return $txt;
 	}
 	
+    /**
+     * Fonction du moteur
+     *
+     * @param array $arr
+     *
+     */
 	public function generePronom($arr){
 		
 		//par défaut la terminaison = 3
@@ -492,6 +564,12 @@ class Gen_Moteur
 		return $arr;
 	}
 
+    /**
+     * Fonction du moteur
+     *
+     * @param array $arr
+     *
+     */
 	public function genereDeterminant($arr){
 
 		$det = "";
@@ -514,6 +592,14 @@ class Gen_Moteur
 		return $det;
 	}
 		
+    /**
+     * Fonction du moteur
+     *
+     * @param string $type
+     * @param string $dir
+     * @param int $num
+     *
+     */
 	public function getVecteur($type,$dir,$num=1){
 		
 		//pour les verbes
@@ -546,6 +632,12 @@ class Gen_Moteur
 		return $vecteur;
 	}
 	
+    /**
+     * Fonction du moteur
+     *
+     * @param array $adj
+     *
+     */
 	public function genereAdjectif($adj){
 
        	$txt = "";
@@ -569,6 +661,12 @@ class Gen_Moteur
 		return $txt;
 	}
 
+    /**
+     * Fonction du moteur
+     *
+     * @param array $arr
+     *
+     */
 	public function genereTerminaison($arr){
 		
 		//par défaut la terminaison est 3eme personne du présent
@@ -601,6 +699,12 @@ class Gen_Moteur
 		return $txt;
 	}
 	
+    /**
+     * Fonction du moteur
+     *
+     * @param mixte $cls
+     *
+     */
 	public function getCarac($cls){
 		
 		if(is_string($cls)){
@@ -622,6 +726,13 @@ class Gen_Moteur
 		
 	}
 
+    /**
+     * Fonction du moteur
+     *
+     * @param array $haystack
+     * @param array $needles
+     *
+     */
 	function strpos_array($haystack, $needles) {
 	    //merci à http://www.php.net/manual/en/function.strpos.php#102773
 		if ( is_array($needles) ) {
@@ -641,6 +752,12 @@ class Gen_Moteur
 	}
 	
 	
+    /**
+     * Fonction du moteur
+     *
+     * @param array $arr
+     *
+     */
 	public function genereVerbe($arr){
 
 		/*
@@ -755,6 +872,12 @@ class Gen_Moteur
 		return $verbe;
 	}
 	
+    /**
+     * Fonction du moteur
+     *
+     * @param mixte $class
+     *
+     */
 	public function getClass($class){
 
 		if($class=="")return;		
@@ -830,6 +953,12 @@ class Gen_Moteur
 		
 	}
 
+    /**
+     * Fonction du moteur
+     *
+     * @param mixte $class
+     *
+     */
 	public function getClassSpe($class){
 
 		if(get_class($class)=="Gen_Moteur"){
@@ -848,6 +977,12 @@ class Gen_Moteur
 		}
 	}
 
+    /**
+     * Fonction du moteur
+     *
+     * @param mixte $moteur
+     *
+     */
 	public function getClassMoteur($moteur){
 
 		//ajoute les classes générées
@@ -872,6 +1007,12 @@ class Gen_Moteur
 	}
 	
 	
+    /**
+     * Fonction du moteur
+     *
+     * @param mixte $cls
+     *
+     */
 	public function getClassType($cls){
 
 		if(isset($cls["id_adj"])){
@@ -885,6 +1026,13 @@ class Gen_Moteur
 		}
 	}
 	
+    /**
+     * Fonction du moteur
+     *
+     * @param string $txt
+     * @param int $i
+     *
+     */
 	public function getClassVals($txt,$i=0){
 
 		if(!$txt){
@@ -917,6 +1065,12 @@ class Gen_Moteur
         return array("deb"=>$deb,"fin"=>$fin,"valeur"=>$class,"arr"=>$arr);
 	}
 	
+    /**
+     * Fonction du moteur
+     *
+     * @param string $class
+     *
+     */
 	public function getAdjectifs($class){
 
         $d = strpos($class,"∏");        
@@ -940,6 +1094,12 @@ class Gen_Moteur
         
 	}
 	
+    /**
+     * Fonction du moteur
+     *
+     * @param string $class
+     *
+     */
 	public function getBlocage($class){
 
         //récupère le numéro du blocage
@@ -970,6 +1130,12 @@ class Gen_Moteur
         
 	}
 	
+    /**
+     * Fonction du moteur
+     *
+     * @param string $class
+     *
+     */
 	public function getDeterminant($class){
 
         $arrClass = false;
@@ -1034,6 +1200,13 @@ class Gen_Moteur
         return $arrClass;
 	}
 	
+    /**
+     * Fonction du moteur
+     *
+     * @param string $class
+     * @param boolean $arrClass
+     *
+     */
 	public function getSubstantif($class, $arrClass=false){
 
         //récupération du substantif
@@ -1052,6 +1225,13 @@ class Gen_Moteur
         return $arrClass;
 	}
 
+    /**
+     * Fonction du moteur
+     *
+     * @param string $class
+     * @param boolean $direct
+     *
+     */
 	public function getSyntagme($class, $direct=true){
 		
 		//vérifie si le syntagme direct #
@@ -1087,6 +1267,13 @@ class Gen_Moteur
 		}
 	}
 	
+    /**
+     * Fonction du moteur
+     *
+     * @param string $class
+     * @param int $i
+     *
+     */
 	public function traiteClass($class, $i=0){
 
 		$arrClass = $this->getClassVals($class,$i);	        	
@@ -1106,6 +1293,13 @@ class Gen_Moteur
 		return $arrClass["fin"];
 	}
 	
+    /**
+     * Fonction du moteur
+     *
+     * @param string $class
+     * @param int $i
+     *
+     */
 	public function traiteFormat($class, $i=0){
 
 		$deb = $i+1;
@@ -1142,6 +1336,12 @@ class Gen_Moteur
         return $fin;
 	}
 	
+    /**
+     * Fonction du moteur
+     *
+     * @param string $class
+     *
+     */
 	public function getNegation($class){
 
         $c = md5("getNegation_".$this->arrDicos['negations']."_".$class);
@@ -1156,6 +1356,13 @@ class Gen_Moteur
         return $arrClass["lib"];
 	}
 	
+    /**
+     * Fonction du moteur
+     *
+     * @param string $class
+     * @param string $type
+     *
+     */
 	public function getPronom($class, $type){
 
 
@@ -1176,6 +1383,13 @@ class Gen_Moteur
 
 	}
 
+    /**
+     * Fonction du moteur
+     *
+     * @param int $idConj
+     * @param int $num
+     *
+     */
 	public function getTerminaison($idConj, $num){
 
 
@@ -1196,6 +1410,13 @@ class Gen_Moteur
 												
 	}
 	
+    /**
+     * Fonction du moteur
+     *
+     * @param string $class
+     * @param boolean $arrClass
+     *
+     */
 	public function getVerbe($class, $arrClass=false){
 
         //récupération du verbe
@@ -1211,6 +1432,12 @@ class Gen_Moteur
         return $arrClass;
 	}
 	
+    /**
+     * Fonction du moteur
+     *
+     * @param string $class
+     *
+     */
 	public function getAleaClass($class){
 		
         //cherche la définition de la class
@@ -1281,12 +1508,24 @@ class Gen_Moteur
 		
 	}
 
+    /**
+     * Fonction du moteur
+     *
+     *
+     */
 	function make_seed()
 	{
 	  list($usec, $sec) = explode(' ', microtime());
 	  return (float) $sec + ((float) $usec * 100000);
 	}
 	
+    /**
+     * Fonction du moteur
+     *
+     * @param string $cpt
+     * @param string $class
+     *
+     */
 	public function getClassGen($cpt,$class){
 		
         //Vérifie si le concept est un générateur
@@ -1327,6 +1566,13 @@ class Gen_Moteur
 		
 	}
 
+    /**
+     * Fonction du moteur
+     *
+     * @param mixte $elem
+     * @param mixte $array
+     *
+     */
 	function in_multiarray($elem, $array)
     {
         // if the $array is an array or is an object
@@ -1362,7 +1608,13 @@ class Gen_Moteur
          return FALSE;
     } 	
 	
-	public function getClassDef($class){
+    /**
+     * Fonction du moteur
+     *
+     * @param mixte $class
+     *
+     */
+    public function getClassDef($class){
 
 
         $c = md5("getClassDef_".$this->arrDicos['concepts']."_".$class);
@@ -1385,6 +1637,13 @@ class Gen_Moteur
 
 	
 	
+    /**
+     * Fonction du moteur
+     *
+     * @param string $chaine
+     * @param string $action
+     *
+     */
 	public function traiteAction($chaine, $action){
 
 		//applique l'action défini dans la description du langage
@@ -1442,6 +1701,15 @@ class Gen_Moteur
 	}	
 
 
+    /**
+     * Fonction du moteur
+     *
+     * @param string $tab
+     * @param string $col1
+     * @param string $col2
+     * @param int $bordure
+     *
+     */
 	function arrayVersHTML($tab, $col1 = "Cl&eacute;", $col2 = "Valeur", $bordure = 1)
 	{
  		//http://www.phpsources.org/scripts471-PHP.htm
