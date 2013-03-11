@@ -2,7 +2,7 @@
 <s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 width="100%" height="100%"
-		 creationComplete="creationCompleteHandler(event)"
+		 creationComplete="creationCompleteHandler(event)" xmlns:compo="compo.*" xmlns:mx="library://ns.adobe.com/flex/mx"
 		 >
 	<s:layout>
 		<s:VerticalLayout paddingBottom="3" paddingLeft="3" paddingRight="3" paddingTop="3"/>
@@ -10,15 +10,12 @@
 	
 	<fx:Script>
 		<![CDATA[
-			import mx.collections.IList;
+			import mx.collections.ArrayCollection;
 			import mx.controls.Alert;
 			import mx.events.FlexEvent;
 			import mx.rpc.events.FaultEvent;
 			import mx.rpc.events.ResultEvent;
-			import mx.rpc.http.HTTPService;
-			
-			import spark.events.GridSelectionEvent;
-			
+						
 			[Bindable] public var idDico:String;
 
 			public function faultHandlerService(fault:FaultEvent):void
@@ -42,19 +39,44 @@
 			{
 				if(event.result){
 					var arr:Array = event.result as Array;
-					var al:ArrayList = new ArrayList();
-					for each(var a:Object in arr){
-						al.addItem(a);
-					}
-					dg.dataProvider = al;
+					dg.dataProvider = arr;
+					var dpCol:ArrayCollection = new ArrayCollection();
+					dpCol.addItem({data:'any', label:'Tout'});
+					dpCol.addItem({data:'lib', label:'Descripteur'});
+					dpCol.addItem({data:'type', label:'Type'});
+					dgFilter.dpColumns = dpCol;
+					dgFilter.dpRows = arr;
+					dgFilter.dg = dg;
 				}
 			}
-			
-			protected function dg_selectionChangeHandler(event:GridSelectionEvent):void
-			{
-				var item:Object = event.target.selectedItem;
-			}
-			
+						
+			private function selectDgItem(event:Event):void {
+				
+				var item:Object=event.currentTarget.selectedItem;
+				if(item){
+					dgDetail.removeAllElements();
+					switch(item.type) 
+					{ 
+						case "a":
+							var eA:gA = new gA();
+							eA.oConcept = item;
+							dgDetail.addElement(eA);
+							break; 
+						case "m": 
+							trace("Monday"); 
+							break; 
+						case "s": 
+							trace("Tuesday"); 
+							break; 
+						case "v": 
+							trace("Wednesday"); 
+							break; 
+						default: 
+							trace("Out of range"); 
+							break; 
+					}					
+				}
+			}			
 		]]>
 	</fx:Script>
 		
@@ -67,16 +89,19 @@
 			<s:method name="findByIdDico" result="findByDico_resultHandler(event)" />  	
 		</s:RemoteObject>
 	</fx:Declarations>
-	<s:BorderContainer width="100%" height="100%" id="detail">
-		<s:DataGrid id="dg" width="100%" height="100%"
-					selectionChange="dg_selectionChangeHandler(event)">
-			<s:columns>
-				<s:ArrayList>
-					<s:GridColumn sortable="true" dataField="id_concept" headerText="id_concept" visible="false"></s:GridColumn>
-					<s:GridColumn sortable="true" dataField="lib" headerText="Descripteur"></s:GridColumn>
-					<s:GridColumn sortable="true" dataField="type" headerText="Type"></s:GridColumn>
-				</s:ArrayList>
-			</s:columns>
-		</s:DataGrid>
-	</s:BorderContainer>
+	<s:VGroup width="100%" height="100%" id="detail" >
+		<compo:hbFilterControl id="dgFilter"  />
+		<mx:HDividedBox id="dgDivBox" width="100%" height="100%" >
+			<mx:DataGrid id="dg" width="100%" height="100%" click="selectDgItem(event);" editable="true"  >
+				<mx:columns>
+					<mx:DataGridColumn dataField="id_concept" visible="false" headerText="id_concept" />
+					<mx:DataGridColumn dataField="lib" headerText="Descripteur" />
+					<mx:DataGridColumn dataField="type" headerText="Type" />
+				</mx:columns>
+			</mx:DataGrid>
+			<s:Group id="dgDetail" width="100%" height="100%" >
+				
+			</s:Group>
+		</mx:HDividedBox>
+	</s:VGroup>
 </s:Group>
