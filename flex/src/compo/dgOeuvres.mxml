@@ -303,7 +303,7 @@
 			{
 				var params:Array=new Array();
 				params.push(event.result);
-				ROOD.ajouter(idOeu, this.parentApplication.uti.idUti, params);				
+				ROODU.ajouter(idOeu, this.parentApplication.uti.idUti, params);				
 			}
 									
 			protected function dgDico_clickHandler(event:MouseEvent):void
@@ -311,6 +311,7 @@
 				var item:Object=event.currentTarget.selectedItem;
 				if(item){
 					detailDico.oItem = item;
+					detailDico.init();
 				}
 				
 			}
