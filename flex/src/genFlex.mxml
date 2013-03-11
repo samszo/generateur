@@ -4,9 +4,16 @@
 					   xmlns:mx="library://ns.adobe.com/flex/mx"
 					   xmlns:co="compo.*"
 					   width="100%" height="100%" minWidth="955" minHeight="600"
-					   creationComplete="login();" title="Générateur : paramètrage">
-	
+					   creationComplete="login();" title="Générateur : paramètrage">	
 	<fx:Script source="gen.as"/>
+	<fx:Declarations>
+		<s:RemoteObject id="ROMOTEUR"
+						source="Gen_Moteur" destination="zend" 
+						showBusyCursor="true"
+						fault="faultHandlerService(event)">
+			<s:method name="Tester" result="testerMoteur_resultHandler(event)" />  	
+		</s:RemoteObject>
+	</fx:Declarations>
 	
 	<s:Group id="boxGen" visible="false" width="100%" height="100%">
 		<s:layout>
