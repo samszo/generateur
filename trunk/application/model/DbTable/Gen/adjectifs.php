@@ -258,5 +258,39 @@ class Model_DbTable_Gen_adjectifs extends Zend_Db_Table_Abstract
         return $this->fetchAll($query)->toArray(); 
     }
     
+	/**
+     * Recherche une entrée Gen_adjectifs avec la valeur spécifiée
+     * et retourne cette entrée.
+     *
+     * @param int $id_concept
+     *
+     * @return array
+     */
+    public function findByIdConcept($id_concept)
+    {
+        $query = $this->select()
+        	->from( array("ca" => "gen_concepts_adjectifs") )                           
+	        ->setIntegrityCheck(false) //pour pouvoir sélectionner des colonnes dans une autre table
+        ->joinInner(array('a' => 'gen_adjectifs'),
+        		'a.id_adj = ca.id_adj')
+        ->where("ca.id_concept = ?", $id_concept );
+        
+        return $this->fetchAll($query)->toArray(); 
+    }
     
+	/**
+     * Tester la génération
+     * et retourne cette entrée.
+     *
+     * @param int $id_adj
+     *
+     * @return array
+     */
+    public function tester($id_adj)
+    {
+        $query = $this->select()
+        	->from( array("a" => "gen_adjectifs") )                           
+        ->where("a.id_adj = ?", $id_adj);
+        return $this->fetchAll($query)->toArray(); 
+    }
 }
