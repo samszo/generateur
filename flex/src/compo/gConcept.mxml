@@ -72,7 +72,7 @@
 					selectionChange="dg_selectionChangeHandler(event)">
 			<s:columns>
 				<s:ArrayList>
-					<s:GridColumn dataField="id_concept" headerText="id_concept" visible="false"></s:GridColumn>
+					<s:GridColumn sortable="true" dataField="id_concept" headerText="id_concept" visible="false"></s:GridColumn>
 					<s:GridColumn sortable="true" dataField="lib" headerText="Descripteur"></s:GridColumn>
 					<s:GridColumn sortable="true" dataField="type" headerText="Type"></s:GridColumn>
 				</s:ArrayList>
