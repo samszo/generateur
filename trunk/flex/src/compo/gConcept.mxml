@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 width="100%" height="100%"
+		 creationComplete="creationCompleteHandler(event)"
+		 >
+	<s:layout>
+		<s:VerticalLayout paddingBottom="3" paddingLeft="3" paddingRight="3" paddingTop="3"/>
+	</s:layout>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.IList;
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.rpc.http.HTTPService;
+			
+			import spark.events.GridSelectionEvent;
+			
+			[Bindable] public var idDico:String;
+
+			public function faultHandlerService(fault:FaultEvent):void
+			{
+				var str:String;
+				str = "Code: "+fault.fault.faultCode.toString()+"\n"+
+					"Detail: "+fault.fault.faultDetail.toString()+"\n"+
+					"String: "+fault.fault.faultString.toString()+"\n";
+				
+				Alert.show(str, "ERREUR : Détail Concept");
+			}
+			
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				if(idDico){
+					ROC.findByIdDico(idDico);
+				}
+			}
+			
+			protected function findByDico_resultHandler(event:ResultEvent):void
+			{
+				if(event.result){
+					var arr:Array = event.result as Array;
+					var al:ArrayList = new ArrayList();
+					for each(var a:Object in arr){
+						al.addItem(a);
+					}
+					dg.dataProvider = al;
+				}
+			}
+			
+			protected function dg_selectionChangeHandler(event:GridSelectionEvent):void
+			{
+				var item:Object = event.target.selectedItem;
+			}
+			
+		]]>
+	</fx:Script>
+		
+	<fx:Declarations>
+		<s:RemoteObject id="ROC"
+						 source="Model_DbTable_Gen_concepts" destination="zend" 
+						 showBusyCursor="true"
+						 fault="faultHandlerService(event)">
+			<s:method name="edit" />  	
+			<s:method name="findByIdDico" result="findByDico_resultHandler(event)" />  	
+		</s:RemoteObject>
+	</fx:Declarations>
+	<s:BorderContainer width="100%" height="100%" id="detail">
+		<s:DataGrid id="dg" width="100%" height="100%"
+					selectionChange="dg_selectionChangeHandler(event)">
+			<s:columns>
+				<s:ArrayList>
+					<s:GridColumn dataField="id_concept" headerText="id_concept" visible="false"></s:GridColumn>
+					<s:GridColumn sortable="true" dataField="lib" headerText="Descripteur"></s:GridColumn>
+					<s:GridColumn sortable="true" dataField="type" headerText="Type"></s:GridColumn>
+				</s:ArrayList>
+			</s:columns>
+		</s:DataGrid>
+	</s:BorderContainer>
+</s:Group>
