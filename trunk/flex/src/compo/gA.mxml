@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 width="100%" height="100%"
+		 creationComplete="creationCompleteHandler(event)" xmlns:compo="compo.*" 
+		 >
+	<s:layout>
+		<s:VerticalLayout paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2"/>
+	</s:layout>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+						
+			[Bindable] public var oConcept:Object;
+			[Bindable] public var idAdj:String;
+			[Bindable] public var donnee:Object;
+			[Bindable] public var testGen:Object;
+
+			public function faultHandlerService(fault:FaultEvent):void
+			{
+				var str:String;
+				str = "Code: "+fault.fault.faultCode.toString()+"\n"+
+					"Detail: "+fault.fault.faultDetail.toString()+"\n"+
+					"String: "+fault.fault.faultString.toString()+"\n";
+				
+				Alert.show(str, "ERREUR : Détail Adjectif");
+			}
+			
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				if(oConcept){
+					ROCA.findByIdConcept(oConcept.id_concept);
+				}
+			}
+			
+			protected function findByIdConcept_resultHandler(event:ResultEvent):void
+			{
+				if(event.result[0]){
+					donnee = event.result[0];
+				}				
+			}
+
+			protected function tester_clickHandler(event:MouseEvent):void
+			{
+				if(this.parentApplication.verifDico()){
+					this.parentApplication.testerGen(Gm_s.text,GTm_s);
+				}
+			}
+
+			protected function enregistrer_clickHandler(event:MouseEvent):void
+			{
+				var arr:Array = new Array();
+				arr["prefix"]=prefix.text;
+				arr["elision"]= elision.selected;
+				arr["m_s"] = m_s.text;			
+				arr["f_s"] = f_s.text;			
+				arr["m_p"] = m_p.text;			
+				arr["f_p"] = f_p.text;							
+				ROCA.edit(donnee.id_adj)				
+			}
+			
+		]]>
+	</fx:Script>
+		
+	<fx:Declarations>
+		<s:RemoteObject id="ROCA"
+						 source="Model_DbTable_Gen_adjectifs" destination="zend" 
+						 showBusyCursor="true"
+						 fault="faultHandlerService(event)">
+			<s:method name="edit" />  	
+			<s:method name="findByIdConcept" result="findByIdConcept_resultHandler(event)" />  	
+		</s:RemoteObject>
+	</fx:Declarations>
+	<s:VGroup width="100%" height="100%" id="detail" >
+		<s:HGroup width="100%" verticalAlign="middle">
+			<s:Label text="Nom de l'adjectif :" width="112"/><s:Label text="{oConcept.lib}" />			
+		</s:HGroup>
+		<s:HGroup width="100%" verticalAlign="middle">
+			<s:Label text="prefix :" width="112"/><s:TextInput id="prefix" text="{donnee.prefix}" />			
+			<s:CheckBox label="élision :" id="elision" selected="{donnee.elision}" /> 			
+		</s:HGroup>
+		<s:HGroup width="100%" verticalAlign="middle">
+			<s:Label text="masculin singulier :" width="112"/><s:TextInput id="m_s" text="{donnee.m_s}"/>			
+			<s:TextInput width="100%" id="Gm_s" text="{'[32|m_mot] [a_'+oConcept.lib+']'}"/><s:Label width="100%" chromeColor="#E01919" id="GTm_s" />
+		</s:HGroup>
+		<s:HGroup width="100%" horizontalAlign="left" verticalAlign="middle">
+			<s:Label text="féminin singulier :" width="112"/><s:TextInput id="f_s" text="{donnee.f_s}"/>			
+			<s:TextInput width="100%" id="Gf_s" text="{'[32|m_phrase] [a_'+oConcept.lib}"/><s:Label  width="100%" chromeColor="#E01919"  id="GTf_s" />
+		</s:HGroup>
+		<s:HGroup width="100%" verticalAlign="middle">
+			<s:Label text="masculin pluriel :" width="112"/><s:TextInput id="m_p" text="{donnee.m_p}"/>			
+			<s:TextInput width="100%" id="Gm_p" text="{'[82|m_mot] [a_'+oConcept.lib}"/><s:Label width="100%" chromeColor="#E01919"  id="GTm_p" />
+		</s:HGroup>
+		<s:HGroup width="100%" verticalAlign="middle">
+			<s:Label width="112" text="féminin pluriel :"/><s:TextInput id="f_p" text="{donnee.f_p}" />			
+			<s:TextInput width="100%" id="Gf_p" text="{'[82|m_phrase] [a_'+oConcept.lib}" /><s:Label width="100%" chromeColor="#E01919"  id="GTf_p" />
+		</s:HGroup>
+		<s:HGroup verticalAlign="middle">
+			<s:Button label="Enregistrer" click="enregistrer_clickHandler(event)" />
+			<s:Button label="Tester" click="tester_clickHandler(event)" />
+		</s:HGroup>
+	</s:VGroup>
+</s:Group>

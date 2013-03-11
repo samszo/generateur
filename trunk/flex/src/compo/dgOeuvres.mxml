@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:co="compo.*"
-	creationComplete="Init()" 
+	creationComplete="init()" 
 	width="100%" height="100%" xmlns:s="library://ns.adobe.com/flex/spark">
 	<mx:Script>
         <![CDATA[
@@ -41,6 +41,7 @@
 	[Bindable] public var bInsert:Boolean=true;
 	[Bindable] public var twAR:twAjoutRef;
 	[Bindable] public var idOeu:int;	
+	[Bindable] public var arrDicoAssos:Array;	
 	[Bindable] public var arrDicoGen:Array;	
 	[Bindable] public var arrDicoCon:Array;	
 	[Bindable] public var arrDicoDet:Array;	
@@ -70,7 +71,7 @@
 				if(dp[0].type=="négations")arrDicoNeg=dp;
 			}
 			
-			public function Init():void 
+			public function init():void 
 			{
 			    //chargement des données
 			    if(bInit){
@@ -169,7 +170,7 @@
 			private function fillGridHandler(e:Object, dg:DataGrid):void
 			{
 				if(!e)return;
-			    dg.dataProvider = e.result as Array;
+				arrDicoAssos = e.result as Array;
 			}
 			
 			private function deleteClickHandler(event:CloseEvent):void
@@ -383,7 +384,8 @@
 												<mx:LinkButton click="vsDico.selectedChild = insertDico;" width="20" icon="@Embed('images/AddRecord.png')" toolTip="Ajouter un dictionnaire à cette oeuvre" />
 												<mx:LinkButton click="deleteDico()" width="20" icon="@Embed('images/DeleteRecord.png')" toolTip="Supprimer un dictionnaire pour cette oeuvre" />							
 											</mx:HBox>							
-											<mx:DataGrid width="100%" id="dgDico" click="dgDico_clickHandler(event)" >
+											<mx:DataGrid width="100%" id="dgDico" click="dgDico_clickHandler(event)" dataProvider="{arrDicoAssos}"
+												 rowCount="3" >
 												<mx:columns>
 													<mx:DataGridColumn headerText="Nom" dataField="nom" />
 													<mx:DataGridColumn headerText="Type" dataField="type" />
