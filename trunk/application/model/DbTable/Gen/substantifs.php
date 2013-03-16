@@ -146,6 +146,27 @@ class Model_DbTable_Gen_substantifs extends Zend_Db_Table_Abstract
 
         return $this->fetchAll($query)->toArray(); 
     }
+    
+	/**
+     * Recherche une entrée Gen_verbes avec la valeur spécifiée
+     * et retourne cette entrée.
+     *
+     * @param int $id_concept
+     *
+     * @return array
+     */
+    public function findByIdConcept($id_concept)
+    {
+        $query = $this->select()
+        	->from( array("cs" => "gen_concepts_substantifs") )                           
+	        ->setIntegrityCheck(false) //pour pouvoir sélectionner des colonnes dans une autre table
+        ->joinInner(array('s' => 'gen_substantifs'),
+        		's.id_sub = cs.id_sub')
+        ->where("cs.id_concept = ?", $id_concept );
+        
+        return $this->fetchAll($query)->toArray(); 
+    }
+    
     	/**
      * Recherche une entrée Gen_substantifs avec la valeur spécifiée
      * et retourne cette entrée.

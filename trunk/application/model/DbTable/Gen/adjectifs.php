@@ -278,19 +278,4 @@ class Model_DbTable_Gen_adjectifs extends Zend_Db_Table_Abstract
         return $this->fetchAll($query)->toArray(); 
     }
     
-	/**
-     * Tester la génération
-     * et retourne cette entrée.
-     *
-     * @param int $id_adj
-     *
-     * @return array
-     */
-    public function tester($id_adj)
-    {
-        $query = $this->select()
-        	->from( array("a" => "gen_adjectifs") )                           
-        ->where("a.id_adj = ?", $id_adj);
-        return $this->fetchAll($query)->toArray(); 
-    }
 }

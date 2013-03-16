@@ -129,6 +129,28 @@ class Model_DbTable_Gen_syntagmes extends Zend_Db_Table_Abstract
         return $this->fetchAll($query)->toArray();
     }
 
+
+	/**
+     * Recherche une entrée Gen_verbes avec la valeur spécifiée
+     * et retourne cette entrée.
+     *
+     * @param int $id_concept
+     * @param string $idsDico
+     *
+     * @return array
+     */
+    public function findByIdConcept($id_concept, $idsDico)
+    {
+        $query = $this->select()
+        	->from( array("cs" => "gen_concepts_syntagmes") )                           
+	        ->setIntegrityCheck(false) //pour pouvoir sélectionner des colonnes dans une autre table
+        ->joinInner(array('s' => 'gen_syntagmes'),
+        		's.id_syn = cs.id_syn')
+        ->where("cs.id_concept = ?", $id_concept );
+        //->where("s.id_dico IN (".$idsDico.")" );
+        
+        return $this->fetchAll($query)->toArray(); 
+    }
     
     	/**
      * Recherche une entrée Gen_syntagmes avec la valeur spécifiée
