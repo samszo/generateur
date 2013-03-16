@@ -63,16 +63,24 @@
 							dgDetail.addElement(eA);
 							break; 
 						case "m": 
-							trace("Monday"); 
+							var eM:gM = new gM();
+							eM.oConcept = item;
+							dgDetail.addElement(eM);
 							break; 
 						case "s": 
-							trace("Tuesday"); 
+							var eS:gS = new gS();
+							eS.oConcept = item;
+							dgDetail.addElement(eS);
 							break; 
 						case "v": 
-							trace("Wednesday"); 
+							var eV:gV = new gV();
+							eV.oConcept = item;
+							dgDetail.addElement(eV);
 							break; 
 						default: 
-							trace("Out of range"); 
+							var eG:gG = new gG();
+							eG.oConcept = item;
+							dgDetail.addElement(eG);
 							break; 
 					}					
 				}
@@ -92,10 +100,10 @@
 	<s:VGroup width="100%" height="100%" id="detail" >
 		<compo:hbFilterControl id="dgFilter"  />
 		<mx:HDividedBox id="dgDivBox" width="100%" height="100%" >
-			<mx:DataGrid id="dg" width="100%" height="100%" click="selectDgItem(event);" editable="true"  >
+			<mx:DataGrid id="dg" width="200" height="100%" click="selectDgItem(event);" >
 				<mx:columns>
-					<mx:DataGridColumn dataField="id_concept" visible="false" headerText="id_concept" />
-					<mx:DataGridColumn dataField="lib" headerText="Descripteur" />
+					<mx:DataGridColumn dataField="id_concept" visible="true" headerText="id_concept" />
+					<mx:DataGridColumn dataField="lib" editable="true" headerText="Descripteur" />
 					<mx:DataGridColumn dataField="type" headerText="Type" />
 				</mx:columns>
 			</mx:DataGrid>

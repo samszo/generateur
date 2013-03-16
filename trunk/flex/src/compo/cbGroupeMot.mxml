@@ -2,14 +2,12 @@
 <mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml"  creationComplete="init()" width="100%">
 	<mx:Script>
         <![CDATA[
+    import mx.controls.Alert;
     import mx.events.CloseEvent;
-	import mx.managers.CursorManager;
-	import mx.managers.PopUpManager;
-
-	import mx.rpc.events.FaultEvent;
-	import mx.rpc.events.ResultEvent;
-
-	import mx.controls.Alert;
+    import mx.managers.CursorManager;
+    import mx.managers.PopUpManager;
+    import mx.rpc.events.FaultEvent;
+    import mx.rpc.events.ResultEvent;
 
 	/**
 	 * paramétrage de l'objet
@@ -23,7 +21,9 @@
 	[Bindable] public var titre:String="un mot clef";
 	[Bindable] public var bAjout:Boolean=true;
 	[Bindable] public var bRemove:Boolean=false;
+	[Bindable] public var bInit:Boolean=true;
 	[Bindable] public var annonce:String;
+	[Bindable] public var itemSelect:String;
 
 	[Bindable] private var dpValue:Array;
 	
@@ -32,13 +32,11 @@
 	public function init():void
 	{
 		annonce="Choisissez "+titre;
+		if(!bInit) return;
 		if(objMethode!="getAll"){
-			if(objMethode=="findByTronc"){
-			    ROS.findByTronc(objParam);
-			}			
-			if(objMethode=="findByIdLieu"){
+			if(objMethode=="findByIdDicoVerbe"){
 				if(objParam){
-				    ROS.findByIdLieu(objParam);					
+					ROS.findByIdDicoVerbe(objParam);					
 				}else return;
 			}			
 		}else{
@@ -59,13 +57,23 @@
    		return -1;
 	}
 
+			
+	public function selectItem(val:String):void
+	{
+		for each(var row:Object in cb.dataProvider){
+			if(row[keyName]==val){
+				cb.selectedItem = row;
+			}
+		}
+	}
+			
 	private function fillHandler(e:Object):void
 	{
 		if(!e)return;
 		dpValue = e.result as Array;
     	cb.dataProvider = dpValue;
     	cb.labelField = labelName;
-
+		if(itemSelect) selectItem(itemSelect);
 	}
 	
 	public function AjoutMot():void{
@@ -146,6 +154,7 @@
 	    	fault="faultHandlerService(event)">
 	 	<mx:method name="getAll"  result="fillHandler(event)"/>  	
 	 	<mx:method name="remove"  result="init()" />
+		<mx:method name="findByIdDicoVerbe" result="fillHandler(event)" />
 	</mx:RemoteObject>
  
 <mx:ComboBox id="cb" change="changeItem()" prompt="{annonce}" width="100%" />
