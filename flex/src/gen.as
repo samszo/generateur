@@ -10,16 +10,23 @@ import mx.rpc.events.ResultEvent;
 import spark.components.Label;
 
 [Bindable] public var uti:Object;
+[Bindable] public var arrCtrls:Array;
+[Bindable] public var arrVerifDico:Array;
 
-public function testerGen(gen:String, fct):void
+public function testerGen(txts:Array, ctrls:Array):void
 {
-	
+	arrCtrls = ctrls;
+	ROMOTEUR.Tester(txts, arrVerifDico);
 }
 
 protected function testerMoteur_resultHandler(event:ResultEvent):void
 {
-	// TODO Auto-generated method stub
-	
+	var arrResult:Array = event.result as Array;
+	var i:int = 0;
+	for each(var txt:String in arrResult){
+		arrCtrls[i].text = txt;
+		i++;
+	}	
 }
 
 public function faultHandlerService(fault:FaultEvent):void
@@ -67,18 +74,38 @@ public function ShowSelection(idOeu:int):void{
 public function verifDico():Boolean
 {
 	//vérifie que l'oeuvre possède bien un exemplaire de chaque dictionnaire
-	var verifDico:Array = new Array();
+	arrVerifDico = new Array();
 	for each(var dico:Object in dgOeuParam.arrDicoAssos){
-		verifDico[dico.type]=1;
+		/**TODO: rendre plus cohérente la gestion des types de dictionnaires
+		 **/ 
+		if(String(dico.type).substr(0,7)=="pronoms" ){
+			if(arrVerifDico["pronoms"]){
+				arrVerifDico["pronoms"]+=", "+dico.id_dico;
+			}else{
+				arrVerifDico["pronoms"]=dico.id_dico;
+			}			
+		}
+		if(String(dico.type)=="négations" ){
+			if(arrVerifDico["negations"]){
+				arrVerifDico["negations"]+=", "+dico.id_dico;
+			}else{
+				arrVerifDico["negations"]=dico.id_dico;
+			}			
+		}
+		if(arrVerifDico[dico.type]){
+			arrVerifDico[dico.type]+=", "+dico.id_dico;
+		}else{
+			arrVerifDico[dico.type]=dico.id_dico;
+		}
 	}
 	var strVerif:String = "";
-	if(!verifDico["concepts"])strVerif+="concepts\n";
-	if(!verifDico["conjugaisons"])strVerif+="conjugaisons\n";
-	if(!verifDico["déterminants"])strVerif+="déterminants\n";
-	if(!verifDico["négations"])strVerif+="négations\n";
-	if(!verifDico["pronoms_complement"])strVerif+="pronoms_complement\n";
-	if(!verifDico["pronoms_sujet"])strVerif+="pronoms_sujet\n";
-	if(!verifDico["syntagmes"])strVerif+="syntagmes\n";
+	if(!arrVerifDico["concepts"])strVerif+="concepts\n";
+	if(!arrVerifDico["conjugaisons"])strVerif+="conjugaisons\n";
+	if(!arrVerifDico["déterminants"])strVerif+="déterminants\n";
+	if(!arrVerifDico["negations"])strVerif+="négations\n";
+	if(!arrVerifDico["pronoms_complement"])strVerif+="pronoms_complement\n";
+	if(!arrVerifDico["pronoms_sujet"])strVerif+="pronoms_sujet\n";
+	if(!arrVerifDico["syntagmes"])strVerif+="syntagmes\n";
 	if(strVerif!=""){
 		strVerif = 	"Il manque des dictionnaires.\nVeuillez ajouter à votre oeuvre le(s) dictionnaire(s) suivant(s):\n"+strVerif;
 		Alert.show(strVerif, "Vérification dictionnaire");

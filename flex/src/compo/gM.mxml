@@ -17,7 +17,7 @@
 			import mx.rpc.events.ResultEvent;
 						
 			[Bindable] public var oConcept:Object;
-			[Bindable] public var idAdj:String;
+			[Bindable] public var idSub:String;
 			[Bindable] public var donnee:Object;
 			[Bindable] public var testGen:Object;
 
@@ -28,13 +28,13 @@
 					"Detail: "+fault.fault.faultDetail.toString()+"\n"+
 					"String: "+fault.fault.faultString.toString()+"\n";
 				
-				Alert.show(str, "ERREUR : Détail Adjectif");
+				Alert.show(str, "ERREUR : Détail Substantif");
 			}
 			
 			protected function creationCompleteHandler(event:FlexEvent):void
 			{
 				if(oConcept){
-					ROCA.findByIdConcept(oConcept.id_concept);
+					ROCS.findByIdConcept(oConcept.id_concept);
 				}
 			}
 			
@@ -44,6 +44,8 @@
 					donnee = event.result[0];
 					if(donnee.elision=="0")elision.selected = false;
 					else elision.selected = true;
+					if(donnee.genre=="2") genre2.selected = true;
+					else genre1.selected = true;
 				}				
 			}
 
@@ -52,15 +54,10 @@
 				if(this.parentApplication.verifDico()){
 					var arrT:Array = new Array();
 					var arrO:Array = new Array();
-					arrT.push(Gm_s.text);
-					arrO.push(GTm_s);
-					arrT.push(Gf_s.text);
-					arrO.push(GTf_s);
-					arrT.push(Gm_p.text);
-					arrO.push(GTm_p);
-					arrT.push(Gf_p.text);
-					arrO.push(GTf_p);
-					
+					arrT.push(Gs.text);
+					arrO.push(GTs);
+					arrT.push(Gp.text);
+					arrO.push(GTp);					
 					this.parentApplication.testerGen(arrT,arrO);
 				}
 			}
@@ -73,19 +70,21 @@
 					arr["elision"]= "1";
 				else
 					arr["elision"]= "0";
-				arr["m_s"] = m_s.text;			
-				arr["f_s"] = f_s.text;			
-				arr["m_p"] = m_p.text;			
-				arr["f_p"] = f_p.text;							
-				ROCA.edit(donnee.id_adj, arr)				
+				if(genre1.selected)
+					arr["genre"]= "1";
+				if(genre2.selected)
+					arr["genre"]= "2";
+				arr["s"] = s.text;			
+				arr["p"] = p.text;			
+				ROCS.edit(donnee.id_sub, arr)				
 			}
 			
 		]]>
 	</fx:Script>
 		
 	<fx:Declarations>
-		<s:RemoteObject id="ROCA"
-						 source="Model_DbTable_Gen_adjectifs" destination="zend" 
+		<s:RemoteObject id="ROCS"
+						 source="Model_DbTable_Gen_substantifs" destination="zend" 
 						 showBusyCursor="true"
 						 fault="faultHandlerService(event)">
 			<s:method name="edit" />  	
@@ -94,27 +93,21 @@
 	</fx:Declarations>
 	<s:VGroup width="100%" height="100%" id="detail" >
 		<s:HGroup width="100%" verticalAlign="middle">
-			<s:Label text="Nom de l'adjectif :" width="112"/><s:Label text="{oConcept.lib}" />			
+			<s:Label text="Nom du substantif :" width="112"/><s:Label text="{oConcept.lib}" />			
 		</s:HGroup>
 		<s:HGroup width="100%" verticalAlign="middle">
 			<s:Label text="prefix :" width="112"/><s:TextInput id="prefix" text="{donnee.prefix}" />			
-			<s:CheckBox label="élision :" id="elision" /> 			
+			<s:CheckBox label="élision :" id="elision" />
+			<s:RadioButton label="Féminin" id="genre2" groupName="genre"/>
+			<s:RadioButton label="Masuclin" id="genre1" groupName="genre"/>
 		</s:HGroup>
 		<s:HGroup width="100%" verticalAlign="middle">
-			<s:Label text="masculin singulier :" width="112"/><s:TextInput id="m_s" text="{donnee.m_s}"/>			
-			<s:TextInput width="100%" id="Gm_s" text="{'[32|m_mot] [a_'+oConcept.lib+']'}"/><s:Label width="100%" color="#E01919" text="---" id="GTm_s" />
+			<s:Label text="singulier :" width="112"/><s:TextInput id="s" text="{donnee.s}"/>			
+			<s:TextInput width="100%" id="Gs" text="{'[12|m_'+oConcept.lib+']'}"/><s:Label width="100%" color="#E01919" text="---" id="GTs" />
 		</s:HGroup>
 		<s:HGroup width="100%" horizontalAlign="left" verticalAlign="middle">
-			<s:Label text="féminin singulier :" width="112"/><s:TextInput id="f_s" text="{donnee.f_s}"/>			
-			<s:TextInput width="100%" id="Gf_s" text="{'[32|m_phrase] [a_'+oConcept.lib+']'}"/><s:Label  width="100%" color="#E01919" text="---" id="GTf_s" />
-		</s:HGroup>
-		<s:HGroup width="100%" verticalAlign="middle">
-			<s:Label text="masculin pluriel :" width="112"/><s:TextInput id="m_p" text="{donnee.m_p}"/>			
-			<s:TextInput width="100%" id="Gm_p" text="{'[82|m_mot] [a_'+oConcept.lib+']'}"/><s:Label width="100%" color="#E01919" text="---" id="GTm_p" />
-		</s:HGroup>
-		<s:HGroup width="100%" verticalAlign="middle">
-			<s:Label width="112" text="féminin pluriel :"/><s:TextInput id="f_p" text="{donnee.f_p}" />			
-			<s:TextInput width="100%" id="Gf_p" text="{'[82|m_phrase] [a_'+oConcept.lib+']'}" /><s:Label width="100%" color="#E01919" text="---" id="GTf_p" />
+			<s:Label text="pluriel :" width="112"/><s:TextInput id="p" text="{donnee.p}"/>			
+			<s:TextInput width="100%" id="Gp" text="{'[62|m_'+oConcept.lib+']'}"/><s:Label  width="100%" color="#E01919" text="---" id="GTp" />
 		</s:HGroup>
 		<s:HGroup verticalAlign="middle">
 			<s:Button label="Enregistrer" click="enregistrer_clickHandler(event)" />
