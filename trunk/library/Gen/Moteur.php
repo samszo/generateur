@@ -91,20 +91,22 @@ class Gen_Moteur
     /**
      * Fonction du moteur
      *
-     * @param string $texte
+     * @param string $arrTextes
      * @param array $arrDicos
      * 
-     * @return string
+     * @return array
      */
-	public function Tester($texte, $arrDicos){
+	public function Tester($arrTextes, $arrDicos){
 
 		$this->forceCalcul = true;
 		$this->arrDicos = $arrDicos;	
 		$this->showErr = true;
-
-		$this->Generation($texte);	
 		
-		return $this->texte;				
+		foreach ($arrTextes as $texte) {
+			$this->Generation($texte);
+			$arrResult[]=$this->texte;	
+		}
+		return $arrResult; 				
 	}
 	
 	/**
@@ -681,7 +683,7 @@ class Gen_Moteur
 			if($arr["determinant_verbe"][1]==7){
 				$temps= 0;
 			}
-			
+			//formule de calcul de la terminaison temps + persones
 			$num = ($temps*6)+$arr["terminaison"]-1;
 			 		
 			if($arr["determinant_verbe"][1]==8){
