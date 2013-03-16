@@ -129,6 +129,25 @@ class Model_DbTable_Gen_generateurs extends Zend_Db_Table_Abstract
         return $this->fetchAll($query)->toArray();
     }
 
+	/**
+     * Recherche une entrée Gen_verbes avec la valeur spécifiée
+     * et retourne cette entrée.
+     *
+     * @param int $id_concept
+     *
+     * @return array
+     */
+    public function findByIdConcept($id_concept)
+    {
+        $query = $this->select()
+        	->from( array("cg" => "gen_concepts_generateurs") )                           
+	        ->setIntegrityCheck(false) //pour pouvoir sélectionner des colonnes dans une autre table
+        ->joinInner(array('g' => 'gen_generateurs'),
+        		'g.id_gen = cg.id_gen')
+        ->where("cg.id_concept = ?", $id_concept );
+        
+        return $this->fetchAll($query)->toArray(); 
+    }
     
     	/**
      * Recherche une entrée Gen_generateurs avec la valeur spécifiée

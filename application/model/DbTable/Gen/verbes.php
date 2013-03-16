@@ -211,5 +211,24 @@ class Model_DbTable_Gen_verbes extends Zend_Db_Table_Abstract
         return $this->fetchAll($query)->toArray(); 
     }
     
+	/**
+     * Recherche une entrée Gen_verbes avec la valeur spécifiée
+     * et retourne cette entrée.
+     *
+     * @param int $id_concept
+     *
+     * @return array
+     */
+    public function findByIdConcept($id_concept)
+    {
+        $query = $this->select()
+        	->from( array("cv" => "gen_concepts_verbes") )                           
+	        ->setIntegrityCheck(false) //pour pouvoir sélectionner des colonnes dans une autre table
+        ->joinInner(array('v' => 'gen_verbes'),
+        		'v.id_verbe = cv.id_verbe')
+        ->where("cv.id_concept = ?", $id_concept );
+        
+        return $this->fetchAll($query)->toArray(); 
+    }
     
 }
