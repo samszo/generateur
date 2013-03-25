@@ -1,16 +1,23 @@
 =Procédure d'installation du générateur=
 
 == Installation de la base de donnée ==
-#créer une base de donnée MySql nommée : generateur
-#selon la structure suivante : https://code.google.com/p/generateur/source/browse/trunk/application/configs/generateur.sql
-#importer les données : https://code.google.com/p/generateur/source/browse/trunk/bdd/generateur.sql
+
+  #créer une base de donnée MySql nommée : generateur
+
+  #selon la structure suivante : https://code.google.com/p/generateur/source/browse/trunk/application/configs/generateur.sql
+
+  #importer les données : https://code.google.com/p/generateur/source/browse/trunk/bdd/generateur.sql
 
 == Installation du framework Zend ==
-#télécharger le framework Zend dans un répertoire de votre serveur Web
-#utiliser la version Zend Framework 1.12.0
+
+  #télécharger le framework Zend dans un répertoire de votre serveur Web
+
+  #utiliser la version Zend Framework 1.12.0
 
 == Installation de l'application du générateur ==
-#télécharger les sources dans un répertoire de votre serveur Web
-#modifier les fichiers de configuration suivant les paramètres de votre machine
+
+  #télécharger les sources dans un répertoire de votre serveur Web
+
+  #modifier les fichiers de configuration suivant les paramètres de votre machine
 https://code.google.com/p/generateur/source/browse/trunk/application/configs/application.ini
 https://code.google.com/p/generateur/source/browse/trunk/application/configs/config.php
