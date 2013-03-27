@@ -61,6 +61,9 @@ private function init():void {
 }
 
 public function ShowSelection(idOeu:int):void{
+	//réinitiaise le détail des items du dico
+	dgOeuParam.detailDico.oItem = false;
+	dgOeuParam.detailDico.init();
 	if(idOeu==-1){
 		dgOeuParam.visible = false;	
 	}else{
