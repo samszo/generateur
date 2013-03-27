@@ -30,9 +30,9 @@ class Model_DbTable_Gen_oeuvresxdicosxutis extends Zend_Db_Table_Abstract
     {
 		$select = $this->select();
 		$select->from($this, array('id_odu'));
-		foreach($data as $k=>$v){
-			$select->where($k.' = ?', $v);
-		}
+		$select->where('id_oeu = ?', $data['id_oeu']);
+		$select->where('id_dico = ?', $data['id_dico']);
+    	$select->where('uti_id = ?', $data['uti_id']);
 	    $rows = $this->fetchAll($select);        
 	    if($rows->count()>0)$id=$rows[0]->id_odu; else $id=false;
         return $id;
