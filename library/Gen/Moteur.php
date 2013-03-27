@@ -63,6 +63,7 @@ class Gen_Moteur
      *
      * @param string $urlDesc
      * @param string $forceCalcul
+     * @param string $xmlDesc
      *
      */
 	public function __construct($urlDesc="", $forceCalcul = false, $xmlDesc=false) {
@@ -222,8 +223,7 @@ class Gen_Moteur
      * Fonction du moteur
      *
      * @param string $texte
-     * @param boolean $getTexte
-     * @param boolean $cache
+     * @param boolean $html
      *
      */
 	public function Verification($texte, $html=false){
