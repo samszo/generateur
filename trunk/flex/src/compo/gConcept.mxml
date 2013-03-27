@@ -12,11 +12,14 @@
 		<![CDATA[
 			import mx.collections.ArrayCollection;
 			import mx.controls.Alert;
+			import mx.events.CloseEvent;
 			import mx.events.FlexEvent;
 			import mx.rpc.events.FaultEvent;
 			import mx.rpc.events.ResultEvent;
 						
 			[Bindable] public var idDico:String;
+			[Bindable] public var bRemove:Boolean=true;
+			[Bindable] public var bAjout:Boolean=true;
 
 			public function faultHandlerService(fault:FaultEvent):void
 			{
@@ -84,7 +87,26 @@
 							break; 
 					}					
 				}
-			}			
+			}
+			
+			private function removeItem():void {
+				
+					Alert.show("Confirmez-vous la suppression de l'item ?",
+						"Confirmation Suppression", 3, this, removeItemHandler);				
+			}
+			
+			private function removeItemHandler(event:CloseEvent):void
+			{
+				if (event.detail == Alert.YES) 
+				{
+					//ROS.remove(cb.selectedItem[keyName]);
+				}
+			}
+			
+			public function ajoutItem():void{
+				
+			}
+			
 		]]>
 	</fx:Script>
 		
@@ -100,13 +122,21 @@
 	<s:VGroup width="100%" height="100%" id="detail" >
 		<compo:hbFilterControl id="dgFilter"  />
 		<mx:HDividedBox id="dgDivBox" width="100%" height="100%" >
-			<mx:DataGrid id="dg" width="200" height="100%" click="selectDgItem(event);" >
-				<mx:columns>
-					<mx:DataGridColumn dataField="id_concept" visible="true" headerText="id_concept" />
-					<mx:DataGridColumn dataField="lib" editable="true" headerText="Descripteur" />
-					<mx:DataGridColumn dataField="type" headerText="Type" />
-				</mx:columns>
-			</mx:DataGrid>
+			<s:VGroup width="200" height="100%" >
+				<s:HGroup>
+					<mx:LinkButton visible="{bRemove}" width="20" click="removeItem()"
+								   icon="@Embed('images/DeleteRecord.png')" toolTip="{'Supprimer un item'}"/>
+					<mx:LinkButton id="btnAddNew" visible="{bAjout}" width="20" click="ajoutItem()"
+								   icon="@Embed('images/AddRecord.png')" toolTip="{'Ajouter un item'}"/>					
+				</s:HGroup>
+				<mx:DataGrid id="dg" width="100%" height="100%" click="selectDgItem(event);" editable="true" >
+					<mx:columns>
+						<mx:DataGridColumn dataField="id_concept" editable="false" visible="true" headerText="id_concept" />
+						<mx:DataGridColumn dataField="lib" headerText="Descripteur" />
+						<mx:DataGridColumn dataField="type" editable="false" headerText="Type" />
+					</mx:columns>
+				</mx:DataGrid>
+			</s:VGroup>
 			<s:Group id="dgDetail" width="100%" height="100%" >
 				
 			</s:Group>
