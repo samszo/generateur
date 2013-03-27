@@ -5,7 +5,25 @@ try {
 	
 	$application->bootstrap();
 
+	//
+	$arrVerifDico = array("concepts"=>"93,94,82,34"	
+		,"conjugaisons"=>"44"	
+		,"déterminants"=>"46"	
+		,"négations"=>"16"	
+		,"pronoms_complement"=>"13"	
+		,"pronoms_sujet"=>"14"	
+		,"syntagmes"=>"4");	
+	$txts = array("[dis_NK8yf]");	
+	$m = new Gen_Moteur();
+	//$m->Tester($txts, $arrVerifDico);
+	$m->getArbreGen("[0|caract1] [0|caract2], [thl-visage-01], [thl-allure-01]",$arrVerifDico);
+	$arr = $m->arrClass;
+	//
+	
 	/*
+	$dbS = new Model_DbTable_Gen_syntagmes();
+	$arr = $dbS->findByIdConcept(56203, "4");
+		
 	$dbODU = new Model_DbTable_Gen_oeuvresxdicosxutis();
 	$dbODU->findByIdOeu(6);
 
@@ -26,7 +44,7 @@ try {
 	$server->addDirectory(APPLICATION_PATH);
 	$server->addDirectory(ROOT_PATH.'/library');
 		
-	//$server->setClass("Model_DbTable_OeuvresDicos");
+	//$server->setClass("Gen_Moteur");
 	$server->setProduction(false);
 	
 	$response = $server->handle();
