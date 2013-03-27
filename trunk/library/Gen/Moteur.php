@@ -54,6 +54,9 @@ class Gen_Moteur
 	var $verif = false;
 	var $timeDeb;
 	var $timeMax = 10000;
+	var $xml;
+	var $xmlRoot;
+	var $xmlGen;
 	
     /**
      * Fonction du moteur
@@ -62,11 +65,12 @@ class Gen_Moteur
      * @param string $forceCalcul
      *
      */
-	public function __construct($urlDesc="", $forceCalcul = false) {
+	public function __construct($urlDesc="", $forceCalcul = false, $xmlDesc=false) {
 
 		$this->urlDesc = $urlDesc;
-		if($this->urlDesc=="")$this->urlDesc=APPLICATION_PATH.'/configs/LangageDescripteur.xml';
-		$this->xmlDesc = simplexml_load_file($this->urlDesc);	
+		if($this->urlDesc=="")$this->urlDesc=APPLICATION_PATH.'/configs/LangageDescripteur.xml';	
+		if(!$xmlDesc) $this->xmlDesc = simplexml_load_file($this->urlDesc);
+		else $this->xmlDesc = $xmlDesc;
 		$this->forceCalcul = $forceCalcul;	
 	}
 
@@ -91,7 +95,7 @@ class Gen_Moteur
     /**
      * Fonction du moteur
      *
-     * @param string $arrTextes
+     * @param array $arrTextes
      * @param array $arrDicos
      * 
      * @return array
@@ -107,6 +111,38 @@ class Gen_Moteur
 			$arrResult[]=$this->texte;	
 		}
 		return $arrResult; 				
+	}
+
+    /**
+     * Fonction du moteur
+     *
+     * @param string $texte
+     * @param array $arrDicos
+     * 
+     * @return array
+     */
+	public function getArbreGen($texte, $arrDicos){
+
+		$this->arrDicos = $arrDicos;
+		$this->xml = new DOMDocument('1.0', 'UTF-8');
+		$this->xml->appendChild(new DOMComment('arbre de génération de '.$texte));
+		$this->xmlRoot = $this->xml->appendChild(new DOMElement('gen'));
+		$xDicos = $this->xml->createElement('dicos');
+		foreach ($arrDicos as $type=>$dico) {
+			$xDico = $this->xml->createElement('dico');
+			$xAtt = $this->xml->createAttribute('ids');
+			$nText = $this->xml->createTextNode($dico);
+			$xAtt->appendChild($nText); 				
+			$xDico->appendChild($xAtt);
+			$xAtt = $this->xml->createAttribute('type');
+			$nText = $this->xml->createTextNode($type);
+			$xAtt->appendChild($nText); 				
+			$xDico->appendChild($xAtt);
+			$xDicos->appendChild($xDico);
+		}
+		$this->xmlRoot->appendChild($xDicos);		
+		$this->Verification($texte);
+		echo $this->xml->saveXML();
 	}
 	
 	/**
@@ -190,12 +226,13 @@ class Gen_Moteur
      * @param boolean $cache
      *
      */
-	public function Verification($texte, $getTexte=true, $cache=false){
+	public function Verification($texte, $html=false){
 		
 		$this->setCache();
 		$this->verif = true;				
 		$this->ordre = 0;
 		$this->typeChoix = "tout";
+		if($this->niv > 2) return;
 		//parcourt l'ensemble de la chaine
 		for($i = 0; $i < strlen($texte); $i++)
         {
@@ -208,7 +245,9 @@ class Gen_Moteur
         	}
         }                
 
-		$this->detail = $this->arrayVersHTML($this->arrClass);
+        if($html){
+			$this->detail = $this->arrayVersHTML($this->arrClass);    	
+        }
        
 	}
 	
@@ -527,7 +566,7 @@ class Gen_Moteur
 						$vecteur = $this->getVecteur("genre",-1,$arr["determinant_verbe"][7]);
 						$genre = $vecteur["genre"];     	
 						//génère le pronom
-						$m = new Gen_Moteur($this->urlDesc,$this->forceCalcul);
+						$m = new Gen_Moteur($this->urlDesc,$this->forceCalcul, $this->xmlDesc);
 						$m->timeDeb = $this->timeDeb;
 						$m->arrDicos = $this->arrDicos;
 						$m->Generation($pr,false,$this->cache);
@@ -551,7 +590,7 @@ class Gen_Moteur
 					$vecteur = $this->getVecteur("genre",-1,$arr["determinant_verbe"][7]);
 					$genre = $vecteur["genre"];     	
 		        	//génère le pronom
-					$m = new Gen_Moteur($this->urlDesc,$this->forceCalcul);
+					$m = new Gen_Moteur($this->urlDesc,$this->forceCalcul,$this->xmlDesc);
 					$m->timeDeb = $this->timeDeb;
 					$m->arrDicos = $this->arrDicos;
 					$m->Generation($arr["prodem"]["lib"],false,$this->cache);
@@ -987,24 +1026,20 @@ class Gen_Moteur
      */
 	public function getClassMoteur($moteur){
 
-		//ajoute les classes générées
-		foreach($moteur->arrClass as $k=>$c){
-			$this->ordre ++;
-			$this->arrClass[$this->ordre] = $c;
-		}
-		//ajoute les caractères générées
-		foreach($moteur->arrCaract as $k=>$c){
-			$this->arrCaract[$k] = $c;
-		}
 		if($this->verif){
-			//ajoute les doublons
-			foreach($moteur->arrDoublons as $k=>$c){
-				if(in_array($c, $this->arrDoublons)){
-					$this->arrClass[$this->ordre]["doublons"] = $c;
-				}else{
-					$this->arrDoublons[] = $c;
-				}
+			//construction du xml			
+			//$this->xmlVerif->addChild("node",$c);
+			$t = "toto";
+		}else{
+			//ajoute les classes générées
+			foreach($moteur->arrClass as $k=>$c){
+				$this->ordre ++;
+				$this->arrClass[$this->ordre] = $c;
 			}
+			//ajoute les caractères générées
+			foreach($moteur->arrCaract as $k=>$c){
+				$this->arrCaract[$k] = $c;
+			}			
 		}		
 	}
 	
@@ -1281,16 +1316,10 @@ class Gen_Moteur
 		$arrClass = $this->getClassVals($class,$i);	        	
 		foreach($arrClass["arr"] as $cls){
 			if($this->verif){
-				//vérifie si la class est dans le tableau
-				if(in_array($cls, $this->arrDoublons)){
-					$this->arrClass[$this->ordre]["doublons"] = $cls;
-				}else{
-					$this->arrDoublons[] = $cls;
-					$this->getClass($cls);
-				}
-			}else{
-				$this->getClass($cls);
+				$this->xmlGen = $this->xml->createElement('gen',$cls);
+				$this->xmlRoot->appendChild($this->xmlGen);		
 			}
+			$this->getClass($cls);
         }	        	
 		return $arrClass["fin"];
 	}
@@ -1477,8 +1506,8 @@ class Gen_Moteur
         	//pour la vérification
         	$i=0;
         	foreach($arrCpt["dst"] as $dst){
-        		$this->arrClass[$this->ordre][$i][] = $this->getClassGen($dst);	
-        		$i++;
+	        	$this->arrClass[$this->ordre][$i][] = $this->getClassGen($dst, $class);
+	        	$i++;
         	}
         	$cpt = false;
         }else{
@@ -1533,7 +1562,7 @@ class Gen_Moteur
         //Vérifie si le concept est un générateur
         if(isset($cpt["id_gen"])){
         	//générer l'expression
-			$m = new Gen_Moteur($this->xmlDesc,$this->forceCalcul);
+			$m = new Gen_Moteur($this->urlDesc,$this->forceCalcul,$this->xmlDesc);
 			$m->timeDeb = $this->timeDeb;
 			$m->niv = $this->niv+1;
 			$m->arrDicos = $this->arrDicos;
@@ -1542,9 +1571,16 @@ class Gen_Moteur
 				$m->verif = $this->verif;
 				$m->arrDoublons = $this->arrDoublons;
 			}
-						
-			//génére la classe
-			$m->Generation($cpt['valeur'],false,$this->cache);
+
+			if($this->verif){
+				//vérifie la class
+				$m->xml = $this->xml;
+				$m->xmlRoot = $this->xmlGen;
+				$m->Verification($cpt['valeur'], $this->niv+1);				
+			}else{
+				//génére la classe
+				$m->Generation($cpt['valeur'],false,$this->cache);				
+			}
 			
 			/*vérifie que la classe n'a pas déjà été générée
 			if($this->in_multiarray($cpt['valeur'],$this->arrClass)){
