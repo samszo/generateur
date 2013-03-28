@@ -40,11 +40,13 @@
 			
 			protected function findByIdConcept_resultHandler(event:ResultEvent):void
 			{
+				lblDicoConj.text = "";
 				if(event.result[0]){
 					donnee = event.result[0];
 					gmConj.itemSelect = donnee.id_conj;
 					gmConj.bInit = true;
 					gmConj.init();
+					lblDicoConj.text = "du dictionnaire de conjugaison :"+donnee.dicoConj;
 					if(donnee.elision=="0")elision.selected = false; 
 					else elision.selected = true;
 				}				
@@ -195,10 +197,11 @@
 			<s:Label text="prefix :" /><s:TextInput id="prefix" text="{donnee.prefix}" />			
 			<s:CheckBox label="élision :" id="elision" /> 			
 		</s:HGroup>
-		<s:HGroup width="100%" verticalAlign="middle">
+		<s:HGroup verticalAlign="middle" horizontalAlign="left">
 			<s:Label text="modèle de conjugaison :" /><compo:cbGroupeMot id="gmConj" bInit="false" bAjout="false" bRemove="false" keyName="id_conj" labelName="modele" 
 							objName="Model_DbTable_Gen_conjugaisons" objMethode="findByIdDicoVerbe" objParam="{donnee.id_dico}" objSource="gV"
 							titre="une conjugaison"/>
+			<s:Label id="lblDicoConj" text="" />
 		</s:HGroup>
 		<mx:TabNavigator id="tabnav" width="100%" height="100%">
 			<s:NavigatorContent label="Indicatif présent" >

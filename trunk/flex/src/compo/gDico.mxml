@@ -53,12 +53,16 @@
 			public function init():void
 			{
 				detail.removeAllElements();
-				if(oItem){
-					
+				if(oItem){					
 					if(oItem.type=="concepts"){
 						var gC:gConcept = new gConcept();
 						gC.idDico = oItem.id_dico;
 						detail.addElement(gC);
+					}
+					if(oItem.type=="conjugaisons"){
+						var gCo:gConj = new gConj;
+						gCo.idDico = oItem.id_dico;
+						detail.addElement(gCo);
 					}
 				}				
 			}
