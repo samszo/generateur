@@ -131,7 +131,7 @@
 				</s:HGroup>
 				<mx:DataGrid id="dg" width="100%" height="100%" click="selectDgItem(event);" editable="true" >
 					<mx:columns>
-						<mx:DataGridColumn dataField="id_concept" editable="false" visible="true" headerText="id_concept" />
+						<mx:DataGridColumn dataField="id_concept" editable="false" visible="false" headerText="id_concept" />
 						<mx:DataGridColumn dataField="lib" headerText="Descripteur" />
 						<mx:DataGridColumn dataField="type" editable="false" headerText="Type" />
 					</mx:columns>
