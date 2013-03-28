@@ -157,12 +157,13 @@ class Model_DbTable_Gen_conjugaisons extends Zend_Db_Table_Abstract
     public function findByIdDico($id_dico)
     {
         $query = $this->select()
-                    ->from( array("g" => "gen_conjugaisons") )                           
-                    ->where( "g.id_dico = ?", $id_dico );
+			->from( array("g" => "gen_conjugaisons") )                           
+            ->where( "g.id_dico = ?", $id_dico )
+        	->order("modele");
 
         return $this->fetchAll($query)->toArray(); 
     }
-    	/**
+   	/**
      * Recherche une entrée Gen_conjugaisons avec la valeur spécifiée
      * et retourne cette entrée.
      *
@@ -182,6 +183,49 @@ class Model_DbTable_Gen_conjugaisons extends Zend_Db_Table_Abstract
             
         return $this->fetchAll($query)->toArray(); 
     }
+    /**
+     * Recherche les terminaisons associées à un modèle
+     * et retourne ces entrées.
+     *
+     * @param int $id_conj
+     *
+     * @return array
+     */
+    public function findTermByIdConj($id_conj)
+    {
+    	$query = $this->select()
+    	->from( array("c" => "gen_conjugaisons"),array())
+    	->setIntegrityCheck(false) //pour pouvoir sélectionner des colonnes dans une autre table
+    		->joinInner(array('t' => 'gen_terminaisons'), 't.id_conj = c.id_conj', array("num","id_trm","lib"))
+		->where( "c.id_conj = ?", $id_conj)
+    	->order("t.num");
+    
+    	return $this->fetchAll($query)->toArray();
+    }
+
+    /**
+     * Recherche les verbes associée à un modèle
+     * et retourne ces entrées.
+     *
+     * @param int $id_conj
+     *
+     * @return array
+     */
+    public function findVerbeByIdConj($id_conj)
+    {
+    	$query = $this->select()
+    	->from( array("c" => "gen_conjugaisons"),array())
+    	->setIntegrityCheck(false) //pour pouvoir sélectionner des colonnes dans une autre table
+    	->joinInner(array('v' => 'gen_verbes'), 'v.id_conj = c.id_conj', array("id_verbe","elision","prefix"))
+    	->joinInner(array('cv' => 'gen_concepts_verbes'), 'cv.id_verbe = v.id_verbe', array())
+    	->joinInner(array('cpt' => 'gen_concepts'), 'cpt.id_concept = cv.id_concept', array("lib","id_concept"))
+    	->where( "c.id_conj = ?", $id_conj)
+    	->order("prefix");
+    
+    	return $this->fetchAll($query)->toArray();
+    }
+    
+        
     /**
      * Recherche une entrée Gen_conjugaisons avec la valeur spécifiée
      * et retourne cette entrée.
