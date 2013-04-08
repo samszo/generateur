@@ -64,7 +64,23 @@ class Model_DbTable_Gen_determinants extends Zend_Db_Table_Abstract
     	}
     	return $id;
     } 
-           
+
+    /**
+     * Recherche une entrée Gen_determinants avec la clef primaire spécifiée
+     * et modifie cette entrée avec les nouvelles données.
+     *
+     * @param array $data
+     *
+     * @return void
+     */
+    public function editMulti($data)
+    {
+   		foreach ($data as $c) {
+   			$this->edit($c["id_dtm"], array("lib"=>$c["lib"]));
+   		}
+    }
+    
+    
     /**
      * Recherche une entrée Gen_determinants avec la clef primaire spécifiée
      * et modifie cette entrée avec les nouvelles données.
@@ -154,13 +170,31 @@ class Model_DbTable_Gen_determinants extends Zend_Db_Table_Abstract
      *
      * @return array
      */
-    public function findById_dico($id_dico)
+    public function findByIdDico($id_dico)
     {
-        $query = $this->select()
-                    ->from( array("g" => "gen_determinants") )                           
-                    ->where( "g.id_dico = ?", $id_dico );
+    	$sql = "SELECT
+    		d0.num  
+			,d0.id_dtm id0, d0.lib ms 
+			,d1.id_dtm id1, d1.lib fs
+			,d2.id_dtm id2, d2.lib mse
+			,d3.id_dtm id3, d3.lib fse
+			,d4.id_dtm id4, d4.lib mp
+			,d5.id_dtm id5, d5.lib fp
+			,d6.id_dtm id6, d6.lib mpe
+			,d7.id_dtm id7, d7.lib fpe
+		FROM gen_determinants d0
+			INNER JOIN gen_determinants d1 ON d1.id_dico = d0.id_dico AND d1.num = d0.num AND d1.ordre = 1
+			INNER JOIN gen_determinants d2 ON d2.id_dico = d0.id_dico AND d2.num = d0.num AND d2.ordre = 2
+			INNER JOIN gen_determinants d3 ON d3.id_dico = d0.id_dico AND d3.num = d0.num AND d3.ordre = 3
+			INNER JOIN gen_determinants d4 ON d4.id_dico = d0.id_dico AND d4.num = d0.num AND d4.ordre = 4
+			INNER JOIN gen_determinants d5 ON d5.id_dico = d0.id_dico AND d5.num = d0.num AND d5.ordre = 5
+			INNER JOIN gen_determinants d6 ON d6.id_dico = d0.id_dico AND d6.num = d0.num AND d6.ordre = 6
+			INNER JOIN gen_determinants d7 ON d7.id_dico = d0.id_dico AND d7.num = d0.num AND d7.ordre = 7
+		WHERE d0.id_dico = ".$id_dico." AND d0.ordre = 0";                    
+		
+    	$db = $this->getAdapter()->query($sql);
 
-        return $this->fetchAll($query)->toArray(); 
+		return $db->fetchAll();
     }
     	/**
      * Recherche une entrée Gen_determinants avec la valeur spécifiée
