@@ -6,7 +6,14 @@ try {
 	$application->bootstrap();
 
 	/*
+	$dbD = new Model_DbTable_Gen_determinants();
+	$arr = $dbD->findByIdDico(46);
+	*/
+	
+	/*
 	$dbT = new Model_DbTable_Gen_conjugaisons();
+	$arrTrmChange[]=array("id_trm"=>"24712","lib"=>"ous");	
+	$dbT->editTerms($arrTrmChange);
 	$arr = $dbT->findVerbeByIdConj('824');
 	$arr = $dbT->findTermByIdConj(680);
 	*/
@@ -27,12 +34,12 @@ try {
 	*/
 	
 	/*
-	
-
-	 
 	$dbS = new Model_DbTable_Gen_syntagmes();
+	$dbS->ajouter(array("id_dico"=>4,"lib"=>"test"));
 	$arr = $dbS->findByIdConcept(56203, "4");
+	*/
 		
+	/* 
 	$dbODU = new Model_DbTable_Gen_oeuvresxdicosxutis();
 	$dbODU->findByIdOeu(6);
 	
