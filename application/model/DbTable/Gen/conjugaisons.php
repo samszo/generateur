@@ -76,8 +76,23 @@ class Model_DbTable_Gen_conjugaisons extends Zend_Db_Table_Abstract
      */
     public function edit($id, $data)
     {        
-   	
     	$this->update($data, 'gen_conjugaisons.id_conj = ' . $id);
+    }
+    
+    /**
+     * Recherche une entrée Gen_conjugaisons avec la clef primaire spécifiée
+     * et modifie cette entrée avec les nouvelles données.
+     *
+     * @param array $data
+     *
+     * @return void
+     */
+    public function editTerms($data)
+    {
+    	$dbTerm = new Model_DbTable_Gen_terminaisons();        
+   		foreach ($data as $c) {
+   			$dbTerm->edit($c["id_trm"], array("lib"=>$c["lib"]));
+   		}
     }
     
     /**
@@ -197,7 +212,7 @@ class Model_DbTable_Gen_conjugaisons extends Zend_Db_Table_Abstract
     	->from( array("c" => "gen_conjugaisons"),array())
     	->setIntegrityCheck(false) //pour pouvoir sélectionner des colonnes dans une autre table
     		->joinInner(array('t' => 'gen_terminaisons'), 't.id_conj = c.id_conj', array("num","id_trm","lib"))
-		->where( "c.id_conj = ?", $id_conj)
+    	->where( "c.id_conj = ?", $id_conj)
     	->order("t.num");
     
     	return $this->fetchAll($query)->toArray();
@@ -220,7 +235,7 @@ class Model_DbTable_Gen_conjugaisons extends Zend_Db_Table_Abstract
     	->joinInner(array('cv' => 'gen_concepts_verbes'), 'cv.id_verbe = v.id_verbe', array())
     	->joinInner(array('cpt' => 'gen_concepts'), 'cpt.id_concept = cv.id_concept', array("lib","id_concept"))
     	->where( "c.id_conj = ?", $id_conj)
-    	->order("prefix");
+    	->order("cpt.lib");
     
     	return $this->fetchAll($query)->toArray();
     }

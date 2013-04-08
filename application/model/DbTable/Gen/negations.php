@@ -154,11 +154,11 @@ class Model_DbTable_Gen_negations extends Zend_Db_Table_Abstract
      *
      * @return array
      */
-    public function findById_dico($id_dico)
+    public function findByIdDico($id_dico)
     {
         $query = $this->select()
-                    ->from( array("g" => "gen_negations") )                           
-                    ->where( "g.id_dico = ?", $id_dico );
+			->from( array("g" => "gen_negations") )                           
+            ->where( "g.id_dico = ?", $id_dico );
 
         return $this->fetchAll($query)->toArray(); 
     }

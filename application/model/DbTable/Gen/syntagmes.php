@@ -45,24 +45,58 @@ class Model_DbTable_Gen_syntagmes extends Zend_Db_Table_Abstract
 	    if($rows->count()>0)$id=$rows[0]->id_syn; else $id=false;
         return $id;
     } 
-        
+
+    /**
+     * Vérifie si une entrée Gen_syntagmes est utilisée.
+     *
+     * @param int 		$idDico
+     * @param string 	$num
+     *
+     * @return array
+     */
+    public function utilise($idDico, $num)
+    {
+    	$sql ="SELECT COUNT(DISTINCT g.id_gen) nbGen
+    		, COUNT(DISTINCT oduA.id_oeu) nbOeu
+			, COUNT(DISTINCT g.id_dico) nbDico
+			, COUNT(DISTINCT oduA.uti_id) nbUti
+		FROM gen_syntagmes s
+			INNER JOIN gen_oeuvres_dicos_utis odu ON odu.id_dico = s.id_dico
+			INNER JOIN gen_oeuvres_dicos_utis oduA ON oduA.id_oeu = odu.id_oeu
+			LEFT JOIN gen_generateurs g ON g.valeur LIKE '%[".$num."#]%' AND g.id_dico = oduA.id_dico
+			WHERE s.num = ".$num." AND s.id_dico = ".$idDico."
+			GROUP BY s.id_syn";
+		$db = $this->getAdapter()->query($sql);
+        return $db->fetchAll();
+
+    } 
+    
     /**
      * Ajoute une entrée Gen_syntagmes.
      *
      * @param array $data
      * @param boolean $existe
+     * @param boolean $bData
      *  
-     * @return integer
+     * @return mixte
      */
-    public function ajouter($data, $existe=true)
+    public function ajouter($data, $existe=true, $bData=false)
     {
-    	
+    	if(!isset($data['num'])){
+    		//recherche le dernier num du dictionnaire
+    		$mn = $this->findMaxNumByIdDico($data['id_dico']);
+    		$data['num'] = $mn[0]['maxNum']+1;
+    	}
     	$id=false;
     	if($existe)$id = $this->existe($data);
     	if(!$id){
     	 	$id = $this->insert($data);
+    	 	$data['id_syn']=$id;
     	}
-    	return $id;
+    	if ($bData)
+    		return $data;
+    	else
+	    	return $id;
     } 
            
     /**
@@ -93,18 +127,6 @@ class Model_DbTable_Gen_syntagmes extends Zend_Db_Table_Abstract
     	$this->delete('gen_syntagmes.id_syn = ' . $id);
     }
 
-    /**
-     * Recherche les entrées de Gen_syntagmes avec la clef de lieu
-     * et supprime ces entrées.
-     *
-     * @param integer $idLieu
-     *
-     * @return void
-     */
-    public function removeLieu($idLieu)
-    {
-		$this->delete('id_lieu = ' . $idLieu);
-    }
     
     /**
      * Récupère toutes les entrées Gen_syntagmes avec certains critères
@@ -152,7 +174,23 @@ class Model_DbTable_Gen_syntagmes extends Zend_Db_Table_Abstract
         return $this->fetchAll($query)->toArray(); 
     }
     
-    	/**
+    /**
+     * Recherche le plus grand num pour un dictionnaire
+     *
+     * @param int $idDico
+     *
+     * @return array
+     */
+    public function findMaxNumByIdDico($idDico)
+    {
+        $query = $this->select()
+			->from( array("g" => "gen_syntagmes"),array("maxNum"=>"MAX(num)"))                           
+            ->where( "g.id_dico = ?", $idDico);
+
+        return $this->fetchAll($query)->toArray(); 
+    }
+    
+    /**
      * Recherche une entrée Gen_syntagmes avec la valeur spécifiée
      * et retourne cette entrée.
      *
@@ -176,7 +214,7 @@ class Model_DbTable_Gen_syntagmes extends Zend_Db_Table_Abstract
      *
      * @return array
      */
-    public function findById_dico($id_dico)
+    public function findByIdDico($id_dico)
     {
         $query = $this->select()
                     ->from( array("g" => "gen_syntagmes") )                           
