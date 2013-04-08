@@ -16,12 +16,16 @@
 			import mx.events.FlexEvent;
 			import mx.rpc.events.FaultEvent;
 			import mx.rpc.events.ResultEvent;
+			
+			import spark.events.TextOperationEvent;
 						
 			[Bindable] public var idDico:String;
 			[Bindable] public var bRemove:Boolean=true;
 			[Bindable] public var bAjout:Boolean=true;
 			[Bindable] public var cptVerbe:String="";
-			private var ctlTrm:Array=new Array;
+			[Bindable] public var arrTrm:Array=new Array;
+			[Bindable] public var arrTrmChange:Array=new Array;
+			[Bindable] public var bChange:Boolean=false;
 
 			public function faultHandlerService(fault:FaultEvent):void
 			{
@@ -30,7 +34,7 @@
 					"Detail: "+fault.fault.faultDetail.toString()+"\n"+
 					"String: "+fault.fault.faultString.toString()+"\n";
 				
-				Alert.show(str, "ERREUR : Détail Concept");
+				Alert.show(str, "ERREUR : Détail Conjugaison");
 			}
 			
 			protected function creationCompleteHandler(event:FlexEvent):void
@@ -38,46 +42,6 @@
 				if(idDico){
 					ROC.findByIdDico(idDico);
 				}
-				//garde les contrôle pour les terminaisons
-				ctlTrm.push(t1);
-				ctlTrm.push(t2);
-				ctlTrm.push(t3);
-				ctlTrm.push(t4);
-				ctlTrm.push(t5);
-				ctlTrm.push(t6);
-				ctlTrm.push(t7);
-				ctlTrm.push(t8);
-				ctlTrm.push(t9);
-				ctlTrm.push(t10);
-				ctlTrm.push(t11);
-				ctlTrm.push(t12);
-				ctlTrm.push(t13);
-				ctlTrm.push(t14);
-				ctlTrm.push(t15);
-				ctlTrm.push(t16);
-				ctlTrm.push(t17);
-				ctlTrm.push(t18);
-				ctlTrm.push(t19);
-				ctlTrm.push(t20);
-				ctlTrm.push(t21);
-				ctlTrm.push(t22);
-				ctlTrm.push(t23);
-				ctlTrm.push(t24);
-				ctlTrm.push(t25);
-				ctlTrm.push(t26);
-				ctlTrm.push(t27);
-				ctlTrm.push(t28);
-				ctlTrm.push(t29);
-				ctlTrm.push(t30);
-				ctlTrm.push(t31);
-				ctlTrm.push(t32);
-				ctlTrm.push(t33);
-				ctlTrm.push(t34);
-				ctlTrm.push(t35);
-				ctlTrm.push(t36);
-				ctlTrm.push(t37);
-				ctlTrm.push(t38);
-
 			}
 			
 			protected function findByDico_resultHandler(event:ResultEvent):void
@@ -123,18 +87,114 @@
 
 			protected function findTermByIdConj_resultHandler(event:ResultEvent):void
 			{
-				for each(var tx:Object in ctlTrm){
-					tx.text = "";	
-				}
 			
 				if(event.result){
-					var arr:Array = event.result as Array;
-					for each(var item:Object in arr){
-						var txt:Object = ctlTrm[item.num];
-						txt.text = item.lib;
-					}	
+					arrTrm = event.result as Array;
+					initTerms();
+					bChange = false;
+					arrTrmChange = new Array;
 
 				}
+				
+			}
+
+			protected function initTerms():void
+			{
+				if(arrTrm.length!=38){
+					Alert.show("Il manque des terminaisons pour ce modèle.\nMerci de corriger.", "ERREUR : Détail Conjugaison");
+					return;
+				}
+								
+				if(tabnav.selectedIndex==0){
+					t1.text = arrTrm[0].lib;
+					t2.text = arrTrm[1].lib;
+					t3.text = arrTrm[2].lib;
+					t4.text = arrTrm[3].lib;
+					t5.text = arrTrm[4].lib;
+					t6.text = arrTrm[5].lib;					
+					t1.setStyle("color","black");
+					t2.setStyle("color","black");
+					t3.setStyle("color","black");
+					t4.setStyle("color","black");
+					t5.setStyle("color","black");
+					t6.setStyle("color","black");					
+				}
+				if(tabnav.selectedIndex==1){
+					t7.text = arrTrm[6].lib;
+					t8.text = arrTrm[7].lib;
+					t9.text = arrTrm[8].lib;
+					t10.text = arrTrm[9].lib;
+					t11.text = arrTrm[10].lib;
+					t12.text = arrTrm[11].lib;
+					t7.setStyle("color","black");
+					t8.setStyle("color","black");
+					t9.setStyle("color","black");
+					t10.setStyle("color","black");
+					t11.setStyle("color","black");
+					t12.setStyle("color","black");
+				}
+				if(tabnav.selectedIndex==2){
+					t13.text = arrTrm[12].lib;
+					t14.text = arrTrm[13].lib;
+					t15.text = arrTrm[14].lib;
+					t16.text = arrTrm[15].lib;
+					t17.text = arrTrm[16].lib;
+					t18.text = arrTrm[17].lib;					
+					t13.setStyle("color","black");
+					t14.setStyle("color","black");
+					t15.setStyle("color","black");
+					t16.setStyle("color","black");
+					t17.setStyle("color","black");
+					t18.setStyle("color","black");					
+				}
+				if(tabnav.selectedIndex==3){
+					t19.text = arrTrm[18].lib;
+					t20.text = arrTrm[19].lib;
+					t21.text = arrTrm[20].lib;
+					t22.text = arrTrm[21].lib;
+					t23.text = arrTrm[22].lib;
+					t24.text = arrTrm[23].lib;
+					t19.setStyle("color","black");
+					t20.setStyle("color","black");
+					t21.setStyle("color","black");
+					t22.setStyle("color","black");
+					t23.setStyle("color","black");
+					t24.setStyle("color","black");
+				}
+				if(tabnav.selectedIndex==4){
+					t25.text = arrTrm[24].lib;
+					t26.text = arrTrm[25].lib;
+					t27.text = arrTrm[26].lib;
+					t28.text = arrTrm[27].lib;
+					t29.text = arrTrm[28].lib;
+					t30.text = arrTrm[29].lib;					
+					t25.setStyle("color","black");
+					t26.setStyle("color","black");
+					t27.setStyle("color","black");
+					t28.setStyle("color","black");
+					t29.setStyle("color","black");
+					t30.setStyle("color","black");					
+				}
+				if(tabnav.selectedIndex==5){
+					t31.text = arrTrm[30].lib;
+					t32.text = arrTrm[31].lib;
+					t33.text = arrTrm[32].lib;
+					t34.text = arrTrm[33].lib;
+					t35.text = arrTrm[34].lib;
+					t36.text = arrTrm[35].lib;
+					t31.setStyle("color","black");
+					t32.setStyle("color","black");
+					t33.setStyle("color","black");
+					t34.setStyle("color","black");
+					t35.setStyle("color","black");
+					t36.setStyle("color","black");
+				}
+				if(tabnav.selectedIndex==6){
+					t37.text = arrTrm[36].lib;
+					t38.text = arrTrm[37].lib;
+					t37.setStyle("color","black");
+					t38.setStyle("color","black");
+				}				
 				
 			}
 			
@@ -142,28 +202,218 @@
 			{
 				if(event.result){
 					dgVerbe.dataProvider = event.result as Array;
+					initResultGen();
+					bChange = false;
+					arrTrmChange = new Array;
 				}				
 			}
 			
+			protected function initResultGen():void
+			{
+				if(tabnav.selectedIndex==0){
+					GTp1P.text = "---";
+					GTp2P.text = "---";
+					GTp3P.text = "---";
+					GTp4P.text = "---";
+					GTp5P.text = "---";
+					GTp6P.text = "---";						
+				}
+				if(tabnav.selectedIndex==1){
+					GTp1I.text = "---";
+					GTp2I.text = "---";
+					GTp3I.text = "---";
+					GTp4I.text = "---";
+					GTp5I.text = "---";
+					GTp6I.text = "---";
+											
+				}
+				if(tabnav.selectedIndex==2){
+					GTp1PS.text = "---";
+					GTp2PS.text = "---";
+					GTp3PS.text = "---";
+					GTp4PS.text = "---";
+					GTp5PS.text = "---";
+					GTp6PS.text = "---";
+											
+				}
+				if(tabnav.selectedIndex==3){
+					GTp1F.text = "---";
+					GTp2F.text = "---";
+					GTp3F.text = "---";
+					GTp4F.text = "---";
+					GTp5F.text = "---";
+					GTp6F.text = "---";
+											
+				}
+				if(tabnav.selectedIndex==4){
+					GTp1C.text = "---";
+					GTp2C.text = "---";
+					GTp3C.text = "---";
+					GTp4C.text = "---";
+					GTp5C.text = "---";
+					GTp6C.text = "---";
+											
+				}
+				if(tabnav.selectedIndex==5){
+					GTp1S.text = "---";
+					GTp2S.text = "---";
+					GTp3S.text = "---";
+					GTp4S.text = "---";
+					GTp5S.text = "---";
+					GTp6S.text = "---";
+											
+				}
+				if(tabnav.selectedIndex==6){
+					GTpPP.text = "---";
+					GTpIP.text = "---";
+											
+				}					
+			}
+
 			protected function dgVerbe_clickHandler(event:MouseEvent):void
 			{
 				var item:Object=event.currentTarget.selectedItem;
 				if(item){
-					cptVerbe = item.lib;					
+					cptVerbe = item.lib;
+					initResultGen();
 				}				
 			}
 			
 			protected function enregistrer_clickHandler(event:MouseEvent):void
 			{
-				
+				ROC.editTerms(arrTrmChange);
 			}
 			
 			protected function tester_clickHandler(event:MouseEvent):void
 			{
 				if(this.parentApplication.verifDico()){
+					/*
+					Position 1 : type de négation
+					Position 2 : temps verbal
+					Position 3 : pronoms sujets définis
+					Positions 4 ET 5 : pronoms compléments
+					Position 6 : ordre des pronoms sujets
+					Position 7 : pronoms indéfinis
+					Position 8 : Place du sujet dans la chaîne grammaticale
+					*/
 					
+					var arrT:Array = new Array();
+					var arrO:Array = new Array();
+					
+					if(tabnav.selectedIndex==0){
+						arrT.push(Gp1P.text);
+						arrO.push(GTp1P);
+						arrT.push(Gp2P.text);
+						arrO.push(GTp2P);
+						arrT.push(Gp3P.text);
+						arrO.push(GTp3P);
+						arrT.push(Gp4P.text);
+						arrO.push(GTp4P);
+						arrT.push(Gp5P.text);
+						arrO.push(GTp5P);
+						arrT.push(Gp6P.text);
+						arrO.push(GTp6P);						
+					}
+					if(tabnav.selectedIndex==1){
+						arrT.push(Gp1I.text);
+						arrO.push(GTp1I);
+						arrT.push(Gp2I.text);
+						arrO.push(GTp2I);
+						arrT.push(Gp3I.text);
+						arrO.push(GTp3I);
+						arrT.push(Gp4I.text);
+						arrO.push(GTp4I);
+						arrT.push(Gp5I.text);
+						arrO.push(GTp5I);
+						arrT.push(Gp6I.text);
+						arrO.push(GTp6I);						
+					}
+					if(tabnav.selectedIndex==2){
+						arrT.push(Gp1PS.text);
+						arrO.push(GTp1PS);
+						arrT.push(Gp2PS.text);
+						arrO.push(GTp2PS);
+						arrT.push(Gp3PS.text);
+						arrO.push(GTp3PS);
+						arrT.push(Gp4PS.text);
+						arrO.push(GTp4PS);
+						arrT.push(Gp5PS.text);
+						arrO.push(GTp5PS);
+						arrT.push(Gp6PS.text);
+						arrO.push(GTp6PS);						
+					}
+					if(tabnav.selectedIndex==3){
+						arrT.push(Gp1F.text);
+						arrO.push(GTp1F);
+						arrT.push(Gp2F.text);
+						arrO.push(GTp2F);
+						arrT.push(Gp3F.text);
+						arrO.push(GTp3F);
+						arrT.push(Gp4F.text);
+						arrO.push(GTp4F);
+						arrT.push(Gp5F.text);
+						arrO.push(GTp5F);
+						arrT.push(Gp6F.text);
+						arrO.push(GTp6F);						
+					}
+					if(tabnav.selectedIndex==4){
+						arrT.push(Gp1C.text);
+						arrO.push(GTp1C);
+						arrT.push(Gp2C.text);
+						arrO.push(GTp2C);
+						arrT.push(Gp3C.text);
+						arrO.push(GTp3C);
+						arrT.push(Gp4C.text);
+						arrO.push(GTp4C);
+						arrT.push(Gp5C.text);
+						arrO.push(GTp5C);
+						arrT.push(Gp6C.text);
+						arrO.push(GTp6C);						
+					}
+					if(tabnav.selectedIndex==5){
+						arrT.push(Gp1S.text);
+						arrO.push(GTp1S);
+						arrT.push(Gp2S.text);
+						arrO.push(GTp2S);
+						arrT.push(Gp3S.text);
+						arrO.push(GTp3S);
+						arrT.push(Gp4S.text);
+						arrO.push(GTp4S);
+						arrT.push(Gp5S.text);
+						arrO.push(GTp5S);
+						arrT.push(Gp6S.text);
+						arrO.push(GTp6S);						
+					}
+					if(tabnav.selectedIndex==6){
+						arrT.push(GpPP.text);
+						arrO.push(GTpPP);						
+						arrT.push(GpIP.text);
+						arrO.push(GTpIP);						
+					}
+					
+					this.parentApplication.testerGen(arrT,arrO);
 				}
 			}
+			
+			protected function t_changeHandler(event:TextOperationEvent):void
+			{
+				var tx:TextInput = event.target as TextInput;
+				tx.setStyle("color","red");
+				var id:String = tx.id.substr(1);
+				var i:int = int(id)-1;
+				var change:Array = new Array;
+				change["lib"] = tx.text;
+				change["id_trm"] = arrTrm[i].id_trm;
+				arrTrmChange.push(change);
+				bChange = true;
+			}
+			
+			protected function edit_resultHandler(event:ResultEvent):void
+			{
+				bChange = false;
+				arrTrmChange = new Array;
+			}
+			
 		]]>
 	</fx:Script>
 		
@@ -172,7 +422,8 @@
 						 source="Model_DbTable_Gen_conjugaisons" destination="zend" 
 						 showBusyCursor="true"
 						 fault="faultHandlerService(event)">
-			<s:method name="edit" />  	
+			<s:method name="edit" result="edit_resultHandler(event)" />
+			<s:method name="editTerms" result="edit_resultHandler(event)" />
 			<s:method name="findByIdDico" result="findByDico_resultHandler(event)" />
 			<s:method name="findTermByIdConj" result="findTermByIdConj_resultHandler(event)" />
 			<s:method name="findVerbeByIdConj" result="findVerbeByIdConj_resultHandler(event)"/>
@@ -199,19 +450,18 @@
 				<mx:DataGrid id="dgVerbe" height="100%" click="dgVerbe_clickHandler(event)" >
 					<mx:columns>
 						<mx:DataGridColumn dataField="id_concept" editable="false" visible="false" headerText="id_concept" />
-						<mx:DataGridColumn dataField="lib" headerText="Verbe(s) associé(s)" />
+						<mx:DataGridColumn dataField="lib" headerText="Verbe(s)" />
 					</mx:columns>
 				</mx:DataGrid>									
 				<s:VGroup width="100%" height="100%" >
-					<s:Label id="lblDicoTerm" text="" />
-					<mx:TabNavigator id="tabnav" width="100%" height="100%">
+					<mx:TabNavigator id="tabnav" width="100%" height="100%" change="initTerms()">
 						<s:NavigatorContent label="Indicatif présent" >
 							<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
 								<s:VGroup width="100%" height="100%">					
 									<s:HGroup width="100%">
-										<s:TextInput id="t1" width="100%" text="" />
+										<s:TextInput id="t1" width="100%" text="" change="t_changeHandler(event)" />
 										<s:TextInput id="Gp1P" width="100%" text="{'[011000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp1P" width="100%" color="#E01919" text="---" />				
+										<s:TextInput id="GTp1P" width="100%" color="#117E20" text="---" />				
 									</s:HGroup>
 									<s:Line width="100%" >
 										<s:stroke>
@@ -219,9 +469,9 @@
 										</s:stroke>					
 									</s:Line>
 									<s:HGroup width="100%">
-										<s:TextInput id="t2" width="100%" text="" />
+										<s:TextInput id="t2" width="100%" text="" change="t_changeHandler(event)" />
 										<s:TextInput id="Gp2P" width="100%" text="{'[012000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp2P" width="100%" color="#E01919" text="---" />				
+										<s:TextInput id="GTp2P" width="100%" color="#117E20" text="---" />				
 									</s:HGroup>
 									<s:Line width="100%" >
 										<s:stroke>
@@ -229,16 +479,16 @@
 										</s:stroke>					
 									</s:Line>
 									<s:HGroup width="100%">
-										<s:TextInput id="t3" width="100%" text="" />
+										<s:TextInput id="t3" width="100%" text="" change="t_changeHandler(event)" />
 										<s:TextInput id="Gp3P" width="100%" text="{'[013000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp3P" width="100%" color="#E01919" text="---" />				
+										<s:TextInput id="GTp3P" width="100%" color="#117E20" text="---" />				
 									</s:HGroup>
 								</s:VGroup>
 								<s:VGroup width="100%" height="100%">					
 									<s:HGroup width="100%">
-										<s:TextInput id="t4" width="100%" text="" />
+										<s:TextInput id="t4" width="100%" text="" change="t_changeHandler(event)" />
 										<s:TextInput id="Gp4P" width="100%" text="{'[014000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp4P" width="100%" color="#E01919" text="---" />				
+										<s:TextInput id="GTp4P" width="100%" color="#117E20" text="---" />				
 									</s:HGroup>
 									<s:Line width="100%" >
 										<s:stroke>
@@ -246,9 +496,9 @@
 										</s:stroke>					
 									</s:Line>
 									<s:HGroup width="100%">
-										<s:TextInput id="t5" width="100%" text="" />
+										<s:TextInput id="t5" width="100%" text="" change="t_changeHandler(event)" />
 										<s:TextInput id="Gp5P" width="100%" text="{'[015000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp5P" width="100%" color="#E01919" text="---" />				
+										<s:TextInput id="GTp5P" width="100%" color="#117E20" text="---" />				
 									</s:HGroup>
 									<s:Line width="100%" >
 										<s:stroke>
@@ -256,9 +506,9 @@
 										</s:stroke>					
 									</s:Line>
 									<s:HGroup width="100%">
-										<s:TextInput id="t6" width="100%" text="" />
+										<s:TextInput id="t6" width="100%" text="" change="t_changeHandler(event)" />
 										<s:TextInput id="Gp6P" width="100%" text="{'[017000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp6P" width="100%" color="#E01919" text="---" />				
+										<s:TextInput id="GTp6P" width="100%" color="#117E20" text="---" />				
 									</s:HGroup>
 								</s:VGroup>
 							</s:HGroup>
@@ -267,9 +517,9 @@
 							<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
 								<s:VGroup width="100%" height="100%">					
 									<s:HGroup width="100%">
-										<s:TextInput id="t7" width="100%" text="" />
+										<s:TextInput id="t7" width="100%" text="" change="t_changeHandler(event)" />
 										<s:TextInput id="Gp1I" width="100%" text="{'[021000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp1I" width="100%" color="#E01919" text="---" />				
+										<s:TextInput id="GTp1I" width="100%" color="#117E20" text="---" />				
 									</s:HGroup>
 									<s:Line width="100%" >
 										<s:stroke>
@@ -277,9 +527,9 @@
 										</s:stroke>					
 									</s:Line>
 									<s:HGroup width="100%">
-										<s:TextInput id="t8" width="100%" text="" />
+										<s:TextInput id="t8" width="100%" text="" change="t_changeHandler(event)" />
 										<s:TextInput id="Gp2I" width="100%" text="{'[022000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp2I" width="100%" color="#E01919" text="---" />				
+										<s:TextInput id="GTp2I" width="100%" color="#117E20" text="---" />				
 									</s:HGroup>
 									<s:Line width="100%" >
 										<s:stroke>
@@ -287,16 +537,16 @@
 										</s:stroke>					
 									</s:Line>
 									<s:HGroup width="100%">
-										<s:TextInput id="t9" width="100%" text="" />
+										<s:TextInput id="t9" width="100%" text="" change="t_changeHandler(event)" />
 										<s:TextInput id="Gp3I" width="100%" text="{'[023000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp3I" width="100%" color="#E01919" text="---" />				
+										<s:TextInput id="GTp3I" width="100%" color="#117E20" text="---" />				
 									</s:HGroup>
 								</s:VGroup>
 								<s:VGroup width="100%" height="100%">					
 									<s:HGroup width="100%">
-										<s:TextInput id="t10" width="100%" text="" />
+										<s:TextInput id="t10" width="100%" text="" change="t_changeHandler(event)" />
 										<s:TextInput id="Gp4I" width="100%" text="{'[024000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp4I" width="100%" color="#E01919" text="---" />				
+										<s:TextInput id="GTp4I" width="100%" color="#117E20" text="---" />				
 									</s:HGroup>
 									<s:Line width="100%" >
 										<s:stroke>
@@ -304,9 +554,9 @@
 										</s:stroke>					
 									</s:Line>
 									<s:HGroup width="100%">
-										<s:TextInput id="t11" width="100%" text="" />
+										<s:TextInput id="t11" width="100%" text="" change="t_changeHandler(event)" />
 										<s:TextInput id="Gp5I" width="100%" text="{'[025000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp5I" width="100%" color="#E01919" text="---" />				
+										<s:TextInput id="GTp5I" width="100%" color="#117E20" text="---" />				
 									</s:HGroup>
 									<s:Line width="100%" >
 										<s:stroke>
@@ -314,9 +564,9 @@
 										</s:stroke>					
 									</s:Line>
 									<s:HGroup width="100%">
-										<s:TextInput id="t12" width="100%" text="" />
+										<s:TextInput id="t12" width="100%" text="" change="t_changeHandler(event)" />
 										<s:TextInput id="Gp6I" width="100%" text="{'[027000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp6I" width="100%" color="#E01919" text="---" />				
+										<s:TextInput id="GTp6I" width="100%" color="#117E20" text="---" />				
 									</s:HGroup>
 								</s:VGroup>
 							</s:HGroup>
@@ -325,9 +575,9 @@
 							<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
 								<s:VGroup width="100%" height="100%">					
 									<s:HGroup width="100%">
-										<s:TextInput id="t13" width="100%" text="" />
+										<s:TextInput id="t13" width="100%" text="" change="t_changeHandler(event)" />
 										<s:TextInput id="Gp1PS" width="100%" text="{'[031000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp1PS" width="100%" color="#E01919" text="---" />				
+										<s:TextInput id="GTp1PS" width="100%" color="#117E20" text="---" />				
 									</s:HGroup>
 									<s:Line width="100%" >
 										<s:stroke>
@@ -335,9 +585,9 @@
 										</s:stroke>					
 									</s:Line>
 									<s:HGroup width="100%">
-										<s:TextInput id="t14" width="100%" text="" />
+										<s:TextInput id="t14" width="100%" text="" change="t_changeHandler(event)" />
 										<s:TextInput id="Gp2PS" width="100%" text="{'[032000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp2PS" width="100%" color="#E01919" text="---" />				
+										<s:TextInput id="GTp2PS" width="100%" color="#117E20" text="---" />				
 									</s:HGroup>
 									<s:Line width="100%" >
 										<s:stroke>
@@ -345,16 +595,16 @@
 										</s:stroke>					
 									</s:Line>
 									<s:HGroup width="100%">
-										<s:TextInput id="t15" width="100%" text="" />
+										<s:TextInput id="t15" width="100%" text="" change="t_changeHandler(event)" />
 										<s:TextInput id="Gp3PS" width="100%" text="{'[033000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp3PS" width="100%" color="#E01919" text="---" />				
+										<s:TextInput id="GTp3PS" width="100%" color="#117E20" text="---" />				
 									</s:HGroup>
 								</s:VGroup>
 								<s:VGroup width="100%" height="100%">					
 									<s:HGroup width="100%">
-										<s:TextInput id="t16" width="100%" text="" />
+										<s:TextInput id="t16" width="100%" text="" change="t_changeHandler(event)" />
 										<s:TextInput id="Gp4PS" width="100%" text="{'[034000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp4PS" width="100%" color="#E01919" text="---" />				
+										<s:TextInput id="GTp4PS" width="100%" color="#117E20" text="---" />				
 									</s:HGroup>
 									<s:Line width="100%" >
 										<s:stroke>
@@ -362,9 +612,9 @@
 										</s:stroke>					
 									</s:Line>
 									<s:HGroup width="100%">
-										<s:TextInput id="t17" width="100%" text="" />
+										<s:TextInput id="t17" width="100%" text="" change="t_changeHandler(event)" />
 										<s:TextInput id="Gp5PS" width="100%" text="{'[035000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp5PS" width="100%" color="#E01919" text="---" />				
+										<s:TextInput id="GTp5PS" width="100%" color="#117E20" text="---" />				
 									</s:HGroup>
 									<s:Line width="100%" >
 										<s:stroke>
@@ -372,9 +622,9 @@
 										</s:stroke>					
 									</s:Line>
 									<s:HGroup width="100%">
-										<s:TextInput id="t18" width="100%" text="" />
+										<s:TextInput id="t18" width="100%" text="" change="t_changeHandler(event)" />
 										<s:TextInput id="Gp6PS" width="100%" text="{'[037000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp6PS" width="100%" color="#E01919" text="---" />				
+										<s:TextInput id="GTp6PS" width="100%" color="#117E20" text="---" />				
 									</s:HGroup>
 								</s:VGroup>
 							</s:HGroup>
@@ -383,9 +633,9 @@
 							<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
 								<s:VGroup width="100%" height="100%">					
 									<s:HGroup width="100%">
-										<s:TextInput id="t19" width="100%" text="" />
+										<s:TextInput id="t19" width="100%" text="" change="t_changeHandler(event)" />
 										<s:TextInput id="Gp1F" width="100%" text="{'[041000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp1F" width="100%" color="#E01919" text="---" />				
+										<s:TextInput id="GTp1F" width="100%" color="#117E20" text="---" />				
 									</s:HGroup>
 									<s:Line width="100%" >
 										<s:stroke>
@@ -393,9 +643,9 @@
 										</s:stroke>					
 									</s:Line>
 									<s:HGroup width="100%">
-										<s:TextInput id="t20" width="100%" text="" />
+										<s:TextInput id="t20" width="100%" text="" change="t_changeHandler(event)" />
 										<s:TextInput id="Gp2F" width="100%" text="{'[042000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp2F" width="100%" color="#E01919" text="---" />				
+										<s:TextInput id="GTp2F" width="100%" color="#117E20" text="---" />				
 									</s:HGroup>
 									<s:Line width="100%" >
 										<s:stroke>
@@ -403,16 +653,16 @@
 										</s:stroke>					
 									</s:Line>
 									<s:HGroup width="100%">
-										<s:TextInput id="t21" width="100%" text="" />
+										<s:TextInput id="t21" width="100%" text="" change="t_changeHandler(event)" />
 										<s:TextInput id="Gp3F" width="100%" text="{'[043000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp3F" width="100%" color="#E01919" text="---" />				
+										<s:TextInput id="GTp3F" width="100%" color="#117E20" text="---" />				
 									</s:HGroup>
 								</s:VGroup>
 								<s:VGroup width="100%" height="100%">					
 									<s:HGroup width="100%">
-										<s:TextInput id="t22" width="100%" text="" />
+										<s:TextInput id="t22" width="100%" text="" change="t_changeHandler(event)" />
 										<s:TextInput id="Gp4F" width="100%" text="{'[044000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp4F" width="100%" color="#E01919" text="---" />				
+										<s:TextInput id="GTp4F" width="100%" color="#117E20" text="---" />				
 									</s:HGroup>
 									<s:Line width="100%" >
 										<s:stroke>
@@ -420,9 +670,9 @@
 										</s:stroke>					
 									</s:Line>
 									<s:HGroup width="100%">
-										<s:TextInput id="t23" width="100%" text="" />
+										<s:TextInput id="t23" width="100%" text="" change="t_changeHandler(event)" />
 										<s:TextInput id="Gp5F" width="100%" text="{'[045000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp5F" width="100%" color="#E01919" text="---" />				
+										<s:TextInput id="GTp5F" width="100%" color="#117E20" text="---" />				
 									</s:HGroup>
 									<s:Line width="100%" >
 										<s:stroke>
@@ -430,9 +680,9 @@
 										</s:stroke>					
 									</s:Line>
 									<s:HGroup width="100%">
-										<s:TextInput id="t24" width="100%" text="" />
+										<s:TextInput id="t24" width="100%" text="" change="t_changeHandler(event)" />
 										<s:TextInput id="Gp6F" width="100%" text="{'[047000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp6F" width="100%" color="#E01919" text="---" />				
+										<s:TextInput id="GTp6F" width="100%" color="#117E20" text="---" />				
 									</s:HGroup>
 								</s:VGroup>
 							</s:HGroup>
@@ -441,9 +691,9 @@
 							<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
 								<s:VGroup width="100%" height="100%">					
 									<s:HGroup width="100%">
-										<s:TextInput id="t25" width="100%" text="" />
+										<s:TextInput id="t25" width="100%" text="" change="t_changeHandler(event)" />
 										<s:TextInput id="Gp1C" width="100%" text="{'[051000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp1C" width="100%" color="#E01919" text="---" />				
+										<s:TextInput id="GTp1C" width="100%" color="#117E20" text="---" />				
 									</s:HGroup>
 									<s:Line width="100%" >
 										<s:stroke>
@@ -451,9 +701,9 @@
 										</s:stroke>					
 									</s:Line>
 									<s:HGroup width="100%">
-										<s:TextInput id="t26" width="100%" text="" />
+										<s:TextInput id="t26" width="100%" text="" change="t_changeHandler(event)" />
 										<s:TextInput id="Gp2C" width="100%" text="{'[052000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp2C" width="100%" color="#E01919" text="---" />				
+										<s:TextInput id="GTp2C" width="100%" color="#117E20" text="---" />				
 									</s:HGroup>
 									<s:Line width="100%" >
 										<s:stroke>
@@ -461,16 +711,16 @@
 										</s:stroke>					
 									</s:Line>
 									<s:HGroup width="100%">
-										<s:TextInput id="t27" width="100%" text="" />
+										<s:TextInput id="t27" width="100%" text="" change="t_changeHandler(event)" />
 										<s:TextInput id="Gp3C" width="100%" text="{'[053000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp3C" width="100%" color="#E01919" text="---" />				
+										<s:TextInput id="GTp3C" width="100%" color="#117E20" text="---" />				
 									</s:HGroup>
 								</s:VGroup>
 								<s:VGroup width="100%" height="100%">					
 									<s:HGroup width="100%">
-										<s:TextInput id="t28" width="100%" text="" />
+										<s:TextInput id="t28" width="100%" text="" change="t_changeHandler(event)" />
 										<s:TextInput id="Gp4C" width="100%" text="{'[054000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp4C" width="100%" color="#E01919" text="---" />				
+										<s:TextInput id="GTp4C" width="100%" color="#117E20" text="---" />				
 									</s:HGroup>
 									<s:Line width="100%" >
 										<s:stroke>
@@ -478,9 +728,9 @@
 										</s:stroke>					
 									</s:Line>
 									<s:HGroup width="100%">
-										<s:TextInput id="t29" width="100%" text="" />
+										<s:TextInput id="t29" width="100%" text="" change="t_changeHandler(event)" />
 										<s:TextInput id="Gp5C" width="100%" text="{'[055000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp5C" width="100%" color="#E01919" text="---" />				
+										<s:TextInput id="GTp5C" width="100%" color="#117E20" text="---" />				
 									</s:HGroup>
 									<s:Line width="100%" >
 										<s:stroke>
@@ -488,9 +738,9 @@
 										</s:stroke>					
 									</s:Line>
 									<s:HGroup width="100%">
-										<s:TextInput id="t30" width="100%" text="" />
+										<s:TextInput id="t30" width="100%" text="" change="t_changeHandler(event)" />
 										<s:TextInput id="Gp6C" width="100%" text="{'[057000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp6C" width="100%" color="#E01919" text="---" />				
+										<s:TextInput id="GTp6C" width="100%" color="#117E20" text="---" />				
 									</s:HGroup>
 								</s:VGroup>
 							</s:HGroup>
@@ -499,9 +749,9 @@
 							<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
 								<s:VGroup width="100%" height="100%">					
 									<s:HGroup width="100%">
-										<s:TextInput id="t31" width="100%" text="" />
+										<s:TextInput id="t31" width="100%" text="" change="t_changeHandler(event)" />
 										<s:TextInput id="Gp1S" width="100%" text="{'[061000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp1S" width="100%" color="#E01919" text="---" />				
+										<s:TextInput id="GTp1S" width="100%" color="#117E20" text="---" />				
 									</s:HGroup>
 									<s:Line width="100%" >
 										<s:stroke>
@@ -509,9 +759,9 @@
 										</s:stroke>					
 									</s:Line>
 									<s:HGroup width="100%">
-										<s:TextInput id="t32" width="100%" text="" />
+										<s:TextInput id="t32" width="100%" text="" change="t_changeHandler(event)" />
 										<s:TextInput id="Gp2S" width="100%" text="{'[062000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp2S" width="100%" color="#E01919" text="---" />				
+										<s:TextInput id="GTp2S" width="100%" color="#117E20" text="---" />				
 									</s:HGroup>
 									<s:Line width="100%" >
 										<s:stroke>
@@ -519,16 +769,16 @@
 										</s:stroke>					
 									</s:Line>
 									<s:HGroup width="100%">
-										<s:TextInput id="t33" width="100%" text="" />
+										<s:TextInput id="t33" width="100%" text="" change="t_changeHandler(event)" />
 										<s:TextInput id="Gp3S" width="100%" text="{'[063000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp3S" width="100%" color="#E01919" text="---" />				
+										<s:TextInput id="GTp3S" width="100%" color="#117E20" text="---" />				
 									</s:HGroup>
 								</s:VGroup>
 								<s:VGroup width="100%" height="100%">					
 									<s:HGroup width="100%">
-										<s:TextInput id="t34" width="100%" text="" />
+										<s:TextInput id="t34" width="100%" text="" change="t_changeHandler(event)" />
 										<s:TextInput id="Gp4S" width="100%" text="{'[064000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp4S" width="100%" color="#E01919" text="---" />				
+										<s:TextInput id="GTp4S" width="100%" color="#117E20" text="---" />				
 									</s:HGroup>
 									<s:Line width="100%" >
 										<s:stroke>
@@ -536,9 +786,9 @@
 										</s:stroke>					
 									</s:Line>
 									<s:HGroup width="100%">
-										<s:TextInput id="t35" width="100%" text="" />
+										<s:TextInput id="t35" width="100%" text="" change="t_changeHandler(event)" />
 										<s:TextInput id="Gp5S" width="100%" text="{'[065000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp5S" width="100%" color="#E01919" text="---" />				
+										<s:TextInput id="GTp5S" width="100%" color="#117E20" text="---" />				
 									</s:HGroup>
 									<s:Line width="100%" >
 										<s:stroke>
@@ -546,9 +796,9 @@
 										</s:stroke>					
 									</s:Line>
 									<s:HGroup width="100%">
-										<s:TextInput id="t36" width="100%" text="" />
+										<s:TextInput id="t36" width="100%" text="" change="t_changeHandler(event)" />
 										<s:TextInput id="Gp6S" width="100%" text="{'[067000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp6S" width="100%" color="#E01919" text="---" />				
+										<s:TextInput id="GTp6S" width="100%" color="#117E20" text="---" />				
 									</s:HGroup>
 								</s:VGroup>
 							</s:HGroup>
@@ -557,22 +807,22 @@
 							<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
 								<s:VGroup width="100%" height="100%">					
 									<s:FormHeading label="Participe présent" />
-									<s:TextInput id="t37" width="100%" text="" />
+									<s:TextInput id="t37" width="100%" text="" change="t_changeHandler(event)" />
 									<s:TextInput id="GpPP" width="100%" text="{'[080000000|v_'+cptVerbe+']'}" />
-									<s:TextInput id="GTpPP" width="100%" color="#E01919" text="---" />									
+									<s:TextInput id="GTpPP" width="100%" color="#117E20" text="---" />									
 								</s:VGroup>
 								<s:VGroup height="100%" width="100%" >
 									<s:FormHeading label="Infinitif présent" />
-									<s:TextInput id="t38" width="100%" text="" />
+									<s:TextInput id="t38" width="100%" text="" change="t_changeHandler(event)" />
 									<s:TextInput id="GpIP" width="100%" text="{'[09000000|v_'+cptVerbe+']'}" />
-									<s:TextInput id="GTpIP" width="100%" color="#E01919" text="---" />									
+									<s:TextInput id="GTpIP" width="100%" color="#117E20" text="---" />									
 								</s:VGroup>
 							</s:HGroup>
 						</s:NavigatorContent>
 					</mx:TabNavigator>
 					<s:HGroup verticalAlign="middle">
-						<s:Button label="Enregistrer" click="enregistrer_clickHandler(event)" />
 						<s:Button label="Tester" click="tester_clickHandler(event)" />
+						<s:Button label="Enregistrer" click="enregistrer_clickHandler(event)" visible="{bChange}" color="red" />
 					</s:HGroup>				
 				</s:VGroup>
 			</s:HGroup>
