@@ -209,7 +209,7 @@
 						<s:VGroup width="100%" height="100%">					
 							<s:HGroup width="100%">
 								<s:TextInput id="Gp1P" width="100%" text="{'[011000000|v_'+oConcept.lib+']'}" />
-								<s:TextInput id="GTp1P" width="100%" color="#E01919" text="---" />				
+								<s:TextInput id="GTp1P" width="100%" color="#117E20" text="---" />				
 							</s:HGroup>
 							<s:Line width="100%" >
 								<s:stroke>
@@ -218,7 +218,7 @@
 							</s:Line>
 							<s:HGroup width="100%">
 								<s:TextInput id="Gp2P" width="100%" text="{'[012000000|v_'+oConcept.lib+']'}" />
-								<s:TextInput id="GTp2P" width="100%" color="#E01919" text="---" />				
+								<s:TextInput id="GTp2P" width="100%" color="#117E20" text="---" />				
 							</s:HGroup>
 							<s:Line width="100%" >
 								<s:stroke>
@@ -227,13 +227,13 @@
 							</s:Line>
 							<s:HGroup width="100%">
 								<s:TextInput id="Gp3P" width="100%" text="{'[013000000|v_'+oConcept.lib+']'}" />
-								<s:TextInput id="GTp3P" width="100%" color="#E01919" text="---" />				
+								<s:TextInput id="GTp3P" width="100%" color="#117E20" text="---" />				
 							</s:HGroup>
 						</s:VGroup>
 						<s:VGroup width="100%" height="100%">					
 							<s:HGroup width="100%">
 								<s:TextInput id="Gp4P" width="100%" text="{'[014000000|v_'+oConcept.lib+']'}" />
-								<s:TextInput id="GTp4P" width="100%" color="#E01919" text="---" />				
+								<s:TextInput id="GTp4P" width="100%" color="#117E20" text="---" />				
 							</s:HGroup>
 							<s:Line width="100%" >
 								<s:stroke>
@@ -242,7 +242,7 @@
 							</s:Line>
 							<s:HGroup width="100%">
 								<s:TextInput id="Gp5P" width="100%" text="{'[015000000|v_'+oConcept.lib+']'}" />
-								<s:TextInput id="GTp5P" width="100%" color="#E01919" text="---" />				
+								<s:TextInput id="GTp5P" width="100%" color="#117E20" text="---" />				
 							</s:HGroup>
 							<s:Line width="100%" >
 								<s:stroke>
@@ -251,7 +251,7 @@
 							</s:Line>
 							<s:HGroup width="100%">
 								<s:TextInput id="Gp6P" width="100%" text="{'[017000000|v_'+oConcept.lib+']'}" />
-								<s:TextInput id="GTp6P" width="100%" color="#E01919" text="---" />				
+								<s:TextInput id="GTp6P" width="100%" color="#117E20" text="---" />				
 							</s:HGroup>
 						</s:VGroup>
 					</s:HGroup>
@@ -261,7 +261,7 @@
 					<s:VGroup width="100%" height="100%">					
 						<s:HGroup width="100%">
 							<s:TextInput id="Gp1I" width="100%" text="{'[021000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp1I" width="100%" color="#E01919" text="---" />				
+							<s:TextInput id="GTp1I" width="100%" color="#117E20" text="---" />				
 						</s:HGroup>
 						<s:Line width="100%" >
 							<s:stroke>
@@ -270,7 +270,7 @@
 						</s:Line>
 						<s:HGroup width="100%">
 							<s:TextInput id="Gp2I" width="100%" text="{'[022000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp2I" width="100%" color="#E01919" text="---" />				
+							<s:TextInput id="GTp2I" width="100%" color="#117E20" text="---" />				
 						</s:HGroup>
 						<s:Line width="100%" >
 							<s:stroke>
@@ -279,13 +279,13 @@
 						</s:Line>
 						<s:HGroup width="100%">
 							<s:TextInput id="Gp3I" width="100%" text="{'[023000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp3I" width="100%" color="#E01919" text="---" />				
+							<s:TextInput id="GTp3I" width="100%" color="#117E20" text="---" />				
 						</s:HGroup>
 					</s:VGroup>
 					<s:VGroup width="100%" height="100%">					
 						<s:HGroup width="100%">
 							<s:TextInput id="Gp4I" width="100%" text="{'[024000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp4I" width="100%" color="#E01919" text="---" />				
+							<s:TextInput id="GTp4I" width="100%" color="#117E20" text="---" />				
 						</s:HGroup>
 						<s:Line width="100%" >
 							<s:stroke>
@@ -294,7 +294,7 @@
 						</s:Line>
 						<s:HGroup width="100%">
 							<s:TextInput id="Gp5I" width="100%" text="{'[025000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp5I" width="100%" color="#E01919" text="---" />				
+							<s:TextInput id="GTp5I" width="100%" color="#117E20" text="---" />				
 						</s:HGroup>
 						<s:Line width="100%" >
 							<s:stroke>
@@ -303,7 +303,7 @@
 						</s:Line>
 						<s:HGroup width="100%">
 							<s:TextInput id="Gp6I" width="100%" text="{'[027000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp6I" width="100%" color="#E01919" text="---" />				
+							<s:TextInput id="GTp6I" width="100%" color="#117E20" text="---" />				
 						</s:HGroup>
 					</s:VGroup>
 				</s:HGroup>
@@ -313,7 +313,7 @@
 					<s:VGroup width="100%" height="100%">					
 						<s:HGroup width="100%">
 							<s:TextInput id="Gp1PS" width="100%" text="{'[031000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp1PS" width="100%" color="#E01919" text="---" />				
+							<s:TextInput id="GTp1PS" width="100%" color="#117E20" text="---" />				
 						</s:HGroup>
 						<s:Line width="100%" >
 							<s:stroke>
@@ -322,7 +322,7 @@
 						</s:Line>
 						<s:HGroup width="100%">
 							<s:TextInput id="Gp2PS" width="100%" text="{'[032000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp2PS" width="100%" color="#E01919" text="---" />				
+							<s:TextInput id="GTp2PS" width="100%" color="#117E20" text="---" />				
 						</s:HGroup>
 						<s:Line width="100%" >
 							<s:stroke>
@@ -331,13 +331,13 @@
 						</s:Line>
 						<s:HGroup width="100%">
 							<s:TextInput id="Gp3PS" width="100%" text="{'[033000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp3PS" width="100%" color="#E01919" text="---" />				
+							<s:TextInput id="GTp3PS" width="100%" color="#117E20" text="---" />				
 						</s:HGroup>
 					</s:VGroup>
 					<s:VGroup width="100%" height="100%">					
 						<s:HGroup width="100%">
 							<s:TextInput id="Gp4PS" width="100%" text="{'[034000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp4PS" width="100%" color="#E01919" text="---" />				
+							<s:TextInput id="GTp4PS" width="100%" color="#117E20" text="---" />				
 						</s:HGroup>
 						<s:Line width="100%" >
 							<s:stroke>
@@ -346,7 +346,7 @@
 						</s:Line>
 						<s:HGroup width="100%">
 							<s:TextInput id="Gp5PS" width="100%" text="{'[035000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp5PS" width="100%" color="#E01919" text="---" />				
+							<s:TextInput id="GTp5PS" width="100%" color="#117E20" text="---" />				
 						</s:HGroup>
 						<s:Line width="100%" >
 							<s:stroke>
@@ -355,7 +355,7 @@
 						</s:Line>
 						<s:HGroup width="100%">
 							<s:TextInput id="Gp6PS" width="100%" text="{'[037000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp6PS" width="100%" color="#E01919" text="---" />				
+							<s:TextInput id="GTp6PS" width="100%" color="#117E20" text="---" />				
 						</s:HGroup>
 					</s:VGroup>
 				</s:HGroup>
@@ -365,7 +365,7 @@
 					<s:VGroup width="100%" height="100%">					
 						<s:HGroup width="100%">
 							<s:TextInput id="Gp1F" width="100%" text="{'[041000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp1F" width="100%" color="#E01919" text="---" />				
+							<s:TextInput id="GTp1F" width="100%" color="#117E20" text="---" />				
 						</s:HGroup>
 						<s:Line width="100%" >
 							<s:stroke>
@@ -374,7 +374,7 @@
 						</s:Line>
 						<s:HGroup width="100%">
 							<s:TextInput id="Gp2F" width="100%" text="{'[042000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp2F" width="100%" color="#E01919" text="---" />				
+							<s:TextInput id="GTp2F" width="100%" color="#117E20" text="---" />				
 						</s:HGroup>
 						<s:Line width="100%" >
 							<s:stroke>
@@ -383,13 +383,13 @@
 						</s:Line>
 						<s:HGroup width="100%">
 							<s:TextInput id="Gp3F" width="100%" text="{'[043000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp3F" width="100%" color="#E01919" text="---" />				
+							<s:TextInput id="GTp3F" width="100%" color="#117E20" text="---" />				
 						</s:HGroup>
 					</s:VGroup>
 					<s:VGroup width="100%" height="100%">					
 						<s:HGroup width="100%">
 							<s:TextInput id="Gp4F" width="100%" text="{'[044000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp4F" width="100%" color="#E01919" text="---" />				
+							<s:TextInput id="GTp4F" width="100%" color="#117E20" text="---" />				
 						</s:HGroup>
 						<s:Line width="100%" >
 							<s:stroke>
@@ -398,7 +398,7 @@
 						</s:Line>
 						<s:HGroup width="100%">
 							<s:TextInput id="Gp5F" width="100%" text="{'[045000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp5F" width="100%" color="#E01919" text="---" />				
+							<s:TextInput id="GTp5F" width="100%" color="#117E20" text="---" />				
 						</s:HGroup>
 						<s:Line width="100%" >
 							<s:stroke>
@@ -407,7 +407,7 @@
 						</s:Line>
 						<s:HGroup width="100%">
 							<s:TextInput id="Gp6F" width="100%" text="{'[047000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp6F" width="100%" color="#E01919" text="---" />				
+							<s:TextInput id="GTp6F" width="100%" color="#117E20" text="---" />				
 						</s:HGroup>
 					</s:VGroup>
 				</s:HGroup>
@@ -417,7 +417,7 @@
 					<s:VGroup width="100%" height="100%">					
 						<s:HGroup width="100%">
 							<s:TextInput id="Gp1C" width="100%" text="{'[051000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp1C" width="100%" color="#E01919" text="---" />				
+							<s:TextInput id="GTp1C" width="100%" color="#117E20" text="---" />				
 						</s:HGroup>
 						<s:Line width="100%" >
 							<s:stroke>
@@ -426,7 +426,7 @@
 						</s:Line>
 						<s:HGroup width="100%">
 							<s:TextInput id="Gp2C" width="100%" text="{'[052000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp2C" width="100%" color="#E01919" text="---" />				
+							<s:TextInput id="GTp2C" width="100%" color="#117E20" text="---" />				
 						</s:HGroup>
 						<s:Line width="100%" >
 							<s:stroke>
@@ -435,13 +435,13 @@
 						</s:Line>
 						<s:HGroup width="100%">
 							<s:TextInput id="Gp3C" width="100%" text="{'[053000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp3C" width="100%" color="#E01919" text="---" />				
+							<s:TextInput id="GTp3C" width="100%" color="#117E20" text="---" />				
 						</s:HGroup>
 					</s:VGroup>
 					<s:VGroup width="100%" height="100%">					
 						<s:HGroup width="100%">
 							<s:TextInput id="Gp4C" width="100%" text="{'[054000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp4C" width="100%" color="#E01919" text="---" />				
+							<s:TextInput id="GTp4C" width="100%" color="#117E20" text="---" />				
 						</s:HGroup>
 						<s:Line width="100%" >
 							<s:stroke>
@@ -450,7 +450,7 @@
 						</s:Line>
 						<s:HGroup width="100%">
 							<s:TextInput id="Gp5C" width="100%" text="{'[055000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp5C" width="100%" color="#E01919" text="---" />				
+							<s:TextInput id="GTp5C" width="100%" color="#117E20" text="---" />				
 						</s:HGroup>
 						<s:Line width="100%" >
 							<s:stroke>
@@ -459,7 +459,7 @@
 						</s:Line>
 						<s:HGroup width="100%">
 							<s:TextInput id="Gp6C" width="100%" text="{'[057000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp6C" width="100%" color="#E01919" text="---" />				
+							<s:TextInput id="GTp6C" width="100%" color="#117E20" text="---" />				
 						</s:HGroup>
 					</s:VGroup>
 				</s:HGroup>
@@ -469,7 +469,7 @@
 					<s:VGroup width="100%" height="100%">					
 						<s:HGroup width="100%">
 							<s:TextInput id="Gp1S" width="100%" text="{'[061000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp1S" width="100%" color="#E01919" text="---" />				
+							<s:TextInput id="GTp1S" width="100%" color="#117E20" text="---" />				
 						</s:HGroup>
 						<s:Line width="100%" >
 							<s:stroke>
@@ -478,7 +478,7 @@
 						</s:Line>
 						<s:HGroup width="100%">
 							<s:TextInput id="Gp2S" width="100%" text="{'[062000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp2S" width="100%" color="#E01919" text="---" />				
+							<s:TextInput id="GTp2S" width="100%" color="#117E20" text="---" />				
 						</s:HGroup>
 						<s:Line width="100%" >
 							<s:stroke>
@@ -487,13 +487,13 @@
 						</s:Line>
 						<s:HGroup width="100%">
 							<s:TextInput id="Gp3S" width="100%" text="{'[063000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp3S" width="100%" color="#E01919" text="---" />				
+							<s:TextInput id="GTp3S" width="100%" color="#117E20" text="---" />				
 						</s:HGroup>
 					</s:VGroup>
 					<s:VGroup width="100%" height="100%">					
 						<s:HGroup width="100%">
 							<s:TextInput id="Gp4S" width="100%" text="{'[064000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp4S" width="100%" color="#E01919" text="---" />				
+							<s:TextInput id="GTp4S" width="100%" color="#117E20" text="---" />				
 						</s:HGroup>
 						<s:Line width="100%" >
 							<s:stroke>
@@ -502,7 +502,7 @@
 						</s:Line>
 						<s:HGroup width="100%">
 							<s:TextInput id="Gp5S" width="100%" text="{'[065000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp5S" width="100%" color="#E01919" text="---" />				
+							<s:TextInput id="GTp5S" width="100%" color="#117E20" text="---" />				
 						</s:HGroup>
 						<s:Line width="100%" >
 							<s:stroke>
@@ -511,7 +511,7 @@
 						</s:Line>
 						<s:HGroup width="100%">
 							<s:TextInput id="Gp6S" width="100%" text="{'[067000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp6S" width="100%" color="#E01919" text="---" />				
+							<s:TextInput id="GTp6S" width="100%" color="#117E20" text="---" />				
 						</s:HGroup>
 					</s:VGroup>
 				</s:HGroup>
@@ -521,12 +521,12 @@
 					<s:VGroup width="100%" height="100%">					
 						<s:FormHeading label="Participe présent" />
 						<s:TextInput id="GpPP" width="100%" text="{'[080000000|v_'+oConcept.lib+']'}" />
-						<s:TextInput id="GTpPP" width="100%" color="#E01919" text="---" />									
+						<s:TextInput id="GTpPP" width="100%" color="#117E20" text="---" />									
 					</s:VGroup>
 					<s:VGroup height="100%" width="100%" >
 						<s:FormHeading label="Infinitif présent" />
 						<s:TextInput id="GpIP" width="100%" text="{'[09000000|v_'+oConcept.lib+']'}" />
-						<s:TextInput id="GTpIP" width="100%" color="#E01919" text="---" />									
+						<s:TextInput id="GTpIP" width="100%" color="#117E20" text="---" />									
 					</s:VGroup>
 				</s:HGroup>
 			</s:NavigatorContent>

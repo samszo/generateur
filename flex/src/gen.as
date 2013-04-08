@@ -51,8 +51,9 @@ public function login():void
 	uti.login = "samszo";
 	uti.idUti = "2";
 	uti.role = "administrateur";
-	boxGen.visible = true;
 	//
+	boxGen.visible = true;
+	
 } 
 
 private function init():void {

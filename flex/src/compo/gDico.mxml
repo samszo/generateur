@@ -64,6 +64,27 @@
 						gCo.idDico = oItem.id_dico;
 						detail.addElement(gCo);
 					}
+					if(oItem.type=="pronoms_complement" || oItem.type=="pronoms_sujet"){
+						var gPrn:gPronom = new gPronom;
+						gPrn.idDico = oItem.id_dico;
+						detail.addElement(gPrn);
+					}
+					if(oItem.type=="négations"){
+						var gNeg:gNegation = new gNegation;
+						gNeg.idDico = oItem.id_dico;
+						detail.addElement(gNeg);
+					}
+					if(oItem.type=="déterminants"){
+						var gDet:gDeterminant = new gDeterminant;
+						gDet.idDico = oItem.id_dico;
+						detail.addElement(gDet);
+					}
+					if(oItem.type=="syntagmes"){
+						var gSyn:gSyntagme = new gSyntagme;
+						gSyn.idDico = oItem.id_dico;
+						detail.addElement(gSyn);
+					}
+					
 				}				
 			}
 			
