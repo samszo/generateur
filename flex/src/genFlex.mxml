@@ -5,6 +5,12 @@
 					   xmlns:co="compo.*"
 					   width="100%" height="100%" minWidth="955" minHeight="600"
 					   creationComplete="login();" title="Générateur : paramètrage">	
+	
+	<fx:Script>
+		<![CDATA[
+		]]>
+	</fx:Script>
+	
 	<fx:Script source="gen.as"/>
 	<fx:Declarations>
 		<s:RemoteObject id="ROMOTEUR"
@@ -13,6 +19,12 @@
 						fault="faultHandlerService(event)">
 			<s:method name="Tester" result="testerMoteur_resultHandler(event)" />  	
 		</s:RemoteObject>
+		<s:RemoteObject id="ROACTI"
+						 source="Model_DbTable_flux_acti" destination="zend" 
+						 showBusyCursor="true"
+						 fault="faultHandlerService(event)">
+			<s:method name="ajoutForUtis" result="ajoutForUtis_resultHandler(event)"  />
+		</s:RemoteObject>		
 	</fx:Declarations>
 	
 	<s:Group id="boxGen" visible="false" width="100%" height="100%">

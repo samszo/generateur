@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" height="100%"
+		 creationComplete="creationCompleteHandler(event)" >
+	<fx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			[Bindable] public var idUti:String;
+
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				init(idUti);
+			}
+			public function init(uti:String):void
+			{
+				if(uti){
+					roActiUti.getActiForUti(idUti);
+					idUti = uti;
+				}
+				
+			}
+			public function faultHandlerService(fault:FaultEvent):void
+			{
+				var str:String;
+				str = "Code: "+fault.fault.faultCode.toString()+"\n"+
+					"Detail: "+fault.fault.faultDetail.toString()+"\n"+
+					"String: "+fault.fault.faultString.toString()+"\n";
+				
+				Alert.show(str, "ERREUR : Activités des utilisateurs");
+			}
+			
+			protected function getActiForUti_resultHandler(event:ResultEvent):void
+			{
+				tActiUti.dataProvider = event.result as XML;
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<s:RemoteObject id="roActiUti"
+						source="Model_DbTable_flux_acti" destination="zend" 
+						showBusyCursor="true"
+						fault="faultHandlerService(event)">
+			<s:method name="getActiForUti" result="getActiForUti_resultHandler(event)"  />
+		</s:RemoteObject>
+	</fx:Declarations>
+	<mx:Tree id="tActiUti" width="100%" height="100%" labelField="@lib"></mx:Tree>
+</s:Group>

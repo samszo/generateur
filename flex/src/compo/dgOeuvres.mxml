@@ -36,7 +36,6 @@
 	/**
 	 * paramétrage de l'objet
 	 */
-	[Bindable] public var idExi:String;
 	[Bindable] public var bInit:Boolean=true;
 	[Bindable] public var bInsert:Boolean=true;
 	[Bindable] public var twAR:twAjoutRef;
@@ -430,6 +429,9 @@
 							</mx:VBox>
 				</s:NavigatorContent>
 				<s:NavigatorContent width="100%" height="100%" label="Ecrire">
+				</s:NavigatorContent>
+				<s:NavigatorContent width="100%" height="100%" label="Participer" >
+					<co:gActiUti id="gParticipe" idUti="{this.parentApplication.uti.idUti}" />
 				</s:NavigatorContent>
 			</mx:TabNavigator>
 		</mx:Canvas>
