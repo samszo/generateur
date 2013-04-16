@@ -19,13 +19,8 @@
 			
 			import spark.events.TextOperationEvent;
 						
-			[Bindable] public var idDico:String;
-			[Bindable] public var bRemove:Boolean=true;
-			[Bindable] public var bAjout:Boolean=true;
-			[Bindable] public var bChange:Boolean=false;
 			[Bindable] public var oItem:Object;
 			private var action:String="";
-			private var arrR:Array;
 
 			public function faultHandlerService(fault:FaultEvent):void
 			{
@@ -143,7 +138,7 @@
 			
 			protected function utilise_resultHandler(event:ResultEvent):void
 			{
-				arrR = event.result as Array;
+				var arrR:Array = event.result as Array;
 				if(arrR[0]['nbGen']!=0){
 					if(arrR[0]['nbUti']==1){
 						if(action=="supprimer"){
@@ -158,15 +153,10 @@
 								,"Vérification disponibilité de l'item", 3, this, verifSoloItemHandler);										
 						}	
 					}else{
-						var mess:String ="";
-						if(action=="modifier"){
-							mess="\nPréférez vous créer un nouvel item : cliquer sur 'NON'";
-						}
-
 						Alert.show("Vous ne pouvez pas "+action+" l'item."
 							+"\nIl est utilisé dans "+arrR[0]['nbGen']+" expression(s)."
-							+"\nVoulez vous prévenir le(s) "+arrR[0]['nbUti']+" utilisateur(s)  : cliquer sur 'OUI'"
-							+ mess
+							+"\nVoulez vous prévenir le(s) "+arrR[0]['nbUti']+" utilisateurs  : cliquer sur 'OUI'"
+							+ "\nPréférez vous créer un nouvel item : cliquer sur 'NON'"
 							,"Vérification disponibilité de l'item", 3, this, verifMultiItemHandler);									
 					}
 				}else{
@@ -190,12 +180,10 @@
 				}
 				if (event.detail == Alert.NO) 
 				{
-					if(action=="modifier"){
-						var params:Array = new Array;
-						params['id_dico']=idDico;
-						params['lib']=T0.text;				
-						ROC.ajouter(params);											
-					}
+					var params:Array = new Array;
+					params['id_dico']=idDico;
+					params['lib']=T0.text;				
+					ROC.ajouter(params);					
 				}
 			}
 
@@ -203,10 +191,8 @@
 			{
 				if (event.detail == Alert.YES) 
 				{
-					var actis:String = "dictionnaire syntagme : modifier : "+oItem.lib+" -> "+T0.text+" (ref="+idDico+"_"+oItem.id_syn+")";
-					this.parentApplication.ajoutActiUti(actis, arrR[0]['idsUti'],false);
 				}
-				if (event.detail == Alert.NO && action=="modifier") 
+				if (event.detail == Alert.NO) 
 				{
 					var params:Array = new Array;
 					params['id_dico']=idDico;
@@ -225,7 +211,7 @@
 		
 	<fx:Declarations>
 		<s:RemoteObject id="ROC"
-						 source="Model_DbTable_Gen_syntagmes" destination="zend" 
+						 source="Model_DbTable_flux_acti" destination="zend" 
 						 showBusyCursor="true"
 						 fault="faultHandlerService(event)">
 			<s:method name="edit" result="edit_resultHandler(event)" />

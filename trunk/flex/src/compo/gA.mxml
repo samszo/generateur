@@ -12,6 +12,7 @@
 		<![CDATA[
 			import mx.collections.ArrayCollection;
 			import mx.controls.Alert;
+			import mx.events.CloseEvent;
 			import mx.events.FlexEvent;
 			import mx.rpc.events.FaultEvent;
 			import mx.rpc.events.ResultEvent;
@@ -20,6 +21,8 @@
 			[Bindable] public var idAdj:String;
 			[Bindable] public var donnee:Object;
 			[Bindable] public var testGen:Object;
+			private var action:String="";
+			private var arrR:Array;
 
 			public function faultHandlerService(fault:FaultEvent):void
 			{
@@ -67,6 +70,62 @@
 
 			protected function enregistrer_clickHandler(event:MouseEvent):void
 			{
+				action = "modifier";
+				ROCA.utilise(idAdj);				
+			}
+			
+			protected function utilise_resultHandler(event:ResultEvent):void
+			{
+				arrR = event.result as Array;
+				if(arrR[0]['nbGen']!=0){
+					if(arrR[0]['nbUti']==1){
+						if(action=="supprimer"){
+							Alert.show("Vous ne pouvez pas supprimer l'item."
+								+"\nIl est utilisé dans "+arrR[0]['nbGen']+" expression(s)."
+								+ "\nVous devez supprimer ces expresions avant de pouvoir supprimer l'item."
+								,"Vérification disponibilité de l'item");										
+						}else{
+							Alert.show("L'item est utilisé dans "+arrR[0]['nbGen']+" expression(s)."
+								+ "\nVoulez-vous que ces expressions soient impactées : cliquer sur 'OUI'"
+								+ "\nPréférez vous créer un nouvel item : cliquer sur 'NON'"
+								,"Vérification disponibilité de l'item", 3, this, verifSoloItemHandler);										
+						}	
+					}else{
+						var mess:String ="";
+						if(action=="modifier"){
+							mess="\nPréférez vous créer un nouvel item : cliquer sur 'NON'";
+						}
+						
+						Alert.show("Vous ne pouvez pas "+action+" l'item."
+							+"\nIl est utilisé dans "+arrR[0]['nbGen']+" expression(s)."
+							+"\nVoulez vous prévenir le(s) "+arrR[0]['nbUti']+" utilisateur(s)  : cliquer sur 'OUI'"
+							+ mess
+							,"Vérification disponibilité de l'item", 3, this, verifMultiItemHandler);									
+					}
+				}else{
+					if(action=="supprimer")
+						ROCA.remove(idAdj);
+					if(action=="modifier"){
+						modifier();
+					}
+				}
+			}
+			
+			private function verifSoloItemHandler(event:CloseEvent):void
+			{
+				if (event.detail == Alert.YES) 
+				{					
+					modifier();				}
+				if (event.detail == Alert.NO) 
+				{
+					if(action=="modifier"){
+						modifier();
+					}
+				}
+			}
+			
+			private function modifier():void
+			{
 				var arr:Array = new Array();
 				arr["prefix"]=prefix.text;
 				if(elision.selected)
@@ -77,9 +136,45 @@
 				arr["f_s"] = f_s.text;			
 				arr["m_p"] = m_p.text;			
 				arr["f_p"] = f_p.text;							
-				ROCA.edit(donnee.id_adj, arr)				
+				ROCA.edit(donnee.id_adj, arr)								
+			}
+
+			private function ajouter():void
+			{
+				var arr:Array = new Array();
+				arr["prefix"]=prefix.text;
+				if(elision.selected)
+					arr["elision"]= "1";
+				else
+					arr["elision"]= "0";
+				arr["m_s"] = m_s.text;			
+				arr["f_s"] = f_s.text;			
+				arr["m_p"] = m_p.text;			
+				arr["f_p"] = f_p.text;							
+				ROCA.ajouter(arr);								
 			}
 			
+			private function verifMultiItemHandler(event:CloseEvent):void
+			{
+				if (event.detail == Alert.YES) 
+				{
+					var modifs:String = "prefix="+prefix.text;
+					if(elision.selected)
+						modifs += ",elision=1";
+					else
+						modifs += ",elision=0";
+					modifs += ",m_s="+m_s.text;
+					modifs += ",f_s="+f_s.text;			
+					modifs += ",m_p="+m_p.text;			
+					modifs += ",f_p="+f_p.text;												
+					var actis:String = "dictionnaire adjectif : modifier : "+oConcept.lib+" -> "+modifs+" (ref="+idAdj+")";
+					this.parentApplication.ajoutActiUti(actis, arrR[0]['idsUti'],false);
+				}
+				if (event.detail == Alert.NO && action=="modifier") 
+				{
+					ajouter();					
+				}
+			}			
 		]]>
 	</fx:Script>
 		
@@ -89,7 +184,9 @@
 						 showBusyCursor="true"
 						 fault="faultHandlerService(event)">
 			<s:method name="edit" />  	
-			<s:method name="findByIdConcept" result="findByIdConcept_resultHandler(event)" />  	
+			<s:method name="findByIdConcept" result="findByIdConcept_resultHandler(event)" />
+			<s:method name="utilise" result="utilise_resultHandler(event)"  />
+			
 		</s:RemoteObject>
 	</fx:Declarations>
 	<s:VGroup width="100%" height="100%" id="detail" >

@@ -12,6 +12,7 @@ import spark.components.Label;
 [Bindable] public var uti:Object;
 [Bindable] public var arrCtrls:Array;
 [Bindable] public var arrVerifDico:Array;
+[Bindable] public var ctrlActi:Object;
 
 public function testerGen(txts:Array, ctrls:Array):void
 {
@@ -27,6 +28,18 @@ protected function testerMoteur_resultHandler(event:ResultEvent):void
 		arrCtrls[i].text = txt;
 		i++;
 	}	
+}
+
+public function ajoutActiUti(actis:String, utis:String, ctrl:Object):void
+{
+	ctrlActi = ctrl;
+	ROACTI.ajoutForUtis(actis, utis);
+}
+
+protected function ajoutForUtis_resultHandler(event:ResultEvent):void
+{
+	// TODO Auto-generated method stub
+	var t:String="1";
 }
 
 public function faultHandlerService(fault:FaultEvent):void
