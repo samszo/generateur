@@ -6,6 +6,13 @@ try {
 	$application->bootstrap();
 
 	/*
+	$dbA = new Model_DbTable_flux_acti();
+	//$xml = $dbA->getFullPath(9);
+	$xml = $dbA->getActiForOeuvre(6);
+	$idActi = $dbA->ajoutForUtis("dictionnaire syntagme : modifier : à -> àbb (ref:4_429)","1,2",6,4);
+	*/
+	
+	/*
 	$dbD = new Model_DbTable_Gen_determinants();
 	$arr = $dbD->findByIdDico(46);
 	*/
