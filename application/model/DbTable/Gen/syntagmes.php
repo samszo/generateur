@@ -60,6 +60,7 @@ class Model_DbTable_Gen_syntagmes extends Zend_Db_Table_Abstract
     		, COUNT(DISTINCT oduA.id_oeu) nbOeu
 			, COUNT(DISTINCT g.id_dico) nbDico
 			, COUNT(DISTINCT oduA.uti_id) nbUti
+			, GROUP_CONCAT(DISTINCT oduA.uti_id) idsUti
 		FROM gen_syntagmes s
 			INNER JOIN gen_oeuvres_dicos_utis odu ON odu.id_dico = s.id_dico
 			INNER JOIN gen_oeuvres_dicos_utis oduA ON oduA.id_oeu = odu.id_oeu

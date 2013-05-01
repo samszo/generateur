@@ -82,15 +82,23 @@ class Model_DbTable_Gen_oeuvresxdicosxutis extends Zend_Db_Table_Abstract
      * Recherche une entrée Gen_oeuvres_dicos_utis avec la clef primaire spécifiée
      * et supprime cette entrée.
      *
-     * @param int $idOeu
-     * @param integer $idDico
-     * @param int $idUti
+     * @param int $idOdu
      *
      * @return void
      */
-    public function remove($idOeu, $idDico, $idUti)
+    public function remove($idOdu)
     {
-    	$this->delete('id_oeu = ' . $idOeu.' AND id_dico = ' . $idDico.' AND uti_id = ' . $idUti);
+    	//suprime les actions liés aux dictionnaires de l'oeuvre et à l'utilisateur
+    	$dbOA = new Model_DbTable_Gen_oduxacti();
+    	$dbA = new Model_DbTable_flux_acti();
+    	$arrActi =$dbOA->findByIdOdu($idOdu);
+    	foreach ($arrActi as $acti) {
+    		$dbA->remove($acti['acti_id']);
+    	}
+    	$arr = $dbOA->delete('id_odu='.$idOdu);    	
+    	
+    	//suprime le lien entre l'oeuvre et le dictionnaire
+    	$this->delete('id_odu='.$idOdu);
     }
 
     /**
@@ -107,30 +115,6 @@ class Model_DbTable_Gen_oeuvresxdicosxutis extends Zend_Db_Table_Abstract
     }
     
     /**
-     * Récupère toutes les entrées Gen_oeuvres_dicos_utis avec certains critères
-     * de tri, intervalles
-     */
-    public function getAll($order=null, $limit=0, $from=0)
-    {
-   	
-    	$query = $this->select()
-                    ->from( array("gen_oeuvres_dicos_utis" => "gen_oeuvres_dicos_utis") );
-                    
-        if($order != null)
-        {
-            $query->order($order);
-        }
-
-        if($limit != 0)
-        {
-            $query->limit($limit, $from);
-        }
-
-        return $this->fetchAll($query)->toArray();
-    }
-
-    
-    	/**
      * Recherche une entrée Gen_oeuvres_dicos avec la valeur spécifiée
      * et retourne cette entrée.
      *
