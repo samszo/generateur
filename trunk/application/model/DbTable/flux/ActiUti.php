@@ -38,10 +38,9 @@ class Model_DbTable_flux_actiuti extends Zend_Db_Table_Abstract
     {
 		$select = $this->select();
 		$select->from($this, array('acti_id'));
-		foreach($data as $k=>$v){
-			$select->where($k.' = ?', $v);
-		}
-	    $rows = $this->fetchAll($select);        
+		$select->where('acti_id = ?', $data['acti_id']);
+		$select->where('uti_id = ?', $data['uti_id']);
+		$rows = $this->fetchAll($select);        
 	    if($rows->count()>0)$id=$rows[0]->acti_id; else $id=false;
         return $id;
     } 
@@ -59,7 +58,9 @@ class Model_DbTable_flux_actiuti extends Zend_Db_Table_Abstract
     	$id=false;
     	if($existe)$id = $this->existe($data);
     	if(!$id){
-    	 	$id = $this->insert($data);
+    		if(!isset($data['crea']))$data['crea']= new Zend_Db_Expr('NOW()');
+    		if(!isset($data['validation']))$data['validation']= 2;//par default la validation est "En attente"
+    		$id = $this->insert($data);
     	}
     	return $id;
     } 
@@ -151,7 +152,7 @@ class Model_DbTable_flux_actiuti extends Zend_Db_Table_Abstract
     {
         $query = $this->select()
                     ->from( array("f" => "flux_actiuti") )                           
-                    ->where( "f.date = ?", $date );
+                    ->where( "f.crea = ?", $date );
 
         return $this->fetchAll($query)->toArray(); 
     }
