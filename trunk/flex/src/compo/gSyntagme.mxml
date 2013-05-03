@@ -144,75 +144,12 @@
 			protected function utilise_resultHandler(event:ResultEvent):void
 			{
 				arrR = event.result as Array;
-				if(arrR[0]['nbGen']!=0){
-					if(arrR[0]['nbUti']==1){
-						if(action=="supprimer"){
-							Alert.show("Vous ne pouvez pas supprimer l'item."
-								+"\nIl est utilisé dans "+arrR[0]['nbGen']+" expression(s)."
-								+ "\nVous devez supprimer ces expresions avant de pouvoir supprimer l'item."
-								,"Vérification disponibilité de l'item");										
-						}else{
-							Alert.show("L'item est utilisé dans "+arrR[0]['nbGen']+" expression(s)."
-								+ "\nVoulez-vous que ces expressions soient impactées : cliquer sur 'OUI'"
-								+ "\nPréférez vous créer un nouvel item : cliquer sur 'NON'"
-								,"Vérification disponibilité de l'item", 3, this, verifSoloItemHandler);										
-						}	
-					}else{
-						var mess:String ="";
-						if(action=="modifier"){
-							mess="\nPréférez vous créer un nouvel item : cliquer sur 'NON'";
-						}
+				var actis:String = "dictionnaire syntagme : modifier "+arrR[0]['nbGen']+" items pour "+arrR[0]['nbUti']+" utilisateurs : "+oItem.lib+" -> "+T0.text+" (ref="+idDico+"_"+oItem.id_syn+")";				
+				var data:Array = new Array;
+				data['id_dico']=idDico;
+				data['lib']=T0.text;				
+				this.parentApplication.verifActi(arrR[0], action, actis, ROC, oItem.id_syn, data, idDico);
 
-						Alert.show("Vous ne pouvez pas "+action+" l'item."
-							+"\nIl est utilisé dans "+arrR[0]['nbGen']+" expression(s)."
-							+"\nVoulez vous prévenir le(s) "+arrR[0]['nbUti']+" utilisateur(s)  : cliquer sur 'OUI'"
-							+ mess
-							,"Vérification disponibilité de l'item", 3, this, verifMultiItemHandler);									
-					}
-				}else{
-					if(action=="supprimer")
-						ROC.remove(oItem.id_syn);
-					if(action=="modifier"){
-						var change:Array = new Array;
-						change['lib']=T0.text;
-						ROC.edit(oItem.id_syn, change);					
-					}
-				}
-			}
-
-			private function verifSoloItemHandler(event:CloseEvent):void
-			{
-				if (event.detail == Alert.YES) 
-				{					
-					var change:Array = new Array;
-					change['lib']=T0.text;
-					ROC.edit(oItem.id_syn, change);					
-				}
-				if (event.detail == Alert.NO) 
-				{
-					if(action=="modifier"){
-						var params:Array = new Array;
-						params['id_dico']=idDico;
-						params['lib']=T0.text;				
-						ROC.ajouter(params);											
-					}
-				}
-			}
-
-			private function verifMultiItemHandler(event:CloseEvent):void
-			{
-				if (event.detail == Alert.YES) 
-				{
-					var actis:String = "dictionnaire syntagme : modifier : "+oItem.lib+" -> "+T0.text+" (ref="+idDico+"_"+oItem.id_syn+")";
-					this.parentApplication.ajoutActiUti(actis, arrR[0]['idsUti'],false);
-				}
-				if (event.detail == Alert.NO && action=="modifier") 
-				{
-					var params:Array = new Array;
-					params['id_dico']=idDico;
-					params['lib']=T0.text;				
-					ROC.ajouter(params);					
-				}
 			}
 			
 			protected function remove_resultHandler(event:ResultEvent):void
