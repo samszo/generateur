@@ -2,11 +2,22 @@
 <s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 width="100%" height="100%"
-		  creationComplete="creationCompleteHandler(event)"
+		  creationComplete="creationCompleteHandler(event)" xmlns:compo="compo.*"
 		 >
 	<s:layout>
 		<s:VerticalLayout paddingBottom="3" paddingLeft="3" paddingRight="3" paddingTop="3"/>
 	</s:layout>
+	
+	<fx:Script>
+		<![CDATA[
+			protected function findByIdDico_resultHandler(event:ResultEvent):void
+			{
+				// TODO Auto-generated method stub
+				
+			}
+		]]>
+	</fx:Script>
+	
 	
 	<fx:Script>
 		<![CDATA[
@@ -17,6 +28,7 @@
 			import mx.rpc.http.HTTPService;
 			
 			[Bindable] public var oItem:Object;
+			private var ccModif:gLicence;
 
 			public function faultHandlerService(fault:FaultEvent):void
 			{
@@ -30,7 +42,12 @@
 			
 			protected function enregistrer_clickHandler(event:MouseEvent):void
 			{
-				// TODO Auto-generated method stub
+				var data:Array = new Array;
+				data["type"]=type.text;
+				data["langue"]=langue.text
+				data["nom"]=nom.text;
+				if(ccModif)data["licence"]=ccModif.ccItem;
+				ROD.edit(oItem.id_dico, data);
 				
 			}
 			
@@ -53,6 +70,7 @@
 			public function init():void
 			{
 				detail.removeAllElements();
+				cc.showSelect();
 				if(oItem){					
 					if(oItem.type=="concepts"){
 						var gC:gConcept = new gConcept();
@@ -87,7 +105,21 @@
 					
 				}				
 			}
-			
+			private function modifLicence():void
+			{
+				detail.removeAllElements();
+				ccModif = new gLicence;
+				ccModif.bModif = true;
+				ccModif.ccItem = cc.ccItem;
+				detail.addElement(ccModif);
+			}
+			protected function editHandler(event:ResultEvent):void
+			{
+				cc.ccItem = ccModif.ccItem;
+				cc.showSelect();
+				init();
+			}
+
 		]]>
 	</fx:Script>
 		
@@ -96,16 +128,17 @@
 						 source="Model_DbTable_Gen_dicos" destination="zend" 
 						 showBusyCursor="true"
 						 fault="faultHandlerService(event)">
-			<s:method name="edit" />  	
+			<s:method name="edit" result="editHandler(event)" />
 		</s:RemoteObject>
 	</fx:Declarations>
-	<s:HGroup width="100%" verticalAlign="middle">
-		<s:Label id="type"  text="{oItem.type}"/><s:TextInput id="nom" width="100%" text="{oItem.nom}"/><s:TextInput id="langue" text="{oItem.langue}"/>		
+	<s:HGroup width="100%" verticalAlign="middle" height="20">
+		<s:Label id="type"  text="{oItem.type}"/><s:TextInput id="nom" width="100%" text="{oItem.nom}"/><s:TextInput id="langue" text="{oItem.langue}"/>
+		<compo:gLicence id="cc" ccItem="{oItem.licence}" click="modifLicence()" bModif="false" toolTip="Cliquez sur l'image pour plus d'information ou pour changer de licence." />		
 	</s:HGroup>
-	<s:HGroup width="100%" verticalAlign="middle">
+	<s:HGroup width="100%" verticalAlign="middle" height="20">
 		<s:Button label="Enregistrer" click="enregistrer_clickHandler(event)"/>
-		<s:Button label="Importer" click="importer_clickHandler(event)"  />
-		<s:Button label="Exporter" click="exporter_clickHandler(event)"  />
+		<s:Button label="Importer" visible="false" click="importer_clickHandler(event)"  />
+		<s:Button label="Exporter" visible="false" click="exporter_clickHandler(event)"  />
 	</s:HGroup>
 	<s:BorderContainer width="100%" height="100%" id="detail">
 	</s:BorderContainer>

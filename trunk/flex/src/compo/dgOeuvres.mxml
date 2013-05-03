@@ -23,7 +23,6 @@
 			import mx.events.CloseEvent;
 			import mx.events.DataGridEvent;
 			import mx.events.FlexEvent;
-			import mx.events.IndexChangedEvent;
 			import mx.events.ListEvent;
 			import mx.managers.CursorManager;
 			import mx.managers.PopUpManager;
@@ -51,11 +50,14 @@
 	[Bindable] public var arrDicoNeg:Array;	
 	[Bindable] public var arrLangue:Array;
 	[Bindable] public var arrType:Array;
+	[Bindable] public var item:Object
 
 			private function findItemHandler(e:Object):void {
-				var item:Object=e.result[0];
+				item = e.result[0];
 				if(item){
-					UpdLib.text=item.lib;
+					UpdLib.text = item.lib;
+					cc.ccItem = item.licence;
+					cc.showSelect();
 				}
 			}
 			
@@ -88,6 +90,10 @@
 					ROD.getType();
 				}
 			    if(bInsert)vsParam.selectedChild=insert;
+				if(vsParam.selectedChild==licence){
+					vsParam.selectedChild = view;
+					RO.findByIdOeu(idOeu);
+				}
 			        
 			}
 			
@@ -199,8 +205,6 @@
 			private function DicoHandler(e:Object):void
 			{
 				vsDico.selectedChild = viewDico;
-				var Ctl:DisplayObject;
-				detailDico.detail.removeAllElements();
 				ROODU.findByIdOeu(idOeu);
 			}
 			
@@ -217,7 +221,7 @@
 			{
 			    if (event.detail == Alert.YES) 
 			    {
-					ROODU.remove(dgDico.selectedItem['id_odu']);
+					ROODU.remove(idOeu, dgDico.selectedItem['id_dico'], this.parentApplication.uti.idUti);
 			    }
 			}
 			private function AjouterDicoOeuvre():void
@@ -264,7 +268,7 @@
 			
 			protected function editHandler(event:ResultEvent):void
 			{
-				this.parentApplication.gmOeuvre.init();
+				init();
 			}
 			
 			protected function ajouterDicoclickHandler(event:MouseEvent):void
@@ -292,6 +296,7 @@
 				
 				pArr["nom"]=nomDico.text;
 				pArr["type"]=cbDicoType.selectedLabel;
+				pArr["licence"]=ccAjout.ccItem;
 				
 				ROD.ajouter(pArr,false);
 			}
@@ -313,6 +318,7 @@
 			{
 				var item:Object=event.currentTarget.selectedItem;
 				if(item){
+					detailDico.visible = true;
 					detailDico.oItem = item;
 					detailDico.init();
 				}
@@ -330,9 +336,12 @@
 				// TODO Auto-generated method stub
 				
 			}
-			protected function tabnavigator1_tabIndexChangeHandler(event:IndexChangedEvent):void
+						
+			protected function changeCC_clickHandler(event:MouseEvent):void
 			{
-				if(event.newIndex==2)gParticipe.init();
+				var data:Array = new Array;
+				data["licence"]= this.ccModif.ccItem;
+				RO.edit(idOeu, data);
 			}
 			
 		]]>
@@ -377,10 +386,11 @@
 	
 	<mx:ViewStack id="vsParam" width="100%" height="100%" >			
 		<mx:Canvas id="view" width="100%" height="100%">
-			<mx:HBox width="100%">
+			<mx:HBox width="100%" >
 				<mx:Label fontSize="16" text="Titre de l'oeuvre :" /><mx:TextInput id="UpdLib" /><mx:Button label="Modifier" click="updateItem()" />
+				<co:gLicence id="cc" click="{vsParam.selectedChild = licence;}" toolTip="Cliquez sur l'image pour plus d'information ou pour changer de licence." />
 			</mx:HBox>
-			<mx:TabNavigator y="24" width="100%" height="100%" change="tabnavigator1_tabIndexChangeHandler(event)">
+			<mx:TabNavigator y="30" width="100%" height="100%">
 				<s:NavigatorContent width="100%" height="100%" id="ncParam" label="Paramétrer">
 							<mx:VBox width="100%" height="100%">						
 								<mx:Panel title="Dictionnaires associés" width="100%" height="100%" layout="absolute">
@@ -399,10 +409,10 @@
 													<mx:DataGridColumn headerText="Id Dico" dataField="id_dico" visible="false"/>
 												</mx:columns>
 											</mx:DataGrid>
-											<co:gDico id="detailDico" />
+											<co:gDico id="detailDico" visible="false" />
 										</mx:VBox>
 										<mx:HBox id="insertDico" width="100%" height="100%" >
-											<mx:VBox borderStyle="solid" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2" width="100%" height="100%">
+											<mx:VBox borderStyle="solid" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2" width="320" height="100%">
 												<mx:Label text="Sélectionner les dictionnaires par défaut d'une langue :"/>
 												<mx:ComboBox id="cbLangue"  prompt="langue" labelField="langue" change="selectDicoDefautLangue()" dataProvider="{arrLangue}" />
 												<mx:Label text="ou choisissez un dictionnaire par type :"/>
@@ -425,6 +435,9 @@
 													<mx:Label text="Type :" /><mx:ComboBox id="cbDicoType"  prompt="choisissez un type" dataProvider="{arrType}" labelField="type" />
 												</mx:HBox>
 												<mx:ComboBox id="cbLangueAjout"  prompt="choisissez une langue" labelField="langue" dataProvider="{arrLangue}" editable="true" />											
+												<mx:Label text="Choisissez une licence :" />
+												<co:gLicence id="ccAjout" bModif="true" />			
+
 												<mx:HBox>
 													<mx:Button label="Ajouter" click="ajouterDicoclickHandler(event)"/>
 													<mx:Button label="Annuler" click="vsDico.selectedChild = viewDico;" />															
@@ -438,7 +451,7 @@
 				<s:NavigatorContent width="100%" height="100%" label="Ecrire">
 				</s:NavigatorContent>
 				<s:NavigatorContent width="100%" height="100%" label="Participer" >
-					<co:gActiUti id="gParticipe" idUti="{this.parentApplication.uti.idUti}" idOeu="{idOeu}" />
+					<co:gActiUti id="gParticipe" idUti="{this.parentApplication.uti.idUti}" />
 				</s:NavigatorContent>
 			</mx:TabNavigator>
 		</mx:Canvas>
@@ -453,6 +466,15 @@
 				<mx:Button label="Annuler" click="insertAnnuler()" />				
 			</mx:HBox>
 		</mx:VBox>
+		<mx:VBox id="licence" width="100%" height="100%">
+			<mx:HBox verticalAlign="middle"  >
+				<mx:Label fontSize="16" text="Cliquer sur la licence que vous voulez enregistrer." />
+				<mx:Button label="Enregistrer" click="changeCC_clickHandler(event)" />
+				<mx:Button label="Annuler" click="{vsParam.selectedChild = view;}" />				
+			</mx:HBox>
+			<co:gLicence id="ccModif" bModif="true" ccItem="{item.licence}" />			
+		</mx:VBox>
+
 	</mx:ViewStack>
 
 	 
