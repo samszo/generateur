@@ -3,9 +3,11 @@ import compo.*;
 import compo.dgOeuvres;
 
 import mx.controls.Alert;
+import mx.events.CloseEvent;
 import mx.managers.PopUpManager;
 import mx.rpc.events.FaultEvent;
 import mx.rpc.events.ResultEvent;
+import mx.rpc.remoting.RemoteObject;
 
 import spark.components.Label;
 
@@ -13,6 +15,13 @@ import spark.components.Label;
 [Bindable] public var arrCtrls:Array;
 [Bindable] public var arrVerifDico:Array;
 [Bindable] public var ctrlActi:Object;
+public var idItem:String;
+public var dataItem:Array;
+public var arrItem:Array;
+public var rocItem:Object;
+public var actionItem:String;
+public var actisItem:String;
+public var idDicoItem:String;
 
 public function testerGen(txts:Array, ctrls:Array):void
 {
@@ -30,10 +39,80 @@ protected function testerMoteur_resultHandler(event:ResultEvent):void
 	}	
 }
 
-public function ajoutActiUti(actis:String, utis:String, ctrl:Object):void
+public function verifActi(arrR:Array, action:String, actis:String, ROC:Object, id:String, data:Array, idDico:String):void
+{
+	idItem=id;
+	dataItem=data;
+	rocItem=ROC;
+	actionItem=action;
+	arrItem=arrR;
+	actisItem=actis;
+	idDicoItem=idDico;
+	if(arrR['nbGen']!=0){
+		if(arrR['nbUti']==1){
+			if(action=="supprimer"){
+				Alert.show("Vous ne pouvez pas supprimer l'item."
+					+"\nIl est utilisé dans "+arrR['nbGen']+" expression(s)."
+					+ "\nVous devez supprimer ces expresions avant de pouvoir supprimer l'item."
+					,"Vérification disponibilité de l'item");										
+			}else{
+				Alert.show("L'item est utilisé dans "+arrR['nbGen']+" expression(s)."
+					+ "\nVoulez-vous que ces expressions soient impactées : cliquer sur 'OUI'"
+					+ "\nPréférez vous créer un nouvel item : cliquer sur 'NON'"
+					,"Vérification disponibilité de l'item", 3, this, verifSoloItemHandler);										
+			}	
+		}else{
+			var mess:String ="";
+			if(action=="modifier"){
+				mess="\nPréférez vous créer un nouvel item : cliquer sur 'NON'";
+			}
+			
+			Alert.show("Vous ne pouvez pas "+action+" l'item."
+				+"\nIl est utilisé dans "+arrR['nbGen']+" expression(s)."
+				+"\nVoulez vous prévenir le(s) "+arrR['nbUti']+" utilisateur(s)  : cliquer sur 'OUI'"
+				+ mess
+				,"Vérification disponibilité de l'item", 3, this, verifMultiItemHandler);									
+		}
+	}else{
+		if(action=="supprimer")
+			rocItem.remove(idItem);
+		if(action=="modifier"){
+			rocItem.edit(idItem, dataItem);					
+		}
+	}	
+}
+
+
+private function verifSoloItemHandler(event:CloseEvent):void
+{
+	if (event.detail == Alert.YES) 
+	{					
+		rocItem.edit(idItem, dataItem);					
+	}
+	if (event.detail == Alert.NO) 
+	{
+		if(actionItem=="modifier"){
+			rocItem.ajouter(dataItem);											
+		}
+	}
+}
+
+private function verifMultiItemHandler(event:CloseEvent):void
+{
+	if (event.detail == Alert.YES) 
+	{
+		ajoutActiUti(actisItem, arrItem['idsUti'], idDicoItem, false);
+	}
+	if (event.detail == Alert.NO && actionItem=="modifier") 
+	{
+		rocItem.ajouter(dataItem);					
+	}
+}
+
+public function ajoutActiUti(actis:String, utis:String, idDico:String, ctrl:Object):void
 {
 	ctrlActi = ctrl;
-	ROACTI.ajoutForUtis(actis, utis);
+	ROACTI.ajoutForUtis(actis, utis, dgOeuParam.idOeu, idDico);
 }
 
 protected function ajoutForUtis_resultHandler(event:ResultEvent):void
