@@ -3,6 +3,9 @@
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" height="100%"
 		 creationComplete="creationCompleteHandler(event)" >
+	<s:layout>
+		<s:VerticalLayout paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2"/>
+	</s:layout>
 	<fx:Script>
 		<![CDATA[
 			import mx.controls.Alert;
@@ -11,18 +14,18 @@
 			import mx.rpc.events.ResultEvent;
 			
 			[Bindable] public var idUti:String;
+			[Bindable] public var idOeu:int;
+			[Bindable] public var xmlTree:XML
 
 			protected function creationCompleteHandler(event:FlexEvent):void
 			{
-				init(idUti);
+				init();
 			}
-			public function init(uti:String):void
+			public function init():void
 			{
-				if(uti){
-					roActiUti.getActiForUti(idUti);
-					idUti = uti;
-				}
-				
+				if(idOeu){
+					roActiUti.getActiForOeuvre(idOeu);
+				}				
 			}
 			public function faultHandlerService(fault:FaultEvent):void
 			{
@@ -36,7 +39,8 @@
 			
 			protected function getActiForUti_resultHandler(event:ResultEvent):void
 			{
-				tActiUti.dataProvider = event.result as XML;
+				xmlTree = XML(event.result);
+				tActiUti.openItems = xmlTree..acti;
 			}
 			
 		]]>
@@ -46,8 +50,9 @@
 						source="Model_DbTable_flux_acti" destination="zend" 
 						showBusyCursor="true"
 						fault="faultHandlerService(event)">
-			<s:method name="getActiForUti" result="getActiForUti_resultHandler(event)"  />
+			<s:method name="getActiForOeuvre" result="getActiForUti_resultHandler(event)"  />
 		</s:RemoteObject>
 	</fx:Declarations>
-	<mx:Tree id="tActiUti" width="100%" height="100%" labelField="@lib"></mx:Tree>
+	<mx:Tree id="tActiUti" width="100%" height="100%" labelField="@lib" 
+			 showRoot="true" dataProvider="{xmlTree}" /> 
 </s:Group>
