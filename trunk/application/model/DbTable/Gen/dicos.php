@@ -138,7 +138,7 @@ class Model_DbTable_Gen_dicos extends Zend_Db_Table_Abstract
      *
      * @return array
      */
-    public function findById_dico($id_dico)
+    public function findByIdDico($id_dico)
     {
         $query = $this->select()
                     ->from( array("g" => "gen_dicos") )                           

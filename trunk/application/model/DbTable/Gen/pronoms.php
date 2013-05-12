@@ -19,13 +19,60 @@ class Model_DbTable_Gen_pronoms extends Zend_Db_Table_Abstract
      */
     protected $_primary = 'id_pronom';
 
-    protected $_referenceMap    = array(
-        'Lieux' => array(
-            'columns'           => 'id_lieu',
-            'refTableClass'     => 'Models_DbTable_Gevu_lieux',
-            'refColumns'        => 'id_lieu'
-        )
-    );	
+    
+    /**
+     * Vérifie si une entrée est utilisée comme sujet.
+     *
+     * @param int 		$idDico
+     * @param string 	$num
+     *
+     * @return array
+     */
+    public function utilise_sujet($idDico, $num)
+    {
+    	$sql ="SELECT COUNT(DISTINCT g.id_gen) nbGen
+    		, COUNT(DISTINCT oduA.id_oeu) nbOeu
+			, COUNT(DISTINCT g.id_dico) nbDico
+			, COUNT(DISTINCT oduA.uti_id) nbUti
+			, GROUP_CONCAT(DISTINCT oduA.uti_id) idsUti
+		FROM gen_pronoms p
+			INNER JOIN gen_oeuvres_dicos_utis odu ON odu.id_dico = p.id_dico
+			INNER JOIN gen_oeuvres_dicos_utis oduA ON oduA.id_oeu = odu.id_oeu
+			LEFT JOIN gen_generateurs g ON g.valeur LIKE '%[__".$num."_____|%]%' AND p.id_dico = oduA.id_dico
+			WHERE p.num = ".$num." AND p.id_dico = ".$idDico."
+			GROUP BY p.id_pronom";
+    	$db = $this->getAdapter()->query($sql);
+    	return $db->fetchAll();
+    
+    }
+
+    /**
+     * Vérifie si une entrée est utilisée comme complément.
+     *
+     * @param int 		$idDico
+     * @param string 	$num
+     *
+     * @return array
+     */
+    public function utilise_comp($idDico, $num)
+    {
+    	//vérifie la taille du num
+    	if(strlen($num)==1)$num = "0".$num; 
+    	$sql ="SELECT COUNT(DISTINCT g.id_gen) nbGen
+    		, COUNT(DISTINCT oduA.id_oeu) nbOeu
+			, COUNT(DISTINCT g.id_dico) nbDico
+			, COUNT(DISTINCT oduA.uti_id) nbUti
+			, GROUP_CONCAT(DISTINCT oduA.uti_id) idsUti
+		FROM gen_pronoms p
+			INNER JOIN gen_oeuvres_dicos_utis odu ON odu.id_dico = p.id_dico
+			INNER JOIN gen_oeuvres_dicos_utis oduA ON oduA.id_oeu = odu.id_oeu
+			LEFT JOIN gen_generateurs g ON g.valeur LIKE '%[____".$num."__|%]%' AND p.id_dico = oduA.id_dico
+			WHERE p.num = ".$num." AND p.id_dico = ".$idDico."
+			GROUP BY p.id_pronom";
+    	$db = $this->getAdapter()->query($sql);
+    	return $db->fetchAll();
+    
+    }
     
     /**
      * Vérifie si une entrée Gen_pronoms existe.
@@ -56,7 +103,11 @@ class Model_DbTable_Gen_pronoms extends Zend_Db_Table_Abstract
      */
     public function ajouter($data, $existe=true)
     {
-    	
+    	if(!isset($data['num'])){
+    		//recherche le dernier num du dictionnaire
+    		$mn = $this->findMaxNumByIdDicoType($data['id_dico'], $data['type']);
+    		$data['num'] = $mn[0]['maxNum']+1;
+    	}    	 
     	$id=false;
     	if($existe)$id = $this->existe($data);
     	if(!$id){
@@ -64,7 +115,26 @@ class Model_DbTable_Gen_pronoms extends Zend_Db_Table_Abstract
     	}
     	return $id;
     } 
-           
+
+    /**
+     * Recherche le plus grand num pour un dictionnaire
+     *
+     * @param int $idDico
+     * @param string $type
+     *
+     * @return array
+     */
+    public function findMaxNumByIdDicoType($idDico, $type)
+    {
+    	$query = $this->select()
+    	->from( array("g" => "gen_pronoms"),array("maxNum"=>"MAX(num)"))
+    	->where( "g.id_dico = ?", $idDico)
+    	->where( "g.type = ?", $type);
+    	
+    	return $this->fetchAll($query)->toArray();
+    }
+    
+    
     /**
      * Recherche une entrée Gen_pronoms avec la clef primaire spécifiée
      * et modifie cette entrée avec les nouvelles données.
@@ -93,18 +163,6 @@ class Model_DbTable_Gen_pronoms extends Zend_Db_Table_Abstract
     	$this->delete('gen_pronoms.id_pronom = ' . $id);
     }
 
-    /**
-     * Recherche les entrées de Gen_pronoms avec la clef de lieu
-     * et supprime ces entrées.
-     *
-     * @param integer $idLieu
-     *
-     * @return void
-     */
-    public function removeLieu($idLieu)
-    {
-		$this->delete('id_lieu = ' . $idLieu);
-    }
     
     /**
      * Récupère toutes les entrées Gen_pronoms avec certains critères

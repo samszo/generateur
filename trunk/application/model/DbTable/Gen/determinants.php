@@ -19,13 +19,34 @@ class Model_DbTable_Gen_determinants extends Zend_Db_Table_Abstract
      */
     protected $_primary = 'id_dtm';
 
-    protected $_referenceMap    = array(
-        'Lieux' => array(
-            'columns'           => 'id_lieu',
-            'refTableClass'     => 'Models_DbTable_Gevu_lieux',
-            'refColumns'        => 'id_lieu'
-        )
-    );	
+
+    /**
+     * Vérifie si une entrée est utilisée
+     *
+     * @param int 		$idDico
+     * @param string 	$num
+     *
+     * @return array
+     */
+    public function utilise($idDico, $num)
+    {
+    	$sql ="SELECT COUNT(DISTINCT g.id_gen) nbGen
+    		, COUNT(DISTINCT oduA.id_oeu) nbOeu
+			, COUNT(DISTINCT g.id_dico) nbDico
+			, COUNT(DISTINCT oduA.uti_id) nbUti
+			, GROUP_CONCAT(DISTINCT oduA.uti_id) idsUti
+		FROM gen_determinants d
+			INNER JOIN gen_oeuvres_dicos_utis odu ON odu.id_dico = d.id_dico
+			INNER JOIN gen_oeuvres_dicos_utis oduA ON oduA.id_oeu = odu.id_oeu
+			LEFT JOIN gen_generateurs g ON g.valeur LIKE '%[".$num."|%' AND d.id_dico = oduA.id_dico
+			WHERE d.num = ".$num." AND d.id_dico = ".$idDico."
+			GROUP BY d.num";
+    	$db = $this->getAdapter()->query($sql);
+    	return $db->fetchAll();
+    
+    }
+    
+    
     
     /**
      * Vérifie si une entrée Gen_determinants existe.
@@ -50,21 +71,61 @@ class Model_DbTable_Gen_determinants extends Zend_Db_Table_Abstract
      * Ajoute une entrée Gen_determinants.
      *
      * @param array $data
-     * @param boolean $existe
      *  
      * @return integer
      */
-    public function ajouter($data, $existe=true)
+    public function ajouter($data)
     {
-    	
-    	$id=false;
-    	if($existe)$id = $this->existe($data);
-    	if(!$id){
-    	 	$id = $this->insert($data);
+    	if(!isset($data['num'])){
+    		//recherche le dernier num du dictionnaire
+    		$mn = $this->findMaxNumByIdDico($data['id_dico']);
+    		$data['num'] = $mn[0]['maxNum']+1;
     	}
-    	return $id;
+    	
+		foreach ($data['ordres'] as $key => $value) {
+	    	$r = array("num"=>$data['num'], 'id_dico'=>$data['id_dico'], 'lib'=>$value, 'ordre'=>$key);
+	   	 	$id = $this->insert($r);
+		}
+
+   	 	return $id;
     } 
 
+    /**
+     * Recherche le plus grand num pour un dictionnaire
+     *
+     * @param int $idDico
+     *
+     * @return array
+     */
+    public function findMaxNumByIdDico($idDico)
+    {
+    	$query = $this->select()
+    	->from( array("g" => "gen_determinants"),array("maxNum"=>"MAX(num)"))
+    	->where( "g.id_dico = ?", $idDico);
+    	 
+    	return $this->fetchAll($query)->toArray();
+    }
+        
+    /**
+     * Recherche une entrée Gen_determinants avec la clef primaire spécifiée
+     * et modifie cette entrée avec les nouvelles données.
+     *
+     * @param array $data
+     *
+     * @return void
+     */
+    public function dupliquer($data)
+    {
+    	$mn = $this->findMaxNumByIdDico($data['id_dico']);
+    	$num = $mn[0]['maxNum']+1;
+    	 
+    	foreach ($data as $c) {
+    		$sql = 'INSERT INTO gen_determinants (lib, ordre, id_dico, num) 
+    				SELECT lib, ordre, id_dico,'.$num.' FROM gen_determinants WHERE id_dtm='.$c["id_dtm"];
+    		$stmt = $this->_db->query($sql);
+    	}
+    }
+    
     /**
      * Recherche une entrée Gen_determinants avec la clef primaire spécifiée
      * et modifie cette entrée avec les nouvelles données.
@@ -78,6 +139,19 @@ class Model_DbTable_Gen_determinants extends Zend_Db_Table_Abstract
    		foreach ($data as $c) {
    			$this->edit($c["id_dtm"], array("lib"=>$c["lib"]));
    		}
+    }
+
+    /**
+     * Supprime les entrée
+     *
+     * @param string $num
+     * @param string $idDico
+     *
+     * @return void
+     */
+    public function removeNum($num, $idDico)
+    {
+    	$this->delete('gen_determinants.num = '.$num.' AND gen_determinants.id_dico = '.$idDico);
     }
     
     
@@ -109,19 +183,6 @@ class Model_DbTable_Gen_determinants extends Zend_Db_Table_Abstract
     	$this->delete('gen_determinants.id_dtm = ' . $id);
     }
 
-    /**
-     * Recherche les entrées de Gen_determinants avec la clef de lieu
-     * et supprime ces entrées.
-     *
-     * @param integer $idLieu
-     *
-     * @return void
-     */
-    public function removeLieu($idLieu)
-    {
-		$this->delete('id_lieu = ' . $idLieu);
-    }
-    
     /**
      * Récupère toutes les entrées Gen_determinants avec certains critères
      * de tri, intervalles
