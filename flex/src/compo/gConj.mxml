@@ -413,6 +413,22 @@
 				bChange = false;
 				arrTrmChange = new Array;
 			}
+
+			protected function ajouter_clickHandler(event:MouseEvent):void
+			{				
+				var params:Array = new Array;
+				params['id_dico']=idDico;
+				
+				ROC.ajouter(params);
+			}
+
+			protected function ajouter_resultHandler(event:ResultEvent):void
+			{
+				Alert.show("La conjugaison est ajoutée.","Ajout d'un item");				
+				
+				vs.selectedChild = lecture;
+				ROC.findByIdDico(idDico);
+			}
 			
 		]]>
 	</fx:Script>
@@ -427,405 +443,517 @@
 			<s:method name="findByIdDico" result="findByDico_resultHandler(event)" />
 			<s:method name="findTermByIdConj" result="findTermByIdConj_resultHandler(event)" />
 			<s:method name="findVerbeByIdConj" result="findVerbeByIdConj_resultHandler(event)"/>
+			<s:method name="ajouter" result="ajouter_resultHandler(event)" />			
+			
 		</s:RemoteObject>
 	</fx:Declarations>
-	<s:VGroup width="100%" height="100%" id="detail" >
-		<compo:hbFilterControl id="dgFilter"  />
-		<mx:HDividedBox id="dgDivBox" width="100%" height="100%" >
-			<s:VGroup width="140" height="100%" >
-				<s:HGroup>
-					<mx:LinkButton visible="{bRemove}" width="20" click="removeItem()"
-								   icon="@Embed('images/DeleteRecord.png')" toolTip="{'Supprimer un item'}"/>
-					<mx:LinkButton id="btnAddNew" visible="{bAjout}" width="20" click="ajoutItem()"
-								   icon="@Embed('images/AddRecord.png')" toolTip="{'Ajouter un item'}"/>					
-				</s:HGroup>
-				<mx:DataGrid id="dg" width="100%" height="100%" click="selectDgItem(event);" editable="true" >
-					<mx:columns>
-						<mx:DataGridColumn dataField="id_conj" editable="false" visible="false" headerText="id_conj" />
-						<mx:DataGridColumn dataField="modele" headerText="Modèle" />
-					</mx:columns>
-				</mx:DataGrid>
-			</s:VGroup>
-			<s:HGroup id="dgDetail" width="100%" height="100%" >
-				<mx:DataGrid id="dgVerbe" height="100%" click="dgVerbe_clickHandler(event)" >
-					<mx:columns>
-						<mx:DataGridColumn dataField="id_concept" editable="false" visible="false" headerText="id_concept" />
-						<mx:DataGridColumn dataField="lib" headerText="Verbe(s)" />
-					</mx:columns>
-				</mx:DataGrid>									
-				<s:VGroup width="100%" height="100%" >
-					<mx:TabNavigator id="tabnav" width="100%" height="100%" change="initTerms()">
-						<s:NavigatorContent label="Indicatif présent" >
-							<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
-								<s:VGroup width="100%" height="100%">					
-									<s:HGroup width="100%">
-										<s:TextInput id="t1" width="100%" text="" change="t_changeHandler(event)" />
-										<s:TextInput id="Gp1P" width="100%" text="{'[011000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp1P" width="100%" color="#117E20" text="---" />				
-									</s:HGroup>
-									<s:Line width="100%" >
-										<s:stroke>
-											<s:SolidColorStroke weight="2" caps="square"/>
-										</s:stroke>					
-									</s:Line>
-									<s:HGroup width="100%">
-										<s:TextInput id="t2" width="100%" text="" change="t_changeHandler(event)" />
-										<s:TextInput id="Gp2P" width="100%" text="{'[012000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp2P" width="100%" color="#117E20" text="---" />				
-									</s:HGroup>
-									<s:Line width="100%" >
-										<s:stroke>
-											<s:SolidColorStroke weight="2" caps="square"/>
-										</s:stroke>					
-									</s:Line>
-									<s:HGroup width="100%">
-										<s:TextInput id="t3" width="100%" text="" change="t_changeHandler(event)" />
-										<s:TextInput id="Gp3P" width="100%" text="{'[013000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp3P" width="100%" color="#117E20" text="---" />				
-									</s:HGroup>
-								</s:VGroup>
-								<s:VGroup width="100%" height="100%">					
-									<s:HGroup width="100%">
-										<s:TextInput id="t4" width="100%" text="" change="t_changeHandler(event)" />
-										<s:TextInput id="Gp4P" width="100%" text="{'[014000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp4P" width="100%" color="#117E20" text="---" />				
-									</s:HGroup>
-									<s:Line width="100%" >
-										<s:stroke>
-											<s:SolidColorStroke weight="2" caps="square"/>
-										</s:stroke>					
-									</s:Line>
-									<s:HGroup width="100%">
-										<s:TextInput id="t5" width="100%" text="" change="t_changeHandler(event)" />
-										<s:TextInput id="Gp5P" width="100%" text="{'[015000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp5P" width="100%" color="#117E20" text="---" />				
-									</s:HGroup>
-									<s:Line width="100%" >
-										<s:stroke>
-											<s:SolidColorStroke weight="2" caps="square"/>
-										</s:stroke>					
-									</s:Line>
-									<s:HGroup width="100%">
-										<s:TextInput id="t6" width="100%" text="" change="t_changeHandler(event)" />
-										<s:TextInput id="Gp6P" width="100%" text="{'[017000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp6P" width="100%" color="#117E20" text="---" />				
-									</s:HGroup>
-								</s:VGroup>
-							</s:HGroup>
-						</s:NavigatorContent>
-						<s:NavigatorContent label="Indicatif imparfait" >
-							<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
-								<s:VGroup width="100%" height="100%">					
-									<s:HGroup width="100%">
-										<s:TextInput id="t7" width="100%" text="" change="t_changeHandler(event)" />
-										<s:TextInput id="Gp1I" width="100%" text="{'[021000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp1I" width="100%" color="#117E20" text="---" />				
-									</s:HGroup>
-									<s:Line width="100%" >
-										<s:stroke>
-											<s:SolidColorStroke weight="2" caps="square"/>
-										</s:stroke>					
-									</s:Line>
-									<s:HGroup width="100%">
-										<s:TextInput id="t8" width="100%" text="" change="t_changeHandler(event)" />
-										<s:TextInput id="Gp2I" width="100%" text="{'[022000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp2I" width="100%" color="#117E20" text="---" />				
-									</s:HGroup>
-									<s:Line width="100%" >
-										<s:stroke>
-											<s:SolidColorStroke weight="2" caps="square"/>
-										</s:stroke>					
-									</s:Line>
-									<s:HGroup width="100%">
-										<s:TextInput id="t9" width="100%" text="" change="t_changeHandler(event)" />
-										<s:TextInput id="Gp3I" width="100%" text="{'[023000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp3I" width="100%" color="#117E20" text="---" />				
-									</s:HGroup>
-								</s:VGroup>
-								<s:VGroup width="100%" height="100%">					
-									<s:HGroup width="100%">
-										<s:TextInput id="t10" width="100%" text="" change="t_changeHandler(event)" />
-										<s:TextInput id="Gp4I" width="100%" text="{'[024000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp4I" width="100%" color="#117E20" text="---" />				
-									</s:HGroup>
-									<s:Line width="100%" >
-										<s:stroke>
-											<s:SolidColorStroke weight="2" caps="square"/>
-										</s:stroke>					
-									</s:Line>
-									<s:HGroup width="100%">
-										<s:TextInput id="t11" width="100%" text="" change="t_changeHandler(event)" />
-										<s:TextInput id="Gp5I" width="100%" text="{'[025000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp5I" width="100%" color="#117E20" text="---" />				
-									</s:HGroup>
-									<s:Line width="100%" >
-										<s:stroke>
-											<s:SolidColorStroke weight="2" caps="square"/>
-										</s:stroke>					
-									</s:Line>
-									<s:HGroup width="100%">
-										<s:TextInput id="t12" width="100%" text="" change="t_changeHandler(event)" />
-										<s:TextInput id="Gp6I" width="100%" text="{'[027000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp6I" width="100%" color="#117E20" text="---" />				
-									</s:HGroup>
-								</s:VGroup>
-							</s:HGroup>
-						</s:NavigatorContent>
-						<s:NavigatorContent label="Passé simple" >
-							<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
-								<s:VGroup width="100%" height="100%">					
-									<s:HGroup width="100%">
-										<s:TextInput id="t13" width="100%" text="" change="t_changeHandler(event)" />
-										<s:TextInput id="Gp1PS" width="100%" text="{'[031000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp1PS" width="100%" color="#117E20" text="---" />				
-									</s:HGroup>
-									<s:Line width="100%" >
-										<s:stroke>
-											<s:SolidColorStroke weight="2" caps="square"/>
-										</s:stroke>					
-									</s:Line>
-									<s:HGroup width="100%">
-										<s:TextInput id="t14" width="100%" text="" change="t_changeHandler(event)" />
-										<s:TextInput id="Gp2PS" width="100%" text="{'[032000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp2PS" width="100%" color="#117E20" text="---" />				
-									</s:HGroup>
-									<s:Line width="100%" >
-										<s:stroke>
-											<s:SolidColorStroke weight="2" caps="square"/>
-										</s:stroke>					
-									</s:Line>
-									<s:HGroup width="100%">
-										<s:TextInput id="t15" width="100%" text="" change="t_changeHandler(event)" />
-										<s:TextInput id="Gp3PS" width="100%" text="{'[033000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp3PS" width="100%" color="#117E20" text="---" />				
-									</s:HGroup>
-								</s:VGroup>
-								<s:VGroup width="100%" height="100%">					
-									<s:HGroup width="100%">
-										<s:TextInput id="t16" width="100%" text="" change="t_changeHandler(event)" />
-										<s:TextInput id="Gp4PS" width="100%" text="{'[034000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp4PS" width="100%" color="#117E20" text="---" />				
-									</s:HGroup>
-									<s:Line width="100%" >
-										<s:stroke>
-											<s:SolidColorStroke weight="2" caps="square"/>
-										</s:stroke>					
-									</s:Line>
-									<s:HGroup width="100%">
-										<s:TextInput id="t17" width="100%" text="" change="t_changeHandler(event)" />
-										<s:TextInput id="Gp5PS" width="100%" text="{'[035000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp5PS" width="100%" color="#117E20" text="---" />				
-									</s:HGroup>
-									<s:Line width="100%" >
-										<s:stroke>
-											<s:SolidColorStroke weight="2" caps="square"/>
-										</s:stroke>					
-									</s:Line>
-									<s:HGroup width="100%">
-										<s:TextInput id="t18" width="100%" text="" change="t_changeHandler(event)" />
-										<s:TextInput id="Gp6PS" width="100%" text="{'[037000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp6PS" width="100%" color="#117E20" text="---" />				
-									</s:HGroup>
-								</s:VGroup>
-							</s:HGroup>
-						</s:NavigatorContent>
-						<s:NavigatorContent label="Futur simple" >
-							<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
-								<s:VGroup width="100%" height="100%">					
-									<s:HGroup width="100%">
-										<s:TextInput id="t19" width="100%" text="" change="t_changeHandler(event)" />
-										<s:TextInput id="Gp1F" width="100%" text="{'[041000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp1F" width="100%" color="#117E20" text="---" />				
-									</s:HGroup>
-									<s:Line width="100%" >
-										<s:stroke>
-											<s:SolidColorStroke weight="2" caps="square"/>
-										</s:stroke>					
-									</s:Line>
-									<s:HGroup width="100%">
-										<s:TextInput id="t20" width="100%" text="" change="t_changeHandler(event)" />
-										<s:TextInput id="Gp2F" width="100%" text="{'[042000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp2F" width="100%" color="#117E20" text="---" />				
-									</s:HGroup>
-									<s:Line width="100%" >
-										<s:stroke>
-											<s:SolidColorStroke weight="2" caps="square"/>
-										</s:stroke>					
-									</s:Line>
-									<s:HGroup width="100%">
-										<s:TextInput id="t21" width="100%" text="" change="t_changeHandler(event)" />
-										<s:TextInput id="Gp3F" width="100%" text="{'[043000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp3F" width="100%" color="#117E20" text="---" />				
-									</s:HGroup>
-								</s:VGroup>
-								<s:VGroup width="100%" height="100%">					
-									<s:HGroup width="100%">
-										<s:TextInput id="t22" width="100%" text="" change="t_changeHandler(event)" />
-										<s:TextInput id="Gp4F" width="100%" text="{'[044000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp4F" width="100%" color="#117E20" text="---" />				
-									</s:HGroup>
-									<s:Line width="100%" >
-										<s:stroke>
-											<s:SolidColorStroke weight="2" caps="square"/>
-										</s:stroke>					
-									</s:Line>
-									<s:HGroup width="100%">
-										<s:TextInput id="t23" width="100%" text="" change="t_changeHandler(event)" />
-										<s:TextInput id="Gp5F" width="100%" text="{'[045000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp5F" width="100%" color="#117E20" text="---" />				
-									</s:HGroup>
-									<s:Line width="100%" >
-										<s:stroke>
-											<s:SolidColorStroke weight="2" caps="square"/>
-										</s:stroke>					
-									</s:Line>
-									<s:HGroup width="100%">
-										<s:TextInput id="t24" width="100%" text="" change="t_changeHandler(event)" />
-										<s:TextInput id="Gp6F" width="100%" text="{'[047000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp6F" width="100%" color="#117E20" text="---" />				
-									</s:HGroup>
-								</s:VGroup>
-							</s:HGroup>
-						</s:NavigatorContent>
-						<s:NavigatorContent  label="Conditionnel Présent" >
-							<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
-								<s:VGroup width="100%" height="100%">					
-									<s:HGroup width="100%">
-										<s:TextInput id="t25" width="100%" text="" change="t_changeHandler(event)" />
-										<s:TextInput id="Gp1C" width="100%" text="{'[051000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp1C" width="100%" color="#117E20" text="---" />				
-									</s:HGroup>
-									<s:Line width="100%" >
-										<s:stroke>
-											<s:SolidColorStroke weight="2" caps="square"/>
-										</s:stroke>					
-									</s:Line>
-									<s:HGroup width="100%">
-										<s:TextInput id="t26" width="100%" text="" change="t_changeHandler(event)" />
-										<s:TextInput id="Gp2C" width="100%" text="{'[052000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp2C" width="100%" color="#117E20" text="---" />				
-									</s:HGroup>
-									<s:Line width="100%" >
-										<s:stroke>
-											<s:SolidColorStroke weight="2" caps="square"/>
-										</s:stroke>					
-									</s:Line>
-									<s:HGroup width="100%">
-										<s:TextInput id="t27" width="100%" text="" change="t_changeHandler(event)" />
-										<s:TextInput id="Gp3C" width="100%" text="{'[053000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp3C" width="100%" color="#117E20" text="---" />				
-									</s:HGroup>
-								</s:VGroup>
-								<s:VGroup width="100%" height="100%">					
-									<s:HGroup width="100%">
-										<s:TextInput id="t28" width="100%" text="" change="t_changeHandler(event)" />
-										<s:TextInput id="Gp4C" width="100%" text="{'[054000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp4C" width="100%" color="#117E20" text="---" />				
-									</s:HGroup>
-									<s:Line width="100%" >
-										<s:stroke>
-											<s:SolidColorStroke weight="2" caps="square"/>
-										</s:stroke>					
-									</s:Line>
-									<s:HGroup width="100%">
-										<s:TextInput id="t29" width="100%" text="" change="t_changeHandler(event)" />
-										<s:TextInput id="Gp5C" width="100%" text="{'[055000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp5C" width="100%" color="#117E20" text="---" />				
-									</s:HGroup>
-									<s:Line width="100%" >
-										<s:stroke>
-											<s:SolidColorStroke weight="2" caps="square"/>
-										</s:stroke>					
-									</s:Line>
-									<s:HGroup width="100%">
-										<s:TextInput id="t30" width="100%" text="" change="t_changeHandler(event)" />
-										<s:TextInput id="Gp6C" width="100%" text="{'[057000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp6C" width="100%" color="#117E20" text="---" />				
-									</s:HGroup>
-								</s:VGroup>
-							</s:HGroup>
-						</s:NavigatorContent>
-						<s:NavigatorContent label="Subjonctif présent" >
-							<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
-								<s:VGroup width="100%" height="100%">					
-									<s:HGroup width="100%">
-										<s:TextInput id="t31" width="100%" text="" change="t_changeHandler(event)" />
-										<s:TextInput id="Gp1S" width="100%" text="{'[061000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp1S" width="100%" color="#117E20" text="---" />				
-									</s:HGroup>
-									<s:Line width="100%" >
-										<s:stroke>
-											<s:SolidColorStroke weight="2" caps="square"/>
-										</s:stroke>					
-									</s:Line>
-									<s:HGroup width="100%">
-										<s:TextInput id="t32" width="100%" text="" change="t_changeHandler(event)" />
-										<s:TextInput id="Gp2S" width="100%" text="{'[062000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp2S" width="100%" color="#117E20" text="---" />				
-									</s:HGroup>
-									<s:Line width="100%" >
-										<s:stroke>
-											<s:SolidColorStroke weight="2" caps="square"/>
-										</s:stroke>					
-									</s:Line>
-									<s:HGroup width="100%">
-										<s:TextInput id="t33" width="100%" text="" change="t_changeHandler(event)" />
-										<s:TextInput id="Gp3S" width="100%" text="{'[063000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp3S" width="100%" color="#117E20" text="---" />				
-									</s:HGroup>
-								</s:VGroup>
-								<s:VGroup width="100%" height="100%">					
-									<s:HGroup width="100%">
-										<s:TextInput id="t34" width="100%" text="" change="t_changeHandler(event)" />
-										<s:TextInput id="Gp4S" width="100%" text="{'[064000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp4S" width="100%" color="#117E20" text="---" />				
-									</s:HGroup>
-									<s:Line width="100%" >
-										<s:stroke>
-											<s:SolidColorStroke weight="2" caps="square"/>
-										</s:stroke>					
-									</s:Line>
-									<s:HGroup width="100%">
-										<s:TextInput id="t35" width="100%" text="" change="t_changeHandler(event)" />
-										<s:TextInput id="Gp5S" width="100%" text="{'[065000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp5S" width="100%" color="#117E20" text="---" />				
-									</s:HGroup>
-									<s:Line width="100%" >
-										<s:stroke>
-											<s:SolidColorStroke weight="2" caps="square"/>
-										</s:stroke>					
-									</s:Line>
-									<s:HGroup width="100%">
-										<s:TextInput id="t36" width="100%" text="" change="t_changeHandler(event)" />
-										<s:TextInput id="Gp6S" width="100%" text="{'[067000000|v_'+cptVerbe+']'}" />
-										<s:TextInput id="GTp6S" width="100%" color="#117E20" text="---" />				
-									</s:HGroup>
-								</s:VGroup>
-							</s:HGroup>
-						</s:NavigatorContent>
-						<s:NavigatorContent label="Participes" >
-							<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
-								<s:VGroup width="100%" height="100%">					
-									<s:FormHeading label="Participe présent" />
-									<s:TextInput id="t37" width="100%" text="" change="t_changeHandler(event)" />
-									<s:TextInput id="GpPP" width="100%" text="{'[080000000|v_'+cptVerbe+']'}" />
-									<s:TextInput id="GTpPP" width="100%" color="#117E20" text="---" />									
-								</s:VGroup>
-								<s:VGroup height="100%" width="100%" >
-									<s:FormHeading label="Infinitif présent" />
-									<s:TextInput id="t38" width="100%" text="" change="t_changeHandler(event)" />
-									<s:TextInput id="GpIP" width="100%" text="{'[09000000|v_'+cptVerbe+']'}" />
-									<s:TextInput id="GTpIP" width="100%" color="#117E20" text="---" />									
-								</s:VGroup>
-							</s:HGroup>
-						</s:NavigatorContent>
-					</mx:TabNavigator>
-					<s:HGroup verticalAlign="middle">
-						<s:Button label="Tester" click="tester_clickHandler(event)" />
-						<s:Button label="Enregistrer" click="enregistrer_clickHandler(event)" visible="{bChange}" color="red" />
-					</s:HGroup>				
+	<mx:ViewStack id="vs" width="100%" height="100%">
+		<mx:Canvas width="100%" height="100%" id="lecture" >		
+				
+		<s:VGroup width="100%" height="100%" id="detail" >
+			<compo:hbFilterControl id="dgFilter"  />
+			<mx:HDividedBox id="dgDivBox" width="100%" height="100%" >
+				<s:VGroup width="140" height="100%" >
+					<s:HGroup>
+						<mx:LinkButton visible="{bRemove}" width="20" click="removeItem()"
+									   icon="@Embed('images/DeleteRecord.png')" toolTip="{'Supprimer un item'}"/>
+						<mx:LinkButton id="btnAddNew" visible="{bAjout}" width="20" click="{vs.selectedChild = ecriture;}"
+									   icon="@Embed('images/AddRecord.png')" toolTip="{'Ajouter un item'}"/>					
+					</s:HGroup>
+					<mx:DataGrid id="dg" width="100%" height="100%" click="selectDgItem(event);" editable="true" >
+						<mx:columns>
+							<mx:DataGridColumn dataField="id_conj" editable="false" visible="false" headerText="id_conj" />
+							<mx:DataGridColumn dataField="modele" headerText="Modèle" />
+						</mx:columns>
+					</mx:DataGrid>
 				</s:VGroup>
-			</s:HGroup>
-		</mx:HDividedBox>
-	</s:VGroup>
+				<s:HGroup id="dgDetail" width="100%" height="100%" >
+					<mx:DataGrid id="dgVerbe" height="100%" click="dgVerbe_clickHandler(event)" >
+						<mx:columns>
+							<mx:DataGridColumn dataField="id_concept" editable="false" visible="false" headerText="id_concept" />
+							<mx:DataGridColumn dataField="lib" headerText="Verbe(s)" />
+						</mx:columns>
+					</mx:DataGrid>									
+					<s:VGroup width="100%" height="100%" >
+						<mx:TabNavigator id="tabnav" width="100%" height="100%" change="initTerms()">
+							<s:NavigatorContent label="Indicatif présent" >
+								<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
+									<s:VGroup width="100%" height="100%">					
+										<s:HGroup width="100%">
+											<s:TextInput id="t1" width="100%" text="" change="t_changeHandler(event)" />
+											<s:TextInput id="Gp1P" width="100%" text="{'[011000000|v_'+cptVerbe+']'}" />
+											<s:TextInput id="GTp1P" width="100%" color="#117E20" text="---" />				
+										</s:HGroup>
+										<s:Line width="100%" >
+											<s:stroke>
+												<s:SolidColorStroke weight="2" caps="square"/>
+											</s:stroke>					
+										</s:Line>
+										<s:HGroup width="100%">
+											<s:TextInput id="t2" width="100%" text="" change="t_changeHandler(event)" />
+											<s:TextInput id="Gp2P" width="100%" text="{'[012000000|v_'+cptVerbe+']'}" />
+											<s:TextInput id="GTp2P" width="100%" color="#117E20" text="---" />				
+										</s:HGroup>
+										<s:Line width="100%" >
+											<s:stroke>
+												<s:SolidColorStroke weight="2" caps="square"/>
+											</s:stroke>					
+										</s:Line>
+										<s:HGroup width="100%">
+											<s:TextInput id="t3" width="100%" text="" change="t_changeHandler(event)" />
+											<s:TextInput id="Gp3P" width="100%" text="{'[013000000|v_'+cptVerbe+']'}" />
+											<s:TextInput id="GTp3P" width="100%" color="#117E20" text="---" />				
+										</s:HGroup>
+									</s:VGroup>
+									<s:VGroup width="100%" height="100%">					
+										<s:HGroup width="100%">
+											<s:TextInput id="t4" width="100%" text="" change="t_changeHandler(event)" />
+											<s:TextInput id="Gp4P" width="100%" text="{'[014000000|v_'+cptVerbe+']'}" />
+											<s:TextInput id="GTp4P" width="100%" color="#117E20" text="---" />				
+										</s:HGroup>
+										<s:Line width="100%" >
+											<s:stroke>
+												<s:SolidColorStroke weight="2" caps="square"/>
+											</s:stroke>					
+										</s:Line>
+										<s:HGroup width="100%">
+											<s:TextInput id="t5" width="100%" text="" change="t_changeHandler(event)" />
+											<s:TextInput id="Gp5P" width="100%" text="{'[015000000|v_'+cptVerbe+']'}" />
+											<s:TextInput id="GTp5P" width="100%" color="#117E20" text="---" />				
+										</s:HGroup>
+										<s:Line width="100%" >
+											<s:stroke>
+												<s:SolidColorStroke weight="2" caps="square"/>
+											</s:stroke>					
+										</s:Line>
+										<s:HGroup width="100%">
+											<s:TextInput id="t6" width="100%" text="" change="t_changeHandler(event)" />
+											<s:TextInput id="Gp6P" width="100%" text="{'[017000000|v_'+cptVerbe+']'}" />
+											<s:TextInput id="GTp6P" width="100%" color="#117E20" text="---" />				
+										</s:HGroup>
+									</s:VGroup>
+								</s:HGroup>
+							</s:NavigatorContent>
+							<s:NavigatorContent label="Indicatif imparfait" >
+								<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
+									<s:VGroup width="100%" height="100%">					
+										<s:HGroup width="100%">
+											<s:TextInput id="t7" width="100%" text="" change="t_changeHandler(event)" />
+											<s:TextInput id="Gp1I" width="100%" text="{'[021000000|v_'+cptVerbe+']'}" />
+											<s:TextInput id="GTp1I" width="100%" color="#117E20" text="---" />				
+										</s:HGroup>
+										<s:Line width="100%" >
+											<s:stroke>
+												<s:SolidColorStroke weight="2" caps="square"/>
+											</s:stroke>					
+										</s:Line>
+										<s:HGroup width="100%">
+											<s:TextInput id="t8" width="100%" text="" change="t_changeHandler(event)" />
+											<s:TextInput id="Gp2I" width="100%" text="{'[022000000|v_'+cptVerbe+']'}" />
+											<s:TextInput id="GTp2I" width="100%" color="#117E20" text="---" />				
+										</s:HGroup>
+										<s:Line width="100%" >
+											<s:stroke>
+												<s:SolidColorStroke weight="2" caps="square"/>
+											</s:stroke>					
+										</s:Line>
+										<s:HGroup width="100%">
+											<s:TextInput id="t9" width="100%" text="" change="t_changeHandler(event)" />
+											<s:TextInput id="Gp3I" width="100%" text="{'[023000000|v_'+cptVerbe+']'}" />
+											<s:TextInput id="GTp3I" width="100%" color="#117E20" text="---" />				
+										</s:HGroup>
+									</s:VGroup>
+									<s:VGroup width="100%" height="100%">					
+										<s:HGroup width="100%">
+											<s:TextInput id="t10" width="100%" text="" change="t_changeHandler(event)" />
+											<s:TextInput id="Gp4I" width="100%" text="{'[024000000|v_'+cptVerbe+']'}" />
+											<s:TextInput id="GTp4I" width="100%" color="#117E20" text="---" />				
+										</s:HGroup>
+										<s:Line width="100%" >
+											<s:stroke>
+												<s:SolidColorStroke weight="2" caps="square"/>
+											</s:stroke>					
+										</s:Line>
+										<s:HGroup width="100%">
+											<s:TextInput id="t11" width="100%" text="" change="t_changeHandler(event)" />
+											<s:TextInput id="Gp5I" width="100%" text="{'[025000000|v_'+cptVerbe+']'}" />
+											<s:TextInput id="GTp5I" width="100%" color="#117E20" text="---" />				
+										</s:HGroup>
+										<s:Line width="100%" >
+											<s:stroke>
+												<s:SolidColorStroke weight="2" caps="square"/>
+											</s:stroke>					
+										</s:Line>
+										<s:HGroup width="100%">
+											<s:TextInput id="t12" width="100%" text="" change="t_changeHandler(event)" />
+											<s:TextInput id="Gp6I" width="100%" text="{'[027000000|v_'+cptVerbe+']'}" />
+											<s:TextInput id="GTp6I" width="100%" color="#117E20" text="---" />				
+										</s:HGroup>
+									</s:VGroup>
+								</s:HGroup>
+							</s:NavigatorContent>
+							<s:NavigatorContent label="Passé simple" >
+								<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
+									<s:VGroup width="100%" height="100%">					
+										<s:HGroup width="100%">
+											<s:TextInput id="t13" width="100%" text="" change="t_changeHandler(event)" />
+											<s:TextInput id="Gp1PS" width="100%" text="{'[031000000|v_'+cptVerbe+']'}" />
+											<s:TextInput id="GTp1PS" width="100%" color="#117E20" text="---" />				
+										</s:HGroup>
+										<s:Line width="100%" >
+											<s:stroke>
+												<s:SolidColorStroke weight="2" caps="square"/>
+											</s:stroke>					
+										</s:Line>
+										<s:HGroup width="100%">
+											<s:TextInput id="t14" width="100%" text="" change="t_changeHandler(event)" />
+											<s:TextInput id="Gp2PS" width="100%" text="{'[032000000|v_'+cptVerbe+']'}" />
+											<s:TextInput id="GTp2PS" width="100%" color="#117E20" text="---" />				
+										</s:HGroup>
+										<s:Line width="100%" >
+											<s:stroke>
+												<s:SolidColorStroke weight="2" caps="square"/>
+											</s:stroke>					
+										</s:Line>
+										<s:HGroup width="100%">
+											<s:TextInput id="t15" width="100%" text="" change="t_changeHandler(event)" />
+											<s:TextInput id="Gp3PS" width="100%" text="{'[033000000|v_'+cptVerbe+']'}" />
+											<s:TextInput id="GTp3PS" width="100%" color="#117E20" text="---" />				
+										</s:HGroup>
+									</s:VGroup>
+									<s:VGroup width="100%" height="100%">					
+										<s:HGroup width="100%">
+											<s:TextInput id="t16" width="100%" text="" change="t_changeHandler(event)" />
+											<s:TextInput id="Gp4PS" width="100%" text="{'[034000000|v_'+cptVerbe+']'}" />
+											<s:TextInput id="GTp4PS" width="100%" color="#117E20" text="---" />				
+										</s:HGroup>
+										<s:Line width="100%" >
+											<s:stroke>
+												<s:SolidColorStroke weight="2" caps="square"/>
+											</s:stroke>					
+										</s:Line>
+										<s:HGroup width="100%">
+											<s:TextInput id="t17" width="100%" text="" change="t_changeHandler(event)" />
+											<s:TextInput id="Gp5PS" width="100%" text="{'[035000000|v_'+cptVerbe+']'}" />
+											<s:TextInput id="GTp5PS" width="100%" color="#117E20" text="---" />				
+										</s:HGroup>
+										<s:Line width="100%" >
+											<s:stroke>
+												<s:SolidColorStroke weight="2" caps="square"/>
+											</s:stroke>					
+										</s:Line>
+										<s:HGroup width="100%">
+											<s:TextInput id="t18" width="100%" text="" change="t_changeHandler(event)" />
+											<s:TextInput id="Gp6PS" width="100%" text="{'[037000000|v_'+cptVerbe+']'}" />
+											<s:TextInput id="GTp6PS" width="100%" color="#117E20" text="---" />				
+										</s:HGroup>
+									</s:VGroup>
+								</s:HGroup>
+							</s:NavigatorContent>
+							<s:NavigatorContent label="Futur simple" >
+								<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
+									<s:VGroup width="100%" height="100%">					
+										<s:HGroup width="100%">
+											<s:TextInput id="t19" width="100%" text="" change="t_changeHandler(event)" />
+											<s:TextInput id="Gp1F" width="100%" text="{'[041000000|v_'+cptVerbe+']'}" />
+											<s:TextInput id="GTp1F" width="100%" color="#117E20" text="---" />				
+										</s:HGroup>
+										<s:Line width="100%" >
+											<s:stroke>
+												<s:SolidColorStroke weight="2" caps="square"/>
+											</s:stroke>					
+										</s:Line>
+										<s:HGroup width="100%">
+											<s:TextInput id="t20" width="100%" text="" change="t_changeHandler(event)" />
+											<s:TextInput id="Gp2F" width="100%" text="{'[042000000|v_'+cptVerbe+']'}" />
+											<s:TextInput id="GTp2F" width="100%" color="#117E20" text="---" />				
+										</s:HGroup>
+										<s:Line width="100%" >
+											<s:stroke>
+												<s:SolidColorStroke weight="2" caps="square"/>
+											</s:stroke>					
+										</s:Line>
+										<s:HGroup width="100%">
+											<s:TextInput id="t21" width="100%" text="" change="t_changeHandler(event)" />
+											<s:TextInput id="Gp3F" width="100%" text="{'[043000000|v_'+cptVerbe+']'}" />
+											<s:TextInput id="GTp3F" width="100%" color="#117E20" text="---" />				
+										</s:HGroup>
+									</s:VGroup>
+									<s:VGroup width="100%" height="100%">					
+										<s:HGroup width="100%">
+											<s:TextInput id="t22" width="100%" text="" change="t_changeHandler(event)" />
+											<s:TextInput id="Gp4F" width="100%" text="{'[044000000|v_'+cptVerbe+']'}" />
+											<s:TextInput id="GTp4F" width="100%" color="#117E20" text="---" />				
+										</s:HGroup>
+										<s:Line width="100%" >
+											<s:stroke>
+												<s:SolidColorStroke weight="2" caps="square"/>
+											</s:stroke>					
+										</s:Line>
+										<s:HGroup width="100%">
+											<s:TextInput id="t23" width="100%" text="" change="t_changeHandler(event)" />
+											<s:TextInput id="Gp5F" width="100%" text="{'[045000000|v_'+cptVerbe+']'}" />
+											<s:TextInput id="GTp5F" width="100%" color="#117E20" text="---" />				
+										</s:HGroup>
+										<s:Line width="100%" >
+											<s:stroke>
+												<s:SolidColorStroke weight="2" caps="square"/>
+											</s:stroke>					
+										</s:Line>
+										<s:HGroup width="100%">
+											<s:TextInput id="t24" width="100%" text="" change="t_changeHandler(event)" />
+											<s:TextInput id="Gp6F" width="100%" text="{'[047000000|v_'+cptVerbe+']'}" />
+											<s:TextInput id="GTp6F" width="100%" color="#117E20" text="---" />				
+										</s:HGroup>
+									</s:VGroup>
+								</s:HGroup>
+							</s:NavigatorContent>
+							<s:NavigatorContent  label="Conditionnel Présent" >
+								<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
+									<s:VGroup width="100%" height="100%">					
+										<s:HGroup width="100%">
+											<s:TextInput id="t25" width="100%" text="" change="t_changeHandler(event)" />
+											<s:TextInput id="Gp1C" width="100%" text="{'[051000000|v_'+cptVerbe+']'}" />
+											<s:TextInput id="GTp1C" width="100%" color="#117E20" text="---" />				
+										</s:HGroup>
+										<s:Line width="100%" >
+											<s:stroke>
+												<s:SolidColorStroke weight="2" caps="square"/>
+											</s:stroke>					
+										</s:Line>
+										<s:HGroup width="100%">
+											<s:TextInput id="t26" width="100%" text="" change="t_changeHandler(event)" />
+											<s:TextInput id="Gp2C" width="100%" text="{'[052000000|v_'+cptVerbe+']'}" />
+											<s:TextInput id="GTp2C" width="100%" color="#117E20" text="---" />				
+										</s:HGroup>
+										<s:Line width="100%" >
+											<s:stroke>
+												<s:SolidColorStroke weight="2" caps="square"/>
+											</s:stroke>					
+										</s:Line>
+										<s:HGroup width="100%">
+											<s:TextInput id="t27" width="100%" text="" change="t_changeHandler(event)" />
+											<s:TextInput id="Gp3C" width="100%" text="{'[053000000|v_'+cptVerbe+']'}" />
+											<s:TextInput id="GTp3C" width="100%" color="#117E20" text="---" />				
+										</s:HGroup>
+									</s:VGroup>
+									<s:VGroup width="100%" height="100%">					
+										<s:HGroup width="100%">
+											<s:TextInput id="t28" width="100%" text="" change="t_changeHandler(event)" />
+											<s:TextInput id="Gp4C" width="100%" text="{'[054000000|v_'+cptVerbe+']'}" />
+											<s:TextInput id="GTp4C" width="100%" color="#117E20" text="---" />				
+										</s:HGroup>
+										<s:Line width="100%" >
+											<s:stroke>
+												<s:SolidColorStroke weight="2" caps="square"/>
+											</s:stroke>					
+										</s:Line>
+										<s:HGroup width="100%">
+											<s:TextInput id="t29" width="100%" text="" change="t_changeHandler(event)" />
+											<s:TextInput id="Gp5C" width="100%" text="{'[055000000|v_'+cptVerbe+']'}" />
+											<s:TextInput id="GTp5C" width="100%" color="#117E20" text="---" />				
+										</s:HGroup>
+										<s:Line width="100%" >
+											<s:stroke>
+												<s:SolidColorStroke weight="2" caps="square"/>
+											</s:stroke>					
+										</s:Line>
+										<s:HGroup width="100%">
+											<s:TextInput id="t30" width="100%" text="" change="t_changeHandler(event)" />
+											<s:TextInput id="Gp6C" width="100%" text="{'[057000000|v_'+cptVerbe+']'}" />
+											<s:TextInput id="GTp6C" width="100%" color="#117E20" text="---" />				
+										</s:HGroup>
+									</s:VGroup>
+								</s:HGroup>
+							</s:NavigatorContent>
+							<s:NavigatorContent label="Subjonctif présent" >
+								<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
+									<s:VGroup width="100%" height="100%">					
+										<s:HGroup width="100%">
+											<s:TextInput id="t31" width="100%" text="" change="t_changeHandler(event)" />
+											<s:TextInput id="Gp1S" width="100%" text="{'[061000000|v_'+cptVerbe+']'}" />
+											<s:TextInput id="GTp1S" width="100%" color="#117E20" text="---" />				
+										</s:HGroup>
+										<s:Line width="100%" >
+											<s:stroke>
+												<s:SolidColorStroke weight="2" caps="square"/>
+											</s:stroke>					
+										</s:Line>
+										<s:HGroup width="100%">
+											<s:TextInput id="t32" width="100%" text="" change="t_changeHandler(event)" />
+											<s:TextInput id="Gp2S" width="100%" text="{'[062000000|v_'+cptVerbe+']'}" />
+											<s:TextInput id="GTp2S" width="100%" color="#117E20" text="---" />				
+										</s:HGroup>
+										<s:Line width="100%" >
+											<s:stroke>
+												<s:SolidColorStroke weight="2" caps="square"/>
+											</s:stroke>					
+										</s:Line>
+										<s:HGroup width="100%">
+											<s:TextInput id="t33" width="100%" text="" change="t_changeHandler(event)" />
+											<s:TextInput id="Gp3S" width="100%" text="{'[063000000|v_'+cptVerbe+']'}" />
+											<s:TextInput id="GTp3S" width="100%" color="#117E20" text="---" />				
+										</s:HGroup>
+									</s:VGroup>
+									<s:VGroup width="100%" height="100%">					
+										<s:HGroup width="100%">
+											<s:TextInput id="t34" width="100%" text="" change="t_changeHandler(event)" />
+											<s:TextInput id="Gp4S" width="100%" text="{'[064000000|v_'+cptVerbe+']'}" />
+											<s:TextInput id="GTp4S" width="100%" color="#117E20" text="---" />				
+										</s:HGroup>
+										<s:Line width="100%" >
+											<s:stroke>
+												<s:SolidColorStroke weight="2" caps="square"/>
+											</s:stroke>					
+										</s:Line>
+										<s:HGroup width="100%">
+											<s:TextInput id="t35" width="100%" text="" change="t_changeHandler(event)" />
+											<s:TextInput id="Gp5S" width="100%" text="{'[065000000|v_'+cptVerbe+']'}" />
+											<s:TextInput id="GTp5S" width="100%" color="#117E20" text="---" />				
+										</s:HGroup>
+										<s:Line width="100%" >
+											<s:stroke>
+												<s:SolidColorStroke weight="2" caps="square"/>
+											</s:stroke>					
+										</s:Line>
+										<s:HGroup width="100%">
+											<s:TextInput id="t36" width="100%" text="" change="t_changeHandler(event)" />
+											<s:TextInput id="Gp6S" width="100%" text="{'[067000000|v_'+cptVerbe+']'}" />
+											<s:TextInput id="GTp6S" width="100%" color="#117E20" text="---" />				
+										</s:HGroup>
+									</s:VGroup>
+								</s:HGroup>
+							</s:NavigatorContent>
+							<s:NavigatorContent label="Participes" >
+								<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
+									<s:VGroup width="100%" height="100%">					
+										<s:FormHeading label="Participe présent" />
+										<s:TextInput id="t37" width="100%" text="" change="t_changeHandler(event)" />
+										<s:TextInput id="GpPP" width="100%" text="{'[080000000|v_'+cptVerbe+']'}" />
+										<s:TextInput id="GTpPP" width="100%" color="#117E20" text="---" />									
+									</s:VGroup>
+									<s:VGroup height="100%" width="100%" >
+										<s:FormHeading label="Infinitif présent" />
+										<s:TextInput id="t38" width="100%" text="" change="t_changeHandler(event)" />
+										<s:TextInput id="GpIP" width="100%" text="{'[09000000|v_'+cptVerbe+']'}" />
+										<s:TextInput id="GTpIP" width="100%" color="#117E20" text="---" />									
+									</s:VGroup>
+								</s:HGroup>
+							</s:NavigatorContent>
+						</mx:TabNavigator>
+						<s:HGroup verticalAlign="middle">
+							<s:Button label="Tester" click="tester_clickHandler(event)" />
+							<s:Button label="Enregistrer" click="enregistrer_clickHandler(event)" visible="{bChange}" color="red" />
+						</s:HGroup>				
+					</s:VGroup>
+				</s:HGroup>
+			</mx:HDividedBox>
+		</s:VGroup>
+			
+		</mx:Canvas>
+		<mx:Canvas width="100%" height="100%" id="ecriture" >
+			<s:VGroup  height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2" >
+				<s:Label fontSize="16" text="Indicatif présent" />
+				<s:HGroup  verticalAlign="middle">
+					<s:Label text="je" />
+					<s:TextInput id="p1P" text="---" width="100" />				
+					<s:Label text="tu" />
+					<s:TextInput id="p2P" text="---" width="100" />				
+					<s:Label text="il/elle" />
+					<s:TextInput id="p3P" text="---" width="100" />				
+					<s:Label text="nous" />
+					<s:TextInput id="p4P" text="---" width="100" />				
+					<s:Label text="vous" />
+					<s:TextInput id="p5P" text="---" width="100" />				
+					<s:Label text="ils/elles" />
+					<s:TextInput id="p6P" text="---" width="100" />				
+				</s:HGroup>
+				<s:Label fontSize="16" text="Indicatif imparfait" />
+				<s:HGroup  verticalAlign="middle">
+					<s:Label text="je" />
+					<s:TextInput id="p1I" text="---" width="100"  />				
+					<s:Label text="tu" />
+					<s:TextInput id="p2I" text="---" width="100"  />				
+					<s:Label text="il/elle" />
+					<s:TextInput id="p3I" text="---" width="100"  />				
+					<s:Label text="nous" />
+					<s:TextInput id="p4I" text="---" width="100"  />				
+					<s:Label text="vous" />
+					<s:TextInput id="p5I" text="---" width="100"  />				
+					<s:Label text="ils/elles" />
+					<s:TextInput id="p6I" text="---" width="100"  />				
+				</s:HGroup>
+				<s:Label fontSize="16" text="Passé simple" />
+				<s:HGroup  verticalAlign="middle">
+					<s:Label text="je" />
+					<s:TextInput id="p1PS" text="---" width="100"  />				
+					<s:Label text="tu" />
+					<s:TextInput id="p2PS" text="---" width="100"  />				
+					<s:Label text="il/elle" />
+					<s:TextInput id="p3PS" text="---" width="100"  />				
+					<s:Label text="nous" />
+					<s:TextInput id="p4PS" text="---" width="100"  />				
+					<s:Label text="vous" />
+					<s:TextInput id="p5PS" text="---" width="100"  />				
+					<s:Label text="ils/elles" />
+					<s:TextInput id="p6PS" text="---" width="100"  />				
+				</s:HGroup>
+				<s:Label fontSize="16" text="Futur simple" />
+				<s:HGroup  verticalAlign="middle" >
+					<s:Label text="je" />
+					<s:TextInput id="p1F" text="---" width="100"  />				
+					<s:Label text="tu" />
+					<s:TextInput id="p2F" text="---" width="100"  />				
+					<s:Label text="il/elle" />
+					<s:TextInput id="p3F" text="---" width="100"  />				
+					<s:Label text="nous" />
+					<s:TextInput id="p4F" text="---" width="100"  />				
+					<s:Label text="vous" />
+					<s:TextInput id="p5F" text="---" width="100"  />				
+					<s:Label text="ils/elles" />
+					<s:TextInput id="p6F" text="---" width="100"  />				
+				</s:HGroup>
+				<s:Label fontSize="16" text="Conditionnel Présent" />
+				<s:HGroup  verticalAlign="middle">
+					<s:Label text="je" />
+					<s:TextInput id="p1C" text="---" width="100"  />				
+					<s:Label text="tu" />
+					<s:TextInput id="p2C" text="---" width="100"  />				
+					<s:Label text="il/elle" />
+					<s:TextInput id="p3C" text="---" width="100"  />				
+					<s:Label text="nous" />
+					<s:TextInput id="p4C" text="---" width="100"  />				
+					<s:Label text="vous" />
+					<s:TextInput id="p5C" text="---" width="100"  />				
+					<s:Label text="ils/elles" />
+					<s:TextInput id="p6C" text="---" width="100"  />				
+				</s:HGroup>
+				<s:Label fontSize="16" text="Subjonctif présent" />
+				<s:HGroup  verticalAlign="middle">
+					<s:Label text="je" />
+					<s:TextInput id="p1S" text="---" width="100"  />				
+					<s:Label text="tu" />
+					<s:TextInput id="p2S" text="---" width="100"  />				
+					<s:Label text="il/elle" />
+					<s:TextInput id="p3S" text="---" width="100"  />				
+					<s:Label text="nous" />
+					<s:TextInput id="p4S" text="---" width="100"  />				
+					<s:Label text="vous" />
+					<s:TextInput id="p5S" text="---" width="100"  />				
+					<s:Label text="ils/elles" />
+					<s:TextInput id="p6S" text="---" width="100"  />				
+				</s:HGroup>
+				<s:HGroup verticalAlign="middle">
+					<s:Label fontSize="16" text="Participe présent" />
+					<s:TextInput id="pPP" text="---" width="100"  />									
+					<s:Label fontSize="16" text="Infinitif présent" />
+					<s:TextInput id="pIP" text="---" width="100"  />									
+				</s:HGroup>
+				<s:HGroup>
+					<s:Button label="Ajouter" click="ajouter_clickHandler(event)"  />
+					<s:Button label="Annuler" click="{vs.selectedChild = lecture;}"  />
+				</s:HGroup>
+			</s:VGroup>				
+		</mx:Canvas>
+	</mx:ViewStack>						
 </s:Group>

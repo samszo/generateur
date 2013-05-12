@@ -24,6 +24,8 @@
 			[Bindable] public var bAjout:Boolean=true;
 			[Bindable] public var bChange:Boolean=false;
 			[Bindable] public var oItem:Object;
+			private var action:String="";
+			private var arrR:Array;
 
 			public function faultHandlerService(fault:FaultEvent):void
 			{
@@ -67,28 +69,38 @@
 					Alert.show("Confirmez-vous la suppression de l'item ?",
 						"Confirmation Suppression", 3, this, removeItemHandler);				
 			}
-			
+						
 			private function removeItemHandler(event:CloseEvent):void
 			{
 				if (event.detail == Alert.YES) 
 				{
-					//ROS.remove(cb.selectedItem[keyName]);
+					action = "supprimer";
+					ROC.utilise(idDico, oItem.num);
 				}
 			}
 			
-			public function ajoutItem():void{
-				
-			}
-			
-
 			protected function enregistrer_clickHandler(event:MouseEvent):void
 			{
+				
 				if(oItem){
-					var change:Array = new Array;
-					change['lib']=T0.text;
-					ROC.edit(oItem.id_negation, change);					
+					action = "modifier";
+					ROC.utilise(idDico, oItem.num);
 				}
 			}
+
+			protected function utilise_resultHandler(event:ResultEvent):void
+			{
+				arrR = event.result as Array;
+				var actis:String = "";
+				if(action == "modifier")
+					actis = "dictionnaire négation : modifier "+arrR[0]['nbGen']+" items pour "+arrR[0]['nbUti']+" utilisateurs : "+oItem.lib+" -> "+T0.text+" (ref="+idDico+"_"+oItem.id_negation+")";				
+				if(action == "supprimer")
+					actis = "dictionnaire négation : supprimer "+arrR[0]['nbGen']+" items pour "+arrR[0]['nbUti']+" utilisateurs : "+oItem.lib+" (ref="+idDico+"_"+oItem.id_negation+")";				
+				var data:Array = new Array;
+				data['lib']=T0.text;
+				this.parentApplication.verifActi(arrR[0], action, actis, ROC, oItem.id_negation, data, idDico);				
+			}
+			
 			
 			protected function tester_clickHandler(event:MouseEvent):void
 			{
@@ -118,6 +130,32 @@
 				tx.setStyle("color","red");
 				bChange = true;
 			}
+
+			protected function remove_resultHandler(event:ResultEvent):void
+			{
+				ROC.findByIdDico(idDico);				
+			}
+
+			protected function ajouter_clickHandler(event:MouseEvent):void
+			{
+				if(dg.dataProvider.length == 9){
+					Alert.show("Le nombre maximum de négation est atteint.\nVous ne pouvez pas en ajouter.", "Ajout Négation");
+					return;
+				}
+
+				var params:Array = new Array;
+				params['id_dico']=idDico;
+				params['lib']=lib.text;				
+				ROC.ajouter(params);
+			}
+			
+			protected function ajouter_resultHandler(event:ResultEvent):void
+			{
+				Alert.show("L'item est ajouté.","Ajout d'un item");				
+				
+				vs.selectedChild = lecture;
+				ROC.findByIdDico(idDico);
+			}
 			
 		]]>
 	</fx:Script>
@@ -129,37 +167,56 @@
 						 fault="faultHandlerService(event)">
 			<s:method name="edit" result="edit_resultHandler(event)" />
 			<s:method name="findByIdDico" result="findByDico_resultHandler(event)" />
+			<s:method name="utilise" result="utilise_resultHandler(event)" />
+			<s:method name="remove" result="remove_resultHandler(event)" />			
+			<s:method name="ajouter" result="ajouter_resultHandler(event)" />			
 		</s:RemoteObject>
 	</fx:Declarations>
-	<s:VGroup width="100%" height="100%" id="detail" >
-		<compo:hbFilterControl id="dgFilter"  />
-		<s:VGroup width="100%" height="100%" >
-			<s:HGroup>
-				<mx:LinkButton visible="{bRemove}" width="20" click="removeItem()"
-							   icon="@Embed('images/DeleteRecord.png')" toolTip="{'Supprimer un item'}"/>
-				<mx:LinkButton id="btnAddNew" visible="{bAjout}" width="20" click="ajoutItem()"
-							   icon="@Embed('images/AddRecord.png')" toolTip="{'Ajouter un item'}"/>					
-			</s:HGroup>
-			<s:HGroup width="100%" height="100%" >				
-				<mx:DataGrid id="dg" width="100%" height="100%" click="selectDgItem(event);" editable="false" >
-					<mx:columns>
-						<mx:DataGridColumn dataField="id_negation" editable="false" visible="false" headerText="id_negation" />
-						<mx:DataGridColumn dataField="num"  headerText="N°" />
-						<mx:DataGridColumn dataField="lib" headerText="Libellé" />
-					</mx:columns>
-				</mx:DataGrid>
-				<s:VGroup>
+	<mx:ViewStack id="vs" width="100%" height="100%">
+		<mx:Canvas width="100%" height="100%" id="lecture" >		
+			<s:VGroup width="100%" height="100%" id="detail" >
+				<compo:hbFilterControl id="dgFilter"  />
+				<s:VGroup width="100%" height="100%" >
 					<s:HGroup>
-						<s:TextInput id="T0" width="100%" text="{oItem.lib}" change="t_changeHandler(event)" />
-						<s:TextInput id="G" width="100%" text="{'['+oItem.num+'12000000|v_lire]'}" />
-						<s:TextInput id="GT" width="100%" color="#117E20" text="---" />															
+						<mx:LinkButton visible="{bRemove}" width="20" click="removeItem()"
+									   icon="@Embed('images/DeleteRecord.png')" toolTip="{'Supprimer un item'}"/>
+						<mx:LinkButton id="btnAddNew" visible="{bAjout}" width="20" click="{vs.selectedChild = ecriture;}"
+									   icon="@Embed('images/AddRecord.png')" toolTip="{'Ajouter un item'}"/>					
 					</s:HGroup>
-					<s:HGroup>
-						<s:Button label="Tester" click="tester_clickHandler(event)" />
-						<s:Button label="Enregistrer" click="enregistrer_clickHandler(event)" visible="{bChange}" color="red" />
+					<s:HGroup width="100%" height="100%" >				
+						<mx:DataGrid id="dg" width="100%" height="100%" click="selectDgItem(event);" editable="false" >
+							<mx:columns>
+								<mx:DataGridColumn dataField="id_negation" editable="false" visible="false" headerText="id_negation" />
+								<mx:DataGridColumn dataField="num"  headerText="N°" />
+								<mx:DataGridColumn dataField="lib" headerText="Libellé" />
+							</mx:columns>
+						</mx:DataGrid>
+						<s:VGroup>
+							<s:HGroup>
+								<s:TextInput id="T0" width="100%" text="{oItem.lib}" change="t_changeHandler(event)" />
+								<s:TextInput id="G" width="100%" text="{'['+oItem.num+'12000000|v_lire]'}" />
+								<s:TextInput id="GT" width="100%" color="#117E20" text="---" />															
+							</s:HGroup>
+							<s:HGroup>
+								<s:Button label="Tester" click="tester_clickHandler(event)" />
+								<s:Button label="Enregistrer" click="enregistrer_clickHandler(event)" visible="{bChange}" color="red" />
+							</s:HGroup>
+						</s:VGroup>
 					</s:HGroup>
 				</s:VGroup>
-			</s:HGroup>
-		</s:VGroup>
-	</s:VGroup>
+			</s:VGroup>
+		</mx:Canvas>
+		<mx:Canvas width="100%" height="100%" id="ecriture" >
+			<s:VGroup width="100%" height="100%" >
+				<s:HGroup verticalAlign="middle">
+					<s:Label text="Libellé : "/><s:TextInput id="lib" width="100%" text="" />					
+				</s:HGroup>
+				<s:HGroup>
+					<s:Button label="Ajouter" click="ajouter_clickHandler(event)"  />
+					<s:Button label="Annuler" click="{vs.selectedChild = lecture;}"  />
+				</s:HGroup>
+			</s:VGroup>				
+		</mx:Canvas>
+	</mx:ViewStack>			
+	
 </s:Group>

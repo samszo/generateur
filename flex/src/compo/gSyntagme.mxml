@@ -144,7 +144,11 @@
 			protected function utilise_resultHandler(event:ResultEvent):void
 			{
 				arrR = event.result as Array;
-				var actis:String = "dictionnaire syntagme : modifier "+arrR[0]['nbGen']+" items pour "+arrR[0]['nbUti']+" utilisateurs : "+oItem.lib+" -> "+T0.text+" (ref="+idDico+"_"+oItem.id_syn+")";				
+				var actis:String = "";
+				if(action == "modifier")
+					actis = "dictionnaire syntagme : modifier "+arrR[0]['nbGen']+" items pour "+arrR[0]['nbUti']+" utilisateurs : "+oItem.lib+" -> "+T0.text+" (ref="+idDico+"_"+oItem.id_syn+")";				
+				if(action == "supprimer")
+					actis = "dictionnaire syntagme : supprimer "+arrR[0]['nbGen']+" items pour "+arrR[0]['nbUti']+" utilisateurs : "+oItem.lib+" (ref="+idDico+"_"+oItem.id_syn+")";				
 				var data:Array = new Array;
 				data['id_dico']=idDico;
 				data['lib']=T0.text;				

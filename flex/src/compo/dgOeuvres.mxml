@@ -451,7 +451,7 @@
 				<s:NavigatorContent width="100%" height="100%" label="Ecrire">
 				</s:NavigatorContent>
 				<s:NavigatorContent width="100%" height="100%" label="Participer" >
-					<co:gActiUti id="gParticipe" idUti="{this.parentApplication.uti.idUti}" />
+					<co:gActiUti id="gParticipe" idUti="{this.parentApplication.uti.idUti}" idOeu="{idOeu}" />
 				</s:NavigatorContent>
 			</mx:TabNavigator>
 		</mx:Canvas>
