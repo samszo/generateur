@@ -75,9 +75,15 @@ public function verifActi(arrR:Array, action:String, actis:String, ROC:Object, i
 		}
 	}else{
 		if(action=="supprimer")
-			rocItem.remove(idItem);
+			if(rocItem.source=="Model_DbTable_Gen_determinants")
+				rocItem.removeNum(idItem, idDicoItem);					
+			else
+				rocItem.remove(idItem);
 		if(action=="modifier"){
-			rocItem.edit(idItem, dataItem);					
+			if(rocItem.source=="Model_DbTable_Gen_determinants")
+				rocItem.editMulti(dataItem);					
+			else
+				rocItem.edit(idItem, dataItem);					
 		}
 	}	
 }
@@ -87,12 +93,18 @@ private function verifSoloItemHandler(event:CloseEvent):void
 {
 	if (event.detail == Alert.YES) 
 	{					
-		rocItem.edit(idItem, dataItem);					
+		if(rocItem.source=="Model_DbTable_Gen_determinants")
+			rocItem.editMulti(dataItem);					
+		else
+			rocItem.edit(idItem, dataItem);					
 	}
 	if (event.detail == Alert.NO) 
 	{
 		if(actionItem=="modifier"){
-			rocItem.ajouter(dataItem);											
+			if(rocItem.source=="Model_DbTable_Gen_determinants")
+				rocItem.dupliquer(dataItem);					
+			else
+				rocItem.ajouter(dataItem);											
 		}
 	}
 }
@@ -101,7 +113,7 @@ private function verifMultiItemHandler(event:CloseEvent):void
 {
 	if (event.detail == Alert.YES) 
 	{
-		ajoutActiUti(actisItem, arrItem['idsUti'], idDicoItem, false);
+		ajoutActiUti();
 	}
 	if (event.detail == Alert.NO && actionItem=="modifier") 
 	{
@@ -109,10 +121,9 @@ private function verifMultiItemHandler(event:CloseEvent):void
 	}
 }
 
-public function ajoutActiUti(actis:String, utis:String, idDico:String, ctrl:Object):void
+public function ajoutActiUti():void
 {
-	ctrlActi = ctrl;
-	ROACTI.ajoutForUtis(actis, utis, dgOeuParam.idOeu, idDico);
+	ROACTI.ajoutForUtis(actisItem, arrItem['idsUti'], dgOeuParam.idOeu, idDicoItem, idItem, dataItem);
 }
 
 protected function ajoutForUtis_resultHandler(event:ResultEvent):void
