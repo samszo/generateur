@@ -58,10 +58,12 @@ class Model_DbTable_flux_acti extends Zend_Db_Table_Abstract
     * @param string $idUtis
     * @param string $idOeu
     * @param string $idDico
+    * @param int $idItem
+    * @param array $data
     *  
     * @return integer
     */
-    public function ajoutForUtis($actis, $idUtis, $idOeu, $idDico)
+    public function ajoutForUtis($actis, $idUtis, $idOeu, $idDico, $idItem, $data)
     {
     	$dbAU = new Model_DbTable_flux_actiuti();
     	$dbOA = new Model_DbTable_Gen_oduxacti();
@@ -69,7 +71,8 @@ class Model_DbTable_flux_acti extends Zend_Db_Table_Abstract
     	$parent = 1;
     	$idUtis = explode(",", $idUtis);
 		//création/récupération de l'activité
-    	$idActi = $this->ajouter(array("lib"=>$actis,"parent"=>$parent));
+		$params = array("idDico"=>$idDico,"id"=>$idItem,"data"=>$data);
+    	$idActi = $this->ajouter(array("lib"=>$actis,"parent"=>$parent, "params"=>json_encode($params)));
     	foreach ($idUtis as $uti) {
     		//ajouter l'activité à l'utilisateur
     		$dbAU->ajouter(array("acti_id"=>$idActi, "uti_id"=>$uti));

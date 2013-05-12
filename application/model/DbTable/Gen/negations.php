@@ -26,6 +26,34 @@ class Model_DbTable_Gen_negations extends Zend_Db_Table_Abstract
             'refColumns'        => 'id_lieu'
         )
     );	
+
+    /**
+     * Vérifie si une entrée est utilisée 
+     *
+     * @param int 		$idDico
+     * @param string 	$num
+     *
+     * @return array
+     */
+    public function utilise($idDico, $num)
+    {
+    	$sql ="SELECT COUNT(DISTINCT g.id_gen) nbGen
+    		, COUNT(DISTINCT oduA.id_oeu) nbOeu
+			, COUNT(DISTINCT g.id_dico) nbDico
+			, COUNT(DISTINCT oduA.uti_id) nbUti
+			, GROUP_CONCAT(DISTINCT oduA.uti_id) idsUti
+		FROM gen_negations n
+			INNER JOIN gen_oeuvres_dicos_utis odu ON odu.id_dico = n.id_dico
+			INNER JOIN gen_oeuvres_dicos_utis oduA ON oduA.id_oeu = odu.id_oeu
+			LEFT JOIN gen_generateurs g ON g.valeur LIKE '%[".$num."_______|%]%' AND n.id_dico = oduA.id_dico
+			WHERE n.num = ".$num." AND n.id_dico = ".$idDico."
+			GROUP BY n.id_negation";
+    	$db = $this->getAdapter()->query($sql);
+    	return $db->fetchAll();
+    
+    }
+    
+    
     
     /**
      * Vérifie si une entrée Gen_negations existe.
@@ -56,7 +84,12 @@ class Model_DbTable_Gen_negations extends Zend_Db_Table_Abstract
      */
     public function ajouter($data, $existe=true)
     {
-    	
+    	if(!isset($data['num'])){
+    		//recherche le dernier num du dictionnaire
+    		$mn = $this->findMaxNumByIdDico($data['id_dico']);
+    		$data['num'] = $mn[0]['maxNum']+1;
+    	}
+    	 
     	$id=false;
     	if($existe)$id = $this->existe($data);
     	if(!$id){
@@ -64,7 +97,25 @@ class Model_DbTable_Gen_negations extends Zend_Db_Table_Abstract
     	}
     	return $id;
     } 
-           
+
+    /**
+     * Recherche le plus grand num pour un dictionnaire
+     *
+     * @param int $idDico
+     *
+     * @return array
+     */
+    public function findMaxNumByIdDico($idDico)
+    {
+    	$query = $this->select()
+    	->from( array("g" => "gen_negations"),array("maxNum"=>"MAX(num)"))
+    	->where( "g.id_dico = ?", $idDico);
+    	 
+    	return $this->fetchAll($query)->toArray();
+    }
+    
+    
+    
     /**
      * Recherche une entrée Gen_negations avec la clef primaire spécifiée
      * et modifie cette entrée avec les nouvelles données.
@@ -93,18 +144,6 @@ class Model_DbTable_Gen_negations extends Zend_Db_Table_Abstract
     	$this->delete('gen_negations.id_negation = ' . $id);
     }
 
-    /**
-     * Recherche les entrées de Gen_negations avec la clef de lieu
-     * et supprime ces entrées.
-     *
-     * @param integer $idLieu
-     *
-     * @return void
-     */
-    public function removeLieu($idLieu)
-    {
-		$this->delete('id_lieu = ' . $idLieu);
-    }
     
     /**
      * Récupère toutes les entrées Gen_negations avec certains critères
