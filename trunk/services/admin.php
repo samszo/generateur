@@ -6,6 +6,16 @@ try {
 	$application->bootstrap();
 
 	/*
+	$dbN = new Model_DbTable_Gen_determinants();
+	$arr = $dbN->utilise(46, 46);
+	*/
+	
+	/*
+	$dbN = new Model_DbTable_Gen_negations();
+	$arr = $dbN->utilise(16, 1);
+	*/
+	
+	/*
 	$dbA = new Model_DbTable_flux_acti();
 	//$xml = $dbA->getFullPath(9);
 	$xml = $dbA->getActiForOeuvre(6);
