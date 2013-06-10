@@ -99,7 +99,39 @@ class Model_DbTable_Gen_syntagmes extends Zend_Db_Table_Abstract
     	else
 	    	return $id;
     } 
-           
+
+    /**
+     * Ajoute un syntagme
+     *
+     * @param array $dCpt
+     * @param array $d
+     * @param boolean $existe
+     *  
+     * @return array
+     */
+    public function ajouterCpt($dCpt, $d, $existe=true)
+    {
+    	$dbCpt = new Model_DbTable_Gen_concepts();
+    	
+    	//vérifie si le concept n'existe pas déjà
+    	$e = $dbCpt->existe($dCpt);
+    	if($e){
+    		//on ne peut pas créer deux concepts avec le même nom dans un dictionnaire
+    		return "Le concept existe déjà";
+    	}else{
+    		//création du concept
+    		$idCpt = $dbCpt->ajouter($dCpt, false);		
+    	}
+    	
+    	$id = $this->ajouter($d);
+
+    	//création du lien entre l'adjectif et le concept
+    	$dbCptSyn = new Model_DbTable_Gen_conceptsxsyntagmes();
+    	$dbCptSyn->ajouter(array("id_concept"=>$idCpt,"id_syn"=>$id));
+    	
+    	return $idCpt;
+    } 
+    
     /**
      * Recherche une entrée Gen_syntagmes avec la clef primaire spécifiée
      * et modifie cette entrée avec les nouvelles données.

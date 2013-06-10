@@ -28,6 +28,33 @@ class Model_DbTable_Gen_substantifs extends Zend_Db_Table_Abstract
     );	
     
     /**
+     * Vérifie si une entrée est utilisée.
+     *
+     * @param int 		$idCpt
+     * @param string	$val
+     *
+     * @return array
+     */
+    public function utilise($idCpt, $val)
+    {
+    	/**/
+    	$sql ="SELECT COUNT(DISTINCT g.id_gen) nbGen
+    		, COUNT(DISTINCT oduA.id_oeu) nbOeu
+			, COUNT(DISTINCT g.id_dico) nbDico
+			, COUNT(DISTINCT oduA.uti_id) nbUti
+			, GROUP_CONCAT(DISTINCT oduA.uti_id) idsUti
+		FROM gen_concepts c
+			INNER JOIN gen_oeuvres_dicos_utis odu ON odu.id_dico = c.id_dico
+			INNER JOIN gen_oeuvres_dicos_utis oduA ON oduA.id_oeu = odu.id_oeu
+			LEFT JOIN gen_generateurs g ON g.valeur LIKE '%[m_".$val."]%' AND g.id_dico = oduA.id_dico
+			WHERE c.id_concept = ".$idCpt." 
+			GROUP BY c.id_concept";
+		$db = $this->getAdapter()->query($sql);
+        return $db->fetchAll();
+
+    } 
+    
+    /**
      * Vérifie si une entrée Gen_substantifs existe.
      *
      * @param array $data
@@ -47,24 +74,41 @@ class Model_DbTable_Gen_substantifs extends Zend_Db_Table_Abstract
     } 
         
     /**
-     * Ajoute une entrée Gen_substantifs.
+     * Ajoute une entrée Gen_adjectifs.
      *
-     * @param array $data
+     * @param array $dCpt
+     * @param array $dSub
      * @param boolean $existe
      *  
-     * @return integer
+     * @return array
      */
-    public function ajouter($data, $existe=true)
+    public function ajouter($dCpt, $dSub, $existe=true)
     {
+    	$dbCpt = new Model_DbTable_Gen_concepts();
     	
-    	$id=false;
-    	if($existe)$id = $this->existe($data);
-    	if(!$id){
-    	 	$id = $this->insert($data);
+    	//vérifie si le concept n'existe pas déjà
+    	$e = $dbCpt->existe($dCpt);
+    	if($e){
+    		//on ne peut pas créer deux concepts avec le même nom dans un dictionnaire
+    		return "Le concept existe déjà";
+    	}else{
+    		//création du concept
+    		$idCpt = $dbCpt->ajouter($dCpt, false);		
     	}
-    	return $id;
+    	
+    	//création du substantif
+    	$idSub=false;
+    	if($existe)$idSub = $this->existe($dSub);
+    	if(!$idSub){
+    	 	$idSub = $this->insert($dSub);
+    	}
+    	//création du lien entre le substantif et le concept
+    	$dbCptSub = new Model_DbTable_Gen_conceptsxsubstantifs();
+    	$dbCptSub->ajouter(array("id_concept"=>$idCpt,"id_sub"=>$idSub));
+    	
+    	return $idCpt;
     } 
-           
+               
     /**
      * Recherche une entrée Gen_substantifs avec la clef primaire spécifiée
      * et modifie cette entrée avec les nouvelles données.
