@@ -10,16 +10,27 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import flash.net.dns.AAAARecord;
+			
 			import mx.collections.ArrayCollection;
 			import mx.controls.Alert;
+			import mx.controls.TextInput;
+			import mx.core.IVisualElement;
 			import mx.events.CloseEvent;
+			import mx.events.DataGridEvent;
 			import mx.events.FlexEvent;
+			import mx.events.ItemClickEvent;
 			import mx.rpc.events.FaultEvent;
 			import mx.rpc.events.ResultEvent;
 						
 			[Bindable] public var idDico:String;
 			[Bindable] public var bRemove:Boolean=true;
 			[Bindable] public var bAjout:Boolean=true;
+			[Bindable] public var bModif:Boolean=true;
+			[Bindable] public var oItem:Object;
+			private var action:String="";
+			private var arrR:Array;
+			private var newVal:String;	
 
 			public function faultHandlerService(fault:FaultEvent):void
 			{
@@ -27,8 +38,8 @@
 				str = "Code: "+fault.fault.faultCode.toString()+"\n"+
 					"Detail: "+fault.fault.faultDetail.toString()+"\n"+
 					"String: "+fault.fault.faultString.toString()+"\n";
-				
 				Alert.show(str, "ERREUR : Détail Concept");
+				bModif = true;
 			}
 			
 			protected function creationCompleteHandler(event:FlexEvent):void
@@ -55,38 +66,8 @@
 						
 			private function selectDgItem(event:Event):void {
 				
-				var item:Object=event.currentTarget.selectedItem;
-				if(item){
-					dgDetail.removeAllElements();
-					switch(item.type) 
-					{ 
-						case "a":
-							var eA:gA = new gA();
-							eA.oConcept = item;
-							dgDetail.addElement(eA);
-							break; 
-						case "m": 
-							var eM:gM = new gM();
-							eM.oConcept = item;
-							dgDetail.addElement(eM);
-							break; 
-						case "s": 
-							var eS:gS = new gS();
-							eS.oConcept = item;
-							dgDetail.addElement(eS);
-							break; 
-						case "v": 
-							var eV:gV = new gV();
-							eV.oConcept = item;
-							dgDetail.addElement(eV);
-							break; 
-						default: 
-							var eG:gG = new gG();
-							eG.oConcept = item;
-							dgDetail.addElement(eG);
-							break; 
-					}					
-				}
+				oItem=event.currentTarget.selectedItem;
+				initDetail();
 			}
 			
 			private function removeItem():void {
@@ -99,12 +80,120 @@
 			{
 				if (event.detail == Alert.YES) 
 				{
-					//ROS.remove(cb.selectedItem[keyName]);
+					action = "supprimer";
+					ROC.utilise(oItem.id_concept, oItem.type+"_"+oItem.lib);
 				}
 			}
 			
-			public function ajoutItem():void{
+			public function initDetail():void
+			{
+				if(oItem){
+					dgDetail.removeAllElements();
+					switch(oItem.type) 
+					{ 
+						case "a":
+							var eA:gA = new gA();
+							eA.oConcept = oItem;
+							dgDetail.addElement(eA);
+							break; 
+						case "m": 
+							var eM:gM = new gM();
+							eM.oConcept = oItem;
+							dgDetail.addElement(eM);
+							break; 
+						case "s": 
+							var eS:gS = new gS();
+							eS.oConcept = oItem;
+							dgDetail.addElement(eS);
+							break; 
+						case "v": 
+							var eV:gV = new gV();
+							eV.oConcept = oItem;
+							dgDetail.addElement(eV);
+							break; 
+						default: 
+							var eG:gG = new gG();
+							eG.oConcept = oItem;
+							dgDetail.addElement(eG);
+							break; 
+					}					
+				}
 				
+			}
+			
+			protected function utilise_resultHandler(event:ResultEvent):void
+			{
+				arrR = event.result as Array;
+				var arrN:Array = new Array;
+				arrN["lib"]=newVal;
+				var actis:String = "";
+				if(action == "modifier"){
+					actis = "dictionnaire concept : modifier "+arrR[0]['nbGen']+" items pour "+arrR[0]['nbUti']+" utilisateurs : ";
+					actis = actis+oItem.type+"_"+oItem.lib+" -> "+oItem.type+"_"+newVal+" (ref="+idDico+"_"+oItem.id_concept+")";				
+				}				
+				if(action == "supprimer")
+					actis = "dictionnaire concept : supprimer "+arrR[0]['nbGen']+" items pour "+arrR[0]['nbUti']+" utilisateurs : "+oItem.type+"_"+oItem.lib+"... (ref="+idDico+"_"+oItem.id_concept+")";				
+				this.parentApplication.verifActi(arrR[0], action, actis, ROC, oItem.id_concept, arrN, idDico);				
+			}
+
+			protected function remove_resultHandler(event:ResultEvent):void
+			{
+				ROC.findByIdDico(idDico);				
+			}
+			
+			protected function conceptType_itemClickHandler(event:ItemClickEvent):void
+			{
+				ajoutDetail.removeAllElements();
+				
+				switch(event.currentTarget.selectedValue) 
+				{ 
+					case "a":
+						var eA:gA = new gA();
+						eA.idDico = this.idDico;
+						eA.cptParent = this;
+						ajoutDetail.addElement(eA);
+						break; 
+					case "m": 
+						var eM:gM = new gM();
+						eM.idDico = this.idDico;
+						eM.cptParent = this;
+						ajoutDetail.addElement(eM);
+						break; 
+					case "s": 
+						var eS:gS = new gS();
+						eS.idDico = this.idDico;
+						eS.cptParent = this;
+						ajoutDetail.addElement(eS);
+						break; 
+					case "v": 
+						var eV:gV = new gV();
+						ajoutDetail.addElement(eV);
+						break; 
+					default: 
+						var eG:gG = new gG();
+						ajoutDetail.addElement(eG);
+						break; 
+				}									
+			}
+			
+			protected function edit_resultHandler(event:ResultEvent):void
+			{
+				oItem.lib = newVal;				
+				initDetail();
+				bModif = true;
+			}
+			
+			protected function dg_itemEditEndHandler(event:DataGridEvent):void
+			{
+				// Get the cell editor and cast it to TextInput.
+				var myEditor:TextInput = TextInput(event.currentTarget.itemEditorInstance);
+				// Get the new value from the editor.
+				newVal = myEditor.text;	
+				if(bModif && newVal!=oItem.lib){
+					action = "modifier";
+					bModif = false;
+					ROC.utilise(oItem.id_concept, oItem.type+"_"+oItem.lib);
+				}				
 			}
 			
 		]]>
@@ -115,31 +204,54 @@
 						 source="Model_DbTable_Gen_concepts" destination="zend" 
 						 showBusyCursor="true"
 						 fault="faultHandlerService(event)">
-			<s:method name="edit" />  	
-			<s:method name="findByIdDico" result="findByDico_resultHandler(event)" />  	
+			<s:method name="edit" result="edit_resultHandler(event)" />  	
+			<s:method name="findByIdDico" result="findByDico_resultHandler(event)" /> 
+			<s:method name="utilise" result="utilise_resultHandler(event)" />
+			<s:method name="remove" result="remove_resultHandler(event)" />						
 		</s:RemoteObject>
+		<s:RadioButtonGroup id="conceptType" itemClick="conceptType_itemClickHandler(event)"/>
 	</fx:Declarations>
-	<s:VGroup width="100%" height="100%" id="detail" >
-		<compo:hbFilterControl id="dgFilter"  />
-		<mx:HDividedBox id="dgDivBox" width="100%" height="100%" >
-			<s:VGroup width="200" height="100%" >
-				<s:HGroup>
-					<mx:LinkButton visible="{bRemove}" width="20" click="removeItem()"
-								   icon="@Embed('images/DeleteRecord.png')" toolTip="{'Supprimer un item'}"/>
-					<mx:LinkButton id="btnAddNew" visible="{bAjout}" width="20" click="ajoutItem()"
-								   icon="@Embed('images/AddRecord.png')" toolTip="{'Ajouter un item'}"/>					
-				</s:HGroup>
-				<mx:DataGrid id="dg" width="100%" height="100%" click="selectDgItem(event);" editable="true" >
-					<mx:columns>
-						<mx:DataGridColumn dataField="id_concept" editable="false" visible="false" headerText="id_concept" />
-						<mx:DataGridColumn dataField="lib" headerText="Descripteur" />
-						<mx:DataGridColumn dataField="type" editable="false" headerText="Type" />
-					</mx:columns>
-				</mx:DataGrid>
+	<mx:ViewStack id="vs" width="100%" height="100%">
+		<mx:Canvas width="100%" height="100%" id="lecture" >		
+			<s:VGroup width="100%" height="100%" id="detail" >
+				<compo:hbFilterControl id="dgFilter"  />
+				<mx:HDividedBox id="dgDivBox" width="100%" height="100%" >
+					<s:VGroup width="200" height="100%" >
+						<s:HGroup>
+							<mx:LinkButton visible="{bRemove}" width="20" click="removeItem()"
+										   icon="@Embed('images/DeleteRecord.png')" toolTip="{'Supprimer un item'}"/>
+							<mx:LinkButton id="btnAddNew" visible="{bAjout}" width="20" click="{vs.selectedChild = ecriture;}"
+										   icon="@Embed('images/AddRecord.png')" toolTip="{'Ajouter un item'}"/>					
+						</s:HGroup>
+						<mx:DataGrid id="dg" width="100%" height="100%" click="selectDgItem(event);" editable="true" itemEditEnd="dg_itemEditEndHandler(event)" >
+							<mx:columns>
+								<mx:DataGridColumn dataField="id_concept" editable="false" visible="false" headerText="id_concept" />
+								<mx:DataGridColumn dataField="lib" headerText="Descripteur" />
+								<mx:DataGridColumn dataField="type" editable="false" headerText="Type" />
+							</mx:columns>
+						</mx:DataGrid>
+					</s:VGroup>
+					<s:Group id="dgDetail" width="100%" height="100%" >
+						
+					</s:Group>
+				</mx:HDividedBox>
 			</s:VGroup>
-			<s:Group id="dgDetail" width="100%" height="100%" >
-				
-			</s:Group>
-		</mx:HDividedBox>
-	</s:VGroup>
+			
+		</mx:Canvas>
+		<mx:Canvas width="100%" height="100%" id="ecriture" >
+			<s:VGroup width="100%" height="100%" >
+				<s:HGroup verticalAlign="middle">					
+					<s:Label text="Choisissez un type de concept" />
+					<s:RadioButton groupName="conceptType" value="a" id="A" label="Adjectif" />
+					<s:RadioButton groupName="conceptType" value="m" id="M" label="Substantif" />
+					<s:RadioButton groupName="conceptType" value="s" id="S" label="Syntagme" />
+					<s:RadioButton groupName="conceptType" value="v" id="V" label="Verbe" />
+					<s:RadioButton groupName="conceptType" value="g" id="G" label="Autres" />
+				</s:HGroup>
+				<s:Group id="ajoutDetail" width="100%" height="100%" >
+					
+				</s:Group>
+			</s:VGroup>				
+		</mx:Canvas>
+	</mx:ViewStack>					
 </s:Group>

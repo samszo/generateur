@@ -26,6 +26,9 @@
 			[Bindable] public var arrTrm:Array=new Array;
 			[Bindable] public var arrTrmChange:Array=new Array;
 			[Bindable] public var bChange:Boolean=false;
+			[Bindable] public var oItem:Object;
+			private var action:String="";
+			private var arrR:Array;
 
 			public function faultHandlerService(fault:FaultEvent):void
 			{
@@ -60,10 +63,10 @@
 						
 			private function selectDgItem(event:Event):void {
 				
-				var item:Object=event.currentTarget.selectedItem;
-				if(item){
-					ROC.findTermByIdConj(item.id_conj);
-					ROC.findVerbeByIdConj(item.id_conj);
+				oItem = event.currentTarget.selectedItem;
+				if(oItem){
+					ROC.findTermByIdConj(oItem.id_conj);
+					ROC.findVerbeByIdConj(oItem.id_conj);
 				}
 			}
 			
@@ -77,14 +80,11 @@
 			{
 				if (event.detail == Alert.YES) 
 				{
-					//ROS.remove(cb.selectedItem[keyName]);
+					action = "supprimer";
+					ROC.utilise(idDico, oItem.id_conj);
 				}
 			}
 			
-			public function ajoutItem():void{
-				
-			}
-
 			protected function findTermByIdConj_resultHandler(event:ResultEvent):void
 			{
 			
@@ -281,6 +281,8 @@
 			
 			protected function enregistrer_clickHandler(event:MouseEvent):void
 			{
+				/**TODO : gérer les utilisations des terminaisons
+				 */
 				ROC.editTerms(arrTrmChange);
 			}
 			
@@ -415,11 +417,59 @@
 			}
 
 			protected function ajouter_clickHandler(event:MouseEvent):void
-			{				
+			{
+				//vérifie que le nom n'st pas déjà attribué
+				for each(var mod:Object in dg.dataProvider){
+					if(mod.modele==nomModele.text){
+						Alert.show("Un modèle porte déjà ce nom.\nMerci de le modifier.","Ajout d'un modèle");				
+						return;
+					}
+				}
+								
+				
 				var params:Array = new Array;
 				params['id_dico']=idDico;
-				
-				ROC.ajouter(params);
+				params['modele']=nomModele.text;
+				var terms:Array = new Array;
+				terms.push(p1P.text);				
+				terms.push(p2P.text);				
+				terms.push(p3P.text);				
+				terms.push(p4P.text);				
+				terms.push(p5P.text);				
+				terms.push(p6P.text);				
+				terms.push(p1I.text);				
+				terms.push(p2I.text);				
+				terms.push(p3I.text);				
+				terms.push(p4I.text);				
+				terms.push(p5I.text);				
+				terms.push(p6I.text);				
+				terms.push(p1PS.text);				
+				terms.push(p2PS.text);				
+				terms.push(p3PS.text);				
+				terms.push(p4PS.text);				
+				terms.push(p5PS.text);				
+				terms.push(p6PS.text);				
+				terms.push(p1F.text);				
+				terms.push(p2F.text);				
+				terms.push(p3F.text);				
+				terms.push(p4F.text);				
+				terms.push(p5F.text);				
+				terms.push(p6F.text);				
+				terms.push(p1C.text);				
+				terms.push(p2C.text);				
+				terms.push(p3C.text);				
+				terms.push(p4C.text);				
+				terms.push(p5C.text);				
+				terms.push(p6C.text);				
+				terms.push(p1S.text);				
+				terms.push(p2S.text);				
+				terms.push(p3S.text);				
+				terms.push(p4S.text);				
+				terms.push(p5S.text);				
+				terms.push(p6S.text);				
+				terms.push(pPP.text);				
+				terms.push(pIP.text);				
+				ROC.ajouter(params, terms);
 			}
 
 			protected function ajouter_resultHandler(event:ResultEvent):void
@@ -853,6 +903,10 @@
 		</mx:Canvas>
 		<mx:Canvas width="100%" height="100%" id="ecriture" >
 			<s:VGroup  height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2" >
+				<s:HGroup  verticalAlign="middle">
+					<s:Label text="Nom du modèle" />
+					<s:TextInput id="nomModele" text="---" width="100%" />				
+				</s:HGroup>
 				<s:Label fontSize="16" text="Indicatif présent" />
 				<s:HGroup  verticalAlign="middle">
 					<s:Label text="je" />
