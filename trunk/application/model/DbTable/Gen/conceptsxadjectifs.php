@@ -84,26 +84,21 @@ class Model_DbTable_Gen_conceptsxadjectifs extends Zend_Db_Table_Abstract
      * Recherche une entrée Gen_concepts_adjectifs avec la clef primaire spécifiée
      * et supprime cette entrée.
      *
-     * @param integer $id
+     * @param integer $id_concept
      *
      * @return void
      */
-    public function remove($id)
+    public function remove($id_concept)
     {
-    	$this->delete('gen_concepts_adjectifs.id_concept = ' . $id);
-    }
-
-    /**
-     * Recherche les entrées de Gen_concepts_adjectifs avec la clef de lieu
-     * et supprime ces entrées.
-     *
-     * @param integer $idLieu
-     *
-     * @return void
-     */
-    public function removeLieu($idLieu)
-    {
-		$this->delete('id_lieu = ' . $idLieu);
+    	//vérifie s'il faut supprimer les adjectifs liés
+    	$arr = $this->findNbUseAdjByConcept($id_concept);
+    	$dbA = new Model_DbTable_Gen_adjectifs();
+    	foreach ($arr as $r) {
+    		if($r['nb']==1){
+    			$dbA->remove($r['id_adj']);	
+    		}
+    	}    	
+    	$this->delete('gen_concepts_adjectifs.id_concept = ' . $id_concept);
     }
     
     /**
@@ -130,7 +125,7 @@ class Model_DbTable_Gen_conceptsxadjectifs extends Zend_Db_Table_Abstract
     }
 
     
-    	/**
+	/**
      * Recherche une entrée Gen_concepts_adjectifs avec la valeur spécifiée
      * et retourne cette entrée.
      *
@@ -146,6 +141,24 @@ class Model_DbTable_Gen_conceptsxadjectifs extends Zend_Db_Table_Abstract
 
         return $this->fetchAll($query)->toArray(); 
     }
-    
+        
+	/**
+     * Recherche une entrée Gen_concepts_adjectifs avec la valeur spécifiée
+     * et retourne cette entrée.
+     *
+     * @param int $id_concept
+     *
+     * @return array
+     */
+    public function findNbUseAdjByConcept($id_concept)
+    {
+    	$sql ="SELECT COUNT(DISTINCT cal.id_concept) nb, cal.id_adj
+		FROM gen_concepts_adjectifs ca
+			INNER JOIN gen_concepts_adjectifs cal ON cal.id_adj = ca.id_adj
+			WHERE ca.id_concept = ".$id_concept." 
+			GROUP BY cal.id_adj";
+		$db = $this->getAdapter()->query($sql);
+        return $db->fetchAll();
+    }
     
 }

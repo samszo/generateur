@@ -20,12 +20,43 @@ class Model_DbTable_Gen_conjugaisons extends Zend_Db_Table_Abstract
     protected $_primary = 'id_conj';
 
     protected $_referenceMap    = array(
-        'Lieux' => array(
-            'columns'           => 'id_lieu',
-            'refTableClass'     => 'Models_DbTable_Gevu_lieux',
-            'refColumns'        => 'id_lieu'
+        'Dicos' => array(
+            'columns'           => 'id_dico',
+            'refTableClass'     => 'Model_DbTable_Gen_dicos',
+            'refColumns'        => 'id_dico'
         )
     );	
+
+    /**
+     * Vérifie si une entrée est utilisée.
+     *
+     * @param int 		$idDico
+     * @param int 		$idConj
+     *
+     * @return array
+     */
+    public function utilise($idDico, $idConj)
+    {
+    	/**TODO TROP GOURMAND : optimiser en indexant les generateur par les identifiants qui les composent
+    	 *  
+    	 */
+    	$sql ="SELECT COUNT(DISTINCT g.id_gen) nbGen
+    		, COUNT(DISTINCT oduA.id_oeu) nbOeu
+			, COUNT(DISTINCT g.id_dico) nbDico
+			, COUNT(DISTINCT oduA.uti_id) nbUti
+			, GROUP_CONCAT(DISTINCT oduA.uti_id) idsUti
+		FROM gen_conjugaisons c
+			INNER JOIN gen_verbes v ON v.id_conj = c.id_conj
+			INNER JOIN gen_oeuvres_dicos_utis odu ON odu.id_dico = v.id_dico
+			INNER JOIN gen_oeuvres_dicos_utis oduA ON oduA.id_oeu = odu.id_oeu
+			LEFT JOIN gen_generateurs g ON g.valeur LIKE CONCAT('%v_',v.prefix,'%') AND g.id_dico = oduA.id_dico
+			WHERE c.id_conj = ".$idConj." AND c.id_dico = ".$idDico."
+			GROUP BY c.id_conj";
+		$db = $this->getAdapter()->query($sql);
+        return $db->fetchAll();
+
+    } 
+    
     
     /**
      * Vérifie si une entrée Gen_conjugaisons existe.
@@ -50,21 +81,44 @@ class Model_DbTable_Gen_conjugaisons extends Zend_Db_Table_Abstract
      * Ajoute une entrée Gen_conjugaisons.
      *
      * @param array $data
-     * @param boolean $existe
+     * @param array $terms
      *  
      * @return integer
      */
-    public function ajouter($data, $existe=true)
+    public function ajouter($data, $terms)
     {
     	
-    	$id=false;
-    	if($existe)$id = $this->existe($data);
-    	if(!$id){
-    	 	$id = $this->insert($data);
-    	}
+		if(!isset($data['num'])){
+	    	//recherche le dernier num du dictionnaire
+	    	$mn = $this->findMaxNumByIdDico($data['id_dico']);
+	    	$data['num'] = $mn[0]['maxNum']+1;
+	    }    		
+    	$id = $this->insert($data);
+    		
+	    $dbTerm = new Model_DbTable_Gen_terminaisons();        
+	   	foreach ($terms as $k=>$t) {
+	   			$dbTerm->ajouter(array("id_conj"=>$id,"num"=>$k,"lib"=>$t),false);
+	   	}    		
     	return $id;
     } 
-           
+
+    /**
+     * Recherche le plus grand num pour un dictionnaire
+     *
+     * @param int $idDico
+     *
+     * @return array
+     */
+    public function findMaxNumByIdDico($idDico)
+    {
+        $query = $this->select()
+			->from( array("g" => "gen_conjugaisons"),array("maxNum"=>"MAX(num)"))                           
+            ->where( "g.id_dico = ?", $idDico);
+
+        return $this->fetchAll($query)->toArray(); 
+    }
+    
+    
     /**
      * Recherche une entrée Gen_conjugaisons avec la clef primaire spécifiée
      * et modifie cette entrée avec les nouvelles données.

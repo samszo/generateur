@@ -27,6 +27,34 @@ class Model_DbTable_Gen_adjectifs extends Zend_Db_Table_Abstract
     );	
     
     /**
+     * Vérifie si une entrée est utilisée.
+     *
+     * @param int 		$idCpt
+     * @param string	$val
+     *
+     * @return array
+     */
+    public function utilise($idCpt, $val)
+    {
+    	/**/
+    	$sql ="SELECT COUNT(DISTINCT g.id_gen) nbGen
+    		, COUNT(DISTINCT oduA.id_oeu) nbOeu
+			, COUNT(DISTINCT g.id_dico) nbDico
+			, COUNT(DISTINCT oduA.uti_id) nbUti
+			, GROUP_CONCAT(DISTINCT oduA.uti_id) idsUti
+		FROM gen_concepts c
+			INNER JOIN gen_oeuvres_dicos_utis odu ON odu.id_dico = c.id_dico
+			INNER JOIN gen_oeuvres_dicos_utis oduA ON oduA.id_oeu = odu.id_oeu
+			LEFT JOIN gen_generateurs g ON g.valeur LIKE '%[a_".$val."]%' AND g.id_dico = oduA.id_dico
+			WHERE c.id_concept = ".$idCpt." 
+			GROUP BY c.id_concept";
+		$db = $this->getAdapter()->query($sql);
+        return $db->fetchAll();
+
+    } 
+    
+    
+    /**
      * Vérifie si une entrée Gen_adjectifs existe.
      *
      * @param array $data
@@ -48,20 +76,37 @@ class Model_DbTable_Gen_adjectifs extends Zend_Db_Table_Abstract
     /**
      * Ajoute une entrée Gen_adjectifs.
      *
-     * @param array $data
+     * @param array $dCpt
+     * @param array $dAdj
      * @param boolean $existe
      *  
-     * @return integer
+     * @return array
      */
-    public function ajouter($data, $existe=true)
+    public function ajouter($dCpt, $dAdj, $existe=true)
     {
+    	$dbCpt = new Model_DbTable_Gen_concepts();
     	
-    	$id=false;
-    	if($existe)$id = $this->existe($data);
-    	if(!$id){
-    	 	$id = $this->insert($data);
+    	//vérifie si le concept n'existe pas déjà
+    	$e = $dbCpt->existe($dCpt);
+    	if($e){
+    		//on ne peut pas créer deux concepts avec le même nom dans un dictionnaire
+    		return "Le concept existe déjà";
+    	}else{
+    		//création du concept
+    		$idCpt = $dbCpt->ajouter($dCpt, false);		
     	}
-    	return $id;
+    	
+    	//création de l'adjectif
+    	$idAdj=false;
+    	if($existe)$idAdj = $this->existe($dAdj);
+    	if(!$idAdj){
+    	 	$idAdj = $this->insert($dAdj);
+    	}
+    	//création du lien entre l'adjectif et le concept
+    	$dbCptAdj = new Model_DbTable_Gen_conceptsxadjectifs();
+    	$dbCptAdj->ajouter(array("id_concept"=>$idCpt,"id_adj"=>$idAdj));
+    	
+    	return $idCpt;
     } 
            
     /**
@@ -74,8 +119,7 @@ class Model_DbTable_Gen_adjectifs extends Zend_Db_Table_Abstract
      * @return void
      */
     public function edit($id, $data)
-    {        
-   	
+    {           	
     	$this->update($data, 'gen_adjectifs.id_adj = ' . $id);
     }
     
@@ -90,19 +134,6 @@ class Model_DbTable_Gen_adjectifs extends Zend_Db_Table_Abstract
     public function remove($id)
     {
     	$this->delete('gen_adjectifs.id_adj = ' . $id);
-    }
-
-    /**
-     * Recherche les entrées de Gen_adjectifs avec la clef de lieu
-     * et supprime ces entrées.
-     *
-     * @param integer $idLieu
-     *
-     * @return void
-     */
-    public function removeLieu($idLieu)
-    {
-		$this->delete('id_lieu = ' . $idLieu);
     }
     
     /**

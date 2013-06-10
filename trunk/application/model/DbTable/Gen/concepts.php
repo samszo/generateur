@@ -20,12 +20,49 @@ class Model_DbTable_Gen_concepts extends Zend_Db_Table_Abstract
     protected $_primary = 'id_concept';
 
     protected $_referenceMap    = array(
-        'Lieux' => array(
-            'columns'           => 'id_lieu',
-            'refTableClass'     => 'Models_DbTable_Gevu_lieux',
-            'refColumns'        => 'id_lieu'
+        'Dicos' => array(
+            'columns'           => 'id_dico',
+            'refTableClass'     => 'Model_DbTable_Gen_dicos',
+            'refColumns'        => 'id_dico'
         )
     );	
+
+    protected $_dependentTables = array(
+       "Model_DbTable_Gen_conceptsxadjectifs"
+       ,"Model_DbTable_Gen_conceptsxgenerateurs"
+       ,"Model_DbTable_Gen_conceptsxsubstantifs"
+       ,"Model_DbTable_Gen_conceptsxsyntagmes"
+       ,"Model_DbTable_Gen_conceptsxverbes"
+       );    
+    
+    /**
+     * Vérifie si une entrée est utilisée.
+     *
+     * @param int 		$idCpt
+     * @param string	$val
+     *
+     * @return array
+     */
+    public function utilise($idCpt, $val)
+    {
+    	/**TODO TROP GOURMAND : optimiser en indexant les generateur par les identifiants qui les composent
+    	 *  
+    	 */
+    	$sql ="SELECT COUNT(DISTINCT g.id_gen) nbGen
+    		, COUNT(DISTINCT oduA.id_oeu) nbOeu
+			, COUNT(DISTINCT g.id_dico) nbDico
+			, COUNT(DISTINCT oduA.uti_id) nbUti
+			, GROUP_CONCAT(DISTINCT oduA.uti_id) idsUti
+		FROM gen_concepts c
+			INNER JOIN gen_oeuvres_dicos_utis odu ON odu.id_dico = c.id_dico
+			INNER JOIN gen_oeuvres_dicos_utis oduA ON oduA.id_oeu = odu.id_oeu
+			LEFT JOIN gen_generateurs g ON g.valeur LIKE '%".$val."%' AND g.id_dico = oduA.id_dico
+			WHERE c.id_concept = ".$idCpt."
+			GROUP BY c.id_concept";
+		$db = $this->getAdapter()->query($sql);
+        return $db->fetchAll();
+
+    } 
     
     /**
      * Vérifie si une entrée Gen_concepts existe.
@@ -90,20 +127,13 @@ class Model_DbTable_Gen_concepts extends Zend_Db_Table_Abstract
      */
     public function remove($id)
     {
+		//suppression des données lieés
+        $dt = $this->getDependentTables();
+        foreach($dt as $t){
+        	$dbT = new $t($this->_db);
+        	$dbT->remove($id);
+        }        
     	$this->delete('gen_concepts.id_concept = ' . $id);
-    }
-
-    /**
-     * Recherche les entrées de Gen_concepts avec la clef de lieu
-     * et supprime ces entrées.
-     *
-     * @param integer $idLieu
-     *
-     * @return void
-     */
-    public function removeLieu($idLieu)
-    {
-		$this->delete('id_lieu = ' . $idLieu);
     }
     
     /**
