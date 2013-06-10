@@ -6,6 +6,12 @@ try {
 	$application->bootstrap();
 
 	/*
+	$dbC = new Model_DbTable_Gen_concepts();
+	$dbC->utilise(157625, "a_testouill");
+	$arr = $dbC->remove(157632);
+	*/
+	
+	/*
 	$dbN = new Model_DbTable_Gen_determinants();
 	$arr = $dbN->utilise(46, 46);
 	*/
