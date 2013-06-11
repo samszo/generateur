@@ -27,6 +27,33 @@ class Model_DbTable_Gen_generateurs extends Zend_Db_Table_Abstract
         )
     );	
     
+
+    /**
+     * Vérifie si une entrée est utilisée.
+     *
+     * @param int	$idGen
+     *
+     * @return array
+     */
+    public function utilise($idGen)
+    {
+    	$sql ="SELECT COUNT(DISTINCT g.id_gen) nbGen
+    		, COUNT(DISTINCT oduA.id_oeu) nbOeu
+			, COUNT(DISTINCT c.id_dico) nbDico
+			, COUNT(DISTINCT oduA.uti_id) nbUti
+			, GROUP_CONCAT(DISTINCT oduA.uti_id) idsUti
+		FROM gen_concepts c
+			INNER JOIN gen_oeuvres_dicos_utis odu ON odu.id_dico = c.id_dico
+			INNER JOIN gen_oeuvres_dicos_utis oduA ON oduA.id_oeu = odu.id_oeu
+			INNER JOIN gen_concepts_generateurs gc ON c.id_concept = gc.id_concept 
+      INNER JOIN gen_generateurs g ON g.id_gen = gc.id_gen AND g.id_dico = oduA.id_dico 
+			WHERE g.id_gen = ".$idGen."
+			GROUP BY c.id_concept";
+    	$db = $this->getAdapter()->query($sql);
+    	return $db->fetchAll();
+    
+    }
+    
     /**
      * Vérifie si une entrée Gen_generateurs existe.
      *
@@ -49,12 +76,13 @@ class Model_DbTable_Gen_generateurs extends Zend_Db_Table_Abstract
     /**
      * Ajoute une entrée Gen_generateurs.
      *
+     * @param int $idCpt
      * @param array $data
      * @param boolean $existe
      *  
      * @return integer
      */
-    public function ajouter($data, $existe=true)
+    public function ajouter($idCpt, $data, $existe=true)
     {
     	
     	$id=false;
@@ -62,7 +90,11 @@ class Model_DbTable_Gen_generateurs extends Zend_Db_Table_Abstract
     	if(!$id){
     	 	$id = $this->insert($data);
     	}
-    	return $id;
+    	//création du lien entre l'adjectif et le concept
+    	$dbCptGen = new Model_DbTable_Gen_conceptsxgenerateurs();
+    	$dbCptGen->ajouter(array("id_concept"=>$idCpt,"id_gen"=>$id));
+    	
+    	return $idCpt;
     } 
            
     /**
@@ -80,30 +112,29 @@ class Model_DbTable_Gen_generateurs extends Zend_Db_Table_Abstract
     	$this->update($data, 'gen_generateurs.id_gen = ' . $id);
     }
     
+    
     /**
      * Recherche une entrée Gen_generateurs avec la clef primaire spécifiée
      * et supprime cette entrée.
      *
-     * @param integer $id
+     * @param integer $idGen
+     * @param integer $idCpt
      *
      * @return void
      */
-    public function remove($id)
+    public function remove($idGen, $idCpt)
     {
-    	$this->delete('gen_generateurs.id_gen = ' . $id);
-    }
-
-    /**
-     * Recherche les entrées de Gen_generateurs avec la clef de lieu
-     * et supprime ces entrées.
-     *
-     * @param integer $idLieu
-     *
-     * @return void
-     */
-    public function removeLieu($idLieu)
-    {
-		$this->delete('id_lieu = ' . $idLieu);
+    	$dbCptGen = new Model_DbTable_Gen_conceptsxgenerateurs();
+    	$dbCptGen->remove($idGen, $idCpt);
+    	
+    	//vérifie si le générateur est lié à d'autres concepts
+		$arr = $dbCptGen->findById_gen($idGen);
+    	
+		if(count($arr)==0){
+			//supprime le generateur
+			$this->delete('gen_generateurs.id_gen = ' . $idGen);				
+		}
+		
     }
     
     /**

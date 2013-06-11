@@ -88,10 +88,11 @@ class Model_DbTable_Gen_concepts extends Zend_Db_Table_Abstract
      *
      * @param array $data
      * @param boolean $existe
+     * @param boolean $obj
      *  
      * @return integer
      */
-    public function ajouter($data, $existe=true)
+    public function ajouter($data, $existe=true, $obj=false)
     {
     	
     	$id=false;
@@ -99,7 +100,11 @@ class Model_DbTable_Gen_concepts extends Zend_Db_Table_Abstract
     	if(!$id){
     	 	$id = $this->insert($data);
     	}
-    	return $id;
+    	if($obj){
+    		$arr = $this->findById_concept($id);
+    		return $arr[0];
+    	}else
+    		return $id;
     } 
            
     /**

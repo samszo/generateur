@@ -101,18 +101,6 @@ class Model_DbTable_Gen_oeuvresxdicosxutis extends Zend_Db_Table_Abstract
     	$this->delete('id_odu='.$idOdu);
     }
 
-    /**
-     * Recherche les entrées de Gen_oeuvres_dicos_utis avec la clef de lieu
-     * et supprime ces entrées.
-     *
-     * @param integer $idLieu
-     *
-     * @return void
-     */
-    public function removeLieu($idLieu)
-    {
-		$this->delete('id_lieu = ' . $idLieu);
-    }
     
     /**
      * Recherche une entrée Gen_oeuvres_dicos avec la valeur spécifiée
