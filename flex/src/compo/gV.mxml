@@ -15,11 +15,20 @@
 			import mx.events.FlexEvent;
 			import mx.rpc.events.FaultEvent;
 			import mx.rpc.events.ResultEvent;
+			
+			import spark.events.TextOperationEvent;
 						
 			[Bindable] public var oConcept:Object;
+			[Bindable] public var idDico:String;
+			[Bindable] public var idDicoConj:String;
 			[Bindable] public var idVerbe:String;
 			[Bindable] public var donnee:Object;
 			[Bindable] public var testGen:Object;
+			[Bindable] public var cptParent:gConcept;
+			[Bindable] public var bChange:Boolean=false;
+			[Bindable] public var arrChange:Array=new Array;
+			private var action:String="";
+			private var arrR:Array;
 
 			public function faultHandlerService(fault:FaultEvent):void
 			{
@@ -35,6 +44,8 @@
 			{
 				if(oConcept){
 					ROV.findByIdConcept(oConcept.id_concept);
+				}else{
+					vs.selectedChild = ecriture;
 				}
 			}
 			
@@ -166,19 +177,91 @@
 
 			protected function enregistrer_clickHandler(event:MouseEvent):void
 			{
-				/**TODO: vérifier les droits
-				 **/
+				action = "modifier";
+				arrChange["id_conj"]=gmConj.cb.selectedItem['id_conj'];
+				if(elision.selected)
+					arrChange["elision"]= "1";
+				else
+					arrChange["elision"]= "0";
+				arrChange["prefix"] = prefix.text;			
+				ROV.utilise(oConcept.id_concept,"v_"+oConcept.lib);				
+			}
+
+			private function ajouter():void
+			{
+				oConcept = new Object;
+				oConcept.lib =libA.text; 
 				
 				var arr:Array = new Array();
-				arr["id_conj"]=gmConj.cb.selectedItem['id_conj'];
-				if(elision.selected)
+				arr["id_dico"]=idDico;
+				arr["prefix"]=prefixA.text;
+				arr["id_conj"]=gmConjA.cb.selectedItem['id_conj'];
+				if(elisionA.selected)
 					arr["elision"]= "1";
 				else
 					arr["elision"]= "0";
-				arr["prefix"] = prefix.text;			
-				ROV.edit(donnee.id_verbe, arr)				
+				var arrCpt:Array = new Array();
+				arrCpt["id_dico"]=idDico;
+				arrCpt["lib"]=libA.text;
+				arrCpt["type"]="v";
+				ROV.ajouterCpt(arrCpt, arr, false);								
 			}
-						
+			
+			protected function utilise_resultHandler(event:ResultEvent):void
+			{
+				arrR = event.result as Array;
+				var actis:String = "";
+				if(action == "modifier"){
+					actis = "dictionnaire concept : modifier "+arrR[0]['nbGen']+" items pour "+arrR[0]['nbUti']+" utilisateurs : ";
+					actis = actis + "v_"+oConcept.lib+" "+donnee.elision+" "+donnee.prefix+" conjugaison :"+donnee['id_conj'];
+					actis = actis + " -> v_"+oConcept.lib+" "+elision.selected+" "+prefix.text+" conjugaison :"+gmConj.cb.selectedItem['id_conj'];
+					actis = actis + " (ref="+idDico+"_"+oConcept.id_concept+")";				
+					this.parentApplication.verifActi(arrR[0], action, actis, ROV, donnee.id_verbe, arrChange, idDico);									
+				}
+				if(action == "supprimer"){
+					actis = "dictionnaire concept : supprimer "+arrR[0]['nbGen']+" items pour "+arrR[0]['nbUti']+" utilisateurs : v_"+oConcept.lib+"... (ref="+idDico+"_"+oConcept.id_concept+")";				
+					this.parentApplication.verifActi(arrR[0], action, actis, ROV, oConcept.id_concept, donnee, idDico);									
+				}
+				
+			}
+			
+			protected function ajouter_resultHandler(event:ResultEvent):void
+			{
+				Alert.show("L'item est ajouté.","Ajout d'un item");
+				oConcept.id_concept = event.result;
+				oConcept.type = "v";
+				this.cptParent.oItem = oConcept
+				this.cptParent.vs.selectedChild = this.cptParent.lecture;
+				this.cptParent.ROC.findByIdDico(idDico);
+				this.cptParent.initDetail();
+			}
+			
+			protected function t_changeHandler(event:TextOperationEvent):void
+			{
+				var tx:TextInput = event.target as TextInput;
+				tx.setStyle("color","red");
+				arrChange[tx.id] = tx.text;
+				bChange = true;
+			}
+			
+			
+			protected function edit_resultHandler(event:ResultEvent):void
+			{
+				bChange = false;
+				arrChange = new Array;
+				prefix.setStyle("color","black");
+				elision.setStyle("color","black");
+			}
+			
+			protected function elision_changeHandler(event:Event):void
+			{
+				if(elision.selected)
+					arrChange["elision"]= "1";
+				else
+					arrChange["elision"]= "0";
+				elision.setStyle("color","red");
+				bChange = true;				
+			}			
 		]]>
 	</fx:Script>
 		
@@ -189,27 +272,83 @@
 						 fault="faultHandlerService(event)">
 			<s:method name="edit" />  	
 			<s:method name="findByIdConcept" result="findByIdConcept_resultHandler(event)" />  	
+			<s:method name="utilise" result="utilise_resultHandler(event)"  />
+			<s:method name="ajouterCpt" result="ajouter_resultHandler(event)" />			
 		</s:RemoteObject>
 	</fx:Declarations>
-	<s:VGroup width="100%" height="100%" id="detail" >
-		<s:HGroup width="100%" verticalAlign="middle">
-			<s:Label text="Nom du verbe :" /><s:Label text="{oConcept.lib}" />
-			<s:Label text="prefix :" /><s:TextInput id="prefix" text="{donnee.prefix}" />			
-			<s:CheckBox label="élision :" id="elision" /> 			
-		</s:HGroup>
-		<s:HGroup verticalAlign="middle" horizontalAlign="left">
-			<s:Label text="modèle de conjugaison :" /><compo:cbGroupeMot id="gmConj" bInit="false" bAjout="false" bRemove="false" keyName="id_conj" labelName="modele" 
-							objName="Model_DbTable_Gen_conjugaisons" objMethode="findByIdDicoVerbe" objParam="{donnee.id_dico}" objSource="gV"
-							titre="une conjugaison"/>
-			<s:Label id="lblDicoConj" text="" />
-		</s:HGroup>
-		<mx:TabNavigator id="tabnav" width="100%" height="100%">
-			<s:NavigatorContent label="Indicatif présent" >
+	<mx:ViewStack id="vs" width="100%" height="100%">
+		<mx:Canvas width="100%" height="100%" id="lecture" >					
+		<s:VGroup width="100%" height="100%" id="detail" >
+			<s:HGroup width="100%" verticalAlign="middle">
+				<s:Label text="Nom du verbe :" /><s:Label text="{oConcept.lib}" />
+				<s:Label text="prefix :" /><s:TextInput id="prefix" text="{donnee.prefix}" change="t_changeHandler(event)"/>			
+				<s:CheckBox label="élision :" id="elision" change="elision_changeHandler(event)"/> 			
+			</s:HGroup>
+			<s:HGroup verticalAlign="middle" horizontalAlign="left">
+				<s:Label text="modèle de conjugaison :" /><compo:cbGroupeMot id="gmConj" bInit="false" bAjout="false" bRemove="false" keyName="id_conj" labelName="modele" 
+								objName="Model_DbTable_Gen_conjugaisons" objMethode="findByIdDicoVerbe" objParam="{donnee.id_dico}" objSource="gV"
+								titre="une conjugaison"/>
+				<s:Label id="lblDicoConj" text="" />
+			</s:HGroup>
+			<mx:TabNavigator id="tabnav" width="100%" height="100%">
+				<s:NavigatorContent label="Indicatif présent" >
+						<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
+							<s:VGroup width="100%" height="100%">					
+								<s:HGroup width="100%">
+									<s:TextInput id="Gp1P" width="100%" text="{'[011000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="GTp1P" width="100%" color="#117E20" text="---" />				
+								</s:HGroup>
+								<s:Line width="100%" >
+									<s:stroke>
+										<s:SolidColorStroke weight="2" caps="square"/>
+									</s:stroke>					
+								</s:Line>
+								<s:HGroup width="100%">
+									<s:TextInput id="Gp2P" width="100%" text="{'[012000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="GTp2P" width="100%" color="#117E20" text="---" />				
+								</s:HGroup>
+								<s:Line width="100%" >
+									<s:stroke>
+										<s:SolidColorStroke weight="2" caps="square"/>
+									</s:stroke>					
+								</s:Line>
+								<s:HGroup width="100%">
+									<s:TextInput id="Gp3P" width="100%" text="{'[013000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="GTp3P" width="100%" color="#117E20" text="---" />				
+								</s:HGroup>
+							</s:VGroup>
+							<s:VGroup width="100%" height="100%">					
+								<s:HGroup width="100%">
+									<s:TextInput id="Gp4P" width="100%" text="{'[014000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="GTp4P" width="100%" color="#117E20" text="---" />				
+								</s:HGroup>
+								<s:Line width="100%" >
+									<s:stroke>
+										<s:SolidColorStroke weight="2" caps="square"/>
+									</s:stroke>					
+								</s:Line>
+								<s:HGroup width="100%">
+									<s:TextInput id="Gp5P" width="100%" text="{'[015000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="GTp5P" width="100%" color="#117E20" text="---" />				
+								</s:HGroup>
+								<s:Line width="100%" >
+									<s:stroke>
+										<s:SolidColorStroke weight="2" caps="square"/>
+									</s:stroke>					
+								</s:Line>
+								<s:HGroup width="100%">
+									<s:TextInput id="Gp6P" width="100%" text="{'[017000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="GTp6P" width="100%" color="#117E20" text="---" />				
+								</s:HGroup>
+							</s:VGroup>
+						</s:HGroup>
+				</s:NavigatorContent>
+				<s:NavigatorContent label="Indicatif imparfait" >
 					<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
 						<s:VGroup width="100%" height="100%">					
 							<s:HGroup width="100%">
-								<s:TextInput id="Gp1P" width="100%" text="{'[011000000|v_'+oConcept.lib+']'}" />
-								<s:TextInput id="GTp1P" width="100%" color="#117E20" text="---" />				
+								<s:TextInput id="Gp1I" width="100%" text="{'[021000000|v_'+oConcept.lib+']'}" />
+								<s:TextInput id="GTp1I" width="100%" color="#117E20" text="---" />				
 							</s:HGroup>
 							<s:Line width="100%" >
 								<s:stroke>
@@ -217,8 +356,8 @@
 								</s:stroke>					
 							</s:Line>
 							<s:HGroup width="100%">
-								<s:TextInput id="Gp2P" width="100%" text="{'[012000000|v_'+oConcept.lib+']'}" />
-								<s:TextInput id="GTp2P" width="100%" color="#117E20" text="---" />				
+								<s:TextInput id="Gp2I" width="100%" text="{'[022000000|v_'+oConcept.lib+']'}" />
+								<s:TextInput id="GTp2I" width="100%" color="#117E20" text="---" />				
 							</s:HGroup>
 							<s:Line width="100%" >
 								<s:stroke>
@@ -226,14 +365,14 @@
 								</s:stroke>					
 							</s:Line>
 							<s:HGroup width="100%">
-								<s:TextInput id="Gp3P" width="100%" text="{'[013000000|v_'+oConcept.lib+']'}" />
-								<s:TextInput id="GTp3P" width="100%" color="#117E20" text="---" />				
+								<s:TextInput id="Gp3I" width="100%" text="{'[023000000|v_'+oConcept.lib+']'}" />
+								<s:TextInput id="GTp3I" width="100%" color="#117E20" text="---" />				
 							</s:HGroup>
 						</s:VGroup>
 						<s:VGroup width="100%" height="100%">					
 							<s:HGroup width="100%">
-								<s:TextInput id="Gp4P" width="100%" text="{'[014000000|v_'+oConcept.lib+']'}" />
-								<s:TextInput id="GTp4P" width="100%" color="#117E20" text="---" />				
+								<s:TextInput id="Gp4I" width="100%" text="{'[024000000|v_'+oConcept.lib+']'}" />
+								<s:TextInput id="GTp4I" width="100%" color="#117E20" text="---" />				
 							</s:HGroup>
 							<s:Line width="100%" >
 								<s:stroke>
@@ -241,8 +380,8 @@
 								</s:stroke>					
 							</s:Line>
 							<s:HGroup width="100%">
-								<s:TextInput id="Gp5P" width="100%" text="{'[015000000|v_'+oConcept.lib+']'}" />
-								<s:TextInput id="GTp5P" width="100%" color="#117E20" text="---" />				
+								<s:TextInput id="Gp5I" width="100%" text="{'[025000000|v_'+oConcept.lib+']'}" />
+								<s:TextInput id="GTp5I" width="100%" color="#117E20" text="---" />				
 							</s:HGroup>
 							<s:Line width="100%" >
 								<s:stroke>
@@ -250,290 +389,261 @@
 								</s:stroke>					
 							</s:Line>
 							<s:HGroup width="100%">
-								<s:TextInput id="Gp6P" width="100%" text="{'[017000000|v_'+oConcept.lib+']'}" />
-								<s:TextInput id="GTp6P" width="100%" color="#117E20" text="---" />				
+								<s:TextInput id="Gp6I" width="100%" text="{'[027000000|v_'+oConcept.lib+']'}" />
+								<s:TextInput id="GTp6I" width="100%" color="#117E20" text="---" />				
 							</s:HGroup>
 						</s:VGroup>
 					</s:HGroup>
-			</s:NavigatorContent>
-			<s:NavigatorContent label="Indicatif imparfait" >
-				<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
-					<s:VGroup width="100%" height="100%">					
-						<s:HGroup width="100%">
-							<s:TextInput id="Gp1I" width="100%" text="{'[021000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp1I" width="100%" color="#117E20" text="---" />				
-						</s:HGroup>
-						<s:Line width="100%" >
-							<s:stroke>
-								<s:SolidColorStroke weight="2" caps="square"/>
-							</s:stroke>					
-						</s:Line>
-						<s:HGroup width="100%">
-							<s:TextInput id="Gp2I" width="100%" text="{'[022000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp2I" width="100%" color="#117E20" text="---" />				
-						</s:HGroup>
-						<s:Line width="100%" >
-							<s:stroke>
-								<s:SolidColorStroke weight="2" caps="square"/>
-							</s:stroke>					
-						</s:Line>
-						<s:HGroup width="100%">
-							<s:TextInput id="Gp3I" width="100%" text="{'[023000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp3I" width="100%" color="#117E20" text="---" />				
-						</s:HGroup>
-					</s:VGroup>
-					<s:VGroup width="100%" height="100%">					
-						<s:HGroup width="100%">
-							<s:TextInput id="Gp4I" width="100%" text="{'[024000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp4I" width="100%" color="#117E20" text="---" />				
-						</s:HGroup>
-						<s:Line width="100%" >
-							<s:stroke>
-								<s:SolidColorStroke weight="2" caps="square"/>
-							</s:stroke>					
-						</s:Line>
-						<s:HGroup width="100%">
-							<s:TextInput id="Gp5I" width="100%" text="{'[025000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp5I" width="100%" color="#117E20" text="---" />				
-						</s:HGroup>
-						<s:Line width="100%" >
-							<s:stroke>
-								<s:SolidColorStroke weight="2" caps="square"/>
-							</s:stroke>					
-						</s:Line>
-						<s:HGroup width="100%">
-							<s:TextInput id="Gp6I" width="100%" text="{'[027000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp6I" width="100%" color="#117E20" text="---" />				
-						</s:HGroup>
-					</s:VGroup>
+				</s:NavigatorContent>
+				<s:NavigatorContent label="Passé simple" >
+					<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
+						<s:VGroup width="100%" height="100%">					
+							<s:HGroup width="100%">
+								<s:TextInput id="Gp1PS" width="100%" text="{'[031000000|v_'+oConcept.lib+']'}" />
+								<s:TextInput id="GTp1PS" width="100%" color="#117E20" text="---" />				
+							</s:HGroup>
+							<s:Line width="100%" >
+								<s:stroke>
+									<s:SolidColorStroke weight="2" caps="square"/>
+								</s:stroke>					
+							</s:Line>
+							<s:HGroup width="100%">
+								<s:TextInput id="Gp2PS" width="100%" text="{'[032000000|v_'+oConcept.lib+']'}" />
+								<s:TextInput id="GTp2PS" width="100%" color="#117E20" text="---" />				
+							</s:HGroup>
+							<s:Line width="100%" >
+								<s:stroke>
+									<s:SolidColorStroke weight="2" caps="square"/>
+								</s:stroke>					
+							</s:Line>
+							<s:HGroup width="100%">
+								<s:TextInput id="Gp3PS" width="100%" text="{'[033000000|v_'+oConcept.lib+']'}" />
+								<s:TextInput id="GTp3PS" width="100%" color="#117E20" text="---" />				
+							</s:HGroup>
+						</s:VGroup>
+						<s:VGroup width="100%" height="100%">					
+							<s:HGroup width="100%">
+								<s:TextInput id="Gp4PS" width="100%" text="{'[034000000|v_'+oConcept.lib+']'}" />
+								<s:TextInput id="GTp4PS" width="100%" color="#117E20" text="---" />				
+							</s:HGroup>
+							<s:Line width="100%" >
+								<s:stroke>
+									<s:SolidColorStroke weight="2" caps="square"/>
+								</s:stroke>					
+							</s:Line>
+							<s:HGroup width="100%">
+								<s:TextInput id="Gp5PS" width="100%" text="{'[035000000|v_'+oConcept.lib+']'}" />
+								<s:TextInput id="GTp5PS" width="100%" color="#117E20" text="---" />				
+							</s:HGroup>
+							<s:Line width="100%" >
+								<s:stroke>
+									<s:SolidColorStroke weight="2" caps="square"/>
+								</s:stroke>					
+							</s:Line>
+							<s:HGroup width="100%">
+								<s:TextInput id="Gp6PS" width="100%" text="{'[037000000|v_'+oConcept.lib+']'}" />
+								<s:TextInput id="GTp6PS" width="100%" color="#117E20" text="---" />				
+							</s:HGroup>
+						</s:VGroup>
+					</s:HGroup>
+				</s:NavigatorContent>
+				<s:NavigatorContent label="Futur simple" >
+					<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
+						<s:VGroup width="100%" height="100%">					
+							<s:HGroup width="100%">
+								<s:TextInput id="Gp1F" width="100%" text="{'[041000000|v_'+oConcept.lib+']'}" />
+								<s:TextInput id="GTp1F" width="100%" color="#117E20" text="---" />				
+							</s:HGroup>
+							<s:Line width="100%" >
+								<s:stroke>
+									<s:SolidColorStroke weight="2" caps="square"/>
+								</s:stroke>					
+							</s:Line>
+							<s:HGroup width="100%">
+								<s:TextInput id="Gp2F" width="100%" text="{'[042000000|v_'+oConcept.lib+']'}" />
+								<s:TextInput id="GTp2F" width="100%" color="#117E20" text="---" />				
+							</s:HGroup>
+							<s:Line width="100%" >
+								<s:stroke>
+									<s:SolidColorStroke weight="2" caps="square"/>
+								</s:stroke>					
+							</s:Line>
+							<s:HGroup width="100%">
+								<s:TextInput id="Gp3F" width="100%" text="{'[043000000|v_'+oConcept.lib+']'}" />
+								<s:TextInput id="GTp3F" width="100%" color="#117E20" text="---" />				
+							</s:HGroup>
+						</s:VGroup>
+						<s:VGroup width="100%" height="100%">					
+							<s:HGroup width="100%">
+								<s:TextInput id="Gp4F" width="100%" text="{'[044000000|v_'+oConcept.lib+']'}" />
+								<s:TextInput id="GTp4F" width="100%" color="#117E20" text="---" />				
+							</s:HGroup>
+							<s:Line width="100%" >
+								<s:stroke>
+									<s:SolidColorStroke weight="2" caps="square"/>
+								</s:stroke>					
+							</s:Line>
+							<s:HGroup width="100%">
+								<s:TextInput id="Gp5F" width="100%" text="{'[045000000|v_'+oConcept.lib+']'}" />
+								<s:TextInput id="GTp5F" width="100%" color="#117E20" text="---" />				
+							</s:HGroup>
+							<s:Line width="100%" >
+								<s:stroke>
+									<s:SolidColorStroke weight="2" caps="square"/>
+								</s:stroke>					
+							</s:Line>
+							<s:HGroup width="100%">
+								<s:TextInput id="Gp6F" width="100%" text="{'[047000000|v_'+oConcept.lib+']'}" />
+								<s:TextInput id="GTp6F" width="100%" color="#117E20" text="---" />				
+							</s:HGroup>
+						</s:VGroup>
+					</s:HGroup>
+				</s:NavigatorContent>
+				<s:NavigatorContent  label="Conditionnel Présent" >
+					<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
+						<s:VGroup width="100%" height="100%">					
+							<s:HGroup width="100%">
+								<s:TextInput id="Gp1C" width="100%" text="{'[051000000|v_'+oConcept.lib+']'}" />
+								<s:TextInput id="GTp1C" width="100%" color="#117E20" text="---" />				
+							</s:HGroup>
+							<s:Line width="100%" >
+								<s:stroke>
+									<s:SolidColorStroke weight="2" caps="square"/>
+								</s:stroke>					
+							</s:Line>
+							<s:HGroup width="100%">
+								<s:TextInput id="Gp2C" width="100%" text="{'[052000000|v_'+oConcept.lib+']'}" />
+								<s:TextInput id="GTp2C" width="100%" color="#117E20" text="---" />				
+							</s:HGroup>
+							<s:Line width="100%" >
+								<s:stroke>
+									<s:SolidColorStroke weight="2" caps="square"/>
+								</s:stroke>					
+							</s:Line>
+							<s:HGroup width="100%">
+								<s:TextInput id="Gp3C" width="100%" text="{'[053000000|v_'+oConcept.lib+']'}" />
+								<s:TextInput id="GTp3C" width="100%" color="#117E20" text="---" />				
+							</s:HGroup>
+						</s:VGroup>
+						<s:VGroup width="100%" height="100%">					
+							<s:HGroup width="100%">
+								<s:TextInput id="Gp4C" width="100%" text="{'[054000000|v_'+oConcept.lib+']'}" />
+								<s:TextInput id="GTp4C" width="100%" color="#117E20" text="---" />				
+							</s:HGroup>
+							<s:Line width="100%" >
+								<s:stroke>
+									<s:SolidColorStroke weight="2" caps="square"/>
+								</s:stroke>					
+							</s:Line>
+							<s:HGroup width="100%">
+								<s:TextInput id="Gp5C" width="100%" text="{'[055000000|v_'+oConcept.lib+']'}" />
+								<s:TextInput id="GTp5C" width="100%" color="#117E20" text="---" />				
+							</s:HGroup>
+							<s:Line width="100%" >
+								<s:stroke>
+									<s:SolidColorStroke weight="2" caps="square"/>
+								</s:stroke>					
+							</s:Line>
+							<s:HGroup width="100%">
+								<s:TextInput id="Gp6C" width="100%" text="{'[057000000|v_'+oConcept.lib+']'}" />
+								<s:TextInput id="GTp6C" width="100%" color="#117E20" text="---" />				
+							</s:HGroup>
+						</s:VGroup>
+					</s:HGroup>
+				</s:NavigatorContent>
+				<s:NavigatorContent label="Subjonctif présent" >
+					<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
+						<s:VGroup width="100%" height="100%">					
+							<s:HGroup width="100%">
+								<s:TextInput id="Gp1S" width="100%" text="{'[061000000|v_'+oConcept.lib+']'}" />
+								<s:TextInput id="GTp1S" width="100%" color="#117E20" text="---" />				
+							</s:HGroup>
+							<s:Line width="100%" >
+								<s:stroke>
+									<s:SolidColorStroke weight="2" caps="square"/>
+								</s:stroke>					
+							</s:Line>
+							<s:HGroup width="100%">
+								<s:TextInput id="Gp2S" width="100%" text="{'[062000000|v_'+oConcept.lib+']'}" />
+								<s:TextInput id="GTp2S" width="100%" color="#117E20" text="---" />				
+							</s:HGroup>
+							<s:Line width="100%" >
+								<s:stroke>
+									<s:SolidColorStroke weight="2" caps="square"/>
+								</s:stroke>					
+							</s:Line>
+							<s:HGroup width="100%">
+								<s:TextInput id="Gp3S" width="100%" text="{'[063000000|v_'+oConcept.lib+']'}" />
+								<s:TextInput id="GTp3S" width="100%" color="#117E20" text="---" />				
+							</s:HGroup>
+						</s:VGroup>
+						<s:VGroup width="100%" height="100%">					
+							<s:HGroup width="100%">
+								<s:TextInput id="Gp4S" width="100%" text="{'[064000000|v_'+oConcept.lib+']'}" />
+								<s:TextInput id="GTp4S" width="100%" color="#117E20" text="---" />				
+							</s:HGroup>
+							<s:Line width="100%" >
+								<s:stroke>
+									<s:SolidColorStroke weight="2" caps="square"/>
+								</s:stroke>					
+							</s:Line>
+							<s:HGroup width="100%">
+								<s:TextInput id="Gp5S" width="100%" text="{'[065000000|v_'+oConcept.lib+']'}" />
+								<s:TextInput id="GTp5S" width="100%" color="#117E20" text="---" />				
+							</s:HGroup>
+							<s:Line width="100%" >
+								<s:stroke>
+									<s:SolidColorStroke weight="2" caps="square"/>
+								</s:stroke>					
+							</s:Line>
+							<s:HGroup width="100%">
+								<s:TextInput id="Gp6S" width="100%" text="{'[067000000|v_'+oConcept.lib+']'}" />
+								<s:TextInput id="GTp6S" width="100%" color="#117E20" text="---" />				
+							</s:HGroup>
+						</s:VGroup>
+					</s:HGroup>
+				</s:NavigatorContent>
+				<s:NavigatorContent label="Participes" >
+					<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
+						<s:VGroup width="100%" height="100%">					
+							<s:FormHeading label="Participe présent" />
+							<s:TextInput id="GpPP" width="100%" text="{'[080000000|v_'+oConcept.lib+']'}" />
+							<s:TextInput id="GTpPP" width="100%" color="#117E20" text="---" />									
+						</s:VGroup>
+						<s:VGroup height="100%" width="100%" >
+							<s:FormHeading label="Infinitif présent" />
+							<s:TextInput id="GpIP" width="100%" text="{'[09000000|v_'+oConcept.lib+']'}" />
+							<s:TextInput id="GTpIP" width="100%" color="#117E20" text="---" />									
+						</s:VGroup>
+					</s:HGroup>
+				</s:NavigatorContent>
+			</mx:TabNavigator>
+			<s:HGroup verticalAlign="middle">
+				<s:Button label="Enregistrer" click="enregistrer_clickHandler(event)" />
+				<s:Button label="Tester" click="tester_clickHandler(event)" />
+			</s:HGroup>
+		</s:VGroup>
+			
+		</mx:Canvas>
+		<mx:Canvas width="100%" height="100%" id="ecriture" >
+			<s:VGroup width="100%" height="100%"  >
+				<s:HGroup verticalAlign="middle">
+					<s:Label text="Nom du verbe :" width="112"/><s:TextInput id="libA" text="" />			
 				</s:HGroup>
-			</s:NavigatorContent>
-			<s:NavigatorContent label="Passé simple" >
-				<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
-					<s:VGroup width="100%" height="100%">					
-						<s:HGroup width="100%">
-							<s:TextInput id="Gp1PS" width="100%" text="{'[031000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp1PS" width="100%" color="#117E20" text="---" />				
-						</s:HGroup>
-						<s:Line width="100%" >
-							<s:stroke>
-								<s:SolidColorStroke weight="2" caps="square"/>
-							</s:stroke>					
-						</s:Line>
-						<s:HGroup width="100%">
-							<s:TextInput id="Gp2PS" width="100%" text="{'[032000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp2PS" width="100%" color="#117E20" text="---" />				
-						</s:HGroup>
-						<s:Line width="100%" >
-							<s:stroke>
-								<s:SolidColorStroke weight="2" caps="square"/>
-							</s:stroke>					
-						</s:Line>
-						<s:HGroup width="100%">
-							<s:TextInput id="Gp3PS" width="100%" text="{'[033000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp3PS" width="100%" color="#117E20" text="---" />				
-						</s:HGroup>
-					</s:VGroup>
-					<s:VGroup width="100%" height="100%">					
-						<s:HGroup width="100%">
-							<s:TextInput id="Gp4PS" width="100%" text="{'[034000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp4PS" width="100%" color="#117E20" text="---" />				
-						</s:HGroup>
-						<s:Line width="100%" >
-							<s:stroke>
-								<s:SolidColorStroke weight="2" caps="square"/>
-							</s:stroke>					
-						</s:Line>
-						<s:HGroup width="100%">
-							<s:TextInput id="Gp5PS" width="100%" text="{'[035000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp5PS" width="100%" color="#117E20" text="---" />				
-						</s:HGroup>
-						<s:Line width="100%" >
-							<s:stroke>
-								<s:SolidColorStroke weight="2" caps="square"/>
-							</s:stroke>					
-						</s:Line>
-						<s:HGroup width="100%">
-							<s:TextInput id="Gp6PS" width="100%" text="{'[037000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp6PS" width="100%" color="#117E20" text="---" />				
-						</s:HGroup>
-					</s:VGroup>
+				<s:HGroup verticalAlign="middle" horizontalAlign="left">
+					<s:Label text="modèle de conjugaison :" /><compo:cbGroupeMot id="gmConjA" bAjout="false" bRemove="false" keyName="id_conj" labelName="modele" 
+																				 objName="Model_DbTable_Gen_conjugaisons" objMethode="findByIdDicoVerbe" objParam="{idDicoConj}" objSource="gV"
+																				 titre="une conjugaison"/>
+				</s:HGroup>				
+				<s:HGroup verticalAlign="middle">
+					<s:Label text="prefix :" width="112"/><s:TextInput id="prefixA" text="" />			
+					<s:CheckBox label="élision :" id="elisionA" /> 			
 				</s:HGroup>
-			</s:NavigatorContent>
-			<s:NavigatorContent label="Futur simple" >
-				<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
-					<s:VGroup width="100%" height="100%">					
-						<s:HGroup width="100%">
-							<s:TextInput id="Gp1F" width="100%" text="{'[041000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp1F" width="100%" color="#117E20" text="---" />				
-						</s:HGroup>
-						<s:Line width="100%" >
-							<s:stroke>
-								<s:SolidColorStroke weight="2" caps="square"/>
-							</s:stroke>					
-						</s:Line>
-						<s:HGroup width="100%">
-							<s:TextInput id="Gp2F" width="100%" text="{'[042000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp2F" width="100%" color="#117E20" text="---" />				
-						</s:HGroup>
-						<s:Line width="100%" >
-							<s:stroke>
-								<s:SolidColorStroke weight="2" caps="square"/>
-							</s:stroke>					
-						</s:Line>
-						<s:HGroup width="100%">
-							<s:TextInput id="Gp3F" width="100%" text="{'[043000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp3F" width="100%" color="#117E20" text="---" />				
-						</s:HGroup>
-					</s:VGroup>
-					<s:VGroup width="100%" height="100%">					
-						<s:HGroup width="100%">
-							<s:TextInput id="Gp4F" width="100%" text="{'[044000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp4F" width="100%" color="#117E20" text="---" />				
-						</s:HGroup>
-						<s:Line width="100%" >
-							<s:stroke>
-								<s:SolidColorStroke weight="2" caps="square"/>
-							</s:stroke>					
-						</s:Line>
-						<s:HGroup width="100%">
-							<s:TextInput id="Gp5F" width="100%" text="{'[045000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp5F" width="100%" color="#117E20" text="---" />				
-						</s:HGroup>
-						<s:Line width="100%" >
-							<s:stroke>
-								<s:SolidColorStroke weight="2" caps="square"/>
-							</s:stroke>					
-						</s:Line>
-						<s:HGroup width="100%">
-							<s:TextInput id="Gp6F" width="100%" text="{'[047000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp6F" width="100%" color="#117E20" text="---" />				
-						</s:HGroup>
-					</s:VGroup>
+				<s:HGroup height="100%"  >
+					<s:Button label="Ajouter" click="ajouter()"  />
+					<s:Button label="Annuler" click="{this.cptParent.vs.selectedChild = this.cptParent.lecture;}"  />
 				</s:HGroup>
-			</s:NavigatorContent>
-			<s:NavigatorContent  label="Conditionnel Présent" >
-				<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
-					<s:VGroup width="100%" height="100%">					
-						<s:HGroup width="100%">
-							<s:TextInput id="Gp1C" width="100%" text="{'[051000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp1C" width="100%" color="#117E20" text="---" />				
-						</s:HGroup>
-						<s:Line width="100%" >
-							<s:stroke>
-								<s:SolidColorStroke weight="2" caps="square"/>
-							</s:stroke>					
-						</s:Line>
-						<s:HGroup width="100%">
-							<s:TextInput id="Gp2C" width="100%" text="{'[052000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp2C" width="100%" color="#117E20" text="---" />				
-						</s:HGroup>
-						<s:Line width="100%" >
-							<s:stroke>
-								<s:SolidColorStroke weight="2" caps="square"/>
-							</s:stroke>					
-						</s:Line>
-						<s:HGroup width="100%">
-							<s:TextInput id="Gp3C" width="100%" text="{'[053000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp3C" width="100%" color="#117E20" text="---" />				
-						</s:HGroup>
-					</s:VGroup>
-					<s:VGroup width="100%" height="100%">					
-						<s:HGroup width="100%">
-							<s:TextInput id="Gp4C" width="100%" text="{'[054000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp4C" width="100%" color="#117E20" text="---" />				
-						</s:HGroup>
-						<s:Line width="100%" >
-							<s:stroke>
-								<s:SolidColorStroke weight="2" caps="square"/>
-							</s:stroke>					
-						</s:Line>
-						<s:HGroup width="100%">
-							<s:TextInput id="Gp5C" width="100%" text="{'[055000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp5C" width="100%" color="#117E20" text="---" />				
-						</s:HGroup>
-						<s:Line width="100%" >
-							<s:stroke>
-								<s:SolidColorStroke weight="2" caps="square"/>
-							</s:stroke>					
-						</s:Line>
-						<s:HGroup width="100%">
-							<s:TextInput id="Gp6C" width="100%" text="{'[057000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp6C" width="100%" color="#117E20" text="---" />				
-						</s:HGroup>
-					</s:VGroup>
-				</s:HGroup>
-			</s:NavigatorContent>
-			<s:NavigatorContent label="Subjonctif présent" >
-				<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
-					<s:VGroup width="100%" height="100%">					
-						<s:HGroup width="100%">
-							<s:TextInput id="Gp1S" width="100%" text="{'[061000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp1S" width="100%" color="#117E20" text="---" />				
-						</s:HGroup>
-						<s:Line width="100%" >
-							<s:stroke>
-								<s:SolidColorStroke weight="2" caps="square"/>
-							</s:stroke>					
-						</s:Line>
-						<s:HGroup width="100%">
-							<s:TextInput id="Gp2S" width="100%" text="{'[062000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp2S" width="100%" color="#117E20" text="---" />				
-						</s:HGroup>
-						<s:Line width="100%" >
-							<s:stroke>
-								<s:SolidColorStroke weight="2" caps="square"/>
-							</s:stroke>					
-						</s:Line>
-						<s:HGroup width="100%">
-							<s:TextInput id="Gp3S" width="100%" text="{'[063000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp3S" width="100%" color="#117E20" text="---" />				
-						</s:HGroup>
-					</s:VGroup>
-					<s:VGroup width="100%" height="100%">					
-						<s:HGroup width="100%">
-							<s:TextInput id="Gp4S" width="100%" text="{'[064000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp4S" width="100%" color="#117E20" text="---" />				
-						</s:HGroup>
-						<s:Line width="100%" >
-							<s:stroke>
-								<s:SolidColorStroke weight="2" caps="square"/>
-							</s:stroke>					
-						</s:Line>
-						<s:HGroup width="100%">
-							<s:TextInput id="Gp5S" width="100%" text="{'[065000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp5S" width="100%" color="#117E20" text="---" />				
-						</s:HGroup>
-						<s:Line width="100%" >
-							<s:stroke>
-								<s:SolidColorStroke weight="2" caps="square"/>
-							</s:stroke>					
-						</s:Line>
-						<s:HGroup width="100%">
-							<s:TextInput id="Gp6S" width="100%" text="{'[067000000|v_'+oConcept.lib+']'}" />
-							<s:TextInput id="GTp6S" width="100%" color="#117E20" text="---" />				
-						</s:HGroup>
-					</s:VGroup>
-				</s:HGroup>
-			</s:NavigatorContent>
-			<s:NavigatorContent label="Participes" >
-				<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
-					<s:VGroup width="100%" height="100%">					
-						<s:FormHeading label="Participe présent" />
-						<s:TextInput id="GpPP" width="100%" text="{'[080000000|v_'+oConcept.lib+']'}" />
-						<s:TextInput id="GTpPP" width="100%" color="#117E20" text="---" />									
-					</s:VGroup>
-					<s:VGroup height="100%" width="100%" >
-						<s:FormHeading label="Infinitif présent" />
-						<s:TextInput id="GpIP" width="100%" text="{'[09000000|v_'+oConcept.lib+']'}" />
-						<s:TextInput id="GTpIP" width="100%" color="#117E20" text="---" />									
-					</s:VGroup>
-				</s:HGroup>
-			</s:NavigatorContent>
-		</mx:TabNavigator>
-		<s:HGroup verticalAlign="middle">
-			<s:Button label="Enregistrer" click="enregistrer_clickHandler(event)" />
-			<s:Button label="Tester" click="tester_clickHandler(event)" />
-		</s:HGroup>
-	</s:VGroup>
+			</s:VGroup>				
+		</mx:Canvas>
+	</mx:ViewStack>						
 </s:Group>

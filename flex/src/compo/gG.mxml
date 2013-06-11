@@ -16,14 +16,22 @@
 			import mx.events.FlexEvent;
 			import mx.rpc.events.FaultEvent;
 			import mx.rpc.events.ResultEvent;
+			
+			import spark.events.TextOperationEvent;
 						
 			[Bindable] public var oConcept:Object;
+			[Bindable] public var idDico:String;
 			[Bindable] public var idGen:String;
 			[Bindable] public var valGen:String;
 			[Bindable] public var donnee:Object;
 			[Bindable] public var testGen:Object;
 			[Bindable] public var bRemove:Boolean=true;
 			[Bindable] public var bAjout:Boolean=true;
+			[Bindable] public var cptParent:gConcept;
+			[Bindable] public var bChange:Boolean=false;
+			[Bindable] public var arrChange:Array=new Array;
+			private var action:String="";
+			private var arrR:Array;
 
 			public function faultHandlerService(fault:FaultEvent):void
 			{
@@ -39,13 +47,17 @@
 			{
 				if(oConcept && this.parentApplication.verifDico()){
 					ROCG.findByIdConcept(oConcept.id_concept);
+				}else{
+					vs.selectedChild = ecriture;
 				}
+
 			}
 			
 			protected function findByIdConcept_resultHandler(event:ResultEvent):void
 			{
 				var arr:Array = event.result as Array;
 				dg.dataProvider = arr;
+				vs.selectedChild = lecture;
 			}
 
 			protected function tester_clickHandler(event:MouseEvent):void
@@ -61,22 +73,17 @@
 
 			private function selectDgItem(event:Event):void {
 				
-				var item:Object=event.currentTarget.selectedItem;
-				if(item){
+				donnee=event.currentTarget.selectedItem;
+				if(donnee){
 					//récupère les éléments génératifs du texte
-					var arrGdeb:Array = String(item.valeur).split("[");
+					var arrGdeb:Array = String(donnee.valeur).split("[");
 					for each(var g:String in arrGdeb){
 						var arrGFin:Array = g.split("]");
 					}
-					
+					valeur.text = donnee.valeur;
 				}
 
 			}			
-			protected function enregistrer_clickHandler(event:MouseEvent):void
-			{
-				var arr:Array = new Array();
-				//ROCG.edit(donnee.id_gen, arr)				
-			}
 			private function removeItem():void {
 				
 				Alert.show("Confirmez-vous la suppression de l'item ?",
@@ -87,14 +94,94 @@
 			{
 				if (event.detail == Alert.YES) 
 				{
-					//ROS.remove(cb.selectedItem[keyName]);
+					ROCG.remove(donnee.id_gen, oConcept.id_concept);
 				}
 			}
 			
-			public function ajoutItem():void{
+
+			protected function enregistrer_clickHandler(event:MouseEvent):void
+			{
+				action = "modifier";
+				ROCG.utilise(donnee.id_gen);				
+			}
+			
+			private function ajouter():void
+			{
+				//vérification des types incompatibles
+				if(typeA.text == "a" || typeA.text == "s" || typeA.text == "g" || typeA.text == "m" || typeA.text == "v"){
+					Alert.show("Le type que vous avez saisie n'est pas valide.\nMerci de le changer.","Vérification Ajout");
+					return;					
+				}
 				
+				oConcept = new Object;
+				oConcept.lib =libA.text; 
+				
+				var arrCpt:Array = new Array();
+				arrCpt["id_dico"]=idDico;
+				arrCpt["lib"]=libA.text;
+				arrCpt["type"]=typeA.text;
+				ROC.ajouter(arrCpt, true, true);								
 			}
 
+			private function ajouterGen():void
+			{				
+				var arr:Array = new Array();
+				arr["id_dico"]=idDico;
+				arr["valeur"]=valA.text;
+				ROCG.ajouter(oConcept.id_concept, arr);								
+			}
+			
+			protected function utilise_resultHandler(event:ResultEvent):void
+			{
+				arrR = event.result as Array;
+				var actis:String = "";
+				if(action == "modifier"){
+					actis = "dictionnaire concept : modifier "+arrR[0]['nbGen']+" items pour "+arrR[0]['nbUti']+" utilisateurs : ";
+					actis = actis + oConcept.type+"_"+oConcept.lib+" "+donnee.valeur;
+					actis = actis + " -> " + oConcept.type+"_"+oConcept.lib+" "+arrChange["valeur"];
+					actis = actis + " (ref="+idDico+"_"+oConcept.id_concept+")";				
+					this.parentApplication.verifActi(arrR[0], action, actis, ROCG, donnee.id_gen, arrChange, idDico);									
+				}				
+			}
+						
+			protected function t_changeHandler(event:TextOperationEvent):void
+			{
+				var tx:TextInput = event.target as TextInput;
+				tx.setStyle("color","red");
+				arrChange[tx.id] = tx.text;
+				bChange = true;
+			}
+			
+			
+			protected function edit_resultHandler(event:ResultEvent):void
+			{
+				bChange = false;
+				arrChange = new Array;
+				valeur.setStyle("color","black");
+				ROCG.findByIdConcept(oConcept.id_concept);				
+			}
+			
+			protected function ajouterCpt_resultHandler(event:ResultEvent):void
+			{
+				oConcept = event.result;
+				Alert.show("L'item est ajouté.","Ajout d'un item");
+				this.cptParent.oItem = oConcept
+				this.cptParent.vs.selectedChild = this.cptParent.lecture;
+				this.cptParent.ROC.findByIdDico(idDico);
+				this.cptParent.initDetail();
+				
+			}
+			
+			protected function remove_resultHandler(event:ResultEvent):void
+			{
+				ROCG.findByIdConcept(oConcept.id_concept);				
+			}
+			
+			
+			protected function ajouterGen_resultHandler(event:ResultEvent):void
+			{
+				ROCG.findByIdConcept(oConcept.id_concept);				
+			}
 			
 		]]>
 	</fx:Script>
@@ -104,35 +191,77 @@
 						 source="Model_DbTable_Gen_generateurs" destination="zend" 
 						 showBusyCursor="true"
 						 fault="faultHandlerService(event)">
-			<s:method name="edit" />  	
+			<s:method name="edit" result="edit_resultHandler(event)" />  	
 			<s:method name="findByIdConcept" result="findByIdConcept_resultHandler(event)" />  	
+			<s:method name="remove" result="remove_resultHandler(event)" />  	
+			<s:method name="ajouter" result="ajouterGen_resultHandler(event)" />  	
+			<s:method name="utilise" result="utilise_resultHandler(event)" />  	
 		</s:RemoteObject>
+		<s:RemoteObject id="ROC"
+						source="Model_DbTable_Gen_concepts" destination="zend" 
+						showBusyCursor="true"
+						fault="faultHandlerService(event)">
+			<s:method name="ajouter" result="ajouterCpt_resultHandler(event)" />  	
+		</s:RemoteObject>
+
 	</fx:Declarations>
-	<s:VGroup width="100%" height="100%" id="detail" >
-		<s:HGroup width="100%" verticalAlign="middle">
-			<s:Label text="Nom du texte génératif :" /><s:Label text="{oConcept.lib}" />			
-		</s:HGroup>
-		<s:VGroup width="100%" height="100%" >
-			<s:HGroup>
-				<s:Button visible="{bRemove}" width="20" click="removeItem()" 
-							   icon="@Embed('images/DeleteRecord.png')" toolTip="Supprimer un item"/>
-				<s:Button id="btnAddNew" visible="{bAjout}" width="20" click="ajoutItem()"
-							   icon="@Embed('images/AddRecord.png')" toolTip="Ajouter un item"/>					
-			</s:HGroup>
-			<mx:DataGrid id="dg" width="100%" height="100%" click="selectDgItem(event);" editable="true" >
-				<mx:columns>
-					<mx:DataGridColumn dataField="id_gen" editable="false" visible="false" headerText="id_gen" />
-					<mx:DataGridColumn dataField="valeur" headerText="Descripteur" editable="true" />
-				</mx:columns>
-			</mx:DataGrid>
-		</s:VGroup>
-		<s:HGroup width="100%" verticalAlign="middle">
-			<s:TextInput width="100%" id="G" text="{'['+oConcept.type+'-'+oConcept.lib+']'}"/>
-			<s:Label width="100%" color="#E01919" text="---" id="GT" />
-		</s:HGroup>
-		<s:HGroup verticalAlign="middle">
-			<s:Button label="Enregistrer" click="enregistrer_clickHandler(event)" />
-			<s:Button label="Tester" click="tester_clickHandler(event)" />
-		</s:HGroup>
-	</s:VGroup>
+	<mx:ViewStack id="vs" width="100%" height="100%">
+		<mx:Canvas width="100%" height="100%" id="lecture" >					
+			<s:VGroup width="100%" height="100%" id="detail" >
+				<s:HGroup width="100%" verticalAlign="middle">
+					<s:Label text="Nom du texte génératif :" /><s:Label text="{oConcept.lib}" />			
+					<s:Label text="Type :" /><s:Label text="{oConcept.type}" />			
+				</s:HGroup>
+				<s:VGroup width="100%" height="100%" >
+					<s:HGroup>
+						<mx:LinkButton visible="{bRemove}" width="20" click="removeItem()" 
+									   icon="@Embed('images/DeleteRecord.png')" toolTip="Supprimer un item"/>
+						<mx:LinkButton id="btnAddNew" visible="{bAjout}" width="20" click="{vs.selectedChild=ajoutGen}"
+									   icon="@Embed('images/AddRecord.png')" toolTip="Ajouter un item"/>					
+					</s:HGroup>
+					<mx:DataGrid id="dg" width="100%" height="100%" click="selectDgItem(event);" editable="false" >
+						<mx:columns>
+							<mx:DataGridColumn dataField="id_gen" editable="false" visible="false" headerText="id_gen" />
+							<mx:DataGridColumn dataField="valeur" headerText="Descripteur" editable="true" />
+						</mx:columns>
+					</mx:DataGrid>
+				</s:VGroup>
+				<s:HGroup width="100%" verticalAlign="middle">
+					<s:Button label="Tester" click="tester_clickHandler(event)" />
+					<s:TextInput width="100%" id="G" text="{'['+oConcept.type+'-'+oConcept.lib+']'}"/>
+					<s:Label width="100%" color="#E01919" text="---" id="GT" />
+				</s:HGroup>
+				<s:HGroup verticalAlign="middle">
+					<s:Label width="100%" text="Valeur sélectionnée" />
+					<s:TextInput width="100%" id="valeur" text=""  change="t_changeHandler(event)"/>
+					<s:Button label="Enregistrer" click="enregistrer_clickHandler(event)" />
+				</s:HGroup>
+			</s:VGroup>
+		</mx:Canvas>
+		<mx:Canvas width="100%" height="100%" id="ecriture" >
+			<s:VGroup width="100%" height="100%"  >
+				<s:HGroup verticalAlign="middle">
+					<s:Label text="Nom du concept :" width="112"/><s:TextInput id="libA" text="" />			
+				</s:HGroup>
+				<s:HGroup verticalAlign="middle">
+					<s:Label text="Type :" width="112"/><s:TextInput id="typeA" text="" /><s:Label text="(ne pas mettre de caractères spéciaux)" />			
+				</s:HGroup>
+				<s:HGroup height="100%"  >
+					<s:Button label="Ajouter" click="ajouter()"  />
+					<s:Button label="Annuler" click="{this.cptParent.vs.selectedChild = this.cptParent.lecture;}"  />
+				</s:HGroup>
+			</s:VGroup>				
+		</mx:Canvas>
+		<mx:Canvas width="100%" height="100%" id="ajoutGen" >
+			<s:VGroup width="100%" height="100%"  >
+				<s:HGroup verticalAlign="middle">
+					<s:Label text="Valeur :" /><s:TextInput id="valA" text="" width="100%" />			
+				</s:HGroup>
+				<s:HGroup height="100%"  >
+					<s:Button label="Ajouter" click="ajouterGen()" />
+					<s:Button label="Annuler" click="{vs.selectedChild = lecture;}"  />
+				</s:HGroup>
+			</s:VGroup>				
+		</mx:Canvas>
+	</mx:ViewStack>						
 </s:Group>
