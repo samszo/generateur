@@ -93,8 +93,7 @@
 				if(vsParam.selectedChild==licence){
 					vsParam.selectedChild = view;
 					RO.findByIdOeu(idOeu);
-				}
-			        
+				}			        
 			}
 			
 			private function updateItem():void
@@ -221,7 +220,7 @@
 			{
 			    if (event.detail == Alert.YES) 
 			    {
-					ROODU.remove(idOeu, dgDico.selectedItem['id_dico'], this.parentApplication.uti.idUti);
+					ROODU.remove(dgDico.selectedItem['id_odu']);
 			    }
 			}
 			private function AjouterDicoOeuvre():void
@@ -305,6 +304,8 @@
 			{
 				if(!e)return;
 				arrType = e.result as Array;
+				this.parentApplication.verifDico();
+				
 			}
 			
 			protected function ajouterDico_resultHandler(event:ResultEvent):void

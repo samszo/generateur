@@ -51,6 +51,7 @@
 			
 			protected function findByDico_resultHandler(event:ResultEvent):void
 			{
+				dgDetail.removeAllElements();
 				if(event.result){
 					var arr:Array = event.result as Array;
 					dg.dataProvider = arr;
@@ -113,6 +114,7 @@
 							break; 
 						default: 
 							var eG:gG = new gG();
+							eG.idDico = this.idDico;
 							eG.oConcept = oItem;
 							dgDetail.addElement(eG);
 							break; 
@@ -167,10 +169,15 @@
 						break; 
 					case "v": 
 						var eV:gV = new gV();
+						eV.idDico = this.idDico;
+						eV.idDicoConj = this.parentApplication.arrVerifDico["conjugaisons"];
+						eV.cptParent = this;
 						ajoutDetail.addElement(eV);
 						break; 
 					default: 
 						var eG:gG = new gG();
+						eG.idDico = this.idDico;
+						eG.cptParent = this;
 						ajoutDetail.addElement(eG);
 						break; 
 				}									
