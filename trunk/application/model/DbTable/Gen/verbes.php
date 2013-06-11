@@ -19,14 +19,32 @@ class Model_DbTable_Gen_verbes extends Zend_Db_Table_Abstract
      */
     protected $_primary = 'id_verbe';
 
-    protected $_referenceMap    = array(
-        'Lieux' => array(
-            'columns'           => 'id_lieu',
-            'refTableClass'     => 'Models_DbTable_Gevu_lieux',
-            'refColumns'        => 'id_lieu'
-        )
-    );	
-    
+    /**
+     * Vérifie si une entrée est utilisée.
+     *
+     * @param int 		$idCpt
+     * @param string	$val
+     *
+     * @return array
+     */
+    public function utilise($idCpt, $val)
+    {    	
+    	$sql ="SELECT COUNT(DISTINCT g.id_gen) nbGen
+    		, COUNT(DISTINCT oduA.id_oeu) nbOeu
+			, COUNT(DISTINCT g.id_dico) nbDico
+			, COUNT(DISTINCT oduA.uti_id) nbUti
+			, GROUP_CONCAT(DISTINCT oduA.uti_id) idsUti
+		FROM gen_concepts c
+			INNER JOIN gen_oeuvres_dicos_utis odu ON odu.id_dico = c.id_dico
+			INNER JOIN gen_oeuvres_dicos_utis oduA ON oduA.id_oeu = odu.id_oeu
+			LEFT JOIN gen_generateurs g ON g.valeur LIKE '%".$val."%' AND g.id_dico = oduA.id_dico
+			WHERE c.id_concept = ".$idCpt."
+			GROUP BY c.id_concept";
+		$db = $this->getAdapter()->query($sql);
+        return $db->fetchAll();
+
+    } 
+            
     /**
      * Vérifie si une entrée Gen_verbes existe.
      *
@@ -45,26 +63,62 @@ class Model_DbTable_Gen_verbes extends Zend_Db_Table_Abstract
 	    if($rows->count()>0)$id=$rows[0]->id_verbe; else $id=false;
         return $id;
     } 
-        
+
     /**
-     * Ajoute une entrée Gen_verbes.
+     * Ajoute une entrée Gen_syntagmes.
      *
      * @param array $data
      * @param boolean $existe
-     *  
-     * @return integer
+     * @param boolean $bData
+     *
+     * @return mixte
      */
-    public function ajouter($data, $existe=true)
+    public function ajouter($data, $existe=true, $bData=false)
     {
-    	
     	$id=false;
     	if($existe)$id = $this->existe($data);
     	if(!$id){
-    	 	$id = $this->insert($data);
+    		$id = $this->insert($data);
+    		$data['id_syn']=$id;
     	}
-    	return $id;
-    } 
-           
+    	if ($bData)
+    		return $data;
+    	else
+    		return $id;
+    }
+    
+    /**
+     * Ajoute une entrée Gen_verbes.
+     *
+     * @param array $dCpt
+     * @param array $d
+     * @param boolean $existe
+     *
+     * @return array
+     */
+    public function ajouterCpt($dCpt, $d, $existe=true)
+    {
+    	$dbCpt = new Model_DbTable_Gen_concepts();
+    	 
+    	//vérifie si le concept n'existe pas déjà
+    	$e = $dbCpt->existe($dCpt);
+    	if($e){
+    		//on ne peut pas créer deux concepts avec le même nom dans un dictionnaire
+    		return "Le concept existe déjà";
+    	}else{
+    		//création du concept
+    		$idCpt = $dbCpt->ajouter($dCpt, false);
+    	}
+    	 
+    	$id = $this->ajouter($d);
+    
+    	//création du lien entre l'adjectif et le concept
+    	$dbCptV = new Model_DbTable_Gen_conceptsxverbes();
+    	$dbCptV->ajouter(array("id_concept"=>$idCpt,"id_verbe"=>$id));
+    	 
+    	return $idCpt;
+    }
+    
     /**
      * Recherche une entrée Gen_verbes avec la clef primaire spécifiée
      * et modifie cette entrée avec les nouvelles données.

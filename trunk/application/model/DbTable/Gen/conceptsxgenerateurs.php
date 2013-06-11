@@ -88,22 +88,23 @@ class Model_DbTable_Gen_conceptsxgenerateurs extends Zend_Db_Table_Abstract
      *
      * @return void
      */
-    public function remove($id)
+    public function removeGen($id)
     {
     	$this->delete('gen_concepts_generateurs.id_concept = ' . $id);
     }
 
     /**
-     * Recherche les entrées de Gen_concepts_generateurs avec la clef de lieu
-     * et supprime ces entrées.
+     * Recherche une entrée Gen_concepts_generateurs avec la clef primaire spécifiée
+     * et supprime cette entrée.
      *
-     * @param integer $idLieu
+     * @param integer $idGen
+     * @param integer $idCpt
      *
      * @return void
      */
-    public function removeLieu($idLieu)
+    public function remove($idGen, $idCpt)
     {
-		$this->delete('id_lieu = ' . $idLieu);
+    	$this->delete('gen_concepts_generateurs.id_concept = ' . $idCpt.' AND gen_concepts_generateurs.id_gen = '.$idGen);
     }
     
     /**

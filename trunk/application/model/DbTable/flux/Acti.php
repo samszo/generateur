@@ -206,7 +206,7 @@ class Model_DbTable_flux_acti extends Zend_Db_Table_Abstract
                 ->setIntegrityCheck(false) //pour pouvoir sélectionner des colonnes dans une autre table
             ->from(array('node' => 'flux_acti'),array("ids"=>"GROUP_CONCAT(enfants.acti_id)"))
             ->joinInner(array('enfants' => 'flux_acti'),
-                'enfants.lft BETWEEN node.lft AND node.rgt',array('desc', 'acti_id'))
+                'enfants.lft BETWEEN node.lft AND node.rgt',array('lib', 'acti_id'))
             ->where( "node.acti_id = ?", $idActi)
             ->group("node.acti_id");        
         $result = $this->fetchAll($query);

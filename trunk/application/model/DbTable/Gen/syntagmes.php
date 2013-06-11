@@ -71,6 +71,21 @@ class Model_DbTable_Gen_syntagmes extends Zend_Db_Table_Abstract
         return $db->fetchAll();
 
     } 
+
+    /**
+     * Vérifie si une entrée Gen_syntagmes est utilisée.
+     *
+     * @param int 		$idDico
+     * @param string 	$val
+     *
+     * @return array
+     */
+    public function utiliseCpt($idCpt, $val)
+    {
+    	$dbC = new Model_DbTable_Gen_concepts();
+    	return $dbC->utilise($idCpt, $val);
+    
+    }
     
     /**
      * Ajoute une entrée Gen_syntagmes.

@@ -92,19 +92,6 @@ class Model_DbTable_Gen_conceptsxconjugaisons extends Zend_Db_Table_Abstract
     {
     	$this->delete('gen_concepts_conjugaisons.id_concept = ' . $id);
     }
-
-    /**
-     * Recherche les entrées de Gen_concepts_conjugaisons avec la clef de lieu
-     * et supprime ces entrées.
-     *
-     * @param integer $idLieu
-     *
-     * @return void
-     */
-    public function removeLieu($idLieu)
-    {
-		$this->delete('id_lieu = ' . $idLieu);
-    }
     
     /**
      * Récupère toutes les entrées Gen_concepts_conjugaisons avec certains critères
