@@ -193,30 +193,35 @@
 		</s:RemoteObject>
 	</fx:Declarations>
 	<mx:ViewStack id="vs" width="100%" height="100%">
-		<mx:Canvas width="100%" height="100%" id="lecture" >						
-			<s:VGroup width="100%" height="100%" id="detail" >
-				<s:HGroup width="100%" verticalAlign="middle">
-					<s:Label text="Nom du substantif :" width="112"/><s:Label id="lib" text="{oConcept.lib}" />			
-				</s:HGroup>
-				<s:HGroup width="100%" verticalAlign="middle">
-					<s:Label text="prefix :" width="112"/><s:TextInput id="prefix" text="{donnee.prefix}" change="t_changeHandler(event)" />			
-					<s:CheckBox label="élision :" id="elision" change="elision_changeHandler(event)"/>
-					<s:RadioButton label="Féminin" id="genre2" groupName="genre" change="genre_changeHandler(event)" />
-					<s:RadioButton label="Masuclin" id="genre1" groupName="genre" change="genre_changeHandler(event)" />
-				</s:HGroup>
-				<s:HGroup width="100%" verticalAlign="middle">
-					<s:Label text="singulier :" width="112"/><s:TextInput id="s" text="{donnee.s}" change="t_changeHandler(event)"/>			
-					<s:TextInput width="100%" id="Gs" text="{'[12|m_'+oConcept.lib+']'}"/><s:Label width="100%" color="#E01919" text="---" id="GTs" />
-				</s:HGroup>
-				<s:HGroup width="100%" horizontalAlign="left" verticalAlign="middle">
-					<s:Label text="pluriel :" width="112"/><s:TextInput id="p" text="{donnee.p}" change="t_changeHandler(event)"/>			
-					<s:TextInput width="100%" id="Gp" text="{'[62|m_'+oConcept.lib+']'}"/><s:Label  width="100%" color="#E01919" text="---" id="GTp" />
-				</s:HGroup>
-				<s:HGroup verticalAlign="middle">
-					<s:Button label="Enregistrer" click="enregistrer_clickHandler(event)" />
-					<s:Button label="Tester" click="tester_clickHandler(event)" />
-				</s:HGroup>
-			</s:VGroup>			
+		<mx:Canvas width="100%" height="100%" id="lecture" >
+			<s:HGroup width="100%" height="100%" >				
+				<s:VGroup width="100%" height="100%" id="detail" >
+					<s:HGroup width="100%" verticalAlign="middle">
+						<s:Label text="Nom du substantif :" /><s:Label id="lib" text="{oConcept.lib}" />			
+					</s:HGroup>
+					<s:HGroup width="100%" verticalAlign="middle">
+						<s:Label text="prefix :" width="60"/><s:TextInput id="prefix" text="{donnee.prefix}" change="t_changeHandler(event)" />			
+					</s:HGroup>
+					<s:HGroup width="100%" verticalAlign="middle">
+						<s:CheckBox label="élision :" id="elision" change="elision_changeHandler(event)"/>
+						<s:RadioButton label="Féminin" id="genre2" groupName="genre" change="genre_changeHandler(event)" />
+						<s:RadioButton label="Masuclin" id="genre1" groupName="genre" change="genre_changeHandler(event)" />
+					</s:HGroup>
+					<s:HGroup width="100%" verticalAlign="middle">
+						<s:Label text="singulier :" width="60"/><s:TextInput id="s" width="40" text="{donnee.s}" change="t_changeHandler(event)"/>			
+						<s:TextInput width="100%" id="Gs" text="{'[12|m_'+oConcept.lib+']'}"/><s:Label width="100%" color="#E01919" text="---" id="GTs" />
+					</s:HGroup>
+					<s:HGroup width="100%" horizontalAlign="left" verticalAlign="middle">
+						<s:Label text="pluriel :" width="60"/><s:TextInput id="p" width="40" text="{donnee.p}" change="t_changeHandler(event)"/>			
+						<s:TextInput width="100%" id="Gp" text="{'[62|m_'+oConcept.lib+']'}"/><s:Label  width="100%" color="#E01919" text="---" id="GTp" />
+					</s:HGroup>
+					<s:HGroup verticalAlign="middle">
+						<s:Button label="Enregistrer" click="enregistrer_clickHandler(event)" />
+						<s:Button label="Tester" click="tester_clickHandler(event)" />
+					</s:HGroup>
+				</s:VGroup>
+				<compo:gG oConcept="{this.oConcept}" idDico="{this.idDico}" />
+			</s:HGroup>
 		</mx:Canvas>
 		<mx:Canvas width="100%" height="100%" id="ecriture" >
 			<s:VGroup width="100%" height="100%"  >
