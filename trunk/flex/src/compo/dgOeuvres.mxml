@@ -450,6 +450,7 @@
 							</mx:VBox>
 				</s:NavigatorContent>
 				<s:NavigatorContent width="100%" height="100%" label="Ecrire">
+					<co:gEcrire width="100%" height="100%" />
 				</s:NavigatorContent>
 				<s:NavigatorContent width="100%" height="100%" label="Participer" >
 					<co:gActiUti id="gParticipe" idUti="{this.parentApplication.uti.idUti}" idOeu="{idOeu}" />

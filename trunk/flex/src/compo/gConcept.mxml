@@ -95,21 +95,25 @@
 						case "a":
 							var eA:gA = new gA();
 							eA.oConcept = oItem;
+							eA.idDico = this.idDico;
 							dgDetail.addElement(eA);
 							break; 
 						case "m": 
 							var eM:gM = new gM();
+							eM.idDico = this.idDico;
 							eM.oConcept = oItem;
 							dgDetail.addElement(eM);
 							break; 
 						case "s": 
 							var eS:gS = new gS();
+							eS.idDico = this.idDico;
 							eS.oConcept = oItem;
 							dgDetail.addElement(eS);
 							break; 
 						case "v": 
 							var eV:gV = new gV();
 							eV.oConcept = oItem;
+							eV.idDico = this.idDico;
 							dgDetail.addElement(eV);
 							break; 
 						default: 

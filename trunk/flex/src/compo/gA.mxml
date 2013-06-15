@@ -188,36 +188,38 @@
 	</fx:Declarations>
 	<mx:ViewStack id="vs" width="100%" height="100%">
 		<mx:Canvas width="100%" height="100%" id="lecture" >					
-			<s:VGroup width="100%" height="100%" id="detail" >
-				<s:HGroup width="100%" verticalAlign="middle">
-					<s:Label text="Nom de l'adjectif :" width="112"/><s:Label id="lib" text="{oConcept.lib}" />			
-				</s:HGroup>
-				<s:HGroup width="100%" verticalAlign="middle">
-					<s:Label text="prefix :" width="112"/><s:TextInput id="prefix" text="{donnee.prefix}" change="t_changeHandler(event)" />			
-					<s:CheckBox label="élision :" id="elision" change="elision_changeHandler(event)" /> 			
-				</s:HGroup>
-				<s:HGroup width="100%" verticalAlign="middle">
-					<s:Label text="masculin singulier :" width="112"/><s:TextInput id="m_s" text="{donnee.m_s}" change="t_changeHandler(event)"/>			
-					<s:TextInput width="100%" id="Gm_s" text="{'[32|m_mot] [a_'+oConcept.lib+']'}"/><s:Label width="100%" color="#E01919" text="---" id="GTm_s" />
-				</s:HGroup>
-				<s:HGroup width="100%" horizontalAlign="left" verticalAlign="middle">
-					<s:Label text="féminin singulier :" width="112"/><s:TextInput id="f_s" text="{donnee.f_s}" change="t_changeHandler(event)"/>			
-					<s:TextInput width="100%" id="Gf_s" text="{'[32|m_phrase] [a_'+oConcept.lib+']'}"/><s:Label  width="100%" color="#E01919" text="---" id="GTf_s" />
-				</s:HGroup>
-				<s:HGroup width="100%" verticalAlign="middle">
-					<s:Label text="masculin pluriel :" width="112"/><s:TextInput id="m_p" text="{donnee.m_p}" change="t_changeHandler(event)"/>			
-					<s:TextInput width="100%" id="Gm_p" text="{'[82|m_mot] [a_'+oConcept.lib+']'}"/><s:Label width="100%" color="#E01919" text="---" id="GTm_p" />
-				</s:HGroup>
-				<s:HGroup width="100%" verticalAlign="middle">
-					<s:Label width="112" text="féminin pluriel :"/><s:TextInput id="f_p" text="{donnee.f_p}" change="t_changeHandler(event)" />			
-					<s:TextInput width="100%" id="Gf_p" text="{'[82|m_phrase] [a_'+oConcept.lib+']'}" /><s:Label width="100%" color="#E01919" text="---" id="GTf_p" />
-				</s:HGroup>
-				<s:HGroup verticalAlign="middle">
-					<s:Button label="Enregistrer" id="btn" click="enregistrer_clickHandler(event)" visible="{bChange}" color="red" />
-					<s:Button label="Tester" id="test" click="tester_clickHandler(event)" />
-				</s:HGroup>
-			</s:VGroup>
-			
+			<s:HGroup width="100%" height="100%" >				
+				<s:VGroup width="100%" height="100%" id="detail" >
+					<s:HGroup width="100%" verticalAlign="middle">
+						<s:Label text="Nom de l'adjectif :" width="60"/><s:Label id="lib" text="{oConcept.lib}" />			
+					</s:HGroup>
+					<s:HGroup width="100%" verticalAlign="middle">
+						<s:Label text="prefix :" width="60"/><s:TextInput id="prefix" width="100%" text="{donnee.prefix}" change="t_changeHandler(event)" />			
+						<s:CheckBox label="élision :" id="elision" change="elision_changeHandler(event)" /> 			
+					</s:HGroup>
+					<s:HGroup width="100%" verticalAlign="middle">
+						<s:Label text="masculin singulier :" width="60"/><s:TextInput id="m_s" width="40" text="{donnee.m_s}" change="t_changeHandler(event)"/>			
+						<s:TextInput width="100%" id="Gm_s" text="{'[32|m_mot] [a_'+oConcept.lib+']'}"/><s:Label width="100%" color="#E01919" text="---" id="GTm_s" />
+					</s:HGroup>
+					<s:HGroup width="100%" horizontalAlign="left" verticalAlign="middle">
+						<s:Label text="féminin singulier :" width="60"/><s:TextInput id="f_s" width="40" text="{donnee.f_s}" change="t_changeHandler(event)"/>			
+						<s:TextInput width="100%" id="Gf_s" text="{'[32|m_phrase] [a_'+oConcept.lib+']'}"/><s:Label  width="100%" color="#E01919" text="---" id="GTf_s" />
+					</s:HGroup>
+					<s:HGroup width="100%" verticalAlign="middle">
+						<s:Label text="masculin pluriel :" width="60"/><s:TextInput id="m_p" width="40" text="{donnee.m_p}" change="t_changeHandler(event)"/>			
+						<s:TextInput width="100%" id="Gm_p" text="{'[82|m_mot] [a_'+oConcept.lib+']'}"/><s:Label width="100%" color="#E01919" text="---" id="GTm_p" />
+					</s:HGroup>
+					<s:HGroup width="100%" verticalAlign="middle">
+						<s:Label text="féminin pluriel :" width="60" /><s:TextInput id="f_p" width="40" text="{donnee.f_p}" change="t_changeHandler(event)" />			
+						<s:TextInput width="100%" id="Gf_p" text="{'[82|m_phrase] [a_'+oConcept.lib+']'}" /><s:Label width="100%" color="#E01919" text="---" id="GTf_p" />
+					</s:HGroup>
+					<s:HGroup verticalAlign="middle">
+						<s:Button label="Enregistrer" id="btn" click="enregistrer_clickHandler(event)" visible="{bChange}" color="red" />
+						<s:Button label="Tester" id="test" click="tester_clickHandler(event)" />
+					</s:HGroup>
+				</s:VGroup>
+				<compo:gG oConcept="{this.oConcept}" idDico="{this.idDico}" />
+			</s:HGroup>			
 		</mx:Canvas>
 		<mx:Canvas width="100%" height="100%" id="ecriture" >
 			<s:VGroup width="100%" height="100%"  >
