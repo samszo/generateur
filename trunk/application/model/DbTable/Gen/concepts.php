@@ -185,15 +185,15 @@ class Model_DbTable_Gen_concepts extends Zend_Db_Table_Abstract
      * Recherche une entrée Gen_concepts avec la valeur spécifiée
      * et retourne cette entrée.
      *
-     * @param int $id_dico
+     * @param string $idsDicos
      *
      * @return array
      */
-    public function findByIdDico($id_dico)
+    public function findByIdDico($idsDicos)
     {
         $query = $this->select()
                     ->from( array("g" => "gen_concepts") )                           
-                    ->where( "g.id_dico = ?", $id_dico );
+                    ->where( "g.id_dico IN (".$idsDicos.")" );
 
         return $this->fetchAll($query)->toArray(); 
     }
