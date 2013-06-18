@@ -215,23 +215,24 @@
 
 			protected function findByDico_resultHandler(event:ResultEvent):void
 			{
-				concepts = event.result as ArrayCollection;
+				var arr:Array = event.result as Array;
+				concepts = new ArrayCollection(arr);
 				var tot:String = "";
 			}			
 			
 		]]>
 	</mx:Script>
+	<mx:RemoteObject id="ROC"
+					 source="Model_DbTable_Gen_concepts" destination="zend" 
+					 showBusyCursor="true"
+					 fault="faultHandlerService(event)">
+		<mx:method name="findByIdDico" result="findByDico_resultHandler(event)" /> 
+	</mx:RemoteObject>
 	
 	
 	<mx:Component id="dropDownItemRenderer">
 		<co:ColorItemRenderer selectedItems="{ outerDocument.autoComplete.selectedItems }" />
 	</mx:Component>
-	<mx:RemoteObject id="ROC"
-					source="Model_DbTable_Gen_concepts" destination="zend" 
-					showBusyCursor="true"
-					fault="faultHandlerService(event)">
-		<mx:method name="findByIdDico" result="findByDico_resultHandler(event)" /> 
-	</mx:RemoteObject>
 	
 	<mx:HBox width="100%" minWidth="200">
 		
@@ -273,7 +274,7 @@
 		
 		<mx:Spacer width="10"/>
 		
-		<hc:AutoComplete id="autoComplete" dataProvider="{ concepts }" labelField="name" matchType="anyPart" 
+		<hc:AutoComplete id="autoComplete" dataProvider="{ concepts }" labelField="lib" matchType="anyPart" 
 						 prompt="Choose your favorite Crayola crayon" width="100%" change="{ handleAutoCompleteChange() }"
 						 allowNewValues="{ allowNew.selected }" selectedItemStyleName="{ AutoComplete.STYLE_MAC_MAIL }" 
 						 allowDuplicates="{ unique.selected }" allowMultipleSelection="{ multiselect.selected }"
