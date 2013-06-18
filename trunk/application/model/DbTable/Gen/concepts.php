@@ -195,7 +195,8 @@ class Model_DbTable_Gen_concepts extends Zend_Db_Table_Abstract
                     ->from( array("g" => "gen_concepts") )                           
                     ->where( "g.id_dico IN (".$idsDicos.")" );
 
-        return $this->fetchAll($query)->toArray(); 
+        $rows = $this->fetchAll($query)->toArray();
+        return $rows; 
     }
     	/**
      * Recherche une entrée Gen_concepts avec la valeur spécifiée
