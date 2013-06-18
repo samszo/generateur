@@ -5,8 +5,11 @@ try {
 	
 	$application->bootstrap();
 
+	
 	/*
 	$dbC = new Model_DbTable_Gen_concepts();
+	$ac = $dbC->findByIdDico("102.34",true);
+	$dbC->ajouter(array("id_dico"=>102,"lib"=>"bidule","type"=>"dis"));	
 	$dbC->utilise(157625, "a_testouill");
 	$arr = $dbC->remove(157632);
 	*/
@@ -32,7 +35,10 @@ try {
 	$dbD = new Model_DbTable_Gen_determinants();
 	$arr = $dbD->findByIdDico(46);
 	*/
-	
+	/*
+	$dbV = new Model_DbTable_Gen_verbes();
+	$dbV->ajouter(array("id_dico"=>102,"lib"=>"bidouiller","type"=>"v"),array("elision"=>"0","id_conj"=>"771","id_dico"=>102,"prefix"=>"bidouille"));	
+	*/
 	/*
 	$dbT = new Model_DbTable_Gen_conjugaisons();
 	$arrTrmChange[]=array("id_trm"=>"24712","lib"=>"ous");	
@@ -58,14 +64,18 @@ try {
 	
 	/*
 	$dbS = new Model_DbTable_Gen_syntagmes();
+	$dbS->utiliseCpt(157638, "s_brouc");
 	$dbS->ajouter(array("id_dico"=>4,"lib"=>"test"));
 	$arr = $dbS->findByIdConcept(56203, "4");
 	*/
 		
 	/* 
 	$dbODU = new Model_DbTable_Gen_oeuvresxdicosxutis();
+	$dbODU->remove(55);
 	$dbODU->findByIdOeu(6);
+	*/
 	
+	/*
 	$dbV = new Model_DbTable_Gen_verbes();
 	$arr = $dbV->findByIdConcept('60298');
 
@@ -79,6 +89,10 @@ try {
 	/*
 	$gdata = new Flux_Gdata("projetgapaii@gmail.com","HakNasSam");
 	$gdata->saveSpreadsheetsDico();
+	*/
+	/*
+	$dbGen = new Model_DbTable_Gen_generateurs();
+	$dbGen->remove(192667, 157623);
 	*/
 	
 	$server = new Zend_Amf_Server();
