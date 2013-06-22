@@ -181,7 +181,7 @@ class Model_DbTable_Gen_concepts extends Zend_Db_Table_Abstract
 
         return $this->fetchAll($query)->toArray(); 
     }
-    	/**
+    /**
      * Recherche une entrée Gen_concepts avec la valeur spécifiée
      * et retourne cette entrée.
      *
@@ -192,13 +192,84 @@ class Model_DbTable_Gen_concepts extends Zend_Db_Table_Abstract
     public function findByIdDico($idsDicos)
     {
         $query = $this->select()
-                    ->from( array("g" => "gen_concepts") )                           
-                    ->where( "g.id_dico IN (".$idsDicos.")" );
+			->from( array("g" => "gen_concepts") )                           
+            ->where( "g.id_dico IN (".$idsDicos.")" )
+            ->order("lib");
 
         $rows = $this->fetchAll($query)->toArray();
         return $rows; 
     }
-    	/**
+
+    /**
+     * Recherche toutes les entrées conceptuelles pour les dictionnaires de
+     * - concepts
+     * - syntagmes
+     * - pronoms
+     * et retourne ces entrées.
+     *
+     * @param array $dicos
+     *
+     * @return array
+     */
+    public function findAllByDicos($dicos)
+    {
+
+        //récupère les concepts
+    	$sql ="SELECT id_concept as id
+    		, lib
+			, type
+			, 0 as num 
+		FROM gen_concepts c
+		WHERE c.id_dico IN (".$dicos["concepts"].")";
+		$smtp = $this->_db->query($sql);
+        $concepts = $smtp->fetchAll();
+
+        //récupère les syntagmes
+    	$sql ="SELECT id_syn as id
+    		, lib
+			, 'syntagmes' as type
+			, num 
+		FROM gen_syntagmes 
+		WHERE id_dico IN (".$dicos["syntagmes"].")";
+		$smtp = $this->_db->query($sql);
+        $syns = $smtp->fetchAll();
+
+        //récupère les pronoms
+    	$sql ="SELECT id_pronom as id
+    		, lib
+			, CONCAT('pronom ',type) as type
+			, num 
+		FROM gen_pronoms 
+		WHERE id_dico IN (".$dicos["pronoms"].")";
+		$smtp = $this->_db->query($sql);
+        $pros = $smtp->fetchAll();
+        
+        //récupère les déterminants
+    	$sql ="SELECT id_dtm as id
+    		, lib
+			, 'déterminant' as type
+			, num 
+		FROM gen_determinants 
+		WHERE id_dico IN (".$dicos["déterminants"].")";
+		$smtp = $this->_db->query($sql);
+        $dets = $smtp->fetchAll();
+        
+        //récupère les négations
+    	$sql ="SELECT id_negation as id
+    		, lib
+			, 'négation' as type
+			, num  
+		FROM gen_negations 
+		WHERE id_dico IN (".$dicos["negations"].")";
+		$smtp = $this->_db->query($sql);
+        $negs = $smtp->fetchAll();
+        $nb = count($concepts)+count($syns)+count($pros)+count($dets)+count($negs);
+        $rows = array_merge($concepts, $syns, $pros, $dets, $negs);
+        
+        return $rows; 
+    }
+    
+    /**
      * Recherche une entrée Gen_concepts avec la valeur spécifiée
      * et retourne cette entrée.
      *
