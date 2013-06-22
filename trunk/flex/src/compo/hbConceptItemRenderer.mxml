@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox 
+	xmlns:mx="http://www.adobe.com/2006/mxml" 
+	width="100%" height="100%" updateComplete="handleUpdate()"
+	verticalGap="0" horizontalGap="0"
+	verticalScrollPolicy="off" horizontalScrollPolicy="off" 
+	verticalAlign="middle">
+	<mx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import com.hillelcoren.utils.StringUtils;
+			import mx.utils.StringUtil;
+			import mx.events.FlexEvent;
+			import mx.controls.List;
+			
+			[Bindable]
+			private var _list:List;
+			
+			private var _selectedItems:ArrayCollection;
+			
+			
+			public function set selectedItems( value:ArrayCollection ):void
+			{
+				_selectedItems = value;
+			}
+			
+			override public function set data( value:Object ):void
+			{
+				super.data = value;
+				
+				if (!value)
+				{
+					return;
+				}
+				
+				_list = owner as List;
+				
+				lib.htmlText = _list.labelFunction( value );
+				if(value.type=="a") type.htmlText = " (adjectif)";						
+				else if(value.type=="v") type.htmlText = " (verbe)";						
+				else if(value.type=="m") type.htmlText = " (substantif)";						
+				else type.htmlText = "("+value.type+")";						
+				
+				if (_selectedItems && _selectedItems.getItemIndex( value ) >= 0)
+				{
+					this.setStyle( "color", Consts.COLOR_TEXT_DISABLED );
+				}
+				else
+				{
+					this.clearStyle( "color" );
+				}
+			}
+			
+			private function handleUpdate():void
+			{
+				// There must be a better way to draw a line between each 
+				// of the items in the list
+				graphics.clear();
+				graphics.lineStyle( 1, 0x858585, 0.5 );
+				graphics.moveTo( -2, height + 2);
+				graphics.lineTo( width, height + 2 );
+			}			
+			
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				// TODO Auto-generated method stub
+				
+			}
+			
+		]]>
+	</mx:Script>
+	
+	<mx:VBox width="80%" verticalGap="0">
+		<mx:Label id="lib" fontSize="12"/>
+		<mx:Label id="type" fontSize="12"/>
+	</mx:VBox>	
+	<mx:Spacer width="15"/>
+		
+</mx:HBox>
