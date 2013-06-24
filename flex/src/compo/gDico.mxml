@@ -82,7 +82,7 @@
 						gCo.idDico = oItem.id_dico;
 						detail.addElement(gCo);
 					}
-					if(oItem.type=="pronoms_complement" || oItem.type=="pronoms_sujet"){
+					if(oItem.type=="pronoms_complement" || oItem.type=="pronoms_sujet" || oItem.type=="pronoms_sujet_indefini"){
 						var gPrn:gPronom = new gPronom;
 						gPrn.idDico = oItem.id_dico;
 						if(oItem.type=="pronoms_complement")gPrn.oType = "complément";

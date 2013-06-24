@@ -4,9 +4,9 @@
 	xmlns:hc="com.hillelcoren.components.*"
 	xmlns:classes="com.hillelcoren.components.autoComplete.classes.*"
 	xmlns:co="compo.*"
-	width="100%" height="100%" color="#000000"
+	width="100%" height="100%" 
 	verticalAlign="top" horizontalAlign="left" 
-	paddingLeft="20" paddingTop="15" paddingBottom="20" paddingRight="20"
+	paddingLeft="3" paddingTop="3" paddingBottom="3" paddingRight="3"
 	initialize="init()">
 	
 	<mx:Script>
@@ -18,12 +18,18 @@
 			import mx.core.Application;
 			import mx.core.UIComponent;
 			import mx.events.MenuEvent;
+			import mx.managers.PopUpManager;
 			import mx.rpc.events.FaultEvent;
 			import mx.rpc.events.ResultEvent;
 			import mx.utils.ObjectUtil;
 			
+			[Bindable] public var oItem:Object;
+			[Bindable] public var acItems:ArrayCollection;
+			[Bindable] public var fctAnnuler:Function;
+			[Bindable] public var fctEnregistrer:Function;
 			[Bindable] public var concepts:ArrayCollection;
 			private var selectCpt:Object;
+			[Bindable] public  var allConcept:Array;
 
 			public function faultHandlerService(fault:FaultEvent):void
 			{
@@ -37,35 +43,110 @@
 			private function init():void
 			{
 				this.parentApplication.verifDico();
-				ROC.findAllByDicos(this.parentApplication.arrVerifDico);
+				allConcept=this.parentApplication.allConcept;
+				if(!allConcept)
+					ROC.findAllByDicos(this.parentApplication.arrVerifDico, false);
 				
 			}			
+
+			protected function autoComplete_clickHandler(event:MouseEvent):void
+			{
+				var className:String = flash.utils.getQualifiedClassName(event.target);
+				if(className!="mx.core::UITextField"){
+					selectCpt = autoComplete.selectedItem;
+					if(selectCpt.type=="v"){
+						showParamVerbe();
+					}					
+				}
+				
+			}
 			
 			private function handleAutoCompleteChange():void
 			{
 				selectCpt = autoComplete.selectedItem;
-				if(selectCpt != null ){
+				acItems = autoComplete.selectedItems;
+				var className:String = flash.utils.getQualifiedClassName(selectCpt);
+				if(selectCpt != null && className=="Array"){
 					//suivant le type on affiche le paramètrage
-					//on crée le texte génératif
-					genere();
+					if(selectCpt.type=="v"){
+						showParamVerbe();
+					}else{
+						//on crée le texte génératif
+						genere(null);						
+					}
+				}else{
+					txtGen.text = txtGen.text + selectCpt;					
 				}
 			}
-			private function genere():void
+			
+			private function showParamVerbe():void
 			{
-				txtGen.text = txtGen.text + "[" + selectCpt.type+ "_" + selectCpt.lib+ "]";
+				var twPV:twParamsV= twParamsV(
+					PopUpManager.createPopUp(this.parentApplication.dgOeuParam, twParamsV, true));
+				twPV.callback = genere;
+				twPV.arrNeg = allConcept["negations"];
+				twPV.arrPrC = allConcept["pronomsComp"];
+				twPV.arrPrS = allConcept["pronomsSujet"];
+				twPV.arrPrSI = allConcept["pronomsSujetInd"];
+
+				PopUpManager.centerPopUp(twPV);						
+				
+			}
+			
+			private function genere(param:String):void
+			{
+				switch(selectCpt.type) 
+				{ 
+					case "déterminant":
+						var o:int = int(selectCpt.ordre); 
+						var n:int = int(selectCpt.num);
+						if(o>=4)
+							txtGen.text += " [" + (n+50)+ "|";
+						else
+							txtGen.text += " [" + selectCpt.num+ "|";
+						break; 
+					case "a":
+						txtGen.text += " [" + selectCpt.type+ "_" + selectCpt.lib+ "]";
+						break; 
+					case "m": 
+						if(txtGen.text.substr(txtGen.text.length-1)=="|")
+							txtGen.text += selectCpt.type+ "_" + selectCpt.lib+ "]";
+						else
+							txtGen.text += "[" + selectCpt.type+ "_" + selectCpt.lib+ "]";							
+						break; 
+					case "s":
+						txtGen.text += " [" + selectCpt.num+ "#" + "]";
+						break; 
+					case "v": 
+						txtGen.text += param+ "|" + selectCpt.type+ "_" + selectCpt.lib+ "]";
+						break; 
+					default: 
+						txtGen.text += "[" + selectCpt.type+ "_" + selectCpt.lib+ "]";
+						break; 
+				}	
 			}			
 						
 
 			protected function findAllByDicos_resultHandler(event:ResultEvent):void
-			{
-				var arr:Array = event.result as Array;
-				concepts = new ArrayCollection(arr);
+			{				
+				allConcept = event.result as Array;
+				this.parentApplication.allConcept = allConcept;
+				// call
+				var arrMerge:Array = merge(allConcept["concepts"], allConcept["syntagmes"], allConcept["pronomsComp"], allConcept["pronomsSujet"], allConcept["pronomsSujetInd"], allConcept["determinants"], allConcept["negations"]);			
+				concepts = new ArrayCollection(arrMerge);
 				var tot:String = "";
 			}			
+
+			private function merge(...arrays):Array {
+				var result:Array = [];
+				for(var i:int=0;i<arrays.length;i++){
+					result = result.concat(arrays[i]);
+				}
+				return result;
+			}
 			
 			protected function enregistrer_clickHandler(event:MouseEvent):void
 			{
-				// TODO Auto-generated method stub
 				
 			}
 			
@@ -80,7 +161,7 @@
 				}
 				
 			}
-			//
+			/*
 			private function handleItemClick( event:MenuEvent ):void
 			{
 				switch (String(event.item.@data))
@@ -93,7 +174,9 @@
 						break;	
 				}
 			}
-			//
+			*/
+			
+			
 		]]>
 	</mx:Script>
 	<mx:RemoteObject id="ROC"
@@ -109,33 +192,36 @@
 	</mx:Component>
 	<mx:XML format="e4x" id="menuData">
 		<root>
-			<menuitem data="browse" label="Browse..."/>
-			<menuitem data="remove" label="Remove All"/>
+			<menuitem data="browse" label="Editer..."/>
+			<menuitem data="remove" label="Suprimer tout..."/>
 		</root>
 	</mx:XML>
 	
-	<mx:VBox width="100%" minWidth="200">
+	<mx:HBox width="100%" height="100%" >
+		<mx:VBox width="100%" height="100%" >
+			<hc:AutoComplete id="autoComplete" dataProvider="{ concepts }" labelField="lib" matchType="{AutoComplete.MATCH_BEGINNING}" 
+							 prompt="Ecrivez votre texte génératif" width="100%" change="{ handleAutoCompleteChange() }"
+							 click="autoComplete_clickHandler(event)"
+							 allowNewValues="{ true }" selectedItemStyleName="{ AutoComplete.STYLE_MAC_MAIL }" 
+							 allowDuplicates="{ true }" allowMultipleSelection="{ true }" 
+							 allowEditingNewValues="{ true }" dropDownItemRenderer="{ dropDownItemRenderer }" showRemoveIcon="true"
+							 backspaceAction="focus"/>
 		<!--		
-		<hc:AutoComplete id="autoComplete" dataProvider="{ concepts }" labelField="lib" matchType="{AutoComplete.MATCH_BEGINNING}" 
-						 prompt="Ecrivez votre texte génratif" width="100%" change="{ handleAutoCompleteChange() }"
-						 allowNewValues="{ true }" selectedItemStyleName="{ AutoComplete.STYLE_MAC_MAIL }" 
-						 allowDuplicates="{ true }" allowMultipleSelection="{ true }" 
-						 allowEditingNewValues="{ true }" dropDownItemRenderer="{ dropDownItemRenderer }" showRemoveIcon="true"
-						 backspaceAction="focus"/>
-		-->
 		<hc:AdvancedAutoComplete id="autoComplete" dataProvider="{ concepts }" labelField="lib"
-								 width="300" useListBuilder="{true}" matchType="{AutoComplete.MATCH_BEGINNING}"
+								 width="300" height="100" useListBuilder="{true}" matchType="{AutoComplete.MATCH_BEGINNING}"
 								 showBrowseButton="{false}" showOrderButtons="{true}"
 								 allowMultipleSelection="true" selectionLayout="vertical" change="handleAutoCompleteChange()"
 								 dropDownItemRenderer="{ dropDownItemRenderer }" itemClick="handleItemClick(event)"
 								 actionsMenuDataProvider="{ menuData }" showRemoveButton="{true}"
 								 browserFields="{ ['lib','type'] }"/>
-		<mx:TextArea id="txtGen" width="100%" />
-		<mx:TextArea id="txtRes" width="100%" />
-		<mx:HBox>
-			<mx:Button label="Enregistrer" click="enregistrer_clickHandler(event)" />
-			<mx:Button label="Tester" click="tester_clickHandler(event)" />
-		</mx:HBox>
-	</mx:VBox>
-	
+		-->
+			<mx:TextArea id="txtGen" width="100%" text="{oItem.valeur}" />
+			<mx:TextArea id="txtRes" width="100%" />
+			<mx:HBox>
+				<mx:Button label="Enregistrer" click="{fctEnregistrer()}" />
+				<mx:Button label="Tester" click="tester_clickHandler(event)" />
+				<mx:Button label="Annuler" click="{fctAnnuler()}" />			
+			</mx:HBox>
+		</mx:VBox>
+	</mx:HBox>	
 </mx:HBox>

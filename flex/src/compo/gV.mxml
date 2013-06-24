@@ -619,7 +619,7 @@
 					<s:NavigatorContent label="Participes" >
 						<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
 							<s:VGroup width="100%" height="100%">					
-								<s:FormHeading label="Participe présent" />
+								<s:FormHeading label="Participe passé" />
 								<s:TextInput id="GpPP" width="100%" text="{'[080000000|v_'+oConcept.lib+']'}" />
 								<s:TextInput id="GTpPP" width="100%" color="#117E20" text="---" />									
 							</s:VGroup>
