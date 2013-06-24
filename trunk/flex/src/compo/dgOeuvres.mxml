@@ -47,6 +47,7 @@
 	[Bindable] public var arrDicoSyn:Array;	
 	[Bindable] public var arrDicoPrC:Array;	
 	[Bindable] public var arrDicoPrS:Array;	
+	[Bindable] public var arrDicoPrSInd:Array;	
 	[Bindable] public var arrDicoNeg:Array;	
 	[Bindable] public var arrLangue:Array;
 	[Bindable] public var arrType:Array;
@@ -70,11 +71,13 @@
 				if(dp[0].type=="syntagmes")arrDicoSyn=dp;
 				if(dp[0].type=="pronoms_complement")arrDicoPrC=dp;
 				if(dp[0].type=="pronoms_sujet")arrDicoPrS=dp;
+				if(dp[0].type=="pronoms_sujet_indefini")arrDicoPrSInd=dp;
 				if(dp[0].type=="négations")arrDicoNeg=dp;
 			}
 			
 			public function init():void 
 			{
+				this.parentApplication.allConcept=null;
 			    //chargement des données
 			    if(bInit){
 					RO.findByIdOeu(idOeu);
@@ -85,6 +88,7 @@
 					ROD.findByType("syntagmes");
 					ROD.findByType("pronoms_complement");
 					ROD.findByType("pronoms_sujet");
+					ROD.findByType("pronoms_sujet_indefini");
 					ROD.findByType("négations");
 					ROD.getLangue();
 					ROD.getType();
@@ -238,6 +242,8 @@
 
 				if(cbDicoPrS.selectedIndex!=-1)params.push(cbDicoPrS.selectedItem['id_dico']);
 
+				if(cbDicoPrSInd.selectedIndex!=-1)params.push(cbDicoPrSInd.selectedItem['id_dico']);
+				
 				if(cbDicoNeg.selectedIndex!=-1)params.push(cbDicoNeg.selectedItem['id_dico']);
 				
 				ROODU.ajouter(idOeu, this.parentApplication.uti.idUti, params);
@@ -254,6 +260,7 @@
 				arrDicoSyn.filter(filtreDicoLangueDefaut,cbDicoSyn);
 				arrDicoPrC.filter(filtreDicoLangueDefaut,cbDicoPrC);
 				arrDicoPrS.filter(filtreDicoLangueDefaut,cbDicoPrS);
+				arrDicoPrSInd.filter(filtreDicoLangueDefaut,cbDicoPrSInd);
 				arrDicoNeg.filter(filtreDicoLangueDefaut,cbDicoNeg);
 
 			}
@@ -423,6 +430,7 @@
 												<mx:ComboBox id="cbDicoSyn"  prompt="syntagmes" dataProvider="{arrDicoSyn}" labelField="nom" />
 												<mx:ComboBox id="cbDicoPrC"  prompt="pronoms compléments" dataProvider="{arrDicoPrC}" labelField="nom" />
 												<mx:ComboBox id="cbDicoPrS"  prompt="pronoms sujets" dataProvider="{arrDicoPrS}" labelField="nom" />
+												<mx:ComboBox id="cbDicoPrSInd"  prompt="pronoms sujets indéfini" dataProvider="{arrDicoPrSInd}" labelField="nom" />
 												<mx:ComboBox id="cbDicoNeg"  prompt="négations" dataProvider="{arrDicoNeg}" labelField="nom" />
 												<mx:HBox>
 													<mx:Button label="Enregistrer" click="AjouterDicoOeuvre();" />										

@@ -13,6 +13,7 @@
 			import mx.collections.ArrayCollection;
 			import mx.controls.Alert;
 			import mx.events.CloseEvent;
+			import mx.events.DataGridEvent;
 			import mx.events.FlexEvent;
 			import mx.rpc.events.FaultEvent;
 			import mx.rpc.events.ResultEvent;
@@ -32,6 +33,7 @@
 			[Bindable] public var arrChange:Array=new Array;
 			private var action:String="";
 			private var arrR:Array;
+			private var newVal:String;	
 
 			public function faultHandlerService(fault:FaultEvent):void
 			{
@@ -58,6 +60,8 @@
 				var arr:Array = event.result as Array;
 				dg.dataProvider = arr;
 				vs.selectedChild = lecture;
+				//réinitialise le tableau génral des concepts
+				this.parentApplication.allConcept=null;
 			}
 
 			protected function tester_clickHandler(event:MouseEvent):void
@@ -75,12 +79,12 @@
 				
 				donnee=event.currentTarget.selectedItem;
 				if(donnee){
+					bChange = true;
 					//récupère les éléments génératifs du texte
 					var arrGdeb:Array = String(donnee.valeur).split("[");
 					for each(var g:String in arrGdeb){
 						var arrGFin:Array = g.split("]");
 					}
-					valeur.text = donnee.valeur;
 				}
 
 			}			
@@ -99,9 +103,11 @@
 			}
 			
 
-			protected function enregistrer_clickHandler(event:MouseEvent):void
+			public function enregistrer_clickHandler():void
 			{
 				action = "modifier";
+				donnee.valeur = editGen.txtGen.text;
+				arrChange["valeur"] = editGen.txtGen.text;				
 				ROCG.utilise(donnee.id_gen);				
 			}
 			
@@ -127,7 +133,7 @@
 			{				
 				var arr:Array = new Array();
 				arr["id_dico"]=idDico;
-				arr["valeur"]=valA.text;
+				arr["valeur"]=ecrireGen.txtGen.text;
 				ROCG.ajouter(oConcept.id_concept, arr);								
 			}
 			
@@ -157,7 +163,6 @@
 			{
 				bChange = false;
 				arrChange = new Array;
-				valeur.setStyle("color","black");
 				ROCG.findByIdConcept(oConcept.id_concept);				
 			}
 			
@@ -182,7 +187,9 @@
 			{
 				ROCG.findByIdConcept(oConcept.id_concept);				
 			}
-			
+			public function editGenAnnuler():void{
+				vs.selectedChild = lecture;
+			}
 		]]>
 	</fx:Script>
 		
@@ -218,6 +225,8 @@
 									   icon="@Embed('images/DeleteRecord.png')" toolTip="Supprimer un item"/>
 						<mx:LinkButton id="btnAddNew" visible="{bAjout}" width="20" click="{vs.selectedChild=ajoutGen}"
 									   icon="@Embed('images/AddRecord.png')" toolTip="Ajouter un item"/>					
+						<mx:LinkButton id="btnUpdate" visible="{bChange}" width="20" click="{vs.selectedChild=modifGen}"
+									   icon="@Embed('images/UpdateRecord.png')" toolTip="Modifier un item"/>					
 					</s:HGroup>
 					<mx:DataGrid id="dg" width="100%" height="100%" click="selectDgItem(event);" editable="false" >
 						<mx:columns>
@@ -230,11 +239,6 @@
 					<s:Button label="Tester" click="tester_clickHandler(event)" />
 					<s:TextInput width="100%" id="G" text="{'['+oConcept.type+'-'+oConcept.lib+']'}"/>
 					<s:Label width="100%" color="#E01919" text="---" id="GT" />
-				</s:HGroup>
-				<s:HGroup verticalAlign="middle">
-					<s:Label width="100%" text="Valeur sélectionnée" />
-					<s:TextInput width="100%" id="valeur" text=""  change="t_changeHandler(event)"/>
-					<s:Button label="Enregistrer" click="enregistrer_clickHandler(event)" />
 				</s:HGroup>
 			</s:VGroup>
 		</mx:Canvas>
@@ -253,14 +257,11 @@
 			</s:VGroup>				
 		</mx:Canvas>
 		<mx:Canvas width="100%" height="100%" id="ajoutGen" >
+			<compo:gEcrire id="ecrireGen" width="100%" height="100%" oItem="{donnee}" fctAnnuler="editGenAnnuler" fctEnregistrer="ajouterGen" allConcept="{this.parentApplication.allConcept}" />				
+		</mx:Canvas>
+		<mx:Canvas width="100%" height="100%" id="modifGen" >
 			<s:VGroup width="100%" height="100%"  >
-				<s:HGroup verticalAlign="middle">
-					<s:Label text="Valeur :" /><s:TextInput id="valA" text="" width="100%" />			
-				</s:HGroup>
-				<s:HGroup height="100%"  >
-					<s:Button label="Ajouter" click="ajouterGen()" />
-					<s:Button label="Annuler" click="{vs.selectedChild = lecture;}"  />
-				</s:HGroup>
+				<compo:gEcrire id="editGen" width="100%" height="100%" oItem="{donnee}" fctAnnuler="editGenAnnuler" fctEnregistrer="enregistrer_clickHandler" allConcept="{this.parentApplication.allConcept}" />				
 			</s:VGroup>				
 		</mx:Canvas>
 	</mx:ViewStack>						

@@ -1,6 +1,10 @@
 // ActionScript file
+import air.update.ApplicationUpdaterUI;
+
 import compo.*;
 import compo.dgOeuvres;
+
+import flash.filesystem.File;
 
 import mx.controls.Alert;
 import mx.events.CloseEvent;
@@ -15,6 +19,7 @@ import spark.components.Label;
 [Bindable] public var arrCtrls:Array;
 [Bindable] public var arrVerifDico:Array;
 [Bindable] public var ctrlActi:Object;
+[Bindable] public var allConcept:Array;
 public var idItem:String;
 public var dataItem:Array;
 public var arrItem:Array;
@@ -85,6 +90,8 @@ public function verifActi(arrR:Array, action:String, actis:String, ROC:Object, i
 			else
 				rocItem.edit(idItem, dataItem);					
 		}
+		//réinitialise le tableau génral des concepts
+		allConcept=null;		
 	}	
 }
 
@@ -107,6 +114,9 @@ private function verifSoloItemHandler(event:CloseEvent):void
 				rocItem.ajouter(dataItem);											
 		}
 	}
+	//réinitialise le tableau génral des concepts
+	allConcept=null;
+
 }
 
 private function verifMultiItemHandler(event:CloseEvent):void
@@ -117,7 +127,9 @@ private function verifMultiItemHandler(event:CloseEvent):void
 	}
 	if (event.detail == Alert.NO && actionItem=="modifier") 
 	{
-		rocItem.ajouter(dataItem);					
+		rocItem.ajouter(dataItem);
+		//réinitialise le tableau génral des concepts
+		allConcept=null;
 	}
 }
 
@@ -144,25 +156,35 @@ public function faultHandlerService(fault:FaultEvent):void
 
 public function login():void
 {
-	/*création de la fenêtre de login
+	//création de la fenêtre de login
 	var twLog:twLogin= twLogin(
 		PopUpManager.createPopUp(this, twLogin, true));
 	twLog.callback = init;
 	PopUpManager.centerPopUp(twLog);
-	*/
+	/*
 	this.uti = new Object(); 
 	uti.login = "samszo";
 	uti.idUti = "2";
 	uti.role = "administrateur";
-	//
+	verifUpdate();
 	boxGen.visible = true;
+	*/
 	
 } 
 
 private function init():void {
 
 	utiLog.text = uti.login;
+	verifUpdate();
+	
 }
+
+public function verifUpdate():void
+{
+	var appUpdater:ApplicationUpdaterUI = new ApplicationUpdaterUI(); 
+	appUpdater.configurationFile = new File("app:/updateConfig.xml"); 
+	appUpdater.initialize();
+} 
 
 public function ShowSelection(idOeu:int):void{
 	//réinitiaise le détail des items du dico
@@ -212,6 +234,7 @@ public function verifDico():Boolean
 	if(!arrVerifDico["negations"])strVerif+="négations\n";
 	if(!arrVerifDico["pronoms_complement"])strVerif+="pronoms_complement\n";
 	if(!arrVerifDico["pronoms_sujet"])strVerif+="pronoms_sujet\n";
+	if(!arrVerifDico["pronoms_sujet_indefini"])strVerif+="pronoms_sujet_indefini\n";
 	if(!arrVerifDico["syntagmes"])strVerif+="syntagmes\n";
 	if(strVerif!=""){
 		strVerif = 	"Il manque des dictionnaires.\nVeuillez ajouter à votre oeuvre le(s) dictionnaire(s) suivant(s):\n"+strVerif;

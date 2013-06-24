@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" 
+	title="Paramètres d'un verbe"
+	showCloseButton="true"
+	close="PopUpManager.removePopUp(this);"  
+	xmlns:ns2="compo.*"
+	creationComplete="Init()"
+	> 
+	<mx:Script>
+        <![CDATA[
+			import compo.*;
+			
+			import mx.controls.Alert;
+			import mx.managers.CursorManager;
+			import mx.managers.PopUpManager;
+			
+			import spark.components.RadioButton;
+			
+			[Bindable] public var objParam:Array = new Array();
+			[Bindable] public var callback:Function;
+			[Bindable] public var arrNeg:Array = new Array();
+			[Bindable] public var arrPrC:Array = new Array();
+			[Bindable] public var arrPrS:Array = new Array();
+			[Bindable] public var arrPrSI:Array = new Array();
+			
+			private function Init():void{
+				//dg.twAMC=this;
+			}
+
+			public function ferme():void{
+				PopUpManager.removePopUp(this);
+			}
+
+			public function ajouter():void{
+				/*
+				Position 1 : type de négation
+				Position 2 : temps verbal
+				Position 3 : pronoms sujets définis
+				Positions 4 ET 5 : pronoms compléments
+				Position 6 : ordre des pronoms sujets
+				Position 7 : pronoms indéfinis
+				Position 8 : Place du sujet dans la chaîne grammaticale
+				*/
+				var code:String = "[";
+				
+				var oNeg:Object = cbNeg.selectedItem;
+				if(oNeg)code+=oNeg.num;
+				else code+="0";
+				
+				if(objParam["T"])code+=objParam["T"];
+				else code+="0";
+				
+				var oPrS:Object = cbPrS.selectedItem;
+				if(oPrS)code+=oPrS.num;
+				else code+="0";
+
+				var oPrC:Object = cbPrC.selectedItem;
+				if(oPrC){
+					if(oPrC.num.length==1)
+						code+="0"+oPrC.num;
+					else
+						code+=oPrC.num;
+				}
+				else code+="00";
+
+				if(ordre.selected) code+="1";
+				else code+="0";
+
+				var oPrSI:Object = cbPrSI.selectedItem;
+				if(oPrSI)code+=oPrSI.num;
+				else code+="0";				
+				
+				code+="0";				
+
+				callback(code);
+				ferme();
+			}
+						
+			protected function vTemps_clickHandler(event:MouseEvent):void
+			{
+				objParam["T"]= event.target.value;
+			}
+			protected function vPerso_clickHandler(event:MouseEvent):void
+			{
+				objParam["P"]= event.target.value;
+			}
+			
+		]]>
+    </mx:Script>
+
+	<mx:VBox left="10" top="10" bottom="10" right="10">
+		<mx:HBox>
+			<mx:VBox>
+				<mx:ComboBox id="cbNeg"  prompt="Négations" dataProvider="{arrNeg}" labelField="lib" />
+				<mx:ComboBox id="cbPrC"  prompt="Pronoms compléments" dataProvider="{arrPrC}" labelField="lib" />
+				<mx:ComboBox id="cbPrS"  prompt="Pronoms sujets" dataProvider="{arrPrS}" labelField="lib" />
+				<mx:ComboBox id="cbPrSI"  prompt="Sujet indéfini" dataProvider="{arrPrSI}" labelField="lib" />
+				<mx:CheckBox label="Ordre Inverse : " id="ordre" /> 			
+				<!--
+				<mx:Label text="Négation : "/>
+				<mx:RadioButton groupName="vNeg" value="1" id="vn1" label="pas" click="vNeg_clickHandler(event)" />
+				<mx:RadioButton groupName="vNeg" value="2" id="vn2" label="plus" click="vNeg_clickHandler(event)" />
+				<mx:RadioButton groupName="vNeg" value="3" id="vn3" label="jamais" click="vNeg_clickHandler(event)" />
+				<mx:RadioButton groupName="vNeg" value="4" id="vn4" label="rien" click="vNeg_clickHandler(event)" />
+				<mx:RadioButton groupName="vNeg" value="5" id="vn5" label="que" click="vNeg_clickHandler(event)" />		
+				<mx:RadioButton groupName="vNeg" value="6" id="vn6" label="personne" click="vNeg_clickHandler(event)" />		
+				<mx:RadioButton groupName="vNeg" value="7" id="vn7" label="guère" click="vNeg_clickHandler(event)" />		
+				<mx:RadioButton groupName="vNeg" value="8" id="vn8" label="point" click="vNeg_clickHandler(event)" />							
+				<mx:RadioButton groupName="vNeg" value="9" id="vn9" label=" " click="vNeg_clickHandler(event)" />
+				-->
+			</mx:VBox>
+			<mx:VBox>				
+				<mx:Label text="Temps : "/>
+				<mx:RadioButton groupName="vTemps" value="1" id="vtIP" label="Indicatif présent" click="vTemps_clickHandler(event)" />
+				<mx:RadioButton groupName="vTemps" value="2" id="vtII" label="Indicatif imparfait" click="vTemps_clickHandler(event)" />
+				<mx:RadioButton groupName="vTemps" value="3" id="vtPS" label="Passé simple" click="vTemps_clickHandler(event)" />
+				<mx:RadioButton groupName="vTemps" value="4" id="vtFS" label="Futur simple" click="vTemps_clickHandler(event)" />
+				<mx:RadioButton groupName="vTemps" value="5" id="vtCP" label="Conditionnel Présent" click="vTemps_clickHandler(event)" />		
+				<mx:RadioButton groupName="vTemps" value="6" id="vtSP" label="Subjonctif présent" click="vTemps_clickHandler(event)" />		
+				<mx:RadioButton groupName="vTemps" value="8" id="vtPP" label="Participe présent" click="vTemps_clickHandler(event)" />		
+				<mx:RadioButton groupName="vTemps" value="9" id="vtInf" label="Infinitif présent" click="vTemps_clickHandler(event)" />							
+			</mx:VBox>
+			<!--
+			<mx:VBox>				
+				<mx:RadioButton groupName="vPers" value="1" id="vpJe" label="je" click="vPerso_clickHandler(event)"/>
+				<mx:RadioButton groupName="vPers" value="2" id="vpTu" label="tu" click="vPerso_clickHandler(event)"/>
+				<mx:RadioButton groupName="vPers" value="3" id="vpIl" label="il/elle" click="vPerso_clickHandler(event)"/>
+				<mx:RadioButton groupName="vPers" value="4" id="vpNous" label="nous" click="vPerso_clickHandler(event)"/>
+				<mx:RadioButton groupName="vPers" value="5" id="vpVous" label="vous" click="vPerso_clickHandler(event)"/>		
+				<mx:RadioButton groupName="vPers" value="7" id="vpIls" label="ils/elles" click="vPerso_clickHandler(event)"/>		
+			</mx:VBox>
+			-->
+		</mx:HBox>
+		<mx:HBox>
+			<mx:Button label="Enregistrer" click="ajouter()" right="81" bottom="10"/>
+			<mx:Button label="Annuler" click="ferme()" right="10" bottom="10"/>					
+		</mx:HBox>
+	</mx:VBox>
+    
+</mx:TitleWindow>

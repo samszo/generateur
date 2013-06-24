@@ -63,6 +63,8 @@
 					dgFilter.dpRows = arr;
 					dgFilter.dg = dg;
 				}
+				//réinitialise le tableau génral des concepts
+				this.parentApplication.allConcept=null;
 			}
 						
 			private function selectDgItem(event:Event):void {
