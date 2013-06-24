@@ -115,8 +115,11 @@
 							txtGen.text += "[" + selectCpt.type+ "_" + selectCpt.lib+ "]";							
 						break; 
 					case "s":
+						txtGen.text += " [" + selectCpt.type+ "_" + selectCpt.lib + "]";
+						break;
+					case "syntagmes":
 						txtGen.text += " [" + selectCpt.num+ "#" + "]";
-						break; 
+						break;					
 					case "v": 
 						txtGen.text += param+ "|" + selectCpt.type+ "_" + selectCpt.lib+ "]";
 						break; 
