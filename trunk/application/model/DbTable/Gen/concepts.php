@@ -207,11 +207,12 @@ class Model_DbTable_Gen_concepts extends Zend_Db_Table_Abstract
      * - pronoms
      * et retourne ces entrées.
      *
-     * @param array $dicos
+     * @param array		$dicos
+     * @param boolean	$merge
      *
      * @return array
      */
-    public function findAllByDicos($dicos)
+    public function findAllByDicos($dicos, $merge=true)
     {
 
         //récupère les concepts
@@ -219,6 +220,7 @@ class Model_DbTable_Gen_concepts extends Zend_Db_Table_Abstract
     		, lib
 			, type
 			, 0 as num 
+    		, '' as ordre	  
 		FROM gen_concepts c
 		WHERE c.id_dico IN (".$dicos["concepts"].")";
 		$smtp = $this->_db->query($sql);
@@ -228,7 +230,8 @@ class Model_DbTable_Gen_concepts extends Zend_Db_Table_Abstract
     	$sql ="SELECT id_syn as id
     		, lib
 			, 'syntagmes' as type
-			, num 
+			, num
+    		, ordre 
 		FROM gen_syntagmes 
 		WHERE id_dico IN (".$dicos["syntagmes"].")";
 		$smtp = $this->_db->query($sql);
@@ -239,16 +242,38 @@ class Model_DbTable_Gen_concepts extends Zend_Db_Table_Abstract
     		, lib
 			, CONCAT('pronom ',type) as type
 			, num 
+    		, '' as ordre	  
 		FROM gen_pronoms 
-		WHERE id_dico IN (".$dicos["pronoms"].")";
+		WHERE id_dico IN (".$dicos["pronoms"].") AND type='complément'";
 		$smtp = $this->_db->query($sql);
-        $pros = $smtp->fetchAll();
-        
+        $prosComp = $smtp->fetchAll();
+
+    	$sql ="SELECT id_pronom as id
+    		, lib
+			, CONCAT('pronom ',type) as type
+			, num 
+    		, '' as ordre	  
+		FROM gen_pronoms 
+		WHERE id_dico IN (".$dicos["pronoms"].") AND type='sujet'";
+		$smtp = $this->_db->query($sql);
+        $prosSujet = $smtp->fetchAll();
+
+    	$sql ="SELECT id_pronom as id
+    		, lib
+			, CONCAT('pronom ',type) as type
+			, num 
+    		, '' as ordre	  
+		FROM gen_pronoms 
+		WHERE id_dico IN (".$dicos["pronoms"].") AND type='sujet_indefini'";
+		$smtp = $this->_db->query($sql);
+        $prosSujetInd = $smtp->fetchAll();
+
         //récupère les déterminants
     	$sql ="SELECT id_dtm as id
     		, lib
 			, 'déterminant' as type
 			, num 
+    		, ordre	
 		FROM gen_determinants 
 		WHERE id_dico IN (".$dicos["déterminants"].")";
 		$smtp = $this->_db->query($sql);
@@ -258,14 +283,18 @@ class Model_DbTable_Gen_concepts extends Zend_Db_Table_Abstract
     	$sql ="SELECT id_negation as id
     		, lib
 			, 'négation' as type
-			, num  
+			, num
+    		, '' as ordre	  
 		FROM gen_negations 
 		WHERE id_dico IN (".$dicos["negations"].")";
 		$smtp = $this->_db->query($sql);
         $negs = $smtp->fetchAll();
         $nb = count($concepts)+count($syns)+count($pros)+count($dets)+count($negs);
-        $rows = array_merge($concepts, $syns, $pros, $dets, $negs);
-        
+        if($merge)
+	        $rows = array_merge($concepts, $syns, $prosComp, $prosSujet, $prosSujetInd, $dets, $negs);
+    	else
+    		$rows = array("concepts"=>$concepts,"syntagmes"=>$syns,"pronomsComp"=>$prosComp, "pronomsSujet"=>$prosSujet, "pronomsSujetInd"=>$prosSujetInd,"determinants"=>$dets,"negations"=>$negs);
+    		
         return $rows; 
     }
     
