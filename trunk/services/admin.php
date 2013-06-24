@@ -1,14 +1,24 @@
 <?php
 require_once( "../application/configs/config.php" );
-
 try {
 	
 	$application->bootstrap();
 
+	$dbConj = new Model_DbTable_Gen_conjugaisons;
+	
+	/*
+	$a = new Auth_LoginManager();
+	$user = new Auth_LoginVO();
+	$user->username='samszo';
+	$user->password='samszo';
+	$r = $a->verifyUser($user);
+	print_r($r);
+	*/
 	
 	/*
 	$dbC = new Model_DbTable_Gen_concepts();
 	$ac = $dbC->findByIdDico("102.34",true);
+	print_r($ac);
 	$dbC->ajouter(array("id_dico"=>102,"lib"=>"bidule","type"=>"dis"));	
 	$dbC->utilise(157625, "a_testouill");
 	$arr = $dbC->remove(157632);
@@ -18,7 +28,7 @@ try {
 	$dbN = new Model_DbTable_Gen_determinants();
 	$arr = $dbN->utilise(46, 46);
 	*/
-	
+
 	/*
 	$dbN = new Model_DbTable_Gen_negations();
 	$arr = $dbN->utilise(16, 1);
@@ -78,12 +88,6 @@ try {
 	/*
 	$dbV = new Model_DbTable_Gen_verbes();
 	$arr = $dbV->findByIdConcept('60298');
-
-	$a = new Auth_LoginManager();
-	$user = new Auth_LoginVO();
-	$user->username='samszo';
-	$user->password='samszo';
-	$r = $a->verifyUser($user);
 	*/
 	
 	/*
