@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow width="600" height="600"
+		close="PopUpManager.removePopUp(this);" title="Gestion des utilisateurs"
+		xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		xmlns:s="library://ns.adobe.com/flex/spark" 
+		xmlns:mx="library://ns.adobe.com/flex/mx"
+		creationComplete="creationCompleteHandler(event)" xmlns:compo="compo.*" 
+		showCloseButton="true"
+		 >
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			import mx.events.FlexEvent;
+			import mx.events.ListEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			import spark.events.TextOperationEvent;
+						
+			[Bindable] public var idDico:String;
+			[Bindable] public var bRemove:Boolean=true;
+			[Bindable] public var bAjout:Boolean=true;
+			[Bindable] public var bChange:Boolean=false;
+			[Bindable] public var oItem:Object;
+			private var action:String="";
+			private var arrR:Array;
+			[Bindable] private var arrRole:Array = new Array();
+
+			public function faultHandlerService(fault:FaultEvent):void
+			{
+				var str:String;
+				str = "Code: "+fault.fault.faultCode.toString()+"\n"+
+					"Detail: "+fault.fault.faultDetail.toString()+"\n"+
+					"String: "+fault.fault.faultString.toString()+"\n";
+				
+				Alert.show(str, "ERREUR : Détail Utilisateur");
+			}
+			
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				roRole.getAll("lib");
+				roUti.getAll();
+			}
+									
+			private function selectDgItem(event:Event):void {
+				
+				oItem=event.currentTarget.selectedItem;
+			}
+			
+			private function removeItem():void {
+				
+					Alert.show("Confirmez-vous la suppression de l'utilisateur ?",
+						"Confirmation Suppression", 3, this, removeItemHandler);				
+			}
+			
+			private function removeItemHandler(event:CloseEvent):void
+			{
+				if (event.detail == Alert.YES && oItem) 
+				{
+					roUti.remove(oItem.uti_id);
+				}
+			}
+						
+			protected function enregistrer_clickHandler(event:MouseEvent):void
+			{
+				if(oItem){
+					var params:Array = new Array;
+					params['login']=majLogin.text;				
+					params['mdp']=majMdp.text;
+					params['email']=majMail.text;
+					params['role']=majRole.selectedLabel;
+					roUti.edit(oItem.uti_id, params);
+				}
+			}
+						
+			
+			protected function edit_resultHandler(event:ResultEvent):void
+			{
+				bChange = false;
+				roUti.getAll();
+				majLogin.setStyle("color","black");
+				majMail.setStyle("color","black");
+				majMdp.setStyle("color","black");
+			}			
+			
+			protected function t_changeHandler(event:TextOperationEvent):void
+			{
+				var tx:TextInput = event.target as TextInput;
+				tx.setStyle("color","red");
+				bChange = true;
+			}
+			
+
+			protected function remove_resultHandler(event:ResultEvent):void
+			{
+				roRole.getAll("lib");
+			}
+
+			protected function ajouter_clickHandler(event:MouseEvent):void
+			{
+				
+				var params:Array = new Array;
+				params['login']=login.text;				
+				params['mdp']=mdp.text;
+				params['email']=email.text;
+				params['role']=cbRole.selectedLabel;
+				roUti.ajouter(params);
+			}
+
+			protected function ajouter_resultHandler(event:ResultEvent):void
+			{
+				Alert.show("L'utilisateur est ajouté.","Ajout d'un utilisateur");				
+				
+				vs.selectedChild = lecture;
+				roUti.getAll();
+			}
+			
+			protected function getAllRole_resultHandler(event:ResultEvent):void
+			{
+				if(event.result) arrRole = event.result as Array;				
+			}
+			
+			protected function getAllUti_resultHandler(event:ResultEvent):void
+			{
+				if(event.result){
+					dg.dataProvider = event.result as Array;
+				}
+				
+			}
+			public function getIndexRole(label:String):int
+			{
+				var i:int
+				for each(var r:Object in arrRole){
+					if(r.lib==label){
+						return i;
+					}
+					i++;
+				}
+				return -1;
+			}
+			public function getComRole(label:String):String
+			{
+				var com:String="";
+				for each(var r:Object in arrRole){
+					if(r.lib==label){
+						return r.commentaires;
+					}
+				}
+				return com;
+			}
+			
+			protected function majRole_changeHandler(event:ListEvent):void
+			{
+				bChange=true;
+				comRole.text = getComRole(event.target.selectedLabel);
+			}
+			
+			protected function role_changeHandler(event:ListEvent):void
+			{
+				comRoleAjout.text = getComRole(event.target.selectedLabel);
+			}
+			
+		]]>
+	</fx:Script>
+		
+	<fx:Declarations>
+		<s:RemoteObject id="roRole"
+						 source="Model_DbTable_Flux_Roles" destination="zend" 
+						 showBusyCursor="true"
+						 fault="faultHandlerService(event)">
+			<s:method name="getAll" result="getAllRole_resultHandler(event)" />			
+		</s:RemoteObject>
+		<s:RemoteObject id="roUti"
+						source="Model_DbTable_flux_Uti" destination="zend" 
+						showBusyCursor="true"
+						fault="faultHandlerService(event)">
+			<s:method name="getAll" result="getAllUti_resultHandler(event)" />			
+			<s:method name="edit" result="edit_resultHandler(event)" />			
+			<s:method name="remove" result="edit_resultHandler(event)" />			
+			<s:method name="ajouter" result="ajouter_resultHandler(event)" />			
+		</s:RemoteObject>
+	</fx:Declarations>
+	<s:Group width="100%" height="100%" >
+		<s:layout>
+			<s:VerticalLayout paddingBottom="3" paddingLeft="3" paddingRight="3" paddingTop="3" />
+		</s:layout>
+			
+	<mx:ViewStack id="vs" width="100%" height="100%">
+		<mx:Canvas width="100%" height="100%" id="lecture" >	
+			<s:VGroup width="100%" height="100%" id="detail" >
+				<s:HGroup>
+					<mx:LinkButton visible="{bRemove}" width="20" click="removeItem()"
+								   icon="@Embed('images/DeleteRecord.png')" toolTip="{'Supprimer un utilisateur'}"/>
+					<mx:LinkButton id="btnAddNew" visible="{bAjout}" width="20" click="{vs.selectedChild = ajout;}"
+								   icon="@Embed('images/AddRecord.png')" toolTip="{'Ajouter un utilisateur'}"/>					
+				</s:HGroup>
+				<s:HGroup width="100%" height="100%" >				
+					<mx:DataGrid id="dg" width="100%" height="100%" click="selectDgItem(event);" editable="false" >
+						<mx:columns>
+							<mx:DataGridColumn dataField="uti_id" editable="false" visible="false" headerText="uti_id" />
+							<mx:DataGridColumn dataField="login"  editable="false" headerText="Login" />
+							<mx:DataGridColumn dataField="role"  headerText="Role" />
+						</mx:columns>
+					</mx:DataGrid>
+					<s:VGroup id="maj">
+						<s:HGroup verticalAlign="middle">
+							<s:Label text="Login : " width="80"/><s:TextInput id="majLogin" width="100%" text="{oItem.login}" change="t_changeHandler(event)" />
+						</s:HGroup>
+						<s:HGroup verticalAlign="middle">
+							<s:Label text="Mot de passe : " width="80"/><s:TextInput displayAsPassword="true" id="majMdp" width="100%" text="{oItem.mdp}" change="t_changeHandler(event)" />															
+						</s:HGroup>
+						<s:HGroup verticalAlign="middle">
+							<s:Label text="Rôle : " width="80"/><mx:ComboBox prompt=" " id="majRole" dataProvider="{arrRole}" labelField="lib" selectedIndex="{getIndexRole(oItem.role)}" change="majRole_changeHandler(event)"  />
+						</s:HGroup>
+						<s:HGroup verticalAlign="middle">
+							<s:Label text="Email : " width="80"/><s:TextInput id="majMail" width="100%" text="{oItem.email}" change="t_changeHandler(event)" />
+						</s:HGroup>
+						<s:Button label="Enregistrer" click="enregistrer_clickHandler(event)" visible="{bChange}" color="red" />
+						<s:TextArea id="comRole" width="100%" height="100%" text="{getComRole(oItem.role)}" />
+					</s:VGroup>
+				</s:HGroup>
+				<s:Panel width="100%" height="100%" title="Participation aux oeuvres">
+					<mx:VBox width="100%" height="100%" >
+						<mx:HBox>
+							<mx:LinkButton visible="{bRemove}" width="20" click="removeItem()"
+										   icon="@Embed('images/DeleteRecord.png')" toolTip="{'Supprimer une participation'}"/>
+							<mx:LinkButton visible="{bAjout}" width="20" click="{vs.selectedChild = ajout;}"
+										   icon="@Embed('images/AddRecord.png')" toolTip="{'Ajouter une participation'}"/>												
+						</mx:HBox>
+						<mx:DataGrid id="dgPO" width="100%" height="100%" click="selectDgItem(event);" editable="false" >
+							<mx:columns>
+								<mx:DataGridColumn dataField="uti_id" editable="false" visible="false" headerText="uti_id" />
+								<mx:DataGridColumn dataField="oeu_id" editable="false" visible="false" headerText="oeu_id" />
+								<mx:DataGridColumn dataField="oeuvre"  editable="false" headerText="Oeuvre" />
+								<mx:DataGridColumn dataField="uti"  headerText="Utilisateur" />
+								<mx:DataGridColumn dataField="role"  headerText="Role" />
+							</mx:columns>
+						</mx:DataGrid>					
+					</mx:VBox>
+				</s:Panel>
+				<s:Panel width="100%" height="100%" title="Participation aux dictionaires">
+					<mx:VBox width="100%" height="100%" >
+						<mx:HBox>
+							<mx:LinkButton visible="{bRemove}" width="20" click="removeItem()"
+										   icon="@Embed('images/DeleteRecord.png')" toolTip="{'Supprimer une participation'}"/>
+							<mx:LinkButton visible="{bAjout}" width="20" click="{vs.selectedChild = ajout;}"
+										   icon="@Embed('images/AddRecord.png')" toolTip="{'Ajouter une participation'}"/>												
+						</mx:HBox>
+						<mx:DataGrid id="dgPD" width="100%" height="100%" click="selectDgItem(event);" editable="false" >
+							<mx:columns>
+								<mx:DataGridColumn dataField="uti_id" editable="false" visible="false" headerText="uti_id" />
+								<mx:DataGridColumn dataField="dico_id" editable="false" visible="false" headerText="oeu_id" />
+								<mx:DataGridColumn dataField="dictionnaire"  editable="false" headerText="Dictionnaire" />
+								<mx:DataGridColumn dataField="uti"  headerText="Utilisateur" />
+								<mx:DataGridColumn dataField="role"  headerText="Role" />
+							</mx:columns>
+						</mx:DataGrid>					
+					</mx:VBox>
+				</s:Panel>
+			</s:VGroup>
+		</mx:Canvas>
+		<mx:Canvas width="100%" height="100%" id="ajout" >
+			<s:VGroup width="100%" height="100%" >
+				<s:HGroup verticalAlign="middle">
+					<s:Label text="Login : " width="80" /><s:TextInput id="login" width="100%" text="" />					
+				</s:HGroup>
+				<s:HGroup verticalAlign="middle">
+					<s:Label text="Mot de passe : " width="80" /><s:TextInput displayAsPassword="true" id="mdp" width="100%" text="" />
+				</s:HGroup>
+				<s:HGroup verticalAlign="middle">
+					<s:Label text="Mail : " width="80" /><s:TextInput id="email" width="100%" text="" />
+				</s:HGroup>
+				<s:HGroup verticalAlign="middle">
+					<mx:ComboBox id="cbRole"  prompt="choisissez un rôle" dataProvider="{arrRole}" labelField="lib" change="role_changeHandler(event)" />
+				</s:HGroup>
+				<s:HGroup verticalAlign="middle">
+					<s:Button label="Ajouter" click="ajouter_clickHandler(event)"  />
+					<s:Button label="Annuler" click="{vs.selectedChild = lecture;}"  />
+				</s:HGroup>
+				<s:TextArea id="comRoleAjout" width="100%" height="100%" text="" />
+			</s:VGroup>				
+		</mx:Canvas>
+	</mx:ViewStack>			
+	</s:Group>
+			
+</mx:TitleWindow>

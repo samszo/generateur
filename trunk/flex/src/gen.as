@@ -4,6 +4,7 @@ import air.update.ApplicationUpdaterUI;
 import compo.*;
 import compo.dgOeuvres;
 
+import flash.events.MouseEvent;
 import flash.filesystem.File;
 
 import mx.controls.Alert;
@@ -27,6 +28,7 @@ public var rocItem:Object;
 public var actionItem:String;
 public var actisItem:String;
 public var idDicoItem:String;
+
 
 public function testerGen(txts:Array, ctrls:Array):void
 {
