@@ -65,14 +65,16 @@
 			private function findDicoHandler(e:Object):void {
 				if(!e)return;
 				var dp:Array = e.result as Array;
-				if(dp[0].type=="concepts")arrDicoGen=dp;
-				if(dp[0].type=="conjugaisons")arrDicoCon=dp;
-				if(dp[0].type=="déterminants")arrDicoDet=dp;
-				if(dp[0].type=="syntagmes")arrDicoSyn=dp;
-				if(dp[0].type=="pronoms_complement")arrDicoPrC=dp;
-				if(dp[0].type=="pronoms_sujet")arrDicoPrS=dp;
-				if(dp[0].type=="pronoms_sujet_indefini")arrDicoPrSInd=dp;
-				if(dp[0].type=="négations")arrDicoNeg=dp;
+				if(dp.length>0){
+					if(dp[0].type=="concepts")arrDicoGen=dp;
+					if(dp[0].type=="conjugaisons")arrDicoCon=dp;
+					if(dp[0].type=="déterminants")arrDicoDet=dp;
+					if(dp[0].type=="syntagmes")arrDicoSyn=dp;
+					if(dp[0].type=="pronoms_complement")arrDicoPrC=dp;
+					if(dp[0].type=="pronoms_sujet")arrDicoPrS=dp;
+					if(dp[0].type=="pronoms_sujet_indefini")arrDicoPrSInd=dp;
+					if(dp[0].type=="négations")arrDicoNeg=dp;					
+				}
 			}
 			
 			public function init():void 
@@ -142,7 +144,7 @@
 			    	//incrémente le tableau
 					pArr[ctlId]=val;
 			   	}
-				RO.ajouter(pArr);
+				RO.ajouter(pArr, parentApplication.uti.idUti);
 				
 			}
 			
@@ -304,7 +306,7 @@
 				pArr["type"]=cbDicoType.selectedLabel;
 				pArr["licence"]=ccAjout.ccItem;
 				
-				ROD.ajouter(pArr,false);
+				ROD.ajouter(pArr, this.parentApplication.uti.idUti, false);
 			}
 			
 			protected function getTypeHandler(e:ResultEvent):void

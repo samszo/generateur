@@ -10,7 +10,7 @@
 	
 	<fx:Script>
 		<![CDATA[
-			import flash.net.dns.AAAARecord;
+			//import flash.net.dns.AAAARecord;
 			
 			import mx.collections.ArrayCollection;
 			import mx.controls.Alert;
