@@ -28,13 +28,6 @@ class Model_DbTable_flux_Uti extends Zend_Db_Table_Abstract
 
     protected $_dependentTables = array(
        "Model_DbTable_flux_actiuti"
-       ,"Model_DbTable_flux_utidoc"
-       ,"Model_DbTable_Flux_UtiGeoDoc"
-       ,"Model_DbTable_flux_utiieml"
-       ,"Model_DbTable_Flux_UtiTagDoc"
-       ,"Model_DbTable_flux_utitag"
-       ,"Model_DbTable_flux_utitagrelated"
-       ,"Model_DbTable_Flux_UtiUti"
        );
     
     /**
@@ -71,7 +64,8 @@ class Model_DbTable_flux_Uti extends Zend_Db_Table_Abstract
     	if($existe)$id = $this->existe($data);
     	if(!$id){
     		if(!isset($data["date_inscription"]))$data["date_inscription"]= new Zend_Db_Expr('NOW()');
-    	 	$id = $this->insert($data);
+    		if(!isset($data["ip_inscription"]))$data["ip_inscription"]= $_SERVER['REMOTE_ADDR'];
+    		$id = $this->insert($data);
     	}
     	return $id;
     } 
@@ -116,7 +110,7 @@ class Model_DbTable_flux_Uti extends Zend_Db_Table_Abstract
      * Récupère toutes les entrées Flux_Uti avec certains critères
      * de tri, intervalles
      */
-    public function getAll($cols=false, $order=null, $limit=0, $from=0)
+    public function getAll($cols=false, $order="login", $limit=0, $from=0)
     {
     	if($cols)
         	$query = $this->select()->from( array("flux_uti" => "flux_uti"), $cols);

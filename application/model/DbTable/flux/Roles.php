@@ -84,19 +84,6 @@ class Model_DbTable_Flux_Roles extends Zend_Db_Table_Abstract
     {
     	$this->delete('flux_roles.id_role = ' . $id);
     }
-
-    /**
-     * Recherche les entrées de flux_roles avec la clef de lieu
-     * et supprime ces entrées.
-     *
-     * @param integer $idLieu
-     *
-     * @return void
-     */
-    public function removeLieu($idLieu)
-    {
-		$this->delete('id_lieu = ' . $idLieu);
-    }
     
     /**
      * Récupère toutes les entrées flux_roles avec certains critères

@@ -47,11 +47,12 @@ class Model_DbTable_Gen_oeuvres extends Zend_Db_Table_Abstract
      * Ajoute une entrée Gen_oeuvres.
      *
      * @param array $data
+     * @param int $idUti
      * @param boolean $existe
      *  
      * @return integer
      */
-    public function ajouter($data, $existe=true)
+    public function ajouter($data, $idUti=false, $existe=true)
     {
     	
     	$id=false;
@@ -59,6 +60,11 @@ class Model_DbTable_Gen_oeuvres extends Zend_Db_Table_Abstract
     	if(!$id){
     		if(!isset($data['maj']))$data['maj'] = new Zend_Db_Expr('NOW()');
     	 	$id = $this->insert($data);
+    	}
+    	//vérifie s'il faut créer le lien avec l'utilisateur
+    	if($idUti){
+    		$dbOU = new Model_DbTable_Gen_oeuvresxutis();
+    		$dbOU->ajouter(array("id_oeu"=>$id,"uti_id"=>$idUti,"id_role"=>4));
     	}
     	return $id;
     } 

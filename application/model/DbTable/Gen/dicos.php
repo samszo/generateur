@@ -50,11 +50,12 @@ class Model_DbTable_Gen_dicos extends Zend_Db_Table_Abstract
      * Ajoute une entrée Gen_dicos.
      *
      * @param array $data
+     * @param int $idUti
      * @param boolean $existe
      *  
      * @return integer
      */
-    public function ajouter($data, $existe=true)
+    public function ajouter($data, $idUti, $existe=true)
     {
     	
     	$id=false;
@@ -62,6 +63,12 @@ class Model_DbTable_Gen_dicos extends Zend_Db_Table_Abstract
     	if(!$id){
     	 	$id = $this->insert($data);
     	}
+    	//vérifie s'il faut créer le lien avec l'utilisateur
+    	if($idUti){
+    		$dbDUR = new Model_DbTable_Gen_dicosxutisxroles();
+    		$dbDUR->ajouter(array("id_dico"=>$id,"uti_id"=>$idUti,"id_role"=>4));
+    	}
+    	
     	return $id;
     } 
            
