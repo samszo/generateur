@@ -22,6 +22,10 @@
 			import mx.rpc.events.FaultEvent;
 			import mx.rpc.events.ResultEvent;
 			import mx.utils.ObjectUtil;
+
+			[Bindable] public var bRemove:Boolean=true;
+			[Bindable] public var bAjout:Boolean=true;
+			[Bindable] public var bModif:Boolean=true;
 			
 			[Bindable] public var oItem:Object;
 			[Bindable] public var acItems:ArrayCollection;
@@ -42,6 +46,10 @@
 			
 			private function init():void
 			{
+				bAjout = this.parentApplication.uti.écriture;
+				bModif = this.parentApplication.uti.écriture;
+				bRemove = this.parentApplication.uti.suppression;
+				
 				this.parentApplication.verifDico();
 				allConcept=this.parentApplication.allConcept;
 				if(!allConcept)
@@ -70,6 +78,10 @@
 					//suivant le type on affiche le paramètrage
 					if(selectCpt.type=="v"){
 						showParamVerbe();
+					/*
+					}else if(selectCpt.type=="m"){
+						showParamSubstantif();
+					*/
 					}else{
 						//on crée le texte génératif
 						genere(null);						
@@ -92,6 +104,18 @@
 				PopUpManager.centerPopUp(twPV);						
 				
 			}
+
+			private function showParamSubstantif():void
+			{
+				var twPS:twParamsM= twParamsM(
+					PopUpManager.createPopUp(this.parentApplication.dgOeuParam, twParamsM, true));
+				twPS.callback = genere;
+				twPS.oItem = selectCpt;
+				twPS.arrDet = allConcept["determinants"];
+				
+				PopUpManager.centerPopUp(twPS);						
+				
+			}
 			
 			private function genere(param:String):void
 			{
@@ -111,6 +135,8 @@
 					case "m": 
 						if(txtGen.text.substr(txtGen.text.length-1)=="|")
 							txtGen.text += selectCpt.type+ "_" + selectCpt.lib+ "]";
+						else if(param)
+							txtGen.text += param + selectCpt.type+ "_" + selectCpt.lib+ "]";							
 						else
 							txtGen.text += "[" + selectCpt.type+ "_" + selectCpt.lib+ "]";							
 						break; 
@@ -202,6 +228,7 @@
 	
 	<mx:HBox width="100%" height="100%" >
 		<mx:VBox width="100%" height="100%" >
+			<mx:Label text="Structure du texte génératif :" />
 			<hc:AutoComplete id="autoComplete" dataProvider="{ concepts }" labelField="lib" matchType="{AutoComplete.MATCH_BEGINNING}" 
 							 prompt="Ecrivez votre texte génératif" width="100%" change="{ handleAutoCompleteChange() }"
 							 click="autoComplete_clickHandler(event)"
@@ -218,10 +245,12 @@
 								 actionsMenuDataProvider="{ menuData }" showRemoveButton="{true}"
 								 browserFields="{ ['lib','type'] }"/>
 		-->
+			<mx:Label text="Texte génératif :" />
 			<mx:TextArea id="txtGen" width="100%" text="{oItem.valeur}" />
+			<mx:Label text="Résultat de la génération :" />
 			<mx:TextArea id="txtRes" width="100%" />
 			<mx:HBox>
-				<mx:Button label="Enregistrer" click="{fctEnregistrer()}" />
+				<mx:Button label="Enregistrer" click="{fctEnregistrer()}" visible="{bModif}" />
 				<mx:Button label="Tester" click="tester_clickHandler(event)" />
 				<mx:Button label="Annuler" click="{fctAnnuler()}" />			
 			</mx:HBox>

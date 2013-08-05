@@ -28,6 +28,7 @@
 			[Bindable] public var testGen:Object;
 			[Bindable] public var bRemove:Boolean=true;
 			[Bindable] public var bAjout:Boolean=true;
+			[Bindable] public var bModif:Boolean=true;
 			[Bindable] public var cptParent:gConcept;
 			[Bindable] public var bChange:Boolean=false;
 			[Bindable] public var arrChange:Array=new Array;
@@ -47,6 +48,10 @@
 			
 			protected function creationCompleteHandler(event:FlexEvent):void
 			{
+				bAjout = this.parentApplication.uti.écriture;
+				bModif = this.parentApplication.uti.écriture;
+				bRemove = this.parentApplication.uti.suppression;
+				
 				if(oConcept && this.parentApplication.verifDico()){
 					ROCG.findByIdConcept(oConcept.id_concept);
 				}else{
@@ -225,7 +230,7 @@
 									   icon="@Embed('images/DeleteRecord.png')" toolTip="Supprimer un item"/>
 						<mx:LinkButton id="btnAddNew" visible="{bAjout}" width="20" click="{vs.selectedChild=ajoutGen}"
 									   icon="@Embed('images/AddRecord.png')" toolTip="Ajouter un item"/>					
-						<mx:LinkButton id="btnUpdate" visible="{bChange}" width="20" click="{vs.selectedChild=modifGen}"
+						<mx:LinkButton id="btnUpdate" visible="{bModif}" width="20" click="{vs.selectedChild=modifGen}"
 									   icon="@Embed('images/UpdateRecord.png')" toolTip="Modifier un item"/>					
 					</s:HGroup>
 					<mx:DataGrid id="dg" width="100%" height="100%" click="selectDgItem(event);" editable="false" >

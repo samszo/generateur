@@ -30,6 +30,10 @@
 			[Bindable] public var oItem:Object;
 			private var ccModif:gLicence;
 
+			[Bindable] public var bRemove:Boolean=true;
+			[Bindable] public var bAjout:Boolean=true;
+			[Bindable] public var bModif:Boolean=true;
+			
 			public function faultHandlerService(fault:FaultEvent):void
 			{
 				var str:String;
@@ -65,13 +69,17 @@
 			
 			protected function creationCompleteHandler(event:FlexEvent):void
 			{
-				init();
+				init();	
 			}
 			public function init():void
 			{
 				detail.removeAllElements();
 				cc.showSelect();
-				if(oItem){					
+				if(oItem){
+					bAjout = this.parentApplication.uti.écriture;
+					bModif = this.parentApplication.uti.écriture;
+					bRemove = this.parentApplication.uti.suppression;
+
 					if(oItem.type=="concepts"){
 						var gC:gConcept = new gConcept();
 						gC.idDico = oItem.id_dico;
@@ -137,9 +145,9 @@
 		<compo:gLicence id="cc" ccItem="{oItem.licence}" click="modifLicence()" bModif="false" toolTip="Cliquez sur l'image pour plus d'information ou pour changer de licence." />		
 	</s:HGroup>
 	<s:HGroup width="100%" verticalAlign="middle" height="20">
-		<s:Button label="Enregistrer" click="enregistrer_clickHandler(event)"/>
-		<s:Button label="Importer" visible="true" click="importer_clickHandler(event)"  />
-		<s:Button label="Exporter" visible="true" click="exporter_clickHandler(event)"  />
+		<s:Button label="Enregistrer" visible="{bModif}" click="enregistrer_clickHandler(event)"/>
+		<s:Button label="Importer" visible="false" click="importer_clickHandler(event)"  />
+		<s:Button label="Exporter" visible="false" click="exporter_clickHandler(event)"  />
 	</s:HGroup>
 	<s:BorderContainer width="100%" height="100%" id="detail">
 	</s:BorderContainer>

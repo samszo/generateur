@@ -21,6 +21,10 @@
 			
 			import spark.events.TextOperationEvent;
 						
+			[Bindable] public var bRemove:Boolean=true;
+			[Bindable] public var bAjout:Boolean=true;
+			[Bindable] public var bModif:Boolean=true;
+
 			[Bindable] public var oConcept:Object;
 			[Bindable] public var idAdj:String;
 			[Bindable] public var idDico:String;
@@ -44,6 +48,10 @@
 			
 			protected function creationCompleteHandler(event:FlexEvent):void
 			{
+				bAjout = this.parentApplication.uti.écriture;
+				bModif = this.parentApplication.uti.écriture;
+				bRemove = this.parentApplication.uti.suppression;
+				
 				if(oConcept){
 					ROCA.findByIdConcept(oConcept.id_concept);
 				}else{
@@ -142,6 +150,8 @@
 
 			protected function t_changeHandler(event:TextOperationEvent):void
 			{
+				if(!bModif)return;
+				
 				var tx:TextInput = event.target as TextInput;
 				tx.setStyle("color","red");
 				arrChange[tx.id] = tx.text;
