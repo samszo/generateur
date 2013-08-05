@@ -3,8 +3,6 @@ require_once( "../application/configs/config.php" );
 try {
 	
 	$application->bootstrap();
-
-	$dbConj = new Model_DbTable_Gen_conjugaisons;
 	
 	/*
 	$a = new Auth_LoginManager();
