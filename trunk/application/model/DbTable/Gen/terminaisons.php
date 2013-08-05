@@ -94,16 +94,16 @@ class Model_DbTable_Gen_terminaisons extends Zend_Db_Table_Abstract
     }
 
     /**
-     * Recherche les entrées de Gen_terminaisons avec la clef de lieu
+     * Recherche les entrées de Gen_terminaisons avec la clef de conj
      * et supprime ces entrées.
      *
-     * @param integer $idLieu
+     * @param integer $idConj
      *
      * @return void
      */
-    public function removeLieu($idLieu)
+    public function removeConj($idConj)
     {
-		$this->delete('id_lieu = ' . $idLieu);
+		$this->delete('id_conj = ' . $idConj);
     }
     
     /**

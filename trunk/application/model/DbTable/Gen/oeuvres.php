@@ -20,7 +20,7 @@ class Model_DbTable_Gen_oeuvres extends Zend_Db_Table_Abstract
     protected $_primary = 'id_oeu';
 
     protected $_dependentTables = array(
-       "Model_DbTable_Gen_oeuvresxutis"
+       "Model_DbTable_Gen_oeuvresxutisxroles"
        ,"Model_DbTable_Gen_oeuvresxdicos"
        );
                
@@ -63,7 +63,7 @@ class Model_DbTable_Gen_oeuvres extends Zend_Db_Table_Abstract
     	}
     	//vérifie s'il faut créer le lien avec l'utilisateur
     	if($idUti){
-    		$dbOU = new Model_DbTable_Gen_oeuvresxutis();
+    		$dbOU = new Model_DbTable_Gen_oeuvresxutisxroles();
     		$dbOU->ajouter(array("id_oeu"=>$id,"uti_id"=>$idUti,"id_role"=>4));
     	}
     	return $id;

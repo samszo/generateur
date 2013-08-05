@@ -331,5 +331,23 @@ class Model_DbTable_Gen_concepts extends Zend_Db_Table_Abstract
         return $this->fetchAll($query)->toArray(); 
     }
     
+    /**
+     * Recherche les entrées Gen_concepts pour diffuser une oeurvre
+     *
+     * @param int $idDico
+     *
+     * @return array
+     */
+    public function getCptForDiffusion($idDico)
+    {
+        $query = $this->select()
+        	->from( array("c" => "gen_concepts") )                           
+        ->where( "c.id_dico = ?", $idDico)
+        ->where( "c.type NOT IN ('a','m','s','v')")
+        ->order("c.lib");
+    	
+        return $this->fetchAll($query)->toArray(); 
+    }
+    
     
 }

@@ -29,10 +29,9 @@ class Model_DbTable_Gen_dicosxutisxroles extends Zend_Db_Table_Abstract
     {
 		$select = $this->select();
 		$select->from($this, array('id_dur'));
-		foreach($data as $k=>$v){
-			$select->where($k.' = ?', $v);
-		}
-	    $rows = $this->fetchAll($select);        
+		$select->where('uti_id = ?', $data['uti_id']);
+		$select->where('id_dico = ?', $data['id_dico']);
+		$rows = $this->fetchAll($select);        
 	    if($rows->count()>0)$id=$rows[0]->id_dur; else $id=false;
         return $id;
     } 
@@ -52,6 +51,8 @@ class Model_DbTable_Gen_dicosxutisxroles extends Zend_Db_Table_Abstract
     	if($existe)$id = $this->existe($data);
     	if(!$id){
     	 	$id = $this->insert($data);
+    	}else{
+    		$this->edit($id, array('id_role'=>$data['id_role']));
     	}
     	return $id;
     } 

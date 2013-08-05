@@ -125,6 +125,27 @@ class Model_DbTable_Gen_oeuvresxdicosxutis extends Zend_Db_Table_Abstract
     }
 
     /**
+     * Recherche les entrées Gen_dicos pour diffuser une oeurvre
+     *
+     * @param int $idOeu
+     *
+     * @return array
+     */
+    public function getDicoForDiffusion($idOeu)
+    {
+        $query = $this->select()
+        	->from( array("odu" => "gen_oeuvres_dicos_utis") )                           
+	        ->setIntegrityCheck(false) //pour pouvoir sélectionner des colonnes dans une autre table
+        ->joinInner(array('d' => 'gen_dicos'),
+        		'd.id_dico = odu.id_dico AND d.general = 0')
+        ->where( "odu.id_oeu = ?", $idOeu )
+        ->group("d.id_dico")
+    	->order("d.nom");
+    	
+        return $this->fetchAll($query)->toArray(); 
+    }
+    
+    /**
      * Recherche une entrée Gen_oeuvres_dicos_utis avec la valeur spécifiée
      * et retourne cette entrée.
      *

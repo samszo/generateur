@@ -159,22 +159,16 @@ class Model_DbTable_Gen_conjugaisons extends Zend_Db_Table_Abstract
      */
     public function remove($id)
     {
+    	//suprime les terminaisons
+    	$dbTerms = new Model_DbTable_Gen_terminaisons();
+    	$dbTerms->removeConj($id);
+    	//suprime les verbes
+    	$dbV = new Model_DbTable_Gen_verbes();
+    	$dbV->removeConj($id);
+    	//suprime la conjugaison
     	$this->delete('gen_conjugaisons.id_conj = ' . $id);
     }
 
-    /**
-     * Recherche les entrées de Gen_conjugaisons avec la clef de lieu
-     * et supprime ces entrées.
-     *
-     * @param integer $idLieu
-     *
-     * @return void
-     */
-    public function removeLieu($idLieu)
-    {
-		$this->delete('id_lieu = ' . $idLieu);
-    }
-    
     /**
      * Récupère toutes les entrées Gen_conjugaisons avec certains critères
      * de tri, intervalles
