@@ -13,7 +13,7 @@
  * @copyright  2011 Samuel Szoniecky
  * @license    "New" BSD License
  */
-class Model_DbTable_flux_Uti extends Zend_Db_Table_Abstract
+class Model_DbTable_Flux_Uti extends Zend_Db_Table_Abstract
 {
     
     /*
