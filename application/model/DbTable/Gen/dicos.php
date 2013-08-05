@@ -294,7 +294,6 @@ class Model_DbTable_Gen_dicos extends Zend_Db_Table_Abstract
     	->order('type');
     	 
     	return $this->fetchAll($query)->toArray();
-    }
-    
+    }    
        
 }

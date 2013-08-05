@@ -259,4 +259,113 @@ class Model_DbTable_flux_Uti extends Zend_Db_Table_Abstract
     	return $arrRoles;        
     } 
     
+    /**
+     * renvoie la liste des dictionnaires avec le role de l'utilisateur
+     *
+     * @param int $idUti
+     * @param string $role
+     * 
+     * @return array
+     */
+    public function getDicos($idUti, $role)
+    {
+        if($role != ROLE_ADMIN){
+	        $query = $this->select()
+				->from( array("u" => "flux_uti"),array("uti_id") )                           
+	        	->setIntegrityCheck(false) //pour pouvoir sélectionner des colonnes dans une autre table
+	        		->joinInner(array('dur' => 'gen_dicos_utis_roles'),'dur.uti_id = u.uti_id',array('id_dur'))
+	        		->joinInner(array('d' => 'gen_dicos'),"d.id_dico = dur.id_dico",array('id_dico','dico'=>'nom'))
+	        		->joinInner(array('r' => 'flux_roles'),"r.id_role = dur.id_role",array('id_role','role'=>'lib'))
+	        	->where( "u.uti_id = ?", $idUti);
+	        return $this->fetchAll($query)->toArray();         	
+        }else{
+        	$sql ="SELECT id_dico, nom as 'dico', '".ROLE_ADMIN."' as role, '".ID_ROLE_ADMIN."' as id_role
+        	FROM gen_dicos";
+        	$db = $this->getAdapter()->query($sql);
+    		return $db->fetchAll();
+        }        		        		            
+    } 
+
+    /**
+     * ajoute un dictionnaires et un role à l'utilisateur
+     *
+     * @param array $data
+     * 
+     * @return int
+     */
+    public function setDico($data)
+    {
+    	$dbDUR = new Model_DbTable_Gen_dicosxutisxroles();
+    	$id = $dbDUR->ajouter($data);
+    	
+    	return $id;
+    } 
+    
+    /**
+     * supprime un dico et un role d'un utilisateur
+     *
+     * @param array $idDur
+     * 
+     */
+    public function removeDico($idDur)
+    {
+    	$dbDUR = new Model_DbTable_Gen_dicosxutisxroles();
+    	$id = $dbDUR->remove($idDur);
+    } 
+    
+    /**
+     * renvoie la liste des oeuvres avec le role de l'utilisateur
+     *
+     * @param int $idUti
+     * @param string $role
+     * 
+     * @return array
+     */
+    public function getOeuvres($idUti, $role)
+    {
+        if($role != ROLE_ADMIN){
+	    	$query = $this->select()
+				->from( array("u" => "flux_uti"),array("uti_id") )                           
+	        	->setIntegrityCheck(false) //pour pouvoir sélectionner des colonnes dans une autre table
+	        		->joinInner(array('our' => 'gen_oeuvres_utis_roles'),'our.uti_id = u.uti_id',array('id_our'))
+	        		->joinInner(array('o' => 'gen_oeuvres'),"o.id_oeu = our.id_oeu",array('id_oeu','oeuvre'=>'lib'))
+	        		->joinInner(array('r' => 'flux_roles'),"r.id_role = our.id_role",array('id_role','role'=>'lib'))
+	        	->where( "u.uti_id = ?", $idUti);
+        	return $this->fetchAll($query)->toArray(); 
+        }else{
+        	$sql ="SELECT id_oeu, lib as 'oeuvre', '".ROLE_ADMIN."' as role, '".ID_ROLE_ADMIN."' as id_role
+        	FROM gen_oeuvres";
+        	$db = $this->getAdapter()->query($sql);
+    		return $db->fetchAll();
+        }
+        	
+    } 
+
+    /**
+     * ajoute une oeuvre et un role à l'utilisateur
+     *
+     * @param array $data
+     * 
+     * @return int
+     */
+    public function setOeuvre($data)
+    {
+    	$dbOUR = new Model_DbTable_Gen_oeuvresxutisxroles();
+    	$id = $dbOUR->ajouter($data);
+    	
+    	return $id;
+    } 
+    
+    /**
+     * supprime une oeuvre et un role d'un utilisateur
+     *
+     * @param array $idOur
+     * 
+     */
+    public function removeOeuvre($idOur)
+    {
+    	$dbOUR = new Model_DbTable_Gen_oeuvresxutisxroles();
+    	$id = $dbOUR->remove($idOur);
+    } 
+    
 }

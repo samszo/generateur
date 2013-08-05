@@ -1,25 +1,25 @@
 <?php
 /**
- * Ce fichier contient la classe Gen_oeuvres_utis.
+ * Ce fichier contient la classe gen_oeuvres_utis_roles.
  *
  * @copyright  2013 Samuel Szoniecky
  * @license    "New" BSD License
 */
-class Model_DbTable_Gen_oeuvresxutis extends Zend_Db_Table_Abstract
+class Model_DbTable_Gen_oeuvresxutisxroles extends Zend_Db_Table_Abstract
 {
     
     /**
      * Nom de la table.
      */
-    protected $_name = 'gen_oeuvres_utis';
+    protected $_name = 'gen_oeuvres_utis_roles';
     
     /**
      * Clef primaire de la table.
      */
-    protected $_primary = 'id_oeu';
+    protected $_primary = 'id_our';
     
     /**
-     * Vérifie si une entrée Gen_oeuvres_utis existe.
+     * Vérifie si une entrée gen_oeuvres_utis_roles existe.
      *
      * @param array $data
      *
@@ -28,17 +28,16 @@ class Model_DbTable_Gen_oeuvresxutis extends Zend_Db_Table_Abstract
     public function existe($data)
     {
 		$select = $this->select();
-		$select->from($this, array('id_oeu'));
-		foreach($data as $k=>$v){
-			$select->where($k.' = ?', $v);
-		}
-	    $rows = $this->fetchAll($select);        
-	    if($rows->count()>0)$id=$rows[0]->id_oeu; else $id=false;
+		$select->from($this, array('id_our'));
+		$select->where('uti_id = ?', $data['uti_id']);
+		$select->where('id_oeu = ?', $data['id_oeu']);
+		$rows = $this->fetchAll($select);        
+	    if($rows->count()>0)$id=$rows[0]->id_our; else $id=false;
         return $id;
     } 
         
     /**
-     * Ajoute une entrée Gen_oeuvres_utis.
+     * Ajoute une entrée gen_oeuvres_utis_roles.
      *
      * @param array $data
      * @param boolean $existe
@@ -52,12 +51,14 @@ class Model_DbTable_Gen_oeuvresxutis extends Zend_Db_Table_Abstract
     	if($existe)$id = $this->existe($data);
     	if(!$id){
     	 	$id = $this->insert($data);
+    	}else{
+    		$this->edit($id, array("id_role"=>$data["id_role"]));
     	}
     	return $id;
     } 
            
     /**
-     * Recherche une entrée Gen_oeuvres_utis avec la clef primaire spécifiée
+     * Recherche une entrée gen_oeuvres_utis_roles avec la clef primaire spécifiée
      * et modifie cette entrée avec les nouvelles données.
      *
      * @param integer $id
@@ -68,11 +69,11 @@ class Model_DbTable_Gen_oeuvresxutis extends Zend_Db_Table_Abstract
     public function edit($id, $data)
     {        
    	
-    	$this->update($data, 'gen_oeuvres_utis.id_oeu = ' . $id);
+    	$this->update($data, 'gen_oeuvres_utis_roles.id_our = ' . $id);
     }
     
     /**
-     * Recherche une entrée Gen_oeuvres_utis avec la clef primaire spécifiée
+     * Recherche une entrée gen_oeuvres_utis_roles avec la clef primaire spécifiée
      * et supprime cette entrée.
      *
      * @param integer $id
@@ -81,31 +82,19 @@ class Model_DbTable_Gen_oeuvresxutis extends Zend_Db_Table_Abstract
      */
     public function remove($id)
     {
-    	$this->delete('gen_oeuvres_utis.id_oeu = ' . $id);
+    	$this->delete('gen_oeuvres_utis_roles.id_our = ' . $id);
     }
 
-    /**
-     * Recherche les entrées de Gen_oeuvres_utis avec la clef de lieu
-     * et supprime ces entrées.
-     *
-     * @param integer $idLieu
-     *
-     * @return void
-     */
-    public function removeLieu($idLieu)
-    {
-		$this->delete('id_lieu = ' . $idLieu);
-    }
     
     /**
-     * Récupère toutes les entrées Gen_oeuvres_utis avec certains critères
+     * Récupère toutes les entrées gen_oeuvres_utis_roles avec certains critères
      * de tri, intervalles
      */
     public function getAll($order=null, $limit=0, $from=0)
     {
    	
     	$query = $this->select()
-                    ->from( array("gen_oeuvres_utis" => "gen_oeuvres_utis") );
+                    ->from( array("gen_oeuvres_utis_roles" => "gen_oeuvres_utis_roles") );
                     
         if($order != null)
         {
@@ -122,7 +111,7 @@ class Model_DbTable_Gen_oeuvresxutis extends Zend_Db_Table_Abstract
 
     
     	/**
-     * Recherche une entrée Gen_oeuvres_utis avec la valeur spécifiée
+     * Recherche une entrée gen_oeuvres_utis_roles avec la valeur spécifiée
      * et retourne cette entrée.
      *
      * @param int $id_oeu
@@ -132,13 +121,13 @@ class Model_DbTable_Gen_oeuvresxutis extends Zend_Db_Table_Abstract
     public function findById_oeu($id_oeu)
     {
         $query = $this->select()
-                    ->from( array("g" => "gen_oeuvres_utis") )                           
+                    ->from( array("g" => "gen_oeuvres_utis_roles") )                           
                     ->where( "g.id_oeu = ?", $id_oeu );
 
         return $this->fetchAll($query)->toArray(); 
     }
     	/**
-     * Recherche une entrée Gen_oeuvres_utis avec la valeur spécifiée
+     * Recherche une entrée gen_oeuvres_utis_roles avec la valeur spécifiée
      * et retourne cette entrée.
      *
      * @param int $uti_id
@@ -148,7 +137,7 @@ class Model_DbTable_Gen_oeuvresxutis extends Zend_Db_Table_Abstract
     public function findByUti_id($uti_id)
     {
         $query = $this->select()
-                    ->from( array("g" => "gen_oeuvres_utis") )                           
+                    ->from( array("g" => "gen_oeuvres_utis_roles") )                           
                     ->where( "g.uti_id = ?", $uti_id );
 
         return $this->fetchAll($query)->toArray(); 
