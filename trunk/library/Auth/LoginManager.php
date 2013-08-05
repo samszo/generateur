@@ -55,8 +55,8 @@ class Auth_LoginManager {
 		$pwd=htmlspecialchars($user->password);
 		if($usr == ''){
 			$authAdapter
-				->setIdentity('guest')
-				->setCredential('guest');
+				->setIdentity('invité')
+				->setCredential('invité');
 		}else{
 			$authAdapter
 				->setIdentity($usr)
@@ -67,24 +67,24 @@ class Auth_LoginManager {
 		switch ($result->getCode()) {
 	
 			case Zend_Auth_Result::FAILURE_IDENTITY_NOT_FOUND:
-				$userRole = "guest";
+				$userRole = "invité";
 				break;
 		
 			case Zend_Auth_Result::FAILURE_CREDENTIAL_INVALID:
-				$userRole = "guest";
+				$userRole = "invité";
 				return "FAILURE_CREDENTIAL_INVALID";
 				break;
 	
 			case Zend_Auth_Result::FAILURE:
-				$userRole = 'guest';
+				$userRole = 'invité';
 				break;
 	
 			case Zend_Auth_Result::FAILURE_IDENTITY_AMBIGUOUS:
-				$userRole = 'guest';
+				$userRole = 'invité';
 				break;
 	
 			case Zend_Auth_Result::FAILURE_UNCATEGORIZED:
-				$userRole = 'guest';
+				$userRole = 'invité';
 				break;
 		
 			case Zend_Auth_Result::SUCCESS:
@@ -104,27 +104,28 @@ class Auth_LoginManager {
 		// Set up the ACL (Access Control List)
 		$acl = new Zend_Acl();
 		// Add groups to the Role registry using Zend_Acl_Role
-		// Guest does not inherit access controls.
+		// invité does not inherit access controls.
 		// Order matters here, we go from the most	restricted to the least restricted
 		$dbRole = new Model_DbTable_Flux_Roles();
 		$rs = $dbRole->getAll();
 		
 		foreach ($rs as $r){
+			/*problème d'héritage
 			if($r['inherit']!=""){
-				$acl->addRole(new Zend_Acl_Role($r['lib'],$r['inherit']));							
+				$roleHerite = $acl->getRole($r['inherit']);
+				$acl->addRole(new Zend_Acl_Role($r['lib'],$roleHerite));							
 			}else{
 				$acl->addRole(new Zend_Acl_Role($r['lib']));							
 			}
+			*/
+			$acl->addRole(new Zend_Acl_Role($r['lib']));							
 			$res = json_decode($r['params']);
-			if($res==""){
-				$acl->allow($r['lib']);	
-			}else{
-				foreach ($res as $re){
-					// setup the resource privs
-					if(!$acl->has($re->lib))	$acl->addResource($re->lib);
-					// application de la ressource
-					$acl->allow($r['lib'], null, $re->lib);				
-				}
+			if($res){
+				// application des droits
+				$acl->allow($r['lib'], null, $res);
+				foreach ($res as $r){
+					if(!$acl->has($r))$acl->addResource(new Zend_Acl_Resource($r));
+				}				
 			}
 		}
 		
@@ -133,10 +134,18 @@ class Auth_LoginManager {
 		$userRolePrivs["idUti"] = $userId;
 		$userRolePrivs["role"] = $userRole;
 		$userRolePrivs["login"] = $user->username;
+
 		//ajoute les autorisations liées au role
 		$rs = $acl->getResources();
 		foreach ($rs as $r){
 			$userRolePrivs[$r] = $acl->isAllowed($userRole, null, $r);			
+		}
+
+		//ajoute les droits sur les oeuvres
+		if($userId){
+			$dbUti = new Model_DbTable_flux_Uti();
+			$userRolePrivs["oeuvres"] = $dbUti->getOeuvres($userId, $userRole);
+			$userRolePrivs["dicos"] = $dbUti->getDicos($userId, $userRole);			
 		}
 		
 		return $userRolePrivs;
