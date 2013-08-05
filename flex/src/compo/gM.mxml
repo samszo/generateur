@@ -19,6 +19,10 @@
 			import mx.rpc.events.ResultEvent;
 			
 			import spark.events.TextOperationEvent;
+
+			[Bindable] public var bRemove:Boolean=true;
+			[Bindable] public var bAjout:Boolean=true;
+			[Bindable] public var bModif:Boolean=true;
 						
 			[Bindable] public var oConcept:Object;
 			[Bindable] public var idSub:String;
@@ -43,6 +47,10 @@
 			
 			protected function creationCompleteHandler(event:FlexEvent):void
 			{
+				bAjout = this.parentApplication.uti.écriture;
+				bModif = this.parentApplication.uti.écriture;
+				bRemove = this.parentApplication.uti.suppression;
+				
 				if(oConcept){
 					ROCS.findByIdConcept(oConcept.id_concept);
 				}else{
@@ -138,6 +146,8 @@
 			}
 			protected function t_changeHandler(event:TextOperationEvent):void
 			{
+				if(!bModif)return;
+
 				var tx:TextInput = event.target as TextInput;
 				tx.setStyle("color","red");
 				arrChange[tx.id] = tx.text;
@@ -145,6 +155,8 @@
 			}
 			protected function elision_changeHandler(event:Event):void
 			{
+				if(!bModif)return;
+
 				if(elision.selected)
 					arrChange["elision"]= "1";
 				else
@@ -154,6 +166,8 @@
 			
 			protected function genre_changeHandler(event:Event):void
 			{
+				if(!bModif)return;
+
 				if(genre1.selected)
 					arrChange["genre"]= "1";
 				if(genre2.selected)
@@ -216,7 +230,7 @@
 						<s:TextInput width="100%" id="Gp" text="{'[62|m_'+oConcept.lib+']'}"/><s:Label  width="100%" color="#E01919" text="---" id="GTp" />
 					</s:HGroup>
 					<s:HGroup verticalAlign="middle">
-						<s:Button label="Enregistrer" click="enregistrer_clickHandler(event)" />
+						<s:Button label="Enregistrer" click="enregistrer_clickHandler(event)" visible="{bChange}" color="red"/>
 						<s:Button label="Tester" click="tester_clickHandler(event)" />
 					</s:HGroup>
 				</s:VGroup>

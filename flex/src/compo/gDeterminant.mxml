@@ -22,6 +22,7 @@
 			[Bindable] public var idDico:String;
 			[Bindable] public var bRemove:Boolean=true;
 			[Bindable] public var bAjout:Boolean=true;
+			[Bindable] public var bModif:Boolean=true;
 			[Bindable] public var bChange:Boolean=false;
 			[Bindable] public var arrChange:Array;
 			[Bindable] public var oItem:Object;
@@ -43,6 +44,9 @@
 				if(idDico){
 					ROC.findByIdDico(idDico);
 				}
+				bAjout = this.parentApplication.uti.écriture;
+				bModif = this.parentApplication.uti.écriture;
+				bRemove = this.parentApplication.uti.suppression;
 			}
 			
 			protected function findByDico_resultHandler(event:ResultEvent):void
@@ -167,6 +171,8 @@
 
 			protected function t_changeHandler(event:TextOperationEvent):void
 			{
+				if(!bModif)return;
+				
 				var tx:TextInput = event.target as TextInput;
 				tx.setStyle("color","red");
 				var id:String = tx.id.substr(1);

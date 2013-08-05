@@ -20,6 +20,10 @@
 			
 			import spark.events.TextOperationEvent;
 						
+			[Bindable] public var bRemove:Boolean=true;
+			[Bindable] public var bAjout:Boolean=true;
+			[Bindable] public var bModif:Boolean=true;
+
 			[Bindable] public var oConcept:Object;
 			[Bindable] public var idSyn:String;
 			[Bindable] public var idDico:String;
@@ -43,6 +47,10 @@
 			
 			protected function creationCompleteHandler(event:FlexEvent):void
 			{
+				bAjout = this.parentApplication.uti.écriture;
+				bModif = this.parentApplication.uti.écriture;
+				bRemove = this.parentApplication.uti.suppression;
+				
 				if(oConcept && this.parentApplication.verifDico()){
 					ROCS.findByIdConcept(oConcept.id_concept, this.parentApplication.arrVerifDico["syntagmes"]);
 				}else{
@@ -121,6 +129,8 @@
 			}
 			protected function t_changeHandler(event:TextOperationEvent):void
 			{
+				if(!bModif)return;
+
 				var tx:TextInput = event.target as TextInput;
 				tx.setStyle("color","red");
 				arrChange[tx.id] = tx.text;
@@ -160,7 +170,7 @@
 						<s:TextInput width="100%" id="G" text="{'[s_'+oConcept.lib+']'}"/><s:Label width="100%" color="#E01919" text="---" id="GT" />
 					</s:HGroup>
 					<s:HGroup verticalAlign="middle">
-						<s:Button label="Enregistrer" click="enregistrer_clickHandler(event)" />
+						<s:Button label="Enregistrer" click="enregistrer_clickHandler(event)" visible="{bChange}" color="red"/>
 						<s:Button label="Tester" click="tester_clickHandler(event)" />
 					</s:HGroup>
 				</s:VGroup>

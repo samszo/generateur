@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" 
+	title="Paramètres d'un substantif"
+	showCloseButton="true"
+	close="PopUpManager.removePopUp(this);"  
+	xmlns:ns2="compo.*"
+	creationComplete="Init()"
+	> 
+	<mx:Script>
+        <![CDATA[
+			import compo.*;
+			
+			import mx.controls.Alert;
+			import mx.managers.CursorManager;
+			import mx.managers.PopUpManager;
+			
+			import spark.components.RadioButton;
+			
+			[Bindable] public var oItem:Object
+			[Bindable] public var callback:Function;
+			[Bindable] public var arrDet:Array = new Array();
+			
+			private function Init():void{
+				//dg.twAMC=this;
+			}
+
+			public function ferme():void{
+				PopUpManager.removePopUp(this);
+			}
+
+			public function ajouter():void{
+				/*
+				[5|m_phrase]
+				*/
+				var code:String = "[";
+				
+				var oDet:Object = cbDet.selectedItem;
+				if(oDet){
+					var o:int = int(oDet.ordre); 
+					var n:int = int(oDet.num);
+					if(o>=4)
+						code += (n+50)+ "|";
+					else
+						code += n + "|";
+				}
+				
+				callback(code);
+				ferme();
+			}
+									
+		]]>
+    </mx:Script>
+
+	<mx:VBox left="10" top="10" bottom="10" right="10">
+		<mx:ComboBox id="cbDet"  prompt="Déterminant" dataProvider="{arrDet}" labelField="lib" />
+		<mx:HBox>
+			<mx:Button label="Enregistrer" click="ajouter()" right="81" bottom="10"/>
+			<mx:Button label="Annuler" click="ferme()" right="10" bottom="10"/>					
+		</mx:HBox>
+	</mx:VBox>
+    
+</mx:TitleWindow>

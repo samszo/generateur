@@ -47,6 +47,10 @@
 				if(idDico){
 					ROC.findByIdDico(idDico);
 				}
+				bModif = this.parentApplication.uti.écriture;
+				bAjout = this.parentApplication.uti.écriture;
+				bRemove = this.parentApplication.uti.suppression;
+				
 			}
 			
 			protected function findByDico_resultHandler(event:ResultEvent):void
@@ -198,6 +202,7 @@
 			
 			protected function dg_itemEditEndHandler(event:DataGridEvent):void
 			{
+				if(!bModif) return;
 				// Get the cell editor and cast it to TextInput.
 				var myEditor:TextInput = TextInput(event.currentTarget.itemEditorInstance);
 				// Get the new value from the editor.

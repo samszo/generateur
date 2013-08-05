@@ -23,6 +23,7 @@
 			import mx.events.CloseEvent;
 			import mx.events.DataGridEvent;
 			import mx.events.FlexEvent;
+			import mx.events.IndexChangedEvent;
 			import mx.events.ListEvent;
 			import mx.managers.CursorManager;
 			import mx.managers.PopUpManager;
@@ -38,6 +39,8 @@
 	 */
 	[Bindable] public var bInit:Boolean=true;
 	[Bindable] public var bInsert:Boolean=true;
+	[Bindable] public var bModif:Boolean=true;
+	[Bindable] public var bRemove:Boolean=true;
 	[Bindable] public var twAR:twAjoutRef;
 	[Bindable] public var idOeu:int;	
 	[Bindable] public var arrDicoAssos:Array;	
@@ -167,14 +170,12 @@
 				idOeu = e.result;
 				vsParam.selectedChild = view;
 				RO.getAll();
-				//on ajoute l'utilisateur à l'oeuvre
-				var pArr:Array = new Array;
-				pArr["id_oeu"]=idOeu;
-				pArr["uti_id"]=this.parentApplication.uti.idUti;
-				ROOU.ajouter(pArr); 
 				if(twAR){
-					Alert.show("Veuillez choisir les dictionnaires associés à cette oeuvre.");
 					twAR.ferme();
+					this.parentApplication.gmOeuvre.itemSelect=idOeu;
+					this.parentApplication.gmOeuvre.ROS.getAll();
+					this.parentApplication.ShowSelection(idOeu);
+					this.parentApplication.dgOeuParam.vsDico.selectedChild = this.parentApplication.dgOeuParam.insertDico;
 				}
 			}
 			
@@ -354,6 +355,12 @@
 				RO.edit(idOeu, data);
 			}
 			
+			protected function tn_changeHandler(event:IndexChangedEvent):void
+			{
+				if(event.newIndex == 2) gDiffuse.init();
+				
+			}
+			
 		]]>
     </mx:Script>
     
@@ -386,29 +393,22 @@
 		<mx:method name="getType" result="getTypeHandler(event)" />  	
 		<mx:method name="ajouter" result="ajouterDico_resultHandler(event)"  />  	
 	</mx:RemoteObject>
-	
-	<mx:RemoteObject id="ROOU"
-					 source="Model_DbTable_Gen_oeuvresxutis" destination="zend" 
-					 showBusyCursor="true"
-					 fault="faultHandlerService(event)">
-		<mx:method name="ajouter" result="ajoutOeuvreUti_resultHandler(event)" />  	
-	</mx:RemoteObject>
-	
+		
 	<mx:ViewStack id="vsParam" width="100%" height="100%" >			
 		<mx:Canvas id="view" width="100%" height="100%">
 			<mx:HBox width="100%" >
-				<mx:Label fontSize="16" text="Titre de l'oeuvre :" /><mx:TextInput id="UpdLib" /><mx:Button label="Modifier" click="updateItem()" />
+				<mx:Label fontSize="16" text="Titre de l'oeuvre :" /><mx:TextInput id="UpdLib" /><mx:Button label="Modifier" click="updateItem()" visible="{bModif}" />
 				<co:gLicence id="cc" click="{vsParam.selectedChild = licence;}" toolTip="Cliquez sur l'image pour plus d'information ou pour changer de licence." />
 			</mx:HBox>
-			<mx:TabNavigator y="30" width="100%" height="100%">
+			<mx:TabNavigator y="30" width="100%" height="100%" id="tn" change="tn_changeHandler(event)" >
 				<s:NavigatorContent width="100%" height="100%" id="ncParam" label="Dictionnaires">
 							<mx:VBox width="100%" height="100%">						
 								<mx:Panel title="Dictionnaires associés" width="100%" height="100%" layout="absolute">
 									<mx:ViewStack id="vsDico" width="100%" height="100%" >
 										<mx:VBox id="viewDico" width="100%" height="100%" >
 											<mx:HBox height="24">
-												<mx:LinkButton click="vsDico.selectedChild = insertDico;" width="20" icon="@Embed('images/AddRecord.png')" toolTip="Ajouter un dictionnaire à cette oeuvre" />
-												<mx:LinkButton click="deleteDico()" width="20" icon="@Embed('images/DeleteRecord.png')" toolTip="Supprimer un dictionnaire pour cette oeuvre" />							
+												<mx:LinkButton click="vsDico.selectedChild = insertDico;" width="20" icon="@Embed('images/AddRecord.png')" toolTip="Ajouter un dictionnaire à cette oeuvre" visible="{bModif}" />
+												<mx:LinkButton click="deleteDico()" width="20" icon="@Embed('images/DeleteRecord.png')" toolTip="Supprimer un dictionnaire pour cette oeuvre" visible="{bRemove}"/>							
 											</mx:HBox>							
 											<mx:DataGrid width="100%" id="dgDico" click="dgDico_clickHandler(event)" dataProvider="{arrDicoAssos}"
 												 rowCount="3" >
@@ -439,7 +439,7 @@
 													<mx:Button label="Annuler" click="vsDico.selectedChild = viewDico;" />				
 												</mx:HBox>
 											</mx:VBox>
-											<mx:VBox borderStyle="solid" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2" width="100%" height="100%">
+											<mx:VBox borderStyle="solid" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2" width="100%" height="100%" visible="{bModif}" >
 												<mx:Label text="Créer un dictionnaire :"/>
 												<mx:HBox><mx:Label text="Nom :" /><mx:TextInput id="nomDico" /></mx:HBox>
 												<mx:HBox>
@@ -462,8 +462,8 @@
 				<s:NavigatorContent width="100%" height="100%" label="Participer" >
 					<co:gActiUti id="gParticipe" idUti="{this.parentApplication.uti.idUti}" idOeu="{idOeu}" />
 				</s:NavigatorContent>
-				<s:NavigatorContent width="100%" height="100%" label="Partager">
-					<mx:Label text="Ici vous trouverez bientôt les codes HTML pour partager vos oeuvres." />
+				<s:NavigatorContent width="100%" height="100%" label="Diffuser" >
+					<co:gDiffuser id="gDiffuse" idOeu="{idOeu}" />	 
 				</s:NavigatorContent>
 			</mx:TabNavigator>
 		</mx:Canvas>
@@ -481,7 +481,7 @@
 		<mx:VBox id="licence" width="100%" height="100%">
 			<mx:HBox verticalAlign="middle"  >
 				<mx:Label fontSize="16" text="Cliquer sur la licence que vous voulez enregistrer." />
-				<mx:Button label="Enregistrer" click="changeCC_clickHandler(event)" />
+				<mx:Button label="Enregistrer" click="changeCC_clickHandler(event)" visible="{bModif}" />
 				<mx:Button label="Annuler" click="{vsParam.selectedChild = view;}" />				
 			</mx:HBox>
 			<co:gLicence id="ccModif" bModif="true" ccItem="{item.licence}" />			

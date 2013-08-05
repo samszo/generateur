@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" height="100%"
+		 xmlns:flexiframe="http://code.google.com/p/flex-iframe/"
+		 creationComplete="creationCompleteHandler(event)" >
+	<s:layout>
+		<s:VerticalLayout paddingBottom="4" paddingLeft="4" paddingRight="4" paddingTop="4"/>
+	</s:layout>
+	
+		
+	<fx:Script>
+		<![CDATA[
+			import flash.external.*;
+			
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			[Bindable] public var idOeu:int;
+			[Bindable] public var oItem:Object
+			[Bindable] public var arrDico:Array;
+			[Bindable] public var arrCpt:Array;
+			private var textLoader:URLLoader;
+						
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				init();
+			}
+			public function init():void
+			{
+				if(idOeu){
+					roODU.getDicoForDiffusion(idOeu);
+					arrCpt = new Array;
+				}				
+			}
+			public function faultHandlerService(fault:FaultEvent):void
+			{
+				var str:String;
+				str = "Code: "+fault.fault.faultCode.toString()+"\n"+
+					"Detail: "+fault.fault.faultDetail.toString()+"\n"+
+					"String: "+fault.fault.faultString.toString()+"\n";
+				
+				Alert.show(str, "ERREUR : Activités des utilisateurs");
+			}
+			
+			
+			protected function dgDico_clickHandler(event:MouseEvent):void
+			{
+				if(event.currentTarget.selectedItem)roC.getCptForDiffusion(event.currentTarget.selectedItem.id_dico);
+				fi.source = "vide.html";
+				taCS.text = "";
+			}
+			
+			protected function getDicoForDiffusion_resultHandler(e:ResultEvent):void
+			{
+				if(!e)return;
+				arrDico = e.result as Array;
+				
+			}
+			
+			protected function getCptForDiffusion_resultHandler(event:ResultEvent):void
+			{
+				if(!event)return;
+				arrCpt = event.result as Array;
+				
+			}
+			
+			protected function dgCpt_clickHandler(event:MouseEvent):void
+			{
+				oItem = event.currentTarget.selectedItem;
+				if(oItem){
+					txtGen.text = '['+oItem.type+'-'+oItem.lib+']';
+				}
+				fi.source = "vide.html";
+				taCS.text = "";
+			}
+
+			protected function html1_clickHandler(event:MouseEvent):void
+			{
+				if(oItem){
+					txtLien.text = this.parentApplication.urlAPI+"?oeu="+idOeu+"&cpt="+oItem.id_concept;					
+					loadUrl(txtLien.text)
+				}
+			}
+
+			protected function html2_clickHandler(event:MouseEvent):void
+			{
+				if(oItem){
+					txtLien.text = this.parentApplication.urlAPI+"?oeu="+idOeu+"&cpt="+oItem.id_concept+"&frt=html";
+					if(cbBtnGen2.selected)txtLien.text += "&btn=1"; 
+					loadUrl(txtLien.text)
+				}
+			}
+			
+			protected function html3_clickHandler(event:MouseEvent):void
+			{
+				if(oItem){
+					txtLien.text = this.parentApplication.urlAPI+"?oeu="+idOeu+"&cpt="+oItem.id_concept+"&frt=iframe";					
+					if(cbBtnGen3.selected)txtLien.text += "&btn=1"; 
+					loadUrl(txtLien.text)
+				}
+			}
+
+			protected function loadUrl(url:String):void
+			{
+				textLoader = new URLLoader();
+				var textReq:URLRequest = new URLRequest(url);
+				
+				textLoader.load(textReq);
+				textLoader.addEventListener(Event.COMPLETE, textLoadComplete);							
+			}
+
+			protected function textLoadComplete(event:Event):void
+			{
+				fi.source = txtLien.text;
+				taCS.text = textLoader.data;
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Style>
+		@namespace s "library://ns.adobe.com/flex/spark";
+		
+		s|BorderContainer {
+			borderColor:#000000; 
+			borderAlpha:1; 
+			cornerRadius:10; 
+			borderWeight:1;
+		}       
+	</fx:Style> 	
+	<fx:Declarations>
+		<s:RemoteObject id="roODU"
+						source="Model_DbTable_Gen_oeuvresxdicosxutis" destination="zend" 
+						showBusyCursor="true"
+						fault="faultHandlerService(event)">
+			<s:method name="getDicoForDiffusion" result="getDicoForDiffusion_resultHandler(event)"  />
+		</s:RemoteObject>
+		<s:RemoteObject id="roC"
+						source="Model_DbTable_Gen_concepts" destination="zend" 
+						showBusyCursor="true"
+						fault="faultHandlerService(event)">
+			<s:method name="getCptForDiffusion" result="getCptForDiffusion_resultHandler(event)"  />  	
+		</s:RemoteObject>
+		
+	</fx:Declarations>
+	<s:HGroup width="100%" height="200">
+		<s:Panel width="100%" height="200" title="1. Choisissez le dictionnaire" >
+			<mx:DataGrid width="100%" height="100%" id="dgDico" click="dgDico_clickHandler(event)"  dataProvider="{arrDico}" >
+				<mx:columns>
+					<mx:DataGridColumn headerText="Nom" dataField="nom" />
+					<mx:DataGridColumn headerText="Langue" dataField="langue" />
+					<mx:DataGridColumn headerText="Id Dico" dataField="id_dico" visible="false"/>
+				</mx:columns>
+			</mx:DataGrid>
+		</s:Panel>
+		<s:Panel width="100%" height="200" title="2. Choisissez le concept">
+			<mx:DataGrid width="100%" height="100%" id="dgCpt" click="dgCpt_clickHandler(event)" dataProvider="{arrCpt}" >
+				<mx:columns>
+					<mx:DataGridColumn headerText="Descripteur" dataField="lib" />
+					<mx:DataGridColumn headerText="Type" dataField="type" />
+				</mx:columns>
+			</mx:DataGrid>
+		</s:Panel>		
+	</s:HGroup>
+	<s:Panel width="100%" height="100%" title="3. Choisissez le type de code">
+		<s:VGroup width="100%" height="100%" paddingBottom="4" paddingLeft="4" paddingRight="4" paddingTop="4">
+			<s:HGroup width="100%" verticalAlign="middle" fontSize="18" >
+				<s:Label text="Texte génératif :" />
+				<s:TextInput id="txtGen" text="" />			
+				<s:Label text="Lien vers le test :" />
+				<s:TextInput id="txtLien" text="" width="100%" />
+			</s:HGroup>
+			<s:HGroup width="100%" height="100%" >
+				<s:Panel title="Codes Disponibles">
+					<s:VGroup paddingBottom="4" paddingLeft="4" paddingRight="4" paddingTop="4">
+						<s:Label text="Lien pour du texte brut" />
+						<s:Button label="Tester" click="html1_clickHandler(event)" />					
+						<mx:HRule width="100%" height="3" />
+						<s:Label text="Code d'une page HTML" />
+						<s:CheckBox label="Avec bouton de génération" id="cbBtnGen2" />
+						<s:Button label="Tester" click="html2_clickHandler(event)" />					
+						<mx:HRule width="100%" height="3" />
+						<s:Label text="Code pour intégrer dans un page Web" />
+						<s:CheckBox label="Avec bouton de génération" id="cbBtnGen3" />
+						<s:Button label="Tester" click="html3_clickHandler(event)" />					
+						<mx:HRule width="100%" height="3" />
+					</s:VGroup>
+				</s:Panel>		
+				<s:Panel width="100%" height="100%" title="Résultat du test">
+					<s:HGroup width="100%" height="100%" fontSize="18" paddingBottom="4" paddingLeft="4" paddingRight="4" paddingTop="4">						
+						<s:VGroup height="100%" width="100%">
+							<s:Label text="code source : " />
+							<s:TextArea id="taCS" width="100%" height="100%" />
+						</s:VGroup>
+						<s:VGroup height="100%" width="100%">
+							<s:Label text="visualisation navigateur : " />
+							<s:BorderContainer height="100%" width="100%">
+								<s:layout>
+									<s:VerticalLayout paddingLeft="4" paddingRight="4" paddingTop="4" paddingBottom="4"/>
+								</s:layout>
+								<flexiframe:IFrame id="fi" height="100%" width="100%" /> 					
+							</s:BorderContainer>
+						</s:VGroup>
+					</s:HGroup>						
+				</s:Panel>
+			</s:HGroup>
+		</s:VGroup>
+	</s:Panel>
+	
+</s:Group>
