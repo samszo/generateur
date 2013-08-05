@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+					   xmlns:s="library://ns.adobe.com/flex/spark"
+					   xmlns:mx="library://ns.adobe.com/flex/mx"
+					   xmlns:co="compo.*"
+					   width="100%" height="100%" minWidth="955" minHeight="600"
+					   creationComplete="login();" >	
+
+	<fx:Script>
+		<![CDATA[
+			
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Script source="gen.as"/>
+	<fx:Declarations>
+		<s:RemoteObject id="ROMOTEUR"
+						source="Gen_Moteur" destination="zend" 
+						showBusyCursor="true"
+						fault="faultHandlerService(event)">
+			<s:method name="Tester" result="testerMoteur_resultHandler(event)" />  	
+		</s:RemoteObject>
+		<s:RemoteObject id="ROACTI"
+						source="Model_DbTable_flux_acti" destination="zend" 
+						showBusyCursor="true"
+						fault="faultHandlerService(event)">
+			<s:method name="ajoutForUtis" result="ajoutForUtis_resultHandler(event)"  />
+		</s:RemoteObject>		
+	</fx:Declarations>
+	
+	<s:Group id="boxGen" visible="false" width="100%" height="100%">
+		<s:layout>
+			<s:VerticalLayout paddingBottom="6" paddingLeft="6" paddingRight="6" paddingTop="6" />
+		</s:layout>
+		<s:HGroup width="100%" verticalAlign="middle">
+			<s:Image source="@Embed('images/logo-gen48.png')" toolTip="Generateur 0.175"  />
+			<s:Label text="Utilisateur :"/><s:Label id="utiLog"/>			
+			<s:Image width="30" height="30" source="@Embed('images/gens.png')" toolTip="Gérer les utilisateurs" click="gereuti_clickHandler(event)" />
+		
+			<co:cbGroupeMot id="gmOeuvre" bRemove="{uti.suppression}" bAjout="{uti.suppression.écriture}" keyName="id_oeu" 
+							objName="Model_DbTable_Gen_oeuvres" objSource="dgOeuvres"
+							titre="une oeuvre"/>
+		</s:HGroup>
+		<co:dgOeuvres id="dgOeuParam" x="0" y="0" width="100%" height="100%" visible="false" bInit="false" bInsert="false" />		
+	</s:Group>
+	
+</s:Application>
