@@ -2,30 +2,13 @@
 /**
  * Generateur Framework
  *
- * LICENSE
- *
- * This source file is subject to the Artistic/GPL license that is bundled
- * with this package in the file LICENSE.txt.
- * It is also available through the world-wide-web at this URL:
- * http://framework.generateur.com/license/
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@generateur.com so we can send you a copy immediately.
- *
- * @category   Generateur
- * @package    Dico
- * @copyright  Copyright (c) 2010 J-P Balpe (http://www.balpe.com)
- * @license    http://framework.generateur.com/license/ Artistic/GPL License
- * @version    $Id: Dico.php 0 2010-09-20 15:26:09Z samszo $
- */
-
 /**
  * Concrete class for generating Fragment for Generateur.
  *
  * @category   Generateur
- * @package    Dico
- * @copyright  Copyright (c) 2010 J-P Balpe (http://www.balpe.com)
- * @license    http://framework.generateur.com/license/ Artistic/GPL License
+ * @package    Import
+ * @copyright  2013 Samuel Szoniecky
+ * @license    "New" BSD License
  */
 
 class Gen_Dico
@@ -74,30 +57,19 @@ class Gen_Dico
 			
 	}
 
-	public function setDicoByDrive(){
-
-		try {
-			
-		}catch (Zend_Exception $e) {
-	          echo "Récupère exception: " . get_class($e) . "\n";
-	          echo "Message: " . $e->getMessage() . "\n";
-		}
-		
-	}
-	
 	public function GetMacToXml($idDico){
 
 	try {
 		
 		//récupération des infos du dico
 		$this->id = $idDico;
-		$dbDico = new Model_DbTable_Dicos();		
-		$arr = $dbDico->obtenirDico($this->id);
-		$this->urlS = $arr['url_source'];
-		$this->type = $arr['type'];
+		$dbDico = new Model_DbTable_Gen_dicos();		
+		$arr = $dbDico->findByIdDico($this->id);
+		$this->urlS = $arr[0]['url_source'];
+		$this->type = $arr[0]['type'];
 		$this->Xtype = $this->RemoveAccents($this->type);
-		$this->pathS = $arr['path_source'];
-		$this->nom = $arr['nom'];
+		$this->pathS = $arr[0]['path_source'];
+		$this->nom = $arr[0]['nom'];
 		
 		//chargement de la configuration du langage
 		$this->xmlDesc = simplexml_load_file($this->urlDesc);
@@ -157,13 +129,13 @@ class Gen_Dico
 		}
 			
 		//création des objects de bd
-		$dbDico = new Model_DbTable_Dicos();
+		$dbDico = new Model_DbTable_Gen_dicos();
 		
 		//enregistre le dico
 		if($this->id){
-			$dbDico->modifierDico($this->id, $this->nom, $this->url, $this->type, $this->urlS);
+			$dbDico->edit($this->id, array("url"=>$this->url));
 		}else{
-			$pk = $dbDico->ajouterDico($this->url, $this->nom, $this->type, $this->urlS, $this->pathS);
+			$pk = $dbDico->ajouter(array("url"=>$this->url, "nom"=>$this->nom, "type"=>$this->type, "url_source"=>$this->urlS, "path_source"=>$this->pathS));
 			$this->id = $pk;
 		}					
        
@@ -196,7 +168,7 @@ class Gen_Dico
 			case 'conjugaisons':
 				$this->dbConj = new Model_DbTable_Conjugaisons();
 				$this->dbTrm = new Model_DbTable_Terminaisons();
-				//ajoute le lien entre le dictionnaire général et le dictionnaire de référende
+				//ajoute le lien entre le dictionnaire général et le dictionnaire de référence
 				$this->dbDicos = new Model_DbTable_DicosDicos();
 				$this->dbDicos->ajouterDicoGenDicoRef($idDico,$idDico);
 				break;
@@ -258,10 +230,11 @@ class Gen_Dico
 	}
 	
 	private function SaveItem($k,$n){
+		/*
 		echo $k."<br/>";
 		print_r($n);
 		echo "<br/>";
-		
+		*/
 		switch ($k) {
 			case 'conjugaison':
 				$pkV = $this->dbConj->ajouterConjugaison($this->id,$n['num'],$n['modele']);
