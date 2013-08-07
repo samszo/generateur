@@ -8,6 +8,7 @@
 		<s:VerticalLayout paddingBottom="3" paddingLeft="3" paddingRight="3" paddingTop="3"/>
 	</s:layout>
 	
+	
 	<fx:Script>
 		<![CDATA[
 			import mx.collections.ArrayCollection;
@@ -28,6 +29,7 @@
 			[Bindable] public var arrTrmChange:Array=new Array;
 			[Bindable] public var bChange:Boolean=false;
 			[Bindable] public var oItem:Object;
+			[Bindable] public var oItemDico:Object;
 			private var action:String="";
 			private var arrR:Array;
 
@@ -68,6 +70,7 @@
 			private function selectDgItem(event:Event):void {
 				
 				oItem = event.currentTarget.selectedItem;
+				oItemDico = null;
 				if(oItem){
 					ROC.findTermByIdConj(oItem.id_conj);
 					ROC.findVerbeByIdConj(oItem.id_conj);
@@ -276,9 +279,9 @@
 
 			protected function dgVerbe_clickHandler(event:MouseEvent):void
 			{
-				var item:Object=event.currentTarget.selectedItem;
-				if(item){
-					cptVerbe = item.lib;
+				oItemDico = event.currentTarget.selectedItem;
+				if(oItemDico){
+					cptVerbe = oItemDico.lib;
 					initResultGen();
 				}				
 			}
@@ -292,6 +295,11 @@
 			
 			protected function tester_clickHandler(event:MouseEvent):void
 			{
+				if(oItemDico==null){
+					Alert.show("Veuillez sélectionner un verbe associé au modèle de conjugaison.", "ERREUR : Tester");
+					return;
+				}
+				
 				if(this.parentApplication.verifDico()){
 					/*
 					Position 1 : type de négation
@@ -485,6 +493,24 @@
 				vs.selectedChild = lecture;
 				ROC.findByIdDico(idDico);
 			}
+
+			protected function utilise_resultHandler(event:ResultEvent):void
+			{
+				arrR = event.result as Array;
+				var actis:String = "";
+				if(action == "modifier"){
+					actis = "dictionnaire conjugaisons : modifier "+arrR[0]['nbGen']+" items pour "+arrR[0]['nbUti']+" utilisateurs : ";
+					actis = actis+oItem.type+"_"+oItem.lib+" (ref="+idDico+"_"+oItem.id_conj+")";				
+				}				
+				if(action == "supprimer")
+					actis = "dictionnaire conjugaisons : supprimer "+arrR[0]['nbGen']+" items pour "+arrR[0]['nbUti']+" utilisateurs : "+oItem.type+"_"+oItem.lib+"... (ref="+idDico+"_"+oItem.id_conj+")";				
+				this.parentApplication.verifActi(arrR[0], action, actis, ROC, oItem.id_conj, arrTrmChange, idDico);				
+			}
+			
+			protected function remove_resultHandler(event:ResultEvent):void
+			{
+				ROC.findByIdDico(idDico);				
+			}
 			
 		]]>
 	</fx:Script>
@@ -499,7 +525,9 @@
 			<s:method name="findByIdDico" result="findByDico_resultHandler(event)" />
 			<s:method name="findTermByIdConj" result="findTermByIdConj_resultHandler(event)" />
 			<s:method name="findVerbeByIdConj" result="findVerbeByIdConj_resultHandler(event)"/>
-			<s:method name="ajouter" result="ajouter_resultHandler(event)" />			
+			<s:method name="ajouter" result="ajouter_resultHandler(event)" />
+			<s:method name="utilise" result="utilise_resultHandler(event)" />
+			<s:method name="remove" result="remove_resultHandler(event)" />						
 			
 		</s:RemoteObject>
 	</fx:Declarations>

@@ -47,7 +47,7 @@
 	</fx:Script>
 	<fx:Declarations>
 		<s:RemoteObject id="roActiUti"
-						source="Model_DbTable_Flux_acti" destination="zend" 
+						source="Model_DbTable_Flux_Acti" destination="zend" 
 						showBusyCursor="true"
 						fault="faultHandlerService(event)">
 			<s:method name="getActiForOeuvre" result="getActiForUti_resultHandler(event)"  />

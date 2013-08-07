@@ -243,7 +243,7 @@
 				<s:HGroup width="100%" verticalAlign="middle">
 					<s:Button label="Tester" click="tester_clickHandler(event)" />
 					<s:TextInput width="100%" id="G" text="{'['+oConcept.type+'-'+oConcept.lib+']'}"/>
-					<s:Label width="100%" color="#E01919" text="---" id="GT" />
+					<s:TextArea width="100%" color="#E01919" text="---" id="GT" />
 				</s:HGroup>
 			</s:VGroup>
 		</mx:Canvas>
