@@ -13,7 +13,7 @@
  * @copyright  2013 Samuel Szoniecky
  * @license    "New" BSD License
  */
-class Model_DbTable_Flux_acti extends Zend_Db_Table_Abstract
+class Model_DbTable_Flux_Acti extends Zend_Db_Table_Abstract
 {
     
     /*
@@ -27,7 +27,7 @@ class Model_DbTable_Flux_acti extends Zend_Db_Table_Abstract
     protected $_primary = 'acti_id';
 
     protected $_dependentTables = array(
-       "Model_DbTable_Flux_actiuti"
+       "Model_DbTable_Flux_ActiUti"
        );    
     
     
@@ -65,7 +65,7 @@ class Model_DbTable_Flux_acti extends Zend_Db_Table_Abstract
     */
     public function ajoutForUtis($actis, $idUtis, $idOeu, $idDico, $idItem, $data)
     {
-    	$dbAU = new Model_DbTable_Flux_actiuti();
+    	$dbAU = new Model_DbTable_Flux_ActiUti();
     	$dbOA = new Model_DbTable_Gen_oduxacti();
     	$dbODU = new Model_DbTable_Gen_oeuvresxdicosxutis();
     	$parent = 1;
