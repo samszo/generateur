@@ -143,7 +143,7 @@ class Auth_LoginManager {
 
 		//ajoute les droits sur les oeuvres
 		if($userId){
-			$dbUti = new Model_DbTable_flux_Uti();
+			$dbUti = new Model_DbTable_Flux_Uti();
 			$userRolePrivs["oeuvres"] = $dbUti->getOeuvres($userId, $userRole);
 			$userRolePrivs["dicos"] = $dbUti->getDicos($userId, $userRole);			
 		}
