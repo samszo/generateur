@@ -5,14 +5,40 @@ try {
 	$application->bootstrap();
 	
 	/*
+	$row = 1;
+	if (($handle = fopen("https://docs.google.com/spreadsheet/pub?key=0AsJMmUNA97M2dGxwUVltUWNQazVwMGZ0b3V6enVaS0E&single=true&gid=0&output=csv", "r")) !== FALSE) {
+	    while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+	        $num = count($data);
+	        echo "<p> $num champs à la ligne $row: <br /></p>\n";
+	        $row++;
+	        for ($c=0; $c < $num; $c++) {
+	            echo $data[$c] . "<br />\n";
+	        }
+	    }
+	    fclose($handle);
+	}
+	$oSite = new Flux_Site();
+	$csv = $oSite->getUrlBodyContent("");
+	$arr = str_getcsv($csv);
+	$toto = "";
+	*/
+	
+	/*
+	$idDico = 135;
+	$idConj = 44;
+    $oDico = new Gen_Dico();
+    $oDico->GetMacToXml($idDico);
+    $oDico->SaveBdd($idDico, $idConj);
+	*/
+	
+	/*
 	$a = new Auth_LoginManager();
 	$user = new Auth_LoginVO();
 	$user->username='samszo';
 	$user->password='samszo';
 	$r = $a->verifyUser($user);
 	print_r($r);
-	*/
-	
+	*/	
 	/*
 	$dbC = new Model_DbTable_Gen_concepts();
 	$ac = $dbC->findByIdDico("102.34",true);
