@@ -27,7 +27,7 @@ class Model_DbTable_Flux_Uti extends Zend_Db_Table_Abstract
     protected $_primary = 'uti_id';
 
     protected $_dependentTables = array(
-       "Model_DbTable_flux_actiuti"
+       "Model_DbTable_Flux_ActiUti"
        );
     
     /**
