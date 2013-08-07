@@ -29,6 +29,8 @@ public var idDicoItem:String;
 
 //public var urlAPI:String = "http://localhost/generateur/services/api.php";
 public var urlAPI:String = "http://generator.digitalartimag.org/services/api.php";
+//public const ENDPOINT_IMPORT:String = "http://localhost/generateur/services/import.php";
+public const ENDPOINT_IMPORT:String = "http://generator.digitalartimag.org/services/import.php";
 
 protected function gereuti_clickHandler(event:MouseEvent):void
 {
