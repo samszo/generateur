@@ -33,6 +33,7 @@
 			import mx.rpc.http.HTTPService;
 			
 			import spark.components.ComboBox;
+			import spark.components.TextArea;
 
 	/**
 	 * paramétrage de l'objet
@@ -282,22 +283,29 @@
 			
 			protected function ajouterDicoclickHandler(event:MouseEvent):void
 			{
+				var pArr:Array = getParamAjout();
+				if(pArr != null)
+					ROD.ajouter(pArr, this.parentApplication.uti.idUti, false);
+			}
+			
+			public function getParamAjout():Array
+			{
 				var pArr:Array = new Array;
-
+				
 				if(nomDico.text==""){
 					Alert.show("Veuillez donner un nom à votre dictionnaire.","Ajout dictionnaire");
-					return;
+					return null;
 				}
 				if(cbDicoType.selectedIndex==-1){
 					Alert.show("Veuillez sélectionner un type de dictionnaire.","Ajout dictionnaire");
-					return;
+					return null;
 				}
 				if(cbLangueAjout.selectedIndex==-1){
 					if(cbLangueAjout.text!="choisissez une langue"){
 						pArr["langue"]=cbLangueAjout.text;						
 					}else{
 						Alert.show("Veuillez sélectionner une langue pour votre dictionnaire.","Ajout dictionnaire");
-						return;						
+						return null;						
 					}
 				}else{
 					pArr["langue"]=cbLangueAjout.selectedLabel;
@@ -307,7 +315,8 @@
 				pArr["type"]=cbDicoType.selectedLabel;
 				pArr["licence"]=ccAjout.ccItem;
 				
-				ROD.ajouter(pArr, this.parentApplication.uti.idUti, false);
+				return pArr;
+				
 			}
 			
 			protected function getTypeHandler(e:ResultEvent):void
@@ -335,19 +344,7 @@
 				}
 				
 			}
-			
-			protected function ajoutDicoUti_resultHandler(event:ResultEvent):void
-			{
-				// TODO Auto-generated method stub
-				
-			}
-			
-			protected function ajoutOeuvreUti_resultHandler(event:ResultEvent):void
-			{
-				// TODO Auto-generated method stub
-				
-			}
-						
+									
 			protected function changeCC_clickHandler(event:MouseEvent):void
 			{
 				var data:Array = new Array;
@@ -361,6 +358,48 @@
 				
 			}
 			
+			public function resultImport(result:Object):void
+			{
+				var params:Array=new Array();
+				params.push(result.resultImport[0].id_dico);
+				ROODU.ajouter(idOeu, this.parentApplication.uti.idUti, params);								
+				/*
+				importation.visible=true;
+				getTxtImport(result.resultImport[0].url, taTxtImport);
+				getTxtImport(result.resultImport[0].url_source, taXmlImport);
+				importDico.oItem = result.resultImport[0];
+				importDico.init();
+				*/
+			}
+
+			private function getTxtImport(url:String, ta:TextArea):void
+			{
+				// création du conteneur du texte
+				var conteneurTextes:URLLoader = new URLLoader();
+				// url du fichier texte à charger
+				var fichier:URLRequest = new URLRequest(url);
+				// Le chargement est terminé
+				function onComplete(evt:Event):void
+				{
+					var variables:URLVariables = new URLVariables(evt.target.data);
+					trace("Le titre est '" + variables.titre + "'\nLa description est '" + variables.description +"'");
+					ta.text = variables.description;
+				}
+				// Progression du chargement
+				function onProgress(evt:ProgressEvent):void
+				{
+					var p:Number=(evt.bytesLoaded*100)/evt.bytesTotal;
+					trace(p);
+				}
+				// Evénement progress
+				conteneurTextes.addEventListener(ProgressEvent.PROGRESS, onProgress);
+				// Evénement complete
+				conteneurTextes.addEventListener(Event.COMPLETE, onComplete);
+				// chargement de l'image dans le conteneur
+				conteneurTextes.load(fichier);			
+				
+			}
+						
 		]]>
     </mx:Script>
     
@@ -408,7 +447,7 @@
 										<mx:VBox id="viewDico" width="100%" height="100%" >
 											<mx:HBox height="24">
 												<mx:LinkButton click="vsDico.selectedChild = insertDico;" width="20" icon="@Embed('images/AddRecord.png')" toolTip="Ajouter un dictionnaire à cette oeuvre" visible="{bModif}" />
-												<mx:LinkButton click="deleteDico()" width="20" icon="@Embed('images/DeleteRecord.png')" toolTip="Supprimer un dictionnaire pour cette oeuvre" visible="{bRemove}"/>							
+												<mx:LinkButton click="deleteDico()" width="20" icon="@Embed('images/DeleteRecord.png')" toolTip="Supprimer un dictionnaire pour cette oeuvre" visible="{bRemove}"/>
 											</mx:HBox>							
 											<mx:DataGrid width="100%" id="dgDico" click="dgDico_clickHandler(event)" dataProvider="{arrDicoAssos}"
 												 rowCount="3" >
@@ -447,12 +486,19 @@
 												</mx:HBox>
 												<mx:ComboBox id="cbLangueAjout"  prompt="choisissez une langue" labelField="langue" dataProvider="{arrLangue}" editable="true" />											
 												<mx:Label text="Choisissez une licence :" />
-												<co:gLicence id="ccAjout" bModif="true" />			
-
-												<mx:HBox>
+												<co:gLicence id="ccAjout" bModif="true" />
+												<mx:HBox verticalAlign="middle">
+													<co:cUploadFile visible="{this.parentApplication.uti.administration}" idExi="{this.parentApplication.uti.idUti}" wf="auton" ttBtn="Importer un dictionnaire" id="uf" iconBtn="@Embed('images/synchronize.png')" ctlBind="{this}" objName="Model_DbTable_Gen_dicos" typeFic="All" />												
 													<mx:Button label="Ajouter" click="ajouterDicoclickHandler(event)"/>
 													<mx:Button label="Annuler" click="vsDico.selectedChild = viewDico;" />															
 												</mx:HBox>
+												<!--
+												<mx:HBox visible="false" id="importation" width="100%" height="100%">
+													<s:TextArea id="taTxtImport" width="100%" height="100%" />
+													<s:TextArea id="taXmlImport" width="100%" height="100%" />
+													<co:gDico id="importDico" visible="true" />
+												</mx:HBox>
+												-->
 											</mx:VBox>
 										</mx:HBox>
 									</mx:ViewStack>											
@@ -485,8 +531,7 @@
 				<mx:Button label="Annuler" click="{vsParam.selectedChild = view;}" />				
 			</mx:HBox>
 			<co:gLicence id="ccModif" bModif="true" ccItem="{item.licence}" />			
-		</mx:VBox>
-
+		</mx:VBox>		
 	</mx:ViewStack>
 
 	 

@@ -329,7 +329,7 @@
 			<s:method name="getAll" result="getAllRole_resultHandler(event)" />			
 		</s:RemoteObject>
 		<s:RemoteObject id="roUti"
-						source="Model_DbTable_flux_Uti" destination="zend" 
+						source="Model_DbTable_Flux_Uti" destination="zend" 
 						showBusyCursor="true"
 						fault="faultHandlerService(event)">
 			<s:method name="getAll" result="getAllUti_resultHandler(event)" />			
