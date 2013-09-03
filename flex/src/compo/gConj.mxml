@@ -64,6 +64,11 @@
 					dgFilter.dpColumns = dpCol;
 					dgFilter.dpRows = arr;
 					dgFilter.dg = dg;
+					dgVerbe.dataProvider = null;
+					initResultGen();
+					bChange = false;
+					arrTrmChange = new Array;
+					
 				}
 			}
 						
@@ -502,8 +507,11 @@
 					actis = "dictionnaire conjugaisons : modifier "+arrR[0]['nbGen']+" items pour "+arrR[0]['nbUti']+" utilisateurs : ";
 					actis = actis+oItem.type+"_"+oItem.lib+" (ref="+idDico+"_"+oItem.id_conj+")";				
 				}				
-				if(action == "supprimer")
-					actis = "dictionnaire conjugaisons : supprimer "+arrR[0]['nbGen']+" items pour "+arrR[0]['nbUti']+" utilisateurs : "+oItem.type+"_"+oItem.lib+"... (ref="+idDico+"_"+oItem.id_conj+")";				
+				if(action == "supprimer"){
+					if(arrR.length==0) ROC.remove(oItem.id_conj);
+					else actis = "dictionnaire conjugaisons : supprimer "+arrR[0]['nbGen']+" items pour "+arrR[0]['nbUti']+" utilisateurs : "+oItem.modele+" "+oItem.num+"... (ref="+idDico+"_"+oItem.id_conj+")";				
+					
+				}
 				this.parentApplication.verifActi(arrR[0], action, actis, ROC, oItem.id_conj, arrTrmChange, idDico);				
 			}
 			

@@ -7,7 +7,7 @@
 	width="100%" height="100%" 
 	verticalAlign="top" horizontalAlign="left" 
 	paddingLeft="3" paddingTop="3" paddingBottom="3" paddingRight="3"
-	initialize="init()">
+	initialize="init()" xmlns:s="library://ns.adobe.com/flex/spark">
 	
 	<mx:Script>
 		<![CDATA[
@@ -248,9 +248,9 @@
 			<mx:Label text="Texte génératif :" />
 			<mx:TextArea id="txtGen" width="100%" text="{oItem.valeur}" />
 			<mx:Label text="Résultat de la génération :" />
-			<mx:TextArea id="txtRes" width="100%" />
+			<s:RichText id="txtRes" width="100%" height="100%" />
 			<mx:HBox>
-				<mx:Button label="Enregistrer" click="{fctEnregistrer()}" visible="{bModif}" />
+				<mx:Button label="Enregistrer" click="{fctEnregistrer(txtGen.text)}" visible="{bModif}" />
 				<mx:Button label="Tester" click="tester_clickHandler(event)" />
 				<mx:Button label="Annuler" click="{fctAnnuler()}" />			
 			</mx:HBox>

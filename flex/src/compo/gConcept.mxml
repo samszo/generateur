@@ -30,8 +30,8 @@
 			[Bindable] public var oItem:Object;
 			private var action:String="";
 			private var arrR:Array;
-			private var newVal:String;	
-
+			private var arrN:Array = new Array;
+			
 			public function faultHandlerService(fault:FaultEvent):void
 			{
 				var str:String;
@@ -135,13 +135,11 @@
 			
 			protected function utilise_resultHandler(event:ResultEvent):void
 			{
-				arrR = event.result as Array;
-				var arrN:Array = new Array;
-				arrN["lib"]=newVal;
+				arrR = event.result as Array;				
 				var actis:String = "";
 				if(action == "modifier"){
 					actis = "dictionnaire concept : modifier "+arrR[0]['nbGen']+" items pour "+arrR[0]['nbUti']+" utilisateurs : ";
-					actis = actis+oItem.type+"_"+oItem.lib+" -> "+oItem.type+"_"+newVal+" (ref="+idDico+"_"+oItem.id_concept+")";				
+					actis = actis+oItem.type+"_"+oItem.lib+" -> "+arrN["type"]+"_"+arrN["lib"]+" (ref="+idDico+"_"+oItem.id_concept+")";				
 				}				
 				if(action == "supprimer")
 					actis = "dictionnaire concept : supprimer "+arrR[0]['nbGen']+" items pour "+arrR[0]['nbUti']+" utilisateurs : "+oItem.type+"_"+oItem.lib+"... (ref="+idDico+"_"+oItem.id_concept+")";				
@@ -195,7 +193,9 @@
 			
 			protected function edit_resultHandler(event:ResultEvent):void
 			{
-				oItem.lib = newVal;				
+				oItem.lib = arrN["lib"];
+				oItem.type = arrN["type"];
+				arrN=new Array;
 				initDetail();
 				bModif = true;
 			}
@@ -206,8 +206,15 @@
 				// Get the cell editor and cast it to TextInput.
 				var myEditor:TextInput = TextInput(event.currentTarget.itemEditorInstance);
 				// Get the new value from the editor.
-				newVal = myEditor.text;	
-				if(bModif && newVal!=oItem.lib){
+				if(event.dataField=="lib"){
+					arrN["lib"]=myEditor.text;					
+					arrN["type"]=oItem.type;
+				}
+				if(event.dataField=="type"){
+					arrN["lib"]=oItem.lib;					
+					arrN["type"]=myEditor.text;
+				}
+				if(bModif && (arrN["lib"]!=oItem.lib || arrN["type"]!=oItem.type)){
 					action = "modifier";
 					bModif = false;
 					ROC.utilise(oItem.id_concept, oItem.type+"_"+oItem.lib);
@@ -245,7 +252,7 @@
 							<mx:columns>
 								<mx:DataGridColumn dataField="id_concept" editable="false" visible="false" headerText="id_concept" />
 								<mx:DataGridColumn dataField="lib" headerText="Descripteur" />
-								<mx:DataGridColumn dataField="type" editable="false" headerText="Type" />
+								<mx:DataGridColumn dataField="type" headerText="Type" />
 							</mx:columns>
 						</mx:DataGrid>
 					</s:VGroup>

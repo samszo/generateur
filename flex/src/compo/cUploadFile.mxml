@@ -196,12 +196,17 @@
                     
 					//récupération de l'identifiant d'objet
                     if(objName=='Model_DbTable_Gen_dicos'){
-                    	sendVars.objId = ctlBind.idOeu;
-						sendVars.idConj = this.parentApplication.arrVerifDico["conjugaisons"];
-						sendVars.langue = paramArr["langue"];
-						sendVars.nom = paramArr["nom"];
-						sendVars.type = paramArr["type"];
-						sendVars.licence = paramArr["licence"];
+						if(paramArr["csv"]){
+							sendVars.idDico = paramArr["idDico"];
+							sendVars.csv = paramArr["csv"];							
+						}else{
+							sendVars.objId = ctlBind.idOeu;
+							sendVars.idConj = this.parentApplication.arrVerifDico["conjugaisons"];
+							sendVars.langue = paramArr["langue"];
+							sendVars.nom = paramArr["nom"];
+							sendVars.type = paramArr["type"];
+							sendVars.licence = paramArr["licence"];
+						}
                     }
 					
                     					
@@ -328,6 +333,6 @@
                 <mx:Button label="Upload file(s)" id="btnUpload" click="startUpload(true)" enabled="false"/>
             </mx:ControlBar>
         </mx:Panel>
-        <!-- <mx:Button width="20" label="{lblBtn}" id="btnAddDirect" click="addFilesDirect()"/> -->
-		<mx:LinkButton label="{lblBtn}" icon="{iconBtn}" toolTip="{ttBtn}" id="btnAddDirect" click="addFilesDirect()"/>
+        <mx:Button width="100%" label="{lblBtn}" id="btnAddDirect" click="addFilesDirect()"/> 
+		<!-- <mx:LinkButton label="{lblBtn}" icon="{iconBtn}" toolTip="{ttBtn}" id="btnAddDirect" click="addFilesDirect()"/>-->
 </mx:Canvas>
