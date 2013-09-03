@@ -99,19 +99,6 @@ class Model_DbTable_Gen_dicos extends Zend_Db_Table_Abstract
     {
     	$this->delete('gen_dicos.id_dico = ' . $id);
     }
-
-    /**
-     * Recherche les entrées de Gen_dicos avec la clef de lieu
-     * et supprime ces entrées.
-     *
-     * @param integer $idLieu
-     *
-     * @return void
-     */
-    public function removeLieu($idLieu)
-    {
-		$this->delete('id_lieu = ' . $idLieu);
-    }
     
     /**
      * Récupère toutes les entrées Gen_dicos avec certains critères
@@ -295,5 +282,27 @@ class Model_DbTable_Gen_dicos extends Zend_Db_Table_Abstract
     	 
     	return $this->fetchAll($query)->toArray();
     }    
-       
+    
+    /**
+     * exporte un dictionnaire au format csv
+     * 
+     * @param int $idDico
+     *
+     * @return array
+     */
+    public function exporter($idDico)
+    {
+    	$sql = "SELECT 
+			c.lib as concept, c.type
+			, g.valeur
+			FROM gen_dicos d
+			INNER JOIN gen_concepts c ON d.id_dico = c.id_dico
+			INNER JOIN gen_concepts_generateurs cg ON c.id_concept = cg.id_concept
+			INNER JOIN gen_generateurs g ON cg.id_gen = g.id_gen
+			WHERE d.id_dico = ".$idDico;
+    	 
+   		$stmt = $this->_db->query($sql);
+    	return $stmt->fetchAll();
+    }    
+    
 }

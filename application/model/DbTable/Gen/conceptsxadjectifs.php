@@ -100,6 +100,19 @@ class Model_DbTable_Gen_conceptsxadjectifs extends Zend_Db_Table_Abstract
     	}    	
     	$this->delete('gen_concepts_adjectifs.id_concept = ' . $id_concept);
     }
+
+    /**
+     * Recherche une entrée avec la clef primaire spécifiée
+     * et supprime cette entrée.
+     *
+     * @param integer $idGen
+     * 
+     * @return void
+     */
+    public function removeGen($id)
+    {
+    	$this->delete('id_concept = ' . $id);
+    }
     
     /**
      * Récupère toutes les entrées Gen_concepts_adjectifs avec certains critères

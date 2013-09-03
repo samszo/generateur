@@ -93,6 +93,19 @@ class Model_DbTable_Gen_conceptsxsubstantifs extends Zend_Db_Table_Abstract
     	$this->delete('gen_concepts_substantifs.id_concept = ' . $id);
     }
 
+    /**
+     * Recherche une entrée avec la clef primaire spécifiée
+     * et supprime cette entrée.
+     *
+     * @param integer $idGen
+     * 
+     * @return void
+     */
+    public function removeGen($id)
+    {
+    	$this->delete('id_concept = ' . $id);
+    }
+        
     
     /**
      * Récupère toutes les entrées Gen_concepts_substantifs avec certains critères

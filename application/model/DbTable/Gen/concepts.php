@@ -136,7 +136,7 @@ class Model_DbTable_Gen_concepts extends Zend_Db_Table_Abstract
         $dt = $this->getDependentTables();
         foreach($dt as $t){
         	$dbT = new $t($this->_db);
-        	$dbT->remove($id);
+        	$dbT->removeGen($id);
         }        
     	$this->delete('gen_concepts.id_concept = ' . $id);
     }
