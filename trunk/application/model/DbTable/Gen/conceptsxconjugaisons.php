@@ -94,6 +94,19 @@ class Model_DbTable_Gen_conceptsxconjugaisons extends Zend_Db_Table_Abstract
     }
     
     /**
+     * Recherche une entrée avec la clef primaire spécifiée
+     * et supprime cette entrée.
+     *
+     * @param integer $idGen
+     * 
+     * @return void
+     */
+    public function removeGen($id)
+    {
+    	$this->delete('id_concept = ' . $id);
+    }
+    
+    /**
      * Récupère toutes les entrées Gen_concepts_conjugaisons avec certains critères
      * de tri, intervalles
      */

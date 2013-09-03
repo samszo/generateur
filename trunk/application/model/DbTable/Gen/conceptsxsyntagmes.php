@@ -94,18 +94,18 @@ class Model_DbTable_Gen_conceptsxsyntagmes extends Zend_Db_Table_Abstract
     }
 
     /**
-     * Recherche les entrées de Gen_concepts_syntagmes avec la clef de lieu
-     * et supprime ces entrées.
+     * Recherche une entrée avec la clef primaire spécifiée
+     * et supprime cette entrée.
      *
-     * @param integer $idLieu
-     *
+     * @param integer $idGen
+     * 
      * @return void
      */
-    public function removeLieu($idLieu)
+    public function removeGen($id)
     {
-		$this->delete('id_lieu = ' . $idLieu);
+    	$this->delete('id_concept = ' . $id);
     }
-    
+        
     /**
      * Récupère toutes les entrées Gen_concepts_syntagmes avec certains critères
      * de tri, intervalles
