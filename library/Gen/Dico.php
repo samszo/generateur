@@ -57,6 +57,46 @@ class Gen_Dico
 			
 	}
 
+	public function importCSV($idDico, $docInfos){
+	try {
+		$this->dbCon = new Model_DbTable_Gen_concepts();
+		$this->dbGen = new Model_DbTable_Gen_generateurs();
+		
+	    //chargement du fichier
+		$arr = $this->csvToArray($docInfos['path_source']);
+		$cpt = "";
+		foreach ($arr as $v) {
+			if(count($v)!=3) throw new Exception("Le fichier est mal formaté : il n'y a pas 3 colonnes.");
+			if($v[0]!="concept" && $v[1]!="type" && $v[2]!="valeur"){
+				//vérifie si on traite le même concept
+				if($cpt!=$v[0]){
+					$idC = $this->dbCon->ajouter(array("id_dico"=>$idDico,"lib"=>$v[0],"type"=>$v[1]));
+					$cpt=$v[0];						
+				}
+	    		$this->dbGen->ajouter($idC, array("id_dico"=>$idDico,"valeur"=>$v[2]));
+			}
+		}
+		// print the array of the csv file.
+		//print_r($arr);
+
+	}catch (Zend_Exception $e) {
+          echo "Récupère exception: " . get_class($e) . "\n";
+          echo "Message: " . $e->getMessage() . "\n";
+	}
+			
+	}
+
+	function csvToArray($file){
+		# Open the File.
+	    if (($handle = fopen($file, "r")) !== FALSE) {
+	        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+	            $csvarray[] = $data;
+	        }
+	        fclose($handle);
+	    }
+     	return $csvarray;		
+	}
+	
 	public function GetMacToXml($idDico){
 
 	try {
