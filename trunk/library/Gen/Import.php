@@ -75,44 +75,45 @@ class Gen_Import {
     public function saveDoc($data, $dataDoc){
     	
     	if($dataDoc["url"]=="url")return ;
-    	    	    		 		
+		
+    	$dbDoc = new Model_DbTable_Flux_Doc();    		    		
+    	
+    	$dataDico = array("url_source"=>$url,"path_source"=>$data["path_source"],"langue"=>$data["langue"],"nom"=>$data["nom"],"type"=>$data["type"],"licence"=>"by");     		
+    	
     	if($data['objName']=='Model_DbTable_Gen_dicos'){
     		$dbDico = new Model_DbTable_Gen_dicos();
-    		$url = str_replace(ROOT_PATH,WEB_ROOT,$data["path_source"]);
-    		$dataDico = array("url_source"=>$url,"path_source"=>$data["path_source"],"langue"=>$data["langue"],"nom"=>$data["nom"],"type"=>$data["type"],"licence"=>"by");     		
-    		$idDico = $dbDico->ajouter($dataDico, $data["idExi"]);
+    		
+    		//ajoute les référence du document dans la base
+    		$dataDoc["data"]="{'action':'importation dictionnaire','idExi':".$data["idExi"].",'idDico':".$data["idDico"]."}";
+    		$idDoc = $dbDoc->ajouter($dataDoc);
+    		
+			//vérifie s'il faut ajouter le lien à l'oeuvre
+    		if($data["idOeu"]){
+    			$dbODU = new Model_DbTable_Gen_oeuvresxdicosxutis(); 
+	    		$dbODU->ajouter($data["idOeu"], $data["idExi"], array($idDicoDst));
+    		}
+    		
     		$oDico = new Gen_Dico();
-    		$oDico->GetMacToXml($idDico);
-    		$oDico->SaveBdd($idDico, $data["idConj"]);
+    		if(isset($data["csv"])){
+    			//importation d'un fichier csv
+    			$idDico = $data["idDico"];
+    			$oDico->importCSV($data["idDico"], $dataDico);	
+    		}else{
+	    		//ajoute le dictionnaire
+	    		$url = str_replace(ROOT_PATH,WEB_ROOT,$data["path_source"]);
+	    		$idDico = $dbDico->ajouter($dataDico, $data["idExi"]);
+    			//importation des dicos Balpe
+	    		$oDico->GetMacToXml($idDico);
+	    		$oDico->SaveBdd($idDico, $data["idConj"]);    			
+    		}
+    		
     		$dataDico = $dbDico->findByIdDico($idDico);
     		return $dataDico;
     	}
 		
-		if($data['objName']=='Models_DbTable_Gevu_docsxproblemes' || $data['objName']=='Models_DbTable_Gevu_docsxlieux' ){
-			$dbDoc = new Model_DbTable_Flux_Doc();
-			$idDoc = $dbDoc->ajouter($dataDoc,false);
-			
-			//redimensionne l'image pour la vignette
-			$this->fctredimimage(120,120,'',"vig_".$data['new_name'],$data['rep'],$data['new_name']);
-			//redimensionne l'image pour l'affichage web
-			$this->fctredimimage(400,400,'','',$data['rep'],$data['new_name']);
-			//ajoute une signature
-			$this->fcttexteimage("GEVU", '', '',$data['rep'], $data['new_name'], 'HG');
-			if($data['objName']=='Models_DbTable_Gevu_docsxproblemes'){
-				$doc_obj = new Models_DbTable_Gevu_docsxproblemes($site->db);
-				$doc_obj->ajouter(array("id_doc"=>$idDoc,"id_instant"=>$idIns,"id_probleme"=>$data['objId']));		
-			}
-			if($data['objName']=='Models_DbTable_Gevu_docsxlieux'){
-				$doc_obj = new Models_DbTable_Gevu_docsxlieux($site->db);
-				$doc_obj->ajouter(array("id_doc"=>$idDoc,"id_instant"=>$idIns,"id_lieu"=>$data['objId']));
-			}		
-		}
-
 		return $idDoc;
 		
-    }
-
-    
+    }    
     
 /** merci à http://j-reaux.developpez.com/tutoriel/php/fonctions-redimensionner-image/
 // 	---------------------------------------------------------------

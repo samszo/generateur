@@ -216,7 +216,7 @@ class Gen_Moteur
         if($getTexte){
         	$this->genereTexte();
         }
-		$t = $this->texte;
+		return $this->texte;
 	}
 
     /**
@@ -347,7 +347,7 @@ class Gen_Moteur
 						}
 					}
 				}elseif(isset($arr["ERREUR"]) && $this->showErr){
-					$this->texte .= $this->arrayVersHTML($arr);
+					$this->texte .= '<ul><font color="#de1f1f" >ERREUR:'.$this->arrayVersListHTML($arr).'</font></ul>';	
 				}else{
 					if($txtCondi){
 						$det = "";
@@ -393,6 +393,11 @@ class Gen_Moteur
 		
 		//gestion des espace en trop
 		//$this->texte = preg_replace('/\s\s+/', ' ', $this->texte); //problème avec à qui devient illisible ???
+		$this->texte = str_replace("  "," ",$this->texte);
+		$this->texte = str_replace("  "," ",$this->texte);
+		$this->texte = str_replace("  "," ",$this->texte);
+		$this->texte = str_replace("  "," ",$this->texte);
+		$this->texte = str_replace("  "," ",$this->texte);
 		$this->texte = str_replace("  "," ",$this->texte);
 		
 		$this->texte = str_replace("' ","'",$this->texte);
@@ -1475,7 +1480,7 @@ class Gen_Moteur
         $arrCpt = $this->getClassDef($class);
         
         //cas des class caract
-        if(substr($class,0,7)=="carac_t"){
+        if(substr($class,0,7)=="carac_t" || substr($class,0,5)=="carac"){
         	//on vérifie que le caractère n'est pas déjà calculé
         	if(isset($this->arrCaract[$class])){
         		//on retourne le carac déjà choisi
@@ -1738,6 +1743,26 @@ class Gen_Moteur
 
 	}	
 
+
+	
+    /**
+     * Mise en forme d'un tableau d'erreur en liste HTML
+     *
+     * @param array $var
+     *
+     * @return string
+     */
+	function arrayVersListHTML($var){
+	  $out = '<li>';
+	  foreach($var as $k=>$v){
+	    if(is_array($v)){
+	      $out .= '<ul>'.$this->arrayVersListHTML($v).'</ul>';
+	    }else{
+	      $out .= " ".$k." ".$v;
+	    }
+	  }
+	  return $out.'</li>';
+	}
 
     /**
      * Fonction du moteur
