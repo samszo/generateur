@@ -4,6 +4,9 @@ import compo.*;
 import compo.dgOeuvres;
 
 import flash.events.MouseEvent;
+import flash.utils.getQualifiedClassName;
+
+import flashx.textLayout.conversion.TextConverter;
 
 import mx.controls.Alert;
 import mx.events.CloseEvent;
@@ -13,6 +16,7 @@ import mx.rpc.events.ResultEvent;
 import mx.rpc.remoting.RemoteObject;
 
 import spark.components.Label;
+import spark.components.RichText;
 
 [Bindable] public var uti:Object;
 [Bindable] public var arrCtrls:Array;
@@ -27,10 +31,11 @@ public var actionItem:String;
 public var actisItem:String;
 public var idDicoItem:String;
 
-//public var urlAPI:String = "http://localhost/generateur/services/api.php";
-public var urlAPI:String = "http://generator.digitalartimag.org/services/api.php";
-//public const ENDPOINT_IMPORT:String = "http://localhost/generateur/services/import.php";
-public const ENDPOINT_IMPORT:String = "http://generator.digitalartimag.org/services/import.php";
+public var urlAPI:String = "http://localhost/generateur/services/api.php";
+//public var urlAPI:String = "http://generator.digitalartimag.org/services/api.php";
+public const ENDPOINT_IMPORT:String = "http://localhost/generateur/services/import.php";
+//public const ENDPOINT_IMPORT:String = "http://generator.digitalartimag.org/services/import.php";
+public const ENDPOINT_EXPORT:String = "http://localhost/generateur/services/export.php";
 
 protected function gereuti_clickHandler(event:MouseEvent):void
 {
@@ -52,109 +57,30 @@ protected function testerMoteur_resultHandler(event:ResultEvent):void
 	var arrResult:Array = event.result as Array;
 	var i:int = 0;
 	for each(var txt:String in arrResult){
-		arrCtrls[i].text = txt;
+		//vérifie le type du champ texte		 
+		var oName:String = getQualifiedClassName(arrCtrls[i]);
+		if(oName=="spark.components::RichText")
+			arrCtrls[i].textFlow = TextConverter.importToFlow(txt, TextConverter.TEXT_FIELD_HTML_FORMAT);
+		else
+			arrCtrls[i].text = txt;
 		i++;
 	}	
 }
 
 public function verifActi(arrR:Array, action:String, actis:String, ROC:Object, id:String, data:Array, idDico:String):void
 {
-	idItem=id;
-	dataItem=data;
-	rocItem=ROC;
-	actionItem=action;
-	arrItem=arrR;
-	actisItem=actis;
-	idDicoItem=idDico;
-	if(arrR['nbGen']!=0){
-		if(arrR['nbUti']==1){
-			if(action=="supprimer"){
-				Alert.show("Vous ne pouvez pas supprimer l'item."
-					+"\nIl est utilisé dans "+arrR['nbGen']+" expression(s)."
-					+ "\nVous devez supprimer ces expresions avant de pouvoir supprimer l'item."
-					,"Vérification disponibilité de l'item");										
-			}else{
-				Alert.show("L'item est utilisé dans "+arrR['nbGen']+" expression(s)."
-					+ "\nVoulez-vous que ces expressions soient impactées : cliquer sur 'OUI'"
-					+ "\nPréférez vous créer un nouvel item : cliquer sur 'NON'"
-					,"Vérification disponibilité de l'item", 3, this, verifSoloItemHandler);										
-			}	
-		}else{
-			var mess:String ="";
-			if(action=="modifier"){
-				mess="\nPréférez vous créer un nouvel item : cliquer sur 'NON'";
-			}
-			
-			Alert.show("Vous ne pouvez pas "+action+" l'item."
-				+"\nIl est utilisé dans "+arrR['nbGen']+" expression(s)."
-				+"\nVoulez vous prévenir le(s) "+arrR['nbUti']+" utilisateur(s)  : cliquer sur 'OUI'"
-				+ mess
-				,"Vérification disponibilité de l'item", 3, this, verifMultiItemHandler);									
-		}
-	}else{
-		if(action=="supprimer")
-			if(rocItem.source=="Model_DbTable_Gen_determinants")
-				rocItem.removeNum(idItem, idDicoItem);					
-			else
-				rocItem.remove(idItem);
-		if(action=="modifier"){
-			if(rocItem.source=="Model_DbTable_Gen_determinants")
-				rocItem.editMulti(dataItem);					
-			else
-				rocItem.edit(idItem, dataItem);					
-		}
-		//réinitialise le tableau génral des concepts
-		allConcept=null;		
-	}	
-}
+	
+	var twCM:twConfirmModif= twConfirmModif(
+		PopUpManager.createPopUp(this, twConfirmModif, true));
+	twCM.idItem=id;
+	twCM.dataItem=data;
+	twCM.rocItem=ROC;
+	twCM.actionItem=action;
+	twCM.arrItem=arrR;
+	twCM.actisItem=actis;
+	twCM.idDicoItem=idDico;
+	PopUpManager.centerPopUp(twCM);
 
-
-private function verifSoloItemHandler(event:CloseEvent):void
-{
-	if (event.detail == Alert.YES) 
-	{					
-		if(rocItem.source=="Model_DbTable_Gen_determinants")
-			rocItem.editMulti(dataItem);					
-		else
-			rocItem.edit(idItem, dataItem);					
-	}
-	if (event.detail == Alert.NO) 
-	{
-		if(actionItem=="modifier"){
-			if(rocItem.source=="Model_DbTable_Gen_determinants")
-				rocItem.dupliquer(dataItem);					
-			else
-				rocItem.ajouter(dataItem);											
-		}
-	}
-	//réinitialise le tableau génral des concepts
-	allConcept=null;
-
-}
-
-private function verifMultiItemHandler(event:CloseEvent):void
-{
-	if (event.detail == Alert.YES) 
-	{
-		ajoutActiUti();
-	}
-	if (event.detail == Alert.NO && actionItem=="modifier") 
-	{
-		rocItem.ajouter(dataItem);
-		//réinitialise le tableau génral des concepts
-		allConcept=null;
-	}
-}
-
-public function ajoutActiUti():void
-{
-	ROACTI.ajoutForUtis(actisItem, arrItem['idsUti'], dgOeuParam.idOeu, idDicoItem, idItem, dataItem);
-}
-
-protected function ajoutForUtis_resultHandler(event:ResultEvent):void
-{
-	// TODO Auto-generated method stub
-	var t:String="1";
 }
 
 public function faultHandlerService(fault:FaultEvent):void
