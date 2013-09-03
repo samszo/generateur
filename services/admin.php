@@ -24,9 +24,10 @@ try {
 	*/
 	
 	/*
-	$idDico = 135;
+	$idDico = 110;
 	$idConj = 44;
     $oDico = new Gen_Dico();
+    $oDico->importCSV($idDico, array("path_source"=>"http://localhost/generateur/data/dicos/522577f966afd.csv"));
     $oDico->GetMacToXml($idDico);
     $oDico->SaveBdd($idDico, $idConj);
 	*/
@@ -82,16 +83,20 @@ try {
 	*/
 	
 	/*
-	$arrVerifDico = array("concepts"=>"93,94,82,34,102"	
+	$arrVerifDico = array("concepts"=>"111, 112, 34"	
 		,"conjugaisons"=>"44"	
 		,"déterminants"=>"46"	
 		,"négations"=>"16"	
+		,"pronoms"=>"13, 14, 108"	
 		,"pronoms_complement"=>"13"	
 		,"pronoms_sujet"=>"14"	
+		,"pronoms_sujet_indefini"=>"108"	
 		,"syntagmes"=>"4");	
-	$txts = array("[dis-NK8yf]");	
+		
+		
+	$txts = array("[Pro-moules-07]");	
 	$m = new Gen_Moteur();
-	$m->Tester($txts, $arrVerifDico);
+	$var = $m->Tester($txts, $arrVerifDico);
 	$m->getArbreGen("[0|caract1] [0|caract2], [thl-visage-01], [thl-allure-01]",$arrVerifDico);
 	$arr = $m->arrClass;
 	*/

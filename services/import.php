@@ -7,7 +7,7 @@ try {
 	
 	$imp = new Gen_Import();
 	$imp->addDoc($_REQUEST);
-
+	
 }catch (Zend_Exception $e) {
 	echo "Récupère exception: " . get_class($e) . "\n";
     echo "Message: " . $e->getMessage() . "\n";
