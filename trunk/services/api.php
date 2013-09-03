@@ -65,8 +65,9 @@ try {
 		
 		//génére le texte
 		$m = new Gen_Moteur();
-		$result = $m->Tester(array($txt), $arrVerifDico);
-		$txt = $result[0]; 
+		$m->arrDicos = $arrVerifDico;
+		$m->forceCalcul = false;
+		$txt = $m->Generation($txt);
 		
 	}
 		
