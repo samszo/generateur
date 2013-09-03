@@ -488,7 +488,9 @@
 												<mx:Label text="Choisissez une licence :" />
 												<co:gLicence id="ccAjout" bModif="true" />
 												<mx:HBox verticalAlign="middle">
+													<!--
 													<co:cUploadFile visible="{this.parentApplication.uti.administration}" idExi="{this.parentApplication.uti.idUti}" wf="auton" ttBtn="Importer un dictionnaire" id="uf" iconBtn="@Embed('images/synchronize.png')" ctlBind="{this}" objName="Model_DbTable_Gen_dicos" typeFic="All" />												
+													-->
 													<mx:Button label="Ajouter" click="ajouterDicoclickHandler(event)"/>
 													<mx:Button label="Annuler" click="vsDico.selectedChild = viewDico;" />															
 												</mx:HBox>

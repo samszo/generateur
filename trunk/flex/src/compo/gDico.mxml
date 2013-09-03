@@ -7,18 +7,7 @@
 	<s:layout>
 		<s:VerticalLayout paddingBottom="3" paddingLeft="3" paddingRight="3" paddingTop="3"/>
 	</s:layout>
-	
-	<fx:Script>
-		<![CDATA[
-			protected function findByIdDico_resultHandler(event:ResultEvent):void
-			{
-				// TODO Auto-generated method stub
-				
-			}
-		]]>
-	</fx:Script>
-	
-	
+		
 	<fx:Script>
 		<![CDATA[
 			import mx.controls.Alert;
@@ -63,8 +52,10 @@
 			
 			protected function exporter_clickHandler(event:MouseEvent):void
 			{
-				// TODO Auto-generated method stub
-				
+				if(oItem){
+					var url:String = this.parentApplication.ENDPOINT_EXPORT+"?idDico=" + oItem.id_dico;
+					navigateToURL(new URLRequest(url), '_blank');				
+				}
 			}
 			
 			protected function creationCompleteHandler(event:FlexEvent):void
@@ -81,6 +72,10 @@
 					bRemove = this.parentApplication.uti.suppression;
 
 					if(oItem.type=="concepts"){
+						if(oItem.general=="0"){
+							btnExp.visible = true;
+							btnImp.visible = true;
+						}
 						var gC:gConcept = new gConcept();
 						gC.idDico = oItem.id_dico;
 						detail.addElement(gC);
@@ -129,6 +124,19 @@
 				init();
 			}
 
+			public function getParamAjout():Array
+			{
+				var pArr:Array = new Array;
+				pArr["idDico"]=oItem.id_dico;						
+				pArr["csv"]="oui";						
+				
+				return pArr;				
+			}
+			
+			public function resultImport(result:Object):void
+			{
+				init();
+			}
 		]]>
 	</fx:Script>
 		
@@ -140,14 +148,14 @@
 			<s:method name="edit" result="editHandler(event)" />
 		</s:RemoteObject>
 	</fx:Declarations>
-	<s:HGroup width="100%" verticalAlign="middle" height="20">
+	<s:HGroup width="100%" verticalAlign="top" height="20">
 		<s:Label id="type"  text="{oItem.type}"/><s:TextInput id="nom" width="100%" text="{oItem.nom}"/><s:TextInput id="langue" text="{oItem.langue}"/>
 		<compo:gLicence id="cc" ccItem="{oItem.licence}" click="modifLicence()" bModif="false" toolTip="Cliquez sur l'image pour plus d'information ou pour changer de licence." />		
 	</s:HGroup>
 	<s:HGroup width="100%" verticalAlign="middle" height="20">
 		<s:Button label="Enregistrer" visible="{bModif}" click="enregistrer_clickHandler(event)"/>
-		<s:Button label="Importer" visible="false" click="importer_clickHandler(event)"  />
-		<s:Button label="Exporter" visible="false" click="exporter_clickHandler(event)"  />
+		<compo:cUploadFile id="btnImp" visible="false" idExi="{this.parentApplication.uti.idUti}" wf="auton" lblBtn="Importer" ttBtn="Importer un dictionnaire au format csv" ctlBind="{this}" objName="Model_DbTable_Gen_dicos" typeFic="csv" />												
+		<s:Button id="btnExp" label="Exporter" visible="false" click="exporter_clickHandler(event)"  />
 	</s:HGroup>
 	<s:BorderContainer width="100%" height="100%" id="detail">
 	</s:BorderContainer>

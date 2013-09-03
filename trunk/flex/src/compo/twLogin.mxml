@@ -71,11 +71,11 @@
 	</mx:RemoteObject>
 		<mx:VBox >		
 			<mx:HBox >
-				<mx:Label text="Login : " />
+				<mx:Label width="100" text="Login : "/>
 				<mx:TextInput id="log" />
 			</mx:HBox>
 			<mx:HBox >
-				<mx:Label text="Mot de passe : " />
+				<mx:Label width="100" text="Mot de passe : " />
 				<mx:TextInput id="mdp" displayAsPassword="true" />
 			</mx:HBox>
 			<mx:Button label="Valider" click="VerifMdp()" />

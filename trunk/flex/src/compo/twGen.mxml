@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" 
+	title="Modification d'un générateur"
+	showCloseButton="true"
+	close="PopUpManager.removePopUp(this);"  
+	xmlns:ns2="compo.*"
+	creationComplete="Init()"
+	width="400" height="400"
+	> 
+	<mx:Script>
+        <![CDATA[
+			import compo.*;
+			
+			import mx.collections.ArrayCollection;
+			import mx.managers.PopUpManager;
+			
+			import spark.components.RadioButton;
+			
+			[Bindable] public var oItem:Object
+			[Bindable] public var bRemove:Boolean=true;
+			[Bindable] public var bAjout:Boolean=true;
+			[Bindable] public var bModif:Boolean=true;
+		
+			[Bindable] public var acItems:ArrayCollection
+			[Bindable] public var fctAnnuler:Function;
+			[Bindable] public var fctEnregistrer:Function;
+			[Bindable] public var concepts:ArrayCollection;
+			
+			private function Init():void{
+				//dg.twAMC=this;
+			}
+
+			public function ferme():void{
+				PopUpManager.removePopUp(this);
+			}
+
+									
+		]]>
+    </mx:Script>
+
+	<mx:VBox paddingBottom="6" paddingLeft="6" paddingRight="6" paddingTop="6" width="100%" height="100%">
+		<ns2:gEcrire id="editGen" width="100%" height="100%" oItem="{oItem}" fctAnnuler="{fctAnnuler}" fctEnregistrer="{fctEnregistrer}" allConcept="{this.parentApplication.allConcept}" />				
+	</mx:VBox>
+    
+</mx:TitleWindow>

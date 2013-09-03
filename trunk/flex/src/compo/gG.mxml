@@ -15,6 +15,7 @@
 			import mx.events.CloseEvent;
 			import mx.events.DataGridEvent;
 			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
 			import mx.rpc.events.FaultEvent;
 			import mx.rpc.events.ResultEvent;
 			
@@ -65,7 +66,13 @@
 				var arr:Array = event.result as Array;
 				dg.dataProvider = arr;
 				vs.selectedChild = lecture;
-				//réinitialise le tableau génral des concepts
+				var dpCol:ArrayCollection = new ArrayCollection();
+				dpCol.addItem({data:'any', label:'Tout'});
+				dpCol.addItem({data:'lib', label:'Descripteur'});
+				dgFilter.dpColumns = dpCol;
+				dgFilter.dpRows = arr;
+				dgFilter.dg = dg;
+				//réinitialise le tableau général des concepts
 				this.parentApplication.allConcept=null;
 			}
 
@@ -108,11 +115,11 @@
 			}
 			
 
-			public function enregistrer_clickHandler():void
+			public function enregistrer(txt:String):void
 			{
 				action = "modifier";
-				donnee.valeur = editGen.txtGen.text;
-				arrChange["valeur"] = editGen.txtGen.text;				
+				donnee.valeur = txt;
+				arrChange["valeur"] = txt;				
 				ROCG.utilise(donnee.id_gen);				
 			}
 			
@@ -134,11 +141,11 @@
 				ROC.ajouter(arrCpt, true, true);								
 			}
 
-			private function ajouterGen():void
+			private function ajouterGen(txt:String):void
 			{				
 				var arr:Array = new Array();
 				arr["id_dico"]=idDico;
-				arr["valeur"]=ecrireGen.txtGen.text;
+				arr["valeur"]=txt;
 				ROCG.ajouter(oConcept.id_concept, arr);								
 			}
 			
@@ -195,6 +202,28 @@
 			public function editGenAnnuler():void{
 				vs.selectedChild = lecture;
 			}
+			
+			protected function btnUpdate_clickHandler(event:MouseEvent):void
+			{
+				var twG:twGen= twGen(
+					PopUpManager.createPopUp(this, twGen));
+				twG.oItem = donnee;
+				twG.fctAnnuler = editGenAnnuler;
+				twG.fctEnregistrer = enregistrer;
+				PopUpManager.centerPopUp(twG);
+			}
+			
+			protected function btnAddNew_clickHandler(event:MouseEvent):void
+			{
+				var twG:twGen= twGen(
+					PopUpManager.createPopUp(this, twGen));
+				twG.title = "Ajout d'un générateur";
+				twG.fctAnnuler = editGenAnnuler;
+				twG.fctEnregistrer = ajouterGen;
+				PopUpManager.centerPopUp(twG);
+
+			}
+			
 		]]>
 	</fx:Script>
 		
@@ -224,26 +253,29 @@
 					<s:Label text="Nom du texte génératif :" /><s:Label text="{oConcept.lib}" />			
 					<s:Label text="Type :" /><s:Label text="{oConcept.type}" />			
 				</s:HGroup>
-				<s:VGroup width="100%" height="100%" >
-					<s:HGroup>
-						<mx:LinkButton visible="{bRemove}" width="20" click="removeItem()" 
-									   icon="@Embed('images/DeleteRecord.png')" toolTip="Supprimer un item"/>
-						<mx:LinkButton id="btnAddNew" visible="{bAjout}" width="20" click="{vs.selectedChild=ajoutGen}"
-									   icon="@Embed('images/AddRecord.png')" toolTip="Ajouter un item"/>					
-						<mx:LinkButton id="btnUpdate" visible="{bModif}" width="20" click="{vs.selectedChild=modifGen}"
-									   icon="@Embed('images/UpdateRecord.png')" toolTip="Modifier un item"/>					
-					</s:HGroup>
-					<mx:DataGrid id="dg" width="100%" height="100%" click="selectDgItem(event);" editable="false" >
-						<mx:columns>
-							<mx:DataGridColumn dataField="id_gen" editable="false" visible="false" headerText="id_gen" />
-							<mx:DataGridColumn dataField="valeur" headerText="Descripteur" editable="true" />
-						</mx:columns>
-					</mx:DataGrid>
-				</s:VGroup>
-				<s:HGroup width="100%" verticalAlign="middle">
-					<s:Button label="Tester" click="tester_clickHandler(event)" />
-					<s:TextInput width="100%" id="G" text="{'['+oConcept.type+'-'+oConcept.lib+']'}"/>
-					<s:TextArea width="100%" color="#E01919" text="---" id="GT" />
+				<s:HGroup width="100%" height="100%" >
+					<s:VGroup width="100%" height="100%" >
+						<compo:hbFilterControl id="dgFilter"  />
+						<s:HGroup>
+							<mx:LinkButton visible="{bRemove}" width="20" click="removeItem()" 
+										   icon="@Embed('images/DeleteRecord.png')" toolTip="Supprimer un item"/>
+							<mx:LinkButton id="btnAddNew" visible="{bAjout}" width="20" click="btnAddNew_clickHandler(event)" 
+										   icon="@Embed('images/AddRecord.png')" toolTip="Ajouter un item"/>					
+							<mx:LinkButton id="btnUpdate" visible="{bModif}" width="20" click="btnUpdate_clickHandler(event)" 
+										   icon="@Embed('images/UpdateRecord.png')" toolTip="Modifier un item"/>					
+						</s:HGroup>
+						<mx:DataGrid id="dg" width="100%" height="100%" click="selectDgItem(event);" editable="false" >
+							<mx:columns>
+								<mx:DataGridColumn dataField="id_gen" editable="false" visible="false" headerText="id_gen" />
+								<mx:DataGridColumn dataField="valeur" headerText="Descripteur" editable="true" />
+							</mx:columns>
+						</mx:DataGrid>
+					</s:VGroup>
+					<s:VGroup width="100%" height="100%" >
+						<s:Button label="Tester" click="tester_clickHandler(event)" />
+						<s:TextInput width="100%" id="G" text="{'['+oConcept.type+'-'+oConcept.lib+']'}"/>
+						<s:RichText id="GT" width="100%" height="100%" /> 
+					</s:VGroup>
 				</s:HGroup>
 			</s:VGroup>
 		</mx:Canvas>
@@ -259,14 +291,6 @@
 					<s:Button label="Ajouter" click="ajouter()"  />
 					<s:Button label="Annuler" click="{this.cptParent.vs.selectedChild = this.cptParent.lecture;}"  />
 				</s:HGroup>
-			</s:VGroup>				
-		</mx:Canvas>
-		<mx:Canvas width="100%" height="100%" id="ajoutGen" >
-			<compo:gEcrire id="ecrireGen" width="100%" height="100%" oItem="{donnee}" fctAnnuler="editGenAnnuler" fctEnregistrer="ajouterGen" allConcept="{this.parentApplication.allConcept}" />				
-		</mx:Canvas>
-		<mx:Canvas width="100%" height="100%" id="modifGen" >
-			<s:VGroup width="100%" height="100%"  >
-				<compo:gEcrire id="editGen" width="100%" height="100%" oItem="{donnee}" fctAnnuler="editGenAnnuler" fctEnregistrer="enregistrer_clickHandler" allConcept="{this.parentApplication.allConcept}" />				
 			</s:VGroup>				
 		</mx:Canvas>
 	</mx:ViewStack>						
