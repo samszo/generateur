@@ -119,6 +119,7 @@
 						case "v": 
 							var eV:gV = new gV();
 							eV.oConcept = oItem;
+							eV.idDicoConj = this.parentApplication.arrVerifDico["conjugaisons"];
 							eV.idDico = this.idDico;
 							dgDetail.addElement(eV);
 							break; 
@@ -202,7 +203,7 @@
 			
 			protected function dg_itemEditEndHandler(event:DataGridEvent):void
 			{
-				if(!bModif) return;
+				if(!bModif || oItem == null) return;
 				// Get the cell editor and cast it to TextInput.
 				var myEditor:TextInput = TextInput(event.currentTarget.itemEditorInstance);
 				// Get the new value from the editor.

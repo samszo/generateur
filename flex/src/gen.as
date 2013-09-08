@@ -1,11 +1,9 @@
 // ActionScript file
-import air.update.ApplicationUpdaterUI;
 
 import compo.*;
 import compo.dgOeuvres;
 
 import flash.events.MouseEvent;
-import flash.filesystem.File;
 
 import mx.controls.Alert;
 import mx.events.CloseEvent;
@@ -177,16 +175,8 @@ public function login():void
 private function init():void {
 
 	utiLog.text = uti.login;
-	verifUpdate();
 	
 }
-
-public function verifUpdate():void
-{
-	var appUpdater:ApplicationUpdaterUI = new ApplicationUpdaterUI(); 
-	appUpdater.configurationFile = new File("app:/updateConfig.xml"); 
-	appUpdater.initialize();
-} 
 
 public function ShowSelection(idOeu:int):void{
 	//réinitiaise le détail des items du dico

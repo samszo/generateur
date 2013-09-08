@@ -18,6 +18,7 @@
 			import mx.rpc.events.FaultEvent;
 			import mx.rpc.events.ResultEvent;
 			
+			import spark.events.IndexChangeEvent;
 			import spark.events.TextOperationEvent;
 
 			[Bindable] public var bRemove:Boolean=true;
@@ -61,12 +62,8 @@
 			
 			protected function findByIdConcept_resultHandler(event:ResultEvent):void
 			{
-				if(event.result[0]){
-					donnee = event.result[0];
-					if(donnee.elision=="0")elision.selected = false;
-					else elision.selected = true;
-					if(donnee.genre=="2") genre2.selected = true;
-					else genre1.selected = true;
+				if(event.result){
+					list.dataProvider = new ArrayCollection(event.result as Array);
 				}				
 			}
 
@@ -85,6 +82,16 @@
 
 			protected function enregistrer_clickHandler(event:MouseEvent):void
 			{
+				//récupère les modifications
+				for each(var obj:Object in list.dataProvider){
+					if(obj.change["prefix"] || obj.change["genre"] || obj.change["elision"]){
+						var arr:Array = new Array;
+						arr["id_sub"]=obj.id_sub;
+						arr["val"]=obj.change;
+						arrChange.push(arr);
+					}
+				}
+
 				action = "modifier";
 				ROCS.utilise(oConcept.id_concept,oConcept.lib);								
 			}
@@ -122,10 +129,9 @@
 				var actis:String = "";
 				if(action == "modifier"){
 					actis = "dictionnaire concept : modifier "+arrR[0]['nbGen']+" items pour "+arrR[0]['nbUti']+" utilisateurs : ";
-					actis = actis + "m_"+oConcept.lib+" "+donnee.elision+" "+donnee.prefix+" "+donnee.s+" "+donnee.p;
-					actis = actis + " -> m_"+lib.text+" "+elision.selected+" "+prefix.text+" "+s.text+" "+p.text;
+					actis = actis + "m_"+oConcept.lib;
 					actis = actis + " (ref="+idDico+"_"+oConcept.id_concept+")";				
-					this.parentApplication.verifActi(arrR[0], action, actis, ROCS, donnee.id_sub, arrChange, idDico);									
+					this.parentApplication.verifActi(arrR[0], action, actis, ROCS, oConcept.id_concept, arrChange, idDico);									
 				}
 				if(action == "supprimer"){
 					actis = "dictionnaire concept : supprimer "+arrR[0]['nbGen']+" items pour "+arrR[0]['nbUti']+" utilisateurs : a_"+oConcept.lib+"... (ref="+idDico+"_"+oConcept.id_concept+")";				
@@ -144,51 +150,22 @@
 				this.cptParent.ROC.findByIdDico(idDico);
 				this.cptParent.initDetail();
 			}
-			protected function t_changeHandler(event:TextOperationEvent):void
-			{
-				if(!bModif)return;
-
-				var tx:TextInput = event.target as TextInput;
-				tx.setStyle("color","red");
-				arrChange[tx.id] = tx.text;
-				bChange = true;
-			}
-			protected function elision_changeHandler(event:Event):void
-			{
-				if(!bModif)return;
-
-				if(elision.selected)
-					arrChange["elision"]= "1";
-				else
-					arrChange["elision"]= "0";				
-				bChange = true;
-			}
-			
-			protected function genre_changeHandler(event:Event):void
-			{
-				if(!bModif)return;
-
-				if(genre1.selected)
-					arrChange["genre"]= "1";
-				if(genre2.selected)
-					arrChange["genre"]= "2";
-				bChange = true;
-				genre1.setStyle("color","red");
-				genre2.setStyle("color","red");
-				
-			}
 			
 			protected function edit_resultHandler(event:ResultEvent):void
 			{
 				bChange = false;
-				arrChange = new Array;
-				lib.setStyle("color","black");
-				prefix.setStyle("color","black");
-				s.setStyle("color","black");
-				p.setStyle("color","black");
-				elision.setStyle("color","black");
-				genre1.setStyle("color","black");
-				genre2.setStyle("color","black");
+				ROCS.findByIdConcept(oConcept.id_concept);
+				
+			}
+			
+			protected function list_valueCommitHandler(event:FlexEvent):void
+			{
+				bChange = true;				
+			}
+			
+			protected function list_changeHandler(event:IndexChangeEvent):void
+			{
+				var to:Object = event.target;
 				
 			}
 			
@@ -200,7 +177,7 @@
 						 source="Model_DbTable_Gen_substantifs" destination="zend" 
 						 showBusyCursor="true"
 						 fault="faultHandlerService(event)">
-			<s:method name="edit" result="edit_resultHandler(event)" />  	
+			<s:method name="editMulti" result="edit_resultHandler(event)" />  	
 			<s:method name="findByIdConcept" result="findByIdConcept_resultHandler(event)" />  
 			<s:method name="ajouter" result="ajouter_resultHandler(event)" />			
 			<s:method name="utilise" result="utilise_resultHandler(event)"  />			
@@ -214,25 +191,20 @@
 						<s:Label text="Nom du substantif :" /><s:Label id="lib" text="{oConcept.lib}" />			
 					</s:HGroup>
 					<s:HGroup width="100%" verticalAlign="middle">
-						<s:Label text="prefix :" width="60"/><s:TextInput id="prefix" text="{donnee.prefix}" change="t_changeHandler(event)" />			
-					</s:HGroup>
-					<s:HGroup width="100%" verticalAlign="middle">
-						<s:CheckBox label="élision :" id="elision" change="elision_changeHandler(event)"/>
-						<s:RadioButton label="Féminin" id="genre2" groupName="genre" change="genre_changeHandler(event)" />
-						<s:RadioButton label="Masuclin" id="genre1" groupName="genre" change="genre_changeHandler(event)" />
-					</s:HGroup>
-					<s:HGroup width="100%" verticalAlign="middle">
-						<s:Label text="singulier :" width="60"/><s:TextInput id="s" width="40" text="{donnee.s}" change="t_changeHandler(event)"/>			
+						<s:Label text="singulier :" width="60"/>			
 						<s:TextInput width="100%" id="Gs" text="{'[12|m_'+oConcept.lib+']'}"/><s:Label width="100%" color="#E01919" text="---" id="GTs" />
 					</s:HGroup>
 					<s:HGroup width="100%" horizontalAlign="left" verticalAlign="middle">
-						<s:Label text="pluriel :" width="60"/><s:TextInput id="p" width="40" text="{donnee.p}" change="t_changeHandler(event)"/>			
+						<s:Label text="pluriel :" width="60"/>			
 						<s:TextInput width="100%" id="Gp" text="{'[62|m_'+oConcept.lib+']'}"/><s:Label  width="100%" color="#E01919" text="---" id="GTp" />
 					</s:HGroup>
 					<s:HGroup verticalAlign="middle">
 						<s:Button label="Enregistrer" click="enregistrer_clickHandler(event)" visible="{bChange}" color="red"/>
 						<s:Button label="Tester" click="tester_clickHandler(event)" />
+						<mx:LinkButton id="btnAddNew" visible="{bAjout}" width="20" click="{vs.selectedChild=ecriture}" 
+									   icon="@Embed('images/AddRecord.png')" toolTip="Ajouter un item"/>					
 					</s:HGroup>
+					<s:List id="list" width="100%" height="100%" itemRenderer="compo.irSub" valueCommit="list_valueCommitHandler(event)" change="list_changeHandler(event)"  />
 				</s:VGroup>
 				<compo:gG oConcept="{this.oConcept}" idDico="{this.idDico}" />
 			</s:HGroup>
@@ -256,7 +228,7 @@
 				</s:HGroup>
 				<s:HGroup height="100%"  >
 					<s:Button label="Ajouter" click="ajouter()"  />
-					<s:Button label="Annuler" click="{this.cptParent.vs.selectedChild = this.cptParent.lecture;}"  />
+					<s:Button label="Annuler" click="{vs.selectedChild = lecture;}"  />
 				</s:HGroup>
 			</s:VGroup>				
 		</mx:Canvas>

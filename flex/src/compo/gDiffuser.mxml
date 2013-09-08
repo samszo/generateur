@@ -80,7 +80,7 @@
 			protected function html1_clickHandler(event:MouseEvent):void
 			{
 				if(oItem){
-					txtLien.text = this.parentApplication.urlAPI+"?oeu="+idOeu+"&cpt="+oItem.id_concept;					
+					txtLien.text = this.parentApplication.urlAPI+"?oeu="+idOeu+"&cpt="+oItem.id_concept+"&nb="+nsTB.value;					
 					loadUrl(txtLien.text)
 				}
 			}
@@ -176,6 +176,10 @@
 				<s:Panel title="Codes Disponibles">
 					<s:VGroup paddingBottom="4" paddingLeft="4" paddingRight="4" paddingTop="4">
 						<s:Label text="Lien pour du texte brut" />
+						<s:HGroup verticalAlign="middle">
+							<s:Label text="Nb; de génration :" />
+							<s:NumericStepper id="nsTB" maximum="200" value="1" />							
+						</s:HGroup>
 						<s:Button label="Tester" click="html1_clickHandler(event)" />					
 						<mx:HRule width="100%" height="3" />
 						<s:Label text="Code d'une page HTML" />
