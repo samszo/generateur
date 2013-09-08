@@ -86,11 +86,11 @@ class Model_DbTable_Gen_conceptsxgenerateurs extends Zend_Db_Table_Abstract
      *
      * @param integer $id
      *
-     * @return void
+     * @return int
      */
     public function removeGen($id)
     {
-    	$this->delete('gen_concepts_generateurs.id_concept = ' . $id);
+    	return $this->delete('gen_concepts_generateurs.id_concept = ' . $id);
     }
 
     /**

@@ -19,13 +19,21 @@ class Model_DbTable_Gen_dicos extends Zend_Db_Table_Abstract
      */
     protected $_primary = 'id_dico';
 
-    protected $_referenceMap    = array(
-        'Lieux' => array(
-            'columns'           => 'id_lieu',
-            'refTableClass'     => 'Models_DbTable_Gevu_lieux',
-            'refColumns'        => 'id_lieu'
-        )
-    );	
+    protected $_dependentTables = array(
+       	"Model_DbTable_Gen_adjectifs"
+       	,"Model_DbTable_Gen_complements"
+       	,"Model_DbTable_Gen_concepts"
+       	,"Model_DbTable_Gen_conjugaisons"
+       	,"Model_DbTable_Gen_determinants"
+       	,"Model_DbTable_Gen_dicosxdicos"
+        ,"Model_DbTable_Gen_dicosxutisxroles"
+        ,"Model_DbTable_Gen_generateurs"
+        ,"Model_DbTable_Gen_negations"
+        ,"Model_DbTable_Gen_pronoms"
+        ,"Model_DbTable_Gen_substantifs"
+        ,"Model_DbTable_Gen_syntagmes"
+        ,"Model_DbTable_Gen_verbes"
+        );    
     
     /**
      * Vérifie si une entrée Gen_dicos existe.
@@ -93,11 +101,29 @@ class Model_DbTable_Gen_dicos extends Zend_Db_Table_Abstract
      *
      * @param integer $id
      *
-     * @return void
+     * @return int
      */
     public function remove($id)
     {
-    	$this->delete('gen_dicos.id_dico = ' . $id);
+		//suppression des données lieés
+        $dt = $this->getDependentTables();
+        $nbTot = 0;
+        foreach($dt as $t){
+        	$dbT = new $t($this->_db);
+        	if($t=="Model_DbTable_Gen_concepts" || $t=="Model_DbTable_Gen_conjugaisons" )
+	        	$nb = $dbT->removeDico($id);
+	        elseif ($t=="Model_DbTable_Gen_dicosxdicos"){
+	        	$nb = $dbT->delete('id_dico_gen = ' . $id); 
+	        	$nb = $dbT->delete('id_dico_ref = ' . $id); 
+	        }else
+	        	$nb = $dbT->delete('id_dico = ' . $id);
+	        echo $t." : $nb supprimé(s) ! <br/>";
+	        $nbTot += $nb;
+        }        
+       	
+    	$nbTot += $this->delete('gen_dicos.id_dico = ' . $id);
+    	
+    	return $nbTot;
     }
     
     /**

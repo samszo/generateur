@@ -99,11 +99,11 @@ class Model_DbTable_Gen_conceptsxverbes extends Zend_Db_Table_Abstract
      *
      * @param integer $idGen
      * 
-     * @return void
+     * @return int
      */
     public function removeGen($id)
     {
-    	$this->delete('id_concept = ' . $id);
+    	return $this->delete('id_concept = ' . $id);
     }
     
     /**

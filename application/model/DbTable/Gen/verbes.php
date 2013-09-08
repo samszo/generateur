@@ -153,11 +153,11 @@ class Model_DbTable_Gen_verbes extends Zend_Db_Table_Abstract
      *
      * @param integer $idConj
      *
-     * @return void
+     * @return int
      */
     public function removeConj($idConj)
     {
-		$this->delete('id_conj = ' . $idConj);
+		return $this->delete('id_conj = ' . $idConj);
     }
         
     /**

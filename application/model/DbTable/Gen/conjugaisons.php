@@ -155,20 +155,39 @@ class Model_DbTable_Gen_conjugaisons extends Zend_Db_Table_Abstract
      *
      * @param integer $id
      *
-     * @return void
+     * @return int
      */
     public function remove($id)
     {
+    	$nb = 0;
     	//suprime les terminaisons
     	$dbTerms = new Model_DbTable_Gen_terminaisons();
-    	$dbTerms->removeConj($id);
+    	$nb += $dbTerms->removeConj($id);
     	//suprime les verbes
     	$dbV = new Model_DbTable_Gen_verbes();
-    	$dbV->removeConj($id);
+    	$nb += $dbV->removeConj($id);
     	//suprime la conjugaison
-    	$this->delete('gen_conjugaisons.id_conj = ' . $id);
+    	$nb += $this->delete('gen_conjugaisons.id_conj = ' . $id);
+    	
+    	return $nb;
     }
 
+    /**
+     * Recherche une entrée Gen_conjugaisons avec la clef primaire spécifiée
+     * et supprime cette entrée.
+     *
+     * @param integer $idDico
+     *
+     * @return void
+     */
+    public function removeDico($idDico)
+    {
+    	$arr = $this->findByIdDico($idDico);
+    	foreach ($arr as $v) {
+    		$this->remove($v["id_conj"]);
+    	}
+    }
+    
     /**
      * Récupère toutes les entrées Gen_conjugaisons avec certains critères
      * de tri, intervalles

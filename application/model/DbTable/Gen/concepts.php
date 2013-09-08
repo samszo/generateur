@@ -128,17 +128,37 @@ class Model_DbTable_Gen_concepts extends Zend_Db_Table_Abstract
      *
      * @param integer $id
      *
-     * @return void
+     * @return int
      */
     public function remove($id)
     {
 		//suppression des données lieés
         $dt = $this->getDependentTables();
+        $nb = 0;
         foreach($dt as $t){
         	$dbT = new $t($this->_db);
-        	$dbT->removeGen($id);
+        	$nb += $dbT->removeGen($id);
         }        
-    	$this->delete('gen_concepts.id_concept = ' . $id);
+    	$nb += $this->delete('gen_concepts.id_concept = ' . $id);
+    	return $nb;
+    }
+
+    /**
+     * Recherche une entrée Gen_concepts avec la clef primaire spécifiée
+     * et supprime cette entrée.
+     *
+     * @param integer $idDico
+     *
+     * @return int
+     */
+    public function removeDico($idDico)
+    {
+        $arr = $this->findByIdDico($idDico);
+        $nb = 0;
+        foreach($arr as $v){
+        	$nb += $this->remove($v["id_concept"]);
+        }
+        return $nb;        
     }
     
     /**
