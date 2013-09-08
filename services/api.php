@@ -32,6 +32,10 @@ try {
 		$btn = $_GET['btn'];
 	else
 		$btn = false;
+	if(isset($_GET['nb']))
+		$nb = $_GET['nb'];
+	else
+		$nb = 1;
 		
 	if(!$err){
 		//récupère les dictionnaires
@@ -61,13 +65,17 @@ try {
 		//récupère le texte génératif
 		$dbCpt = new Model_DbTable_Gen_concepts();
 		$arrCpt = $dbCpt->findById_concept($idCpt);
-		$txt = '['.$arrCpt[0]["type"].'-'.$arrCpt[0]["lib"].']';
+		$txtGen = '['.$arrCpt[0]["type"].'-'.$arrCpt[0]["lib"].']';
 		
 		//génére le texte
 		$m = new Gen_Moteur();
 		$m->arrDicos = $arrVerifDico;
 		$m->forceCalcul = false;
-		$txt = $m->Generation($txt);
+		
+		$txt = "";
+		for ($i = 0; $i < $nb; $i++) {
+			$txt .= $m->Generation($txtGen).$rtn;			
+		}
 		
 	}
 		

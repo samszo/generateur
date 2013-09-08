@@ -94,7 +94,7 @@ try {
 		,"syntagmes"=>"4");	
 		
 		
-	$txts = array("[Pro-moules-07]");	
+	$txts = array("[m_animal 4]");	
 	$m = new Gen_Moteur();
 	$var = $m->Tester($txts, $arrVerifDico);
 	$m->getArbreGen("[0|caract1] [0|caract2], [thl-visage-01], [thl-allure-01]",$arrVerifDico);
