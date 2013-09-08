@@ -90,7 +90,7 @@ class Model_DbTable_Gen_oeuvresxdicosxutis extends Zend_Db_Table_Abstract
     {
     	//suprime les actions liés aux dictionnaires de l'oeuvre et à l'utilisateur
     	$dbOA = new Model_DbTable_Gen_oduxacti();
-    	$dbA = new Model_DbTable_flux_acti();
+    	$dbA = new Model_DbTable_Flux_Acti();
     	$arrActi =$dbOA->findByIdOdu($idOdu);
     	foreach ($arrActi as $acti) {
     		$dbA->remove($acti['acti_id']);

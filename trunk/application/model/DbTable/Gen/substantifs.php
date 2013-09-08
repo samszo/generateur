@@ -125,6 +125,20 @@ class Model_DbTable_Gen_substantifs extends Zend_Db_Table_Abstract
     }
     
     /**
+     * modifie des entrées avec les nouvelles données.
+     *
+     * @param array $data
+     *
+     * @return void
+     */
+    public function editMulti($data)
+    {
+   		foreach ($data as $c) {
+   			$this->edit($c["id_sub"], $c["val"]);
+   		}
+    }
+    
+    /**
      * Recherche une entrée Gen_substantifs avec la clef primaire spécifiée
      * et supprime cette entrée.
      *
