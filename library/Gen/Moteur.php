@@ -399,7 +399,8 @@ class Gen_Moteur
 		$this->texte = str_replace("  "," ",$this->texte);
 		$this->texte = str_replace("  "," ",$this->texte);
 		$this->texte = str_replace("  "," ",$this->texte);
-		
+				
+		$this->texte = str_replace("’ ","’",$this->texte);
 		$this->texte = str_replace("' ","'",$this->texte);
 		$this->texte = str_replace(" , ",", ",$this->texte);
 		$this->texte = str_replace(" .",".",$this->texte);
@@ -700,6 +701,9 @@ class Gen_Moteur
 		$g = "m"; 		
 		if(isset($vecteur["genre"])){												
 			if($vecteur["genre"]==2) $g = "f";
+		}else{
+			$vecteurGenre = $this->getVecteur("genre",-1);
+			if($vecteurGenre["genre"]==2) $g = "f";			
 		}
 		
 		$txt = $adj["prefix"].$adj[$g.$n]." ";
@@ -1152,18 +1156,19 @@ class Gen_Moteur
 	        $this->arrClass[$this->ordre]["vecteur"]["pluriel"] = false; 
 	        $this->arrClass[$this->ordre]["vecteur"]["genre"] = 1;
         }else{
-	        //récupère le vecteur
-	        $vecteur = $this->getVecteur("genre",-1,$num);
-	        //Récupère les informations de genre et de nombre
-        	if(!isset($vecteur["pluriel"])){
-        		$pluriel = false;
-        	}else{
-        		$pluriel = $vecteur["pluriel"];
-        	}
+	        //Récupère les informations de genre
+        	$vecteur = $this->getVecteur("genre",-1,$num);
         	if(!isset($vecteur["genre"])){
         		$genre = 1;
         	}else{
         		$genre = $vecteur["genre"];
+        	}
+        	if(!isset($vecteur["pluriel"])){
+        		//récupère le vecteur de pluriel
+		        $vecteurPlus = $this->getVecteur("pluriel",-1,$num);        		
+        		$pluriel = $vecteurPlus["pluriel"];
+        	}else{
+        		$pluriel = $vecteur["pluriel"];
         	}
         	$this->arrClass[$this->ordre]["vecteur"]["pluriel"] = $pluriel; 
 	        $this->arrClass[$this->ordre]["vecteur"]["genre"] = $genre;         	
@@ -1259,7 +1264,7 @@ class Gen_Moteur
 	        //ajoute le vecteur
 	        $this->arrClass[$this->ordre]["vecteur"]["genre"] = $arrClass["genre"];
 	        $this->arrClass[$this->ordre]["vecteur"]["elision"] = $arrClass["elision"];
-        	        	
+	        
 	        //ajoute le substantif
 	        $this->arrClass[$this->ordre]["substantif"] = $arrClass;
 		        	        
