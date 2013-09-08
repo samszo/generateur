@@ -63,12 +63,12 @@
 				if(event.result[0]){
 					donnee = event.result[0];
 					gmConj.itemSelect = donnee.id_conj;
-					gmConj.bInit = true;
-					gmConj.init();
 					lblDicoConj.text = "dictionnaire de conjugaison :"+donnee.dicoConj;
 					if(donnee.elision=="0")elision.selected = false; 
 					else elision.selected = true;
 				}				
+				gmConj.bInit = true;
+				gmConj.init();
 			}
 
 			protected function tester_clickHandler(event:MouseEvent):void
@@ -221,7 +221,7 @@
 				var actis:String = "";
 				if(action == "modifier"){
 					actis = "dictionnaire concept : modifier "+arrR[0]['nbGen']+" items pour "+arrR[0]['nbUti']+" utilisateurs : ";
-					actis = actis + "v_"+oConcept.lib+" "+donnee.elision+" "+donnee.prefix+" conjugaison :"+donnee['id_conj'];
+					actis = actis + "v_"+oConcept.lib;
 					actis = actis + " -> v_"+oConcept.lib+" "+elision.selected+" "+prefix.text+" conjugaison :"+gmConj.cb.selectedItem['id_conj'];
 					actis = actis + " (ref="+idDico+"_"+oConcept.id_concept+")";				
 					this.parentApplication.verifActi(arrR[0], action, actis, ROV, donnee.id_verbe, arrChange, idDico);									
@@ -301,7 +301,7 @@
 					</s:HGroup>
 					<s:HGroup verticalAlign="middle">
 						<s:Label text="modèle :" /><compo:cbGroupeMot id="gmConj" bInit="false" bAjout="false" bRemove="false" keyName="id_conj" labelName="modele" 
-										objName="Model_DbTable_Gen_conjugaisons" objMethode="findByIdDicoVerbe" objParam="{donnee.id_dico}" objSource="gV"
+										objName="Model_DbTable_Gen_conjugaisons" objMethode="findByIdDicoVerbe" objParam="{idDicoConj}" objSource="gV"
 										titre="une conjugaison"/>
 					</s:HGroup>
 					<s:Label id="lblDicoConj" text="" />

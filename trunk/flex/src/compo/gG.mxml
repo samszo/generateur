@@ -115,12 +115,14 @@
 			}
 			
 
-			public function enregistrer(txt:String):void
+			public function enregistrer(txt:String, oItem:Object):void
 			{
 				action = "modifier";
 				donnee.valeur = txt;
 				arrChange["valeur"] = txt;				
-				ROCG.utilise(donnee.id_gen);				
+				arrChange["id_dico"] = oItem.id_dico;				
+				arrChange["id_concept"] = oItem.id_concept;				
+				ROCG.utilise(oItem.id_gen);				
 			}
 			
 			private function ajouter():void
@@ -141,12 +143,19 @@
 				ROC.ajouter(arrCpt, true, true);								
 			}
 
-			private function ajouterGen(txt:String):void
+			private function ajouterGen(txt:String, item:Object):void
 			{				
 				var arr:Array = new Array();
 				arr["id_dico"]=idDico;
 				arr["valeur"]=txt;
 				ROCG.ajouter(oConcept.id_concept, arr);								
+			}
+
+			private function editGen(txt:String, item:Object):void
+			{				
+				var arr:Array = new Array();
+				arr["valeur"]=txt;
+				ROCG.edit(item.id_gen, arr);								
 			}
 			
 			protected function utilise_resultHandler(event:ResultEvent):void
@@ -208,7 +217,6 @@
 				var twG:twGen= twGen(
 					PopUpManager.createPopUp(this, twGen));
 				twG.oItem = donnee;
-				twG.fctAnnuler = editGenAnnuler;
 				twG.fctEnregistrer = enregistrer;
 				PopUpManager.centerPopUp(twG);
 			}
@@ -218,7 +226,6 @@
 				var twG:twGen= twGen(
 					PopUpManager.createPopUp(this, twGen));
 				twG.title = "Ajout d'un générateur";
-				twG.fctAnnuler = editGenAnnuler;
 				twG.fctEnregistrer = ajouterGen;
 				PopUpManager.centerPopUp(twG);
 
@@ -253,9 +260,9 @@
 					<s:Label text="Nom du texte génératif :" /><s:Label text="{oConcept.lib}" />			
 					<s:Label text="Type :" /><s:Label text="{oConcept.type}" />			
 				</s:HGroup>
+				<compo:hbFilterControl id="dgFilter"  />
 				<s:HGroup width="100%" height="100%" >
 					<s:VGroup width="100%" height="100%" >
-						<compo:hbFilterControl id="dgFilter"  />
 						<s:HGroup>
 							<mx:LinkButton visible="{bRemove}" width="20" click="removeItem()" 
 										   icon="@Embed('images/DeleteRecord.png')" toolTip="Supprimer un item"/>

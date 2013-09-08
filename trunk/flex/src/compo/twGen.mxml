@@ -32,14 +32,13 @@
 
 			public function ferme():void{
 				PopUpManager.removePopUp(this);
-			}
-
+			}			
 									
 		]]>
     </mx:Script>
 
 	<mx:VBox paddingBottom="6" paddingLeft="6" paddingRight="6" paddingTop="6" width="100%" height="100%">
-		<ns2:gEcrire id="editGen" width="100%" height="100%" oItem="{oItem}" fctAnnuler="{fctAnnuler}" fctEnregistrer="{fctEnregistrer}" allConcept="{this.parentApplication.allConcept}" />				
+		<ns2:gEcrire id="editGen" width="100%" height="100%" oItem="{oItem}" fctAnnuler="{ferme}" fctEnregistrer="{fctEnregistrer}" allConcept="{this.parentApplication.allConcept}" />				
 	</mx:VBox>
     
 </mx:TitleWindow>

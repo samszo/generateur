@@ -13,7 +13,6 @@
     </libraryPath>
     <sourceAttachmentPath/>
   </compiler>
-  <theme themeIsDefault="false" themeIsSDK="true" themeLocation="${SDK_THEMES_DIR}/frameworks/themes/Wireframe"/>
   <applications>
     <application path="genFlex.mxml">
       <airExcludes/>
@@ -24,7 +23,7 @@
   <flashCatalyst validateFlashCatalystCompatibility="false"/>
   <buildTargets>
     <buildTarget buildTargetName="default">
-      <airSettings airCertificatePath="" airTimestamp="true" version="1">
+      <airSettings airCertificatePath="C:/wamp/www/generateur/flex/release/certif_lsd.p12" airTimestamp="true" version="1">
         <airExcludes/>
       </airSettings>
       <actionScriptSettings version="1"/>

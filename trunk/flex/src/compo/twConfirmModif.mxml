@@ -100,15 +100,7 @@
 			
 			protected function btnModifier_clickHandler(event:MouseEvent):void
 			{
-				if(rocItem.source=="Model_DbTable_Gen_determinants")
-					rocItem.editMulti(dataItem);					
-				else
-					rocItem.edit(idItem, dataItem);					
-
-				//réinitialise le tableau général des concepts
-				this.parentApplication.allConcept=null;
-				PopUpManager.removePopUp(this);				
-				
+				modifier();				
 			}
 			
 			protected function btnAjouter_clickHandler(event:MouseEvent):void
@@ -116,7 +108,12 @@
 				if(actionItem=="modifier"){
 					if(rocItem.source=="Model_DbTable_Gen_determinants")
 						rocItem.dupliquer(dataItem);					
-					else
+					else if(rocItem.source=="Model_DbTable_Gen_generateurs"){
+						var arrChange:Array = new Array;
+						arrChange["valeur"] = dataItem["valeur"];				
+						arrChange["id_dico"] = dataItem["id_dico"];				
+						rocItem.ajouter(dataItem["id_concept"], arrChange);											
+					}else
 						rocItem.ajouter(dataItem);											
 				}
 				//réinitialise le tableau général des concepts
@@ -125,6 +122,20 @@
 				
 			}
 
+			protected function modifier()
+			{
+				if(rocItem.source=="Model_DbTable_Gen_determinants")
+					rocItem.editMulti(dataItem);
+				else if(rocItem.source=="Model_DbTable_Gen_substantifs")
+					rocItem.editMulti(dataItem);					
+				else
+					rocItem.edit(idItem, dataItem);					
+				
+				//réinitialise le tableau général des concepts
+				this.parentApplication.allConcept=null;
+				PopUpManager.removePopUp(this);				
+			}
+			
 			protected function btnForcer_clickHandler(event:MouseEvent):void
 			{
 				if(actionItem=="supprimer")
@@ -133,10 +144,7 @@
 					else
 						rocItem.remove(idItem);
 				if(actionItem=="modifier"){
-					if(rocItem.source=="Model_DbTable_Gen_determinants")
-						rocItem.editMulti(dataItem);					
-					else
-						rocItem.edit(idItem, dataItem);					
+					modifier();
 				}
 				//réinitialise le tableau général des concepts
 				this.parentApplication.allConcept=null;
