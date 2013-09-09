@@ -14,6 +14,7 @@
 		<![CDATA[
 			import mx.collections.ArrayCollection;
 			import mx.controls.Alert;
+			import mx.events.CollectionEvent;
 			import mx.events.FlexEvent;
 			import mx.rpc.events.FaultEvent;
 			import mx.rpc.events.ResultEvent;
@@ -33,6 +34,7 @@
 			[Bindable] public var cptParent:gConcept;
 			[Bindable] public var bChange:Boolean=false;
 			[Bindable] public var arrChange:Array=new Array;
+			[Bindable] public var bCptAjout:Boolean=true;
 			private var action:String="";
 			private var arrR:Array;
 
@@ -54,6 +56,7 @@
 				
 				if(oConcept){
 					ROCS.findByIdConcept(oConcept.id_concept);
+					bCptAjout = false;
 				}else{
 					vs.selectedChild = ecriture;
 				}
@@ -62,9 +65,17 @@
 			
 			protected function findByIdConcept_resultHandler(event:ResultEvent):void
 			{
+				list.dataProvider = new ArrayCollection(event.result as Array);
 				if(event.result){
-					list.dataProvider = new ArrayCollection(event.result as Array);
+					var ac:ArrayCollection = new ArrayCollection(event.result as Array);
+					ac.addEventListener(CollectionEvent.COLLECTION_CHANGE,changeList);
+					list.dataProvider = ac;
 				}				
+			}
+			
+			protected function changeList(e:CollectionEvent):void
+			{
+				var t:Object = e.target;
 			}
 
 			protected function tester_clickHandler(event:MouseEvent):void
@@ -98,8 +109,18 @@
 
 			private function ajouter():void
 			{
-				oConcept = new Object;
-				oConcept.lib =libA.text; 
+				//vérifie s'il faut créer le concept
+				if(oConcept == null){
+					oConcept = new Object;
+					oConcept.lib =libA.text; 
+					var arrCpt:Array = new Array();
+					arrCpt["id_dico"]=idDico;
+					arrCpt["lib"]=libA.text;
+					arrCpt["type"]="m";					
+				}else{
+					var arrCpt:Array = new Array();
+					arrCpt["id_concept"]=oConcept.id_concept;					
+				}
 				
 				var arr:Array = new Array();
 				arr["id_dico"]=idDico;
@@ -115,10 +136,6 @@
 				arr["s"] = sA.text;			
 				arr["p"] = pA.text;			
 				
-				var arrCpt:Array = new Array();
-				arrCpt["id_dico"]=idDico;
-				arrCpt["lib"]=libA.text;
-				arrCpt["type"]="m";
 				ROCS.ajouter(arrCpt, arr, false);								
 			}
 			
@@ -143,12 +160,17 @@
 			protected function ajouter_resultHandler(event:ResultEvent):void
 			{
 				Alert.show("L'item est ajouté.","Ajout d'un item");
-				oConcept.id_concept = event.result;
-				oConcept.type = "m";
-				this.cptParent.oItem = oConcept
-				this.cptParent.vs.selectedChild = this.cptParent.lecture;
-				this.cptParent.ROC.findByIdDico(idDico);
-				this.cptParent.initDetail();
+				if(!oConcept.id_concept){
+					oConcept.id_concept = event.result;
+					this.cptParent.oItem = oConcept
+					this.cptParent.vs.selectedChild = this.cptParent.lecture;
+					this.cptParent.ROC.findByIdDico(idDico);
+					this.cptParent.initDetail();
+				}
+				
+				bChange = false;
+				ROCS.findByIdConcept(oConcept.id_concept);
+				vs.selectedChild = lecture;
 			}
 			
 			protected function edit_resultHandler(event:ResultEvent):void
@@ -189,6 +211,10 @@
 				<s:VGroup width="100%" height="100%" id="detail" >
 					<s:HGroup width="100%" verticalAlign="middle">
 						<s:Label text="Nom du substantif :" /><s:Label id="lib" text="{oConcept.lib}" />			
+						<s:Button label="Enregistrer" click="enregistrer_clickHandler(event)" visible="{bChange}" color="red"/>
+						<s:Button label="Tester" click="tester_clickHandler(event)" />
+						<mx:LinkButton id="btnAddNew" visible="{bAjout}" width="20" click="{vs.selectedChild=ecriture}" 
+									   icon="@Embed('images/AddRecord.png')" toolTip="Ajouter un item"/>					
 					</s:HGroup>
 					<s:HGroup width="100%" verticalAlign="middle">
 						<s:Label text="singulier :" width="60"/>			
@@ -198,12 +224,6 @@
 						<s:Label text="pluriel :" width="60"/>			
 						<s:TextInput width="100%" id="Gp" text="{'[62|m_'+oConcept.lib+']'}"/><s:Label  width="100%" color="#E01919" text="---" id="GTp" />
 					</s:HGroup>
-					<s:HGroup verticalAlign="middle">
-						<s:Button label="Enregistrer" click="enregistrer_clickHandler(event)" visible="{bChange}" color="red"/>
-						<s:Button label="Tester" click="tester_clickHandler(event)" />
-						<mx:LinkButton id="btnAddNew" visible="{bAjout}" width="20" click="{vs.selectedChild=ecriture}" 
-									   icon="@Embed('images/AddRecord.png')" toolTip="Ajouter un item"/>					
-					</s:HGroup>
 					<s:List id="list" width="100%" height="100%" itemRenderer="compo.irSub" valueCommit="list_valueCommitHandler(event)" change="list_changeHandler(event)"  />
 				</s:VGroup>
 				<compo:gG oConcept="{this.oConcept}" idDico="{this.idDico}" />
@@ -211,8 +231,8 @@
 		</mx:Canvas>
 		<mx:Canvas width="100%" height="100%" id="ecriture" >
 			<s:VGroup width="100%" height="100%"  >
-				<s:HGroup width="100%" verticalAlign="middle">
-					<s:Label text="Nom du substantif :" width="112"/><s:TextInput id="libA" text="" />			
+				<s:HGroup width="100%" verticalAlign="middle" visible="{bCptAjout}" >
+					<s:Label text="Nom du substantif :" width="112"/><s:TextInput id="libA" text=""/>			
 				</s:HGroup>
 				<s:HGroup width="100%" verticalAlign="middle">
 					<s:Label text="prefix :" width="112"/><s:TextInput id="prefixA" text="" />			
