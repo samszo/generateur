@@ -22,6 +22,9 @@ try {
 	$arr = str_getcsv($csv);
 	$toto = "";
 	*/
+	//$dbU = new Model_DbTable_flux_Uti();
+	//$arr = $dbU->getAll();
+	
 	
 	/*
 	$idDico = 110;
@@ -42,6 +45,7 @@ try {
 	*/	
 	/*
 	$dbC = new Model_DbTable_Gen_concepts();
+	$ac = $dbC->findAllByDicos(array("concepts"=>"102, 34","pronoms"=>"13, 14","syntagmes"=>"4","déterminants"=>"46","negations"=>"16"));
 	$ac = $dbC->findByIdDico("102.34",true);
 	print_r($ac);
 	$dbC->ajouter(array("id_dico"=>102,"lib"=>"bidule","type"=>"dis"));	
