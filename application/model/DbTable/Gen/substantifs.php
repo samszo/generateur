@@ -86,15 +86,20 @@ class Model_DbTable_Gen_substantifs extends Zend_Db_Table_Abstract
     {
     	$dbCpt = new Model_DbTable_Gen_concepts();
     	
-    	//vérifie si le concept n'existe pas déjà
-    	$e = $dbCpt->existe($dCpt);
-    	if($e){
-    		//on ne peut pas créer deux concepts avec le même nom dans un dictionnaire
-    		return "Le concept existe déjà";
-    	}else{
-    		//création du concept
-    		$idCpt = $dbCpt->ajouter($dCpt, false);		
-    	}
+    	//vérifie s'il faut créer le concept
+    	if(!isset($dCpt['id_concept'])){
+	    	//vérifie si le concept n'existe pas déjà
+	    	$e = $dbCpt->existe($dCpt);
+	    	if($e){
+	    		//on ne peut pas créer deux concepts avec le même nom dans un dictionnaire
+	    		return "Le concept existe déjà";
+	    	}else{
+	    		//création du concept
+	    		$idCpt = $dbCpt->ajouter($dCpt, false);		
+	    	}    		
+    	}else 
+	    	$idCpt = $dCpt['id_concept'];		
+    	
     	
     	//création du substantif
     	$idSub=false;
@@ -220,7 +225,8 @@ class Model_DbTable_Gen_substantifs extends Zend_Db_Table_Abstract
 	        ->setIntegrityCheck(false) //pour pouvoir sélectionner des colonnes dans une autre table
         ->joinInner(array('s' => 'gen_substantifs'),
         		's.id_sub = cs.id_sub')
-        ->where("cs.id_concept = ?", $id_concept );
+        ->where("cs.id_concept = ?", $id_concept )
+        ->order("s.prefix");
         
         return $this->fetchAll($query)->toArray(); 
     }
