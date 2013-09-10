@@ -19,14 +19,6 @@ class Model_DbTable_Gen_substantifs extends Zend_Db_Table_Abstract
      */
     protected $_primary = 'id_sub';
 
-    protected $_referenceMap    = array(
-        'Lieux' => array(
-            'columns'           => 'id_lieu',
-            'refTableClass'     => 'Models_DbTable_Gevu_lieux',
-            'refColumns'        => 'id_lieu'
-        )
-    );	
-    
     /**
      * Vérifie si une entrée est utilisée.
      *
@@ -153,20 +145,11 @@ class Model_DbTable_Gen_substantifs extends Zend_Db_Table_Abstract
      */
     public function remove($id)
     {
+    	//supprime le lien avec le concept
+    	$dbCS = new Model_DbTable_Gen_conceptsxsubstantifs();
+    	$dbCS->delete('id_sub = ' . $id);
+    	//supprime le substantif
     	$this->delete('gen_substantifs.id_sub = ' . $id);
-    }
-
-    /**
-     * Recherche les entrées de Gen_substantifs avec la clef de lieu
-     * et supprime ces entrées.
-     *
-     * @param integer $idLieu
-     *
-     * @return void
-     */
-    public function removeLieu($idLieu)
-    {
-		$this->delete('id_lieu = ' . $idLieu);
     }
     
     /**
