@@ -5,6 +5,7 @@ import compo.dgOeuvres;
 
 import flash.events.MouseEvent;
 
+import mx.collections.ArrayCollection;
 import mx.controls.Alert;
 import mx.events.CloseEvent;
 import mx.managers.PopUpManager;
@@ -19,6 +20,9 @@ import spark.components.Label;
 [Bindable] public var arrVerifDico:Array;
 [Bindable] public var ctrlActi:Object;
 [Bindable] public var allConcept:Array;
+
+[Bindable] public var acConj:ArrayCollection;
+
 public var idItem:String;
 public var dataItem:Array;
 public var arrItem:Array;

@@ -69,7 +69,7 @@
 				list.dataProvider = null;
 				if(event.result){
 					var ac:ArrayCollection = new ArrayCollection(event.result as Array);
-					ac.addEventListener(CollectionEvent.COLLECTION_CHANGE,changeList);
+					//ac.addEventListener(CollectionEvent.COLLECTION_CHANGE,changeList);
 					list.dataProvider = ac;
 				}				
 			}
@@ -109,6 +109,7 @@
 			protected function enregistrer_clickHandler(event:MouseEvent):void
 			{
 				//récupère les modifications
+				arrChange=new Array;
 				for each(var obj:Object in list.dataProvider){
 					if(obj.change["prefix"] || obj.change["genre"] || obj.change["elision"]){
 						var arr:Array = new Array;
@@ -124,16 +125,15 @@
 
 			private function ajouter():void
 			{
+				var arrCpt:Array = new Array();
 				//vérifie s'il faut créer le concept
 				if(oConcept == null){
 					oConcept = new Object;
 					oConcept.lib =libA.text; 
-					var arrCpt:Array = new Array();
 					arrCpt["id_dico"]=idDico;
 					arrCpt["lib"]=libA.text;
 					arrCpt["type"]="m";					
 				}else{
-					var arrCpt:Array = new Array();
 					arrCpt["id_concept"]=oConcept.id_concept;					
 				}
 				
@@ -200,6 +200,14 @@
 				bChange = true;				
 			}
 			
+			protected function remove_clickHandler(event:MouseEvent):void
+			{
+				if(list.selectedItem){					
+					idSub = list.selectedItem.id_sub;
+					Alert.show("Confirmez-vous la suppression de l'item ?",
+						"Confirmation Suppression", 3, this, removeItemHandler);									
+				}
+			}
 			
 		]]>
 	</fx:Script>
@@ -218,27 +226,37 @@
 	</fx:Declarations>
 	<mx:ViewStack id="vs" width="100%" height="100%">
 		<mx:Canvas width="100%" height="100%" id="lecture" >
-			<s:HGroup width="100%" height="100%" >				
-				<s:VGroup width="100%" height="100%" id="detail" >
-					<s:HGroup width="100%" verticalAlign="middle">
-						<s:Label text="Nom du substantif :" /><s:Label id="lib" text="{oConcept.lib}" />			
-						<s:Button label="Enregistrer" click="enregistrer_clickHandler(event)" visible="{bChange}" color="red"/>
-						<s:Button label="Tester" click="tester_clickHandler(event)" />
-						<mx:LinkButton id="btnAddNew" visible="{bAjout}" width="20" click="{vs.selectedChild=ecriture}" 
-									   icon="@Embed('images/AddRecord.png')" toolTip="Ajouter un item"/>					
-					</s:HGroup>
-					<s:HGroup width="100%" verticalAlign="middle">
-						<s:Label text="singulier :" width="60"/>			
-						<s:TextInput width="100%" id="Gs" text="{'[12|m_'+oConcept.lib+']'}"/><s:Label width="100%" color="#E01919" text="---" id="GTs" />
-					</s:HGroup>
-					<s:HGroup width="100%" horizontalAlign="left" verticalAlign="middle">
-						<s:Label text="pluriel :" width="60"/>			
-						<s:TextInput width="100%" id="Gp" text="{'[62|m_'+oConcept.lib+']'}"/><s:Label  width="100%" color="#E01919" text="---" id="GTp" />
-					</s:HGroup>
-					<s:List id="list" width="100%" height="100%" itemRenderer="compo.irSub" valueCommit="list_valueCommitHandler(event)"   />
-				</s:VGroup>
-				<compo:gG oConcept="{this.oConcept}" idDico="{this.idDico}" />
-			</s:HGroup>
+			<s:VGroup width="100%" height="100%" id="detail" >
+				<s:HGroup width="100%" verticalAlign="middle">
+					<s:Label text="Nom du substantif :" /><s:Label id="lib" text="{oConcept.lib}" />			
+					<s:Button label="Tester" click="tester_clickHandler(event)" />
+				</s:HGroup>
+				<s:HGroup width="100%" verticalAlign="middle">
+					<s:Label text="singulier :" width="60"/>			
+					<s:TextInput width="100%" id="Gs" text="{'[12|m_'+oConcept.lib+']'}"/><s:Label width="100%" color="#E01919" text="---" id="GTs" />
+				</s:HGroup>
+				<s:HGroup width="100%" horizontalAlign="left" verticalAlign="middle">
+					<s:Label text="pluriel :" width="60"/>			
+					<s:TextInput width="100%" id="Gp" text="{'[62|m_'+oConcept.lib+']'}"/><s:Label  width="100%" color="#E01919" text="---" id="GTp" />
+				</s:HGroup>
+				<mx:TabNavigator width="100%" height="100%" id="tn" >
+					<s:NavigatorContent width="100%" height="100%" label="substantifs associés">
+						<s:HGroup verticalAlign="middle">
+							<mx:LinkButton id="btnUpdate" width="20" click="enregistrer_clickHandler(event)" visible="{bChange}"
+										   icon="@Embed('images/UpdateRecord.png')" toolTip="Enregistrer les modifications"/>					
+							<mx:LinkButton id="btnAddNew" visible="{bAjout}" width="20" click="{vs.selectedChild=ecriture}" 
+										   icon="@Embed('images/AddRecord.png')" toolTip="Ajouter un item"/>					
+							<mx:LinkButton width="20" click="remove_clickHandler(event)" visible="{bRemove}" icon="@Embed('images/DeleteRecord.png')" toolTip="Supprimer un item"/>
+						</s:HGroup>
+						<s:VGroup width="100%" height="100%" paddingBottom="4" paddingLeft="4" paddingRight="4" paddingTop="4" >
+							<s:List id="list" width="100%" height="100%" borderVisible="false" itemRenderer="compo.irSub" valueCommit="list_valueCommitHandler(event)"   />
+						</s:VGroup>
+					</s:NavigatorContent>
+					<s:NavigatorContent width="100%" height="100%" label="générateurs associés">
+						<compo:gG oConcept="{this.oConcept}" idDico="{this.idDico}" />						
+					</s:NavigatorContent>
+				</mx:TabNavigator>
+			</s:VGroup>
 		</mx:Canvas>
 		<mx:Canvas width="100%" height="100%" id="ecriture" >
 			<s:VGroup width="100%" height="100%"  >

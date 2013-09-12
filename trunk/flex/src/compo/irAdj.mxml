@@ -22,8 +22,11 @@
 					prefix.text = data.prefix;
 					if(data.elision=="0")elision.selected = false;
 					else elision.selected = true;
-					if(data.genre=="2") genre2.selected = true;
-					else genre1.selected = true;
+					m_s.text = data.m_s;			
+					f_s.text = data.f_s;			
+					m_p.text = data.m_p;			
+					f_p.text = data.f_p;			
+					
 					data.change = new Array;
 				}
 			}  			
@@ -35,16 +38,6 @@
 				tx.setStyle("color","red");
 				data.change[tx.id]  = tx.text;
 			}
-			protected function genre_changeHandler(event:Event):void
-			{
-				if(genre1.selected)
-					data.change["genre"]= "1";
-				if(genre2.selected)
-					data.change["genre"]= "2";
-				genre1.setStyle("color","red");
-				genre2.setStyle("color","red");
-				
-			}
 			protected function elision_changeHandler(event:Event):void
 			{
 				if(elision.selected)
@@ -55,14 +48,13 @@
 		]]>
 	</fx:Script>
 	
-	<s:HGroup width="100%" verticalAlign="middle" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
-		<s:Label text="prefix :" /><s:TextInput id="prefix" change="t_changeHandler(event)" />			
-		<s:CheckBox label="élision" id="elision" change="elision_changeHandler(event)"/>
-		<s:RadioButton label="Féminin" id="genre2" groupName="genre" change="genre_changeHandler(event)" />
-		<s:RadioButton label="Masuclin" id="genre1" groupName="genre" change="genre_changeHandler(event)" />
-		<!--
-		<mx:LinkButton width="20" click="removeItem()" icon="@Embed('images/DeleteRecord.png')" toolTip="Supprimer un item"/>
-		-->
+	<s:HGroup width="100%" verticalAlign="middle">
+		<s:Label text="prefix :" /><s:TextInput id="prefix" width="100%" change="t_changeHandler(event)" />			
+		<s:CheckBox label="élision" id="elision" change="elision_changeHandler(event)" /> 			
+		<s:Image source="@Embed('images/masulin.jpg')" /><s:TextInput id="m_s" width="40" change="t_changeHandler(event)"/>			
+		<s:Image source="@Embed('images/feminin.jpg')" /><s:TextInput id="f_s" width="40" change="t_changeHandler(event)"/>			
+		<s:Image source="@Embed('images/masulin.jpg')" /><s:Image source="@Embed('images/masulin.jpg')" /><s:TextInput id="m_p" width="40" change="t_changeHandler(event)"/>			
+		<s:Image source="@Embed('images/feminin.jpg')" /><s:Image source="@Embed('images/feminin.jpg')" /><s:TextInput id="f_p" width="40"  change="t_changeHandler(event)" />			
 	</s:HGroup>
 	
 </s:ItemRenderer>

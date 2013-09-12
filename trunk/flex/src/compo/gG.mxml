@@ -120,8 +120,6 @@
 				action = "modifier";
 				donnee.valeur = txt;
 				arrChange["valeur"] = txt;				
-				arrChange["id_dico"] = oItem.id_dico;				
-				arrChange["id_concept"] = oItem.id_concept;				
 				ROCG.utilise(oItem.id_gen);				
 			}
 			

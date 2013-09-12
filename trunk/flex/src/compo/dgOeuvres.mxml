@@ -398,8 +398,7 @@
 				// chargement de l'image dans le conteneur
 				conteneurTextes.load(fichier);			
 				
-			}
-						
+			}			
 		]]>
     </mx:Script>
     
