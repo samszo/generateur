@@ -7,14 +7,10 @@
 		<![CDATA[
 			import mx.events.FlexEvent;
 			
-			import spark.events.TextOperationEvent;
 			import spark.components.List;
+			import spark.events.IndexChangeEvent;
+			import spark.events.TextOperationEvent;
 			
-			public function removeItem():void {
-				var parentList:List = owner as List;
-				// remove the item
-				parentList.dataProvider.removeItemAt(parentList.dataProvider.getItemIndex(data))
-			}
 			override public function set data(value:Object):void
 			{
 				super.data = value;
@@ -22,28 +18,25 @@
 					prefix.text = data.prefix;
 					if(data.elision=="0")elision.selected = false;
 					else elision.selected = true;
-					if(data.genre=="2") genre2.selected = true;
-					else genre1.selected = true;
+					selectItem(data.id_conj);
 					data.change = new Array;
 				}
 			}  			
 
+			public function selectItem(val:String):void
+			{
+				for each(var row:Object in ddl.dataProvider){
+					if(row.id_conj==val){
+						ddl.selectedItem = row;
+					}
+				}
+			}
+			
 			protected function t_changeHandler(event:TextOperationEvent):void
 			{
-				
 				var tx:TextInput = event.target as TextInput;
 				tx.setStyle("color","red");
 				data.change[tx.id]  = tx.text;
-			}
-			protected function genre_changeHandler(event:Event):void
-			{
-				if(genre1.selected)
-					data.change["genre"]= "1";
-				if(genre2.selected)
-					data.change["genre"]= "2";
-				genre1.setStyle("color","red");
-				genre2.setStyle("color","red");
-				
 			}
 			protected function elision_changeHandler(event:Event):void
 			{
@@ -52,17 +45,18 @@
 				else
 					data.change["elision"]= "0";				
 			}
+			private function updateSelection(e:IndexChangeEvent):void
+			{
+				data.change["id_conj"]= ddl.selectedItem.id_conj;
+			}			
 		]]>
 	</fx:Script>
 	
 	<s:HGroup width="100%" verticalAlign="middle" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
 		<s:Label text="prefix :" /><s:TextInput id="prefix" change="t_changeHandler(event)" />			
 		<s:CheckBox label="élision" id="elision" change="elision_changeHandler(event)"/>
-		<s:RadioButton label="Féminin" id="genre2" groupName="genre" change="genre_changeHandler(event)" />
-		<s:RadioButton label="Masuclin" id="genre1" groupName="genre" change="genre_changeHandler(event)" />
-		<!--
-		<mx:LinkButton width="20" click="removeItem()" icon="@Embed('images/DeleteRecord.png')" toolTip="Supprimer un item"/>
-		-->
+		<s:Label text="modèle de conjugaison :" />
+		<s:DropDownList id="ddl" dataProvider="{this.parentApplication.acConj}" labelField="modele" change="updateSelection(event);"/>
 	</s:HGroup>
 	
 </s:ItemRenderer>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				xmlns:s="library://ns.adobe.com/flex/spark" 
+				xmlns:mx="library://ns.adobe.com/flex/mx" 
+				>
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			
+			import spark.components.List;
+			import spark.events.IndexChangeEvent;
+			import spark.events.TextOperationEvent;
+			
+			override public function set data(value:Object):void
+			{
+				super.data = value;
+				if(data!=null){
+					lib.text = data.lib;
+					data.change = new Array;
+				}
+			}  			
+
+			protected function t_changeHandler(event:TextOperationEvent):void
+			{
+				var tx:TextInput = event.target as TextInput;
+				tx.setStyle("color","red");
+				data.change[tx.id]  = tx.text;
+			}
+		]]>
+	</fx:Script>
+	
+	<s:HGroup width="100%" verticalAlign="middle" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
+		<s:Label text="Libellé :" /><s:TextInput id="lib" change="t_changeHandler(event)" />			
+	</s:HGroup>
+	
+</s:ItemRenderer>

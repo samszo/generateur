@@ -14,6 +14,7 @@
 		<![CDATA[
 			import mx.collections.ArrayCollection;
 			import mx.controls.Alert;
+			import mx.events.CloseEvent;
 			import mx.events.FlexEvent;
 			import mx.rpc.events.FaultEvent;
 			import mx.rpc.events.ResultEvent;
@@ -32,6 +33,8 @@
 			[Bindable] public var cptParent:gConcept;
 			[Bindable] public var bChange:Boolean=false;
 			[Bindable] public var arrChange:Array=new Array;
+			[Bindable] public var bCptAjout:Boolean=true;
+
 			private var action:String="";
 			private var arrR:Array;
 
@@ -53,6 +56,7 @@
 				
 				if(oConcept && this.parentApplication.verifDico()){
 					ROCS.findByIdConcept(oConcept.id_concept, this.parentApplication.arrVerifDico["syntagmes"]);
+					bCptAjout = false;
 				}else{
 					vs.selectedChild = ecriture;
 				}
@@ -60,8 +64,10 @@
 			
 			protected function findByIdConcept_resultHandler(event:ResultEvent):void
 			{
-				if(event.result[0]){
-					donnee = event.result[0];
+				list.dataProvider = null;
+				if(event.result){
+					var ac:ArrayCollection = new ArrayCollection(event.result as Array);
+					list.dataProvider = ac;
 				}				
 			}
 
@@ -79,22 +85,37 @@
 			protected function enregistrer_clickHandler(event:MouseEvent):void
 			{
 				action = "modifier";
+				//récupère les modifications
+				arrChange=new Array;
+				for each(var obj:Object in list.dataProvider){
+					if(obj.change["lib"] ){
+						var arr:Array = new Array;
+						arr["id_syn"]=obj.id_syn;
+						arr["val"]=obj.change;
+						arrChange.push(arr);
+					}
+				}
 				ROCS.utiliseCpt(oConcept.id_concept,"s_"+oConcept.lib);								
 			}
 
 			private function ajouter():void
 			{
-				oConcept = new Object;
-				oConcept.lib =libA.text; 
+				var arrCpt:Array = new Array();
+				//vérifie s'il faut créer le concept
+				if(oConcept == null){
+					oConcept = new Object;
+					oConcept.lib =libA.text; 
+					arrCpt["id_dico"]=idDico;
+					arrCpt["lib"]=libA.text;
+					arrCpt["type"]="s";					
+				}else{
+					arrCpt["id_concept"]=oConcept.id_concept;					
+				}
 				
 				var arr:Array = new Array();
 				arr["id_dico"]=idDico;
 				arr["lib"]=libAs.text;
 				
-				var arrCpt:Array = new Array();
-				arrCpt["id_dico"]=idDico;
-				arrCpt["lib"]=libA.text;
-				arrCpt["type"]="s";
 				ROCS.ajouterCpt(arrCpt, arr, false);								
 			}
 			
@@ -105,10 +126,9 @@
 				var actis:String = "";
 				if(action == "modifier"){
 					actis = "dictionnaire concept : modifier "+arrR[0]['nbGen']+" items pour "+arrR[0]['nbUti']+" utilisateurs : ";
-					actis = actis + "s_"+oConcept.lib+" "+donnee.num+" "+donnee.lib;
-					actis = actis + " -> "+num.text+" "+lib.text;
+					actis = actis + "s_"+oConcept.lib;
 					actis = actis + " (ref="+idDico+"_"+oConcept.id_concept+")";				
-					this.parentApplication.verifActi(arrR[0], action, actis, ROCS, donnee.id_syn, arrChange, idDico);									
+					this.parentApplication.verifActi(arrR[0], action, actis, ROCS,oConcept.id_concept, arrChange, idDico);									
 				}
 				if(action == "supprimer"){
 					actis = "dictionnaire concept : supprimer "+arrR[0]['nbGen']+" items pour "+arrR[0]['nbUti']+" utilisateurs : a_"+oConcept.lib+"... (ref="+idDico+"_"+oConcept.id_concept+")";				
@@ -120,29 +140,49 @@
 			protected function ajouter_resultHandler(event:ResultEvent):void
 			{
 				Alert.show("L'item est ajouté.","Ajout d'un item");
-				oConcept.id_concept = event.result;
-				oConcept.type = "s";
-				this.cptParent.oItem = oConcept
-				this.cptParent.vs.selectedChild = this.cptParent.lecture;
-				this.cptParent.ROC.findByIdDico(idDico);
-				this.cptParent.initDetail();
-			}
-			protected function t_changeHandler(event:TextOperationEvent):void
-			{
-				if(!bModif)return;
-
-				var tx:TextInput = event.target as TextInput;
-				tx.setStyle("color","red");
-				arrChange[tx.id] = tx.text;
-				bChange = true;
+				if(!oConcept.id_concept){
+					oConcept.id_concept = event.result;
+					this.cptParent.oItem = oConcept
+					this.cptParent.vs.selectedChild = this.cptParent.lecture;
+					this.cptParent.ROC.findByIdDico(idDico);
+					this.cptParent.initDetail();
+				}
+				
+				bChange = false;
+				ROCS.findByIdConcept(oConcept.id_concept);
+				vs.selectedChild = lecture;
 			}
 			
 			protected function edit_resultHandler(event:ResultEvent):void
 			{
 				bChange = false;
-				arrChange = new Array;
-				lib.setStyle("color","black");				
+				ROCS.findByIdConcept(oConcept.id_concept);
 			}			
+						
+			protected function list_valueCommitHandler(event:FlexEvent):void
+			{
+				bChange = true;				
+			}
+			
+			protected function remove_clickHandler(event:MouseEvent):void
+			{
+				if(list.selectedItem){					
+					idSyn = list.selectedItem.id_syn;
+					Alert.show("Confirmez-vous la suppression de l'item ?",
+						"Confirmation Suppression", 3, this, removeItemHandler);									
+				}
+			}
+
+			private function removeItemHandler(event:CloseEvent):void
+			{
+				if (event.detail == Alert.YES) 
+				{
+					ROCS.remove(idSyn);
+				}else{
+					ROCS.findByIdConcept(oConcept.id_concept);									
+				}
+			}
+			
 		]]>
 	</fx:Script>
 		
@@ -151,35 +191,48 @@
 						 source="Model_DbTable_Gen_syntagmes" destination="zend" 
 						 showBusyCursor="true"
 						 fault="faultHandlerService(event)">
-			<s:method name="edit" />  	
+			<s:method name="editMulti" result="edit_resultHandler(event)" />  
 			<s:method name="findByIdConcept" result="findByIdConcept_resultHandler(event)" />  	
 			<s:method name="ajouterCpt" result="ajouter_resultHandler(event)" />			
 			<s:method name="utiliseCpt" result="utilise_resultHandler(event)"  />			
+			<s:method name="remove" result="edit_resultHandler(event)"  />			
 		</s:RemoteObject>
 	</fx:Declarations>
 	<mx:ViewStack id="vs" width="100%" height="100%">
 		<mx:Canvas width="100%" height="100%" id="lecture" >						
-			<s:HGroup width="100%" height="100%" >				
-				<s:VGroup width="100%" height="100%" id="detail" >
-					<s:HGroup width="100%" verticalAlign="middle">
-						<s:Label text="Nom du syntagme :" width="112"/><s:Label text="{oConcept.lib}" />			
-					</s:HGroup>
-					<s:HGroup width="100%" verticalAlign="middle">
-						<s:Label text="n° :" /><s:Label id="num" text="{donnee.num}" />			
-						<s:Label text="Libellé :" /><s:TextInput id="lib" text="{donnee.lib}"  change="t_changeHandler(event)"/>			
-						<s:TextInput width="100%" id="G" text="{'[s_'+oConcept.lib+']'}"/><s:Label width="100%" color="#E01919" text="---" id="GT" />
-					</s:HGroup>
-					<s:HGroup verticalAlign="middle">
-						<s:Button label="Enregistrer" click="enregistrer_clickHandler(event)" visible="{bChange}" color="red"/>
-						<s:Button label="Tester" click="tester_clickHandler(event)" />
-					</s:HGroup>
-				</s:VGroup>
-				<compo:gG oConcept="{this.oConcept}" idDico="{this.idDico}" />
-			</s:HGroup>			
+			<s:VGroup width="100%" height="100%" id="detail" >
+				<s:HGroup width="100%" verticalAlign="middle">
+					<s:Label text="Nom du syntagme :" width="112"/><s:Label text="{oConcept.lib}" />			
+					<s:Button label="Tester" id="test" click="tester_clickHandler(event)" />
+				</s:HGroup>
+				<s:HGroup width="100%" verticalAlign="middle">
+					<s:TextInput width="100%" id="G" text="{'[s_'+oConcept.lib+']'}"/><s:Label width="100%" color="#E01919" text="---" id="GT" />
+				</s:HGroup>
+				<mx:TabNavigator width="100%" height="100%" id="tn" >
+					<s:NavigatorContent width="100%" height="100%" label="substantifs associés">
+						<s:layout>
+							<s:VerticalLayout/>
+						</s:layout>
+						<s:HGroup verticalAlign="middle">
+							<mx:LinkButton id="btnUpdate" width="20" click="enregistrer_clickHandler(event)" visible="{bChange}"
+										   icon="@Embed('images/UpdateRecord.png')" toolTip="Enregistrer les modifications"/>					
+							<mx:LinkButton id="btnAddNew" visible="{bAjout}" width="20" click="{vs.selectedChild=ecriture}" 
+										   icon="@Embed('images/AddRecord.png')" toolTip="Ajouter un item"/>					
+							<mx:LinkButton width="20" click="remove_clickHandler(event)" visible="{bRemove}" icon="@Embed('images/DeleteRecord.png')" toolTip="Supprimer un item"/>
+						</s:HGroup>
+						<s:VGroup width="100%" height="100%" paddingBottom="4" paddingLeft="4" paddingRight="4" paddingTop="4" >
+							<s:List id="list" width="100%" height="100%" borderVisible="false" itemRenderer="compo.irSyn" valueCommit="list_valueCommitHandler(event)"   />
+						</s:VGroup>
+					</s:NavigatorContent>
+					<s:NavigatorContent width="100%" height="100%" label="générateurs associés">
+						<compo:gG oConcept="{this.oConcept}" idDico="{this.idDico}" />						
+					</s:NavigatorContent>
+				</mx:TabNavigator>
+			</s:VGroup>
 		</mx:Canvas>
 		<mx:Canvas width="100%" height="100%" id="ecriture" >
 			<s:VGroup width="100%" height="100%"  >
-				<s:HGroup width="100%" verticalAlign="middle">
+				<s:HGroup width="100%" verticalAlign="middle" visible="{bCptAjout}" >
 					<s:Label text="Nom du syntagme :" width="112"/><s:TextInput id="libA" text="" />			
 				</s:HGroup>
 				<s:HGroup width="100%" verticalAlign="middle">

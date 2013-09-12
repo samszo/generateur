@@ -122,11 +122,14 @@
 				
 			}
 
-			protected function modifier()
+			protected function modifier():void
 			{
-				if(rocItem.source=="Model_DbTable_Gen_determinants")
-					rocItem.editMulti(dataItem);
-				else if(rocItem.source=="Model_DbTable_Gen_substantifs")
+				if(rocItem.source=="Model_DbTable_Gen_determinants" 
+					|| rocItem.source=="Model_DbTable_Gen_substantifs"
+					|| rocItem.source=="Model_DbTable_Gen_adjectifs"
+					|| rocItem.source=="Model_DbTable_Gen_verbes"
+					|| rocItem.source=="Model_DbTable_Gen_syntagmes"
+				)
 					rocItem.editMulti(dataItem);					
 				else
 					rocItem.edit(idItem, dataItem);					
