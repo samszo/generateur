@@ -98,10 +98,10 @@ try {
 		,"syntagmes"=>"4");	
 		
 		
-	$txts = array("[m_animal 4]");	
+	$txts = array("[010000000|v_sembler 1] [090000000|v_accepter 1]");	
 	$m = new Gen_Moteur();
 	$var = $m->Tester($txts, $arrVerifDico);
-	$m->getArbreGen("[0|caract1] [0|caract2], [thl-visage-01], [thl-allure-01]",$arrVerifDico);
+	$m->getArbreGen("[010000000|v_sembler 1] [090000000|v_accepter 1] ",$arrVerifDico);
 	$arr = $m->arrClass;
 	*/
 	
@@ -130,6 +130,13 @@ try {
 	/*
 	$dbGen = new Model_DbTable_Gen_generateurs();
 	$dbGen->remove(192667, 157623);
+	*/
+	
+	/*
+	$dbA = new Model_DbTable_Gen_adjectifs();
+	$dbA->editMulti(array(array("id_adj"=>"19887"
+		,"val"=>array("f_p"=>"es", "f_s"=>"e", "m_p"=>"s", "prefix"=>"cramoisi")
+		)));
 	*/
 	
 	$server = new Zend_Amf_Server();
