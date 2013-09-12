@@ -175,7 +175,8 @@ class Model_DbTable_Gen_generateurs extends Zend_Db_Table_Abstract
 	        ->setIntegrityCheck(false) //pour pouvoir sélectionner des colonnes dans une autre table
         ->joinInner(array('g' => 'gen_generateurs'),
         		'g.id_gen = cg.id_gen')
-        ->where("cg.id_concept = ?", $id_concept );
+        ->where("cg.id_concept = ?", $id_concept )
+        ->order("g.valeur");
         
         return $this->fetchAll($query)->toArray(); 
     }
