@@ -8,6 +8,7 @@ import flash.utils.getQualifiedClassName;
 
 import flashx.textLayout.conversion.TextConverter;
 
+import mx.collections.ArrayCollection;
 import mx.controls.Alert;
 import mx.events.CloseEvent;
 import mx.managers.PopUpManager;
@@ -23,6 +24,8 @@ import spark.components.RichText;
 [Bindable] public var arrVerifDico:Array;
 [Bindable] public var ctrlActi:Object;
 [Bindable] public var allConcept:Array;
+[Bindable] public var acConj:ArrayCollection;
+
 public var idItem:String;
 public var dataItem:Array;
 public var arrItem:Array;
@@ -31,12 +34,12 @@ public var actionItem:String;
 public var actisItem:String;
 public var idDicoItem:String;
 
-public var urlAPI:String = "http://localhost/generateur/services/api.php";
-//public var urlAPI:String = "http://generator.digitalartimag.org/services/api.php";
-public const ENDPOINT_IMPORT:String = "http://localhost/generateur/services/import.php";
-//public const ENDPOINT_IMPORT:String = "http://generator.digitalartimag.org/services/import.php";
-public const ENDPOINT_EXPORT:String = "http://localhost/generateur/services/export.php";
-//public const ENDPOINT_EXPORT:String = "http://generator.digitalartimag.org/services/export.php";
+//public var urlAPI:String = "http://localhost/generateur/services/api.php";
+public var urlAPI:String = "http://generator.digitalartimag.org/services/api.php";
+//public const ENDPOINT_IMPORT:String = "http://localhost/generateur/services/import.php";
+public const ENDPOINT_IMPORT:String = "http://generator.digitalartimag.org/services/import.php";
+//public const ENDPOINT_EXPORT:String = "http://localhost/generateur/services/export.php";
+public const ENDPOINT_EXPORT:String = "http://generator.digitalartimag.org/services/export.php";
 
 protected function gereuti_clickHandler(event:MouseEvent):void
 {
@@ -168,6 +171,7 @@ public function verifDico():Boolean
 	var strVerif:String = "";
 	if(!arrVerifDico["concepts"])strVerif+="concepts\n";
 	if(!arrVerifDico["conjugaisons"])strVerif+="conjugaisons\n";
+	else ROCONJ.findByIdDicoVerbe(arrVerifDico["conjugaisons"]);
 	if(!arrVerifDico["déterminants"])strVerif+="déterminants\n";
 	if(!arrVerifDico["negations"])strVerif+="négations\n";
 	if(!arrVerifDico["pronoms_complement"])strVerif+="pronoms_complement\n";
@@ -180,5 +184,12 @@ public function verifDico():Boolean
 		return false;
 	}
 	return true;
+}
+
+protected function findByIdDicoVerbe_resultHandler(event:ResultEvent):void
+{
+	if(event.result){
+		this.acConj = new ArrayCollection(event.result as Array); 
+	}
 }
 

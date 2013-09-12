@@ -21,6 +21,13 @@
 						fault="faultHandlerService(event)">
 			<s:method name="Tester" result="testerMoteur_resultHandler(event)" />  	
 		</s:RemoteObject>
+		<s:RemoteObject id="ROCONJ"
+						source="Model_DbTable_Gen_conjugaisons" destination="zend" 
+						showBusyCursor="true"
+						fault="faultHandlerService(event)">
+			<s:method name="findByIdDicoVerbe" result="findByIdDicoVerbe_resultHandler(event)"  />  	
+		</s:RemoteObject>
+		
 	</fx:Declarations>
 	
 	<s:Group id="boxGen" visible="false" width="100%" height="100%">
