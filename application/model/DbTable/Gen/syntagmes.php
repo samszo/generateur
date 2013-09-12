@@ -128,16 +128,20 @@ class Model_DbTable_Gen_syntagmes extends Zend_Db_Table_Abstract
     {
     	$dbCpt = new Model_DbTable_Gen_concepts();
     	
-    	//vérifie si le concept n'existe pas déjà
-    	$e = $dbCpt->existe($dCpt);
-    	if($e){
-    		//on ne peut pas créer deux concepts avec le même nom dans un dictionnaire
-    		return "Le concept existe déjà";
-    	}else{
-    		//création du concept
-    		$idCpt = $dbCpt->ajouter($dCpt, false);		
-    	}
-    	
+    	//vérifie s'il faut créer le concept
+    	if(!isset($dCpt['id_concept'])){
+	    	//vérifie si le concept n'existe pas déjà
+	    	$e = $dbCpt->existe($dCpt);
+	    	if($e){
+	    		//on ne peut pas créer deux concepts avec le même nom dans un dictionnaire
+	    		return "Le concept existe déjà";
+	    	}else{
+	    		//création du concept
+	    		$idCpt = $dbCpt->ajouter($dCpt, false);		
+	    	}    		
+    	}else 
+	    	$idCpt = $dCpt['id_concept'];		
+    	    	
     	$id = $this->ajouter($d);
 
     	//création du lien entre l'adjectif et le concept
@@ -162,6 +166,20 @@ class Model_DbTable_Gen_syntagmes extends Zend_Db_Table_Abstract
     	$this->update($data, 'gen_syntagmes.id_syn = ' . $id);
     }
     
+   /**
+     * modifie des entrées avec les nouvelles données.
+     *
+     * @param array $data
+     *
+     * @return void
+     */
+    public function editMulti($data)
+    {
+   		foreach ($data as $c) {
+   			$this->edit($c["id_syn"], $c["val"]);
+   		}
+    }
+
     /**
      * Recherche une entrée Gen_syntagmes avec la clef primaire spécifiée
      * et supprime cette entrée.
