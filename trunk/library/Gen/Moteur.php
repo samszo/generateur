@@ -499,26 +499,7 @@ class Gen_Moteur
 		$pluriel = false;
 		
 		//vérifie la présence d'un d&terminant
-		if(!isset($arr["determinant_verbe"])){
-			//vérifie la présence d'un verbe théorique
-			$verbeTheo = false;
-			for ($i = $this->ordre; $i >= 0; $i--) {
-				if(isset($this->arrClass[$i]) && isset($this->arrClass[$i]["class"][1])){
-					if($this->arrClass[$i]["class"][1]=="v_théorique"){
-						$arr["determinant_verbe"] = $this->arrClass[$i]["determinant_verbe"];
-						$verbeTheo = true;
-						//calcul le pronom
-						$arr = $this->generePronom($arr);
-						$i=-1;						
-					}
-				}
-			}
-			if(!$verbeTheo){
-				//3eme personne sans pronom
-				$arr["prosuj"] = "";
-				$arr["terminaison"] = 3;
-			}
-		}else{
+		if(isset($arr["determinant_verbe"])){
 			if($arr["determinant_verbe"][6]!=0){
 				//pronom indéfinie
 				$arr["prosuj"] = $this->getPronom($arr["determinant_verbe"][6],"sujet_indefini");
@@ -822,7 +803,10 @@ class Gen_Moteur
 		$arr["debneg"]="";
 		$arr["finneg"]="";
 		$arr["prodem"]="";		
-				
+
+		//vérifie s'il faut récupérer le 
+		$arr = $this->getDerterminantVerbe($arr);    	
+		
 		//génère le pronom
 		$arr = $this->generePronom($arr);    	
 		
@@ -920,6 +904,43 @@ class Gen_Moteur
 		}
 		
 		return $verbe;
+	}
+	
+	public function getDerterminantVerbe($arr){
+
+		if(!isset($arr["determinant_verbe"])){
+			//vérifie la présence d'un verbe théorique
+			$verbeTheo = false;
+			for ($i = $this->ordre; $i >= 0; $i--) {
+				if(isset($this->arrClass[$i]) && isset($this->arrClass[$i]["class"][1])){
+					if($this->arrClass[$i]["class"][1]=="v_théorique"){
+						$arr["determinant_verbe"] = $this->arrClass[$i]["determinant_verbe"];
+						$verbeTheo = true;
+						$i=-1;						
+					}
+				}
+			}
+			if(!$verbeTheo){
+				//vérifie si le déterminant n'est pas défini avant une génération de verbe en verbe
+				$deterPrec = false;
+				for ($i = $this->ordre-1; $i >= 0; $i--) {
+					if(isset($this->arrClass[$i]) && isset($this->arrClass[$i]["determinant_verbe"])){
+						$arr["determinant_verbe"] = $this->arrClass[$i]["determinant_verbe"];
+						$i=-1;
+					}
+					if(isset($this->arrClass[$i]) && isset($this->arrClass[$i]["verbe"])){
+						$i=-1;
+					}
+				}
+			}
+			if(!$deterPrec){
+				//3eme personne sans pronom
+				$arr["prosuj"] = "";
+				$arr["terminaison"] = 3;
+			}
+		}
+		
+		return $arr;
 	}
 	
     /**
