@@ -152,7 +152,7 @@
 						txtGen.text += param+ "|" + selectCpt.type+ "_" + selectCpt.lib+ "]";
 						break; 
 					default: 
-						txtGen.text += "[" + selectCpt.type+ "_" + selectCpt.lib+ "]";
+						txtGen.text += "[" + selectCpt.type+ "-" + selectCpt.lib+ "]";
 						break; 
 				}	
 			}			
