@@ -4,11 +4,7 @@ try {
 	
 	$application->bootstrap();
 	
-	if($frt == "html" || $frt == "frg" )
-		$rtn = "<br/>";
-	else
-		$rtn = "\n";
-	
+
 	/*
 	$_GET['oeu']=6;
 	$_GET['cpt']=157623;
@@ -36,6 +32,11 @@ try {
 		$nb = $_GET['nb'];
 	else
 		$nb = 1;
+
+	if($frt == "html" || $frt == "frg" )
+		$rtn = "<br/>";
+	else
+		$rtn = "\n";
 		
 	if(!$err){
 		//récupère les dictionnaires
