@@ -797,7 +797,8 @@ class Gen_Moteur
 		$arr["debneg"]="";
 		$arr["finneg"]="";
 		$arr["prodem"]="";		
-
+		$arrEli = array("a", "e", "é", "ê", "i","y");
+		
 		//vérifie s'il faut récupérer le 
 		$arr = $this->getDerterminantVerbe($arr);    	
 		
@@ -814,7 +815,6 @@ class Gen_Moteur
 		$eli = $arr["verbe"]["elision"];
 		if($eli==0){
 			//attention aux caractères bizares
-			$arrEli = array("a", "e", "é", "ê", "i","y");
 			$arrEliCode = array(195);
 			$initial = $centre[0];
 			if(in_array($initial, $arrEli))$eli=1;
@@ -832,7 +832,7 @@ class Gen_Moteur
 				if($eli==0){
 					$arr["debneg"] = "ne ";	
 				}else{
-					if($arr["prodem"]!=""){
+					if(isset($arr["prodem"]) && !in_array(trim($arr["prodem"]["lib"]), $arrEli)){
 						$arr["debneg"] = "ne ";
 					}else{
 						$arr["debneg"] = "n'";						
@@ -960,7 +960,9 @@ class Gen_Moteur
         	$this->ordre --;
         	//avec le nouveau vecteur
         	$this->arrClass[$this->ordre]["vecteur"] = $this->arrClass[($this->ordre+1)]["vecteur"]; 
+        	//$this->getClass($this->arrPosi[0]);
         	$class = $this->arrPosi[0];
+        	//return;
         }
         
 		$this->arrClass[$this->ordre]["class"][] = $class;
@@ -1058,6 +1060,14 @@ class Gen_Moteur
 			//ajoute les classes générées
 			foreach($moteur->arrClass as $k=>$c){
 				$this->ordre ++;
+				//dans le cas d'un changement de position
+				if(count($this->arrPosi)>1){
+		        	//change l'ordre pour que la class soit placée après
+		        	$this->ordre ++;
+					$this->arrClass[$this->ordre] = $this->arrClass[($this->ordre-1)];
+		        	//redéfini l'ordre pour que la class soit placée avant sans écraser la class précédente
+		        	$this->ordre --;
+				}
 				$this->arrClass[$this->ordre] = $c;
 			}
 			//ajoute les caractères générées
