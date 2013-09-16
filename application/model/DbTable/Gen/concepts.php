@@ -369,5 +369,29 @@ class Model_DbTable_Gen_concepts extends Zend_Db_Table_Abstract
         return $this->fetchAll($query)->toArray(); 
     }
     
+    /**
+     * Recherche les tables liées à une entrée de Gen_concepts
+     *
+     * @param int $idCpt
+     *
+     * @return array
+     */
+    public function findTablesLies($idCpt)
+    {
+        //récupère les déterminants
+    	$sql ="SELECT c.lib, c.type
+			, COUNT(ca.id_concept) nbA
+			, COUNT(csu.id_concept) nbM
+			, COUNT(csy.id_concept) nbS
+			, COUNT(cv.id_concept) nbV
+			FROM gen_concepts c
+			LEFT JOIN gen_concepts_adjectifs ca ON c.id_concept = ca.id_concept
+			LEFT JOIN gen_concepts_substantifs csu ON c.id_concept = csu.id_concept
+			LEFT JOIN gen_concepts_syntagmes csy ON c.id_concept = csy.id_concept
+			LEFT JOIN gen_concepts_verbes cv ON c.id_concept = cv.id_concept
+			WHERE c.id_concept = ".$idCpt;
+		$smtp = $this->_db->query($sql);
+        return $smtp->fetchAll();
+    }
     
 }

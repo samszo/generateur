@@ -324,7 +324,7 @@ class Model_DbTable_Gen_conjugaisons extends Zend_Db_Table_Abstract
 
         return $this->fetchAll($query)->toArray(); 
     }
-    	/**
+    /**
      * Recherche une entrée Gen_conjugaisons avec la valeur spécifiée
      * et retourne cette entrée.
      *
@@ -337,6 +337,24 @@ class Model_DbTable_Gen_conjugaisons extends Zend_Db_Table_Abstract
         $query = $this->select()
                     ->from( array("g" => "gen_conjugaisons") )                           
                     ->where( "g.modele = ?", $modele );
+
+        return $this->fetchAll($query)->toArray(); 
+    }
+    
+    /**
+     * Recherche une entrée Gen_conjugaisons avec la valeur spécifiée
+     * et retourne cette entrée.
+     *
+     * @param int 		$idDico
+     * @param varchar 	$modele
+     *
+     * @return array
+     */
+    public function findByDicoModele($idDico, $modele)
+    {
+        $query = $this->select()
+                    ->from( array("g" => "gen_conjugaisons") )                           
+                    ->where( "g.id_dico =".$idDico." AND g.modele = ?", $modele );
 
         return $this->fetchAll($query)->toArray(); 
     }
