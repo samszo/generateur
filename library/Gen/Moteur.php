@@ -285,24 +285,18 @@ class Gen_Moteur
 				        //choisi s'il faut afficher
 				        $this->potentiel ++;
 						mt_srand($this->make_seed());
-				        $a = 100;//mt_rand(0, 1000);        
+				        $a = mt_rand(0, 1000);        
 				        if($a>500){
 				        	$txtCondi = false;
 					        //vérifie si le texte conditionnel est imbriqué
 					        //pour sauter à la fin de la condition
 					        if(isset($this->arrClass[$i+2]["texte"]) && $this->arrClass[$i+2]["texte"]=="|"){
 					        	for ($j = $this->ordre; $j <= $ordreFin; $j++) {
-					        		if(isset($this->arrClass[$j]["texte"]) 
-					        			&& isset($this->arrClass[$j+1]["texte"])
-					        			&& isset($this->arrClass[$j+2]["texte"])){
-						        		if($this->arrClass[$j]["texte"]=="|" 
-						        			&& $this->arrClass[$j+1]["texte"]==$this->arrClass[$i+1]["texte"]
-						        			&& $this->arrClass[$j+2]["texte"]==">"){
+					        		if($this->arrClass[$j]["texte"]=="|"
+					        			&& $this->arrClass[$j+1]["texte"]==$this->arrClass[$i+1]["texte"]
+						        		&& $this->arrClass[$j+2]["texte"]==">"){
 						        			$i=$j+2;
 						        			$j=$ordreFin;		
-						        		}
-					        		}else{
-					        			$j += 2;
 					        		}
 					        	}
 					        }
