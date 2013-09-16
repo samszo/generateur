@@ -33,6 +33,10 @@
 			[Bindable] public var bChange:Boolean=false;
 			[Bindable] public var arrChange:Array=new Array;
 			[Bindable] public var bCptAjout:Boolean=true;
+			[Bindable] public var bShowConceptsLies:Boolean=true;
+			[Bindable] public var listSelect:List;
+			[Bindable] public var txtTypeGen:String;
+			[Bindable] public var txtLibGen:String;
 			
 			private var action:String="";
 			private var arrR:Array;
@@ -52,6 +56,9 @@
 				bAjout = this.parentApplication.uti.écriture;
 				bModif = this.parentApplication.uti.écriture;
 				bRemove = this.parentApplication.uti.suppression;
+
+				//vérifie s'il faut ajouter les concepts liés
+				if(!bShowConceptsLies) vs.selectedChild = assos;
 				
 				if(oConcept){
 					ROV.findByIdConcept(oConcept.id_concept);
@@ -63,11 +70,24 @@
 			
 			protected function findByIdConcept_resultHandler(event:ResultEvent):void
 			{
-				list.dataProvider = null;
+				//précise la liste sélectionnée
+				if(!bShowConceptsLies){
+					listSelect = this.listAssos;
+					if(oConcept.type=="carac" || oConcept.type=="caract") 
+						txtTypeGen = oConcept.type;
+					else
+						txtTypeGen = oConcept.type+'-';					
+				}else{
+					listSelect = this.list;
+					txtTypeGen = "v_";
+				}
+				txtLibGen = oConcept.lib;
+				
+				listSelect.dataProvider = null;
 				if(event.result){
 					var ac:ArrayCollection = new ArrayCollection(event.result as Array);
 					//ac.addEventListener(CollectionEvent.COLLECTION_CHANGE,changeList);
-					list.dataProvider = ac;
+					listSelect.dataProvider = ac;
 				}				
 			}
 
@@ -186,7 +206,7 @@
 			protected function enregistrer_clickHandler(event:MouseEvent):void
 			{
 				arrChange=new Array;
-				for each(var obj:Object in list.dataProvider){
+				for each(var obj:Object in listSelect.dataProvider){
 					if(obj.change["prefix"] || obj.change["id_conj"] || obj.change["elision"]){
 						var arr:Array = new Array;
 						arr["id_verbe"]=obj.id_verbe;
@@ -282,8 +302,8 @@
 			
 			protected function remove_clickHandler(event:MouseEvent):void
 			{
-				if(list.selectedItem){					
-					idVerbe = list.selectedItem.id_verbe;
+				if(listSelect.selectedItem){					
+					idVerbe = listSelect.selectedItem.id_verbe;
 					Alert.show("Confirmez-vous la suppression de l'item ?",
 						"Confirmation Suppression", 3, this, removeItemHandler);									
 				}
@@ -296,6 +316,20 @@
 				}else{
 					ROV.findByIdConcept(oConcept.id_concept);									
 				}
+			}
+
+			protected function listAssos_clickHandler(event:MouseEvent):void
+			{
+				donnee = listAssos.selectedItem;
+				//txtLibGen = donnee.lib;
+				
+			}
+			
+			protected function list_clickHandler(event:MouseEvent):void
+			{
+				donnee = list.selectedItem;
+				//txtLibGen = donnee.lib;
+
 			}
 			
 		]]>
@@ -333,7 +367,7 @@
 							<mx:LinkButton width="20" click="remove_clickHandler(event)" visible="{bRemove}" icon="@Embed('images/DeleteRecord.png')" toolTip="Supprimer un item"/>
 						</s:HGroup>
 						<s:VGroup width="100%" height="100%" paddingBottom="4" paddingLeft="4" paddingRight="4" paddingTop="4" >
-							<s:List id="list" width="100%" height="100%" borderVisible="false" itemRenderer="compo.irVerbe" valueCommit="list_valueCommitHandler(event)"   />
+							<s:List id="list" width="100%" height="100%" borderVisible="false" itemRenderer="compo.irVerbe" valueCommit="list_valueCommitHandler(event)" click="list_clickHandler(event)"   />
 						</s:VGroup>
 					</s:NavigatorContent>
 					<s:NavigatorContent width="100%" height="100%" label="générateurs associés">
@@ -349,7 +383,7 @@
 						<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
 							<s:VGroup width="100%" height="100%">					
 								<s:HGroup width="100%">
-									<s:TextInput id="Gp1P" width="100%" text="{'[011000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="Gp1P" width="100%" text="{'[011000000|'+txtTypeGen+txtLibGen+']'}" />
 									<s:TextInput id="GTp1P" width="100%" color="#117E20" text="---" />				
 								</s:HGroup>
 								<s:Line width="100%" >
@@ -358,7 +392,7 @@
 									</s:stroke>					
 								</s:Line>
 								<s:HGroup width="100%">
-									<s:TextInput id="Gp2P" width="100%" text="{'[012000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="Gp2P" width="100%" text="{'[012000000|'+txtTypeGen+txtLibGen+']'}" />
 									<s:TextInput id="GTp2P" width="100%" color="#117E20" text="---" />				
 								</s:HGroup>
 								<s:Line width="100%" >
@@ -367,13 +401,13 @@
 									</s:stroke>					
 								</s:Line>
 								<s:HGroup width="100%">
-									<s:TextInput id="Gp3P" width="100%" text="{'[013000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="Gp3P" width="100%" text="{'[013000000|'+txtTypeGen+txtLibGen+']'}" />
 									<s:TextInput id="GTp3P" width="100%" color="#117E20" text="---" />				
 								</s:HGroup>
 							</s:VGroup>
 							<s:VGroup width="100%" height="100%">					
 								<s:HGroup width="100%">
-									<s:TextInput id="Gp4P" width="100%" text="{'[014000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="Gp4P" width="100%" text="{'[014000000|'+txtTypeGen+txtLibGen+']'}" />
 									<s:TextInput id="GTp4P" width="100%" color="#117E20" text="---" />				
 								</s:HGroup>
 								<s:Line width="100%" >
@@ -382,7 +416,7 @@
 									</s:stroke>					
 								</s:Line>
 								<s:HGroup width="100%">
-									<s:TextInput id="Gp5P" width="100%" text="{'[015000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="Gp5P" width="100%" text="{'[015000000|'+txtTypeGen+txtLibGen+']'}" />
 									<s:TextInput id="GTp5P" width="100%" color="#117E20" text="---" />				
 								</s:HGroup>
 								<s:Line width="100%" >
@@ -391,7 +425,7 @@
 									</s:stroke>					
 								</s:Line>
 								<s:HGroup width="100%">
-									<s:TextInput id="Gp6P" width="100%" text="{'[017000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="Gp6P" width="100%" text="{'[017000000|'+txtTypeGen+txtLibGen+']'}" />
 									<s:TextInput id="GTp6P" width="100%" color="#117E20" text="---" />				
 								</s:HGroup>
 							</s:VGroup>
@@ -401,7 +435,7 @@
 						<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
 							<s:VGroup width="100%" height="100%">					
 								<s:HGroup width="100%">
-									<s:TextInput id="Gp1I" width="100%" text="{'[021000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="Gp1I" width="100%" text="{'[021000000|'+txtTypeGen+txtLibGen+']'}" />
 									<s:TextInput id="GTp1I" width="100%" color="#117E20" text="---" />				
 								</s:HGroup>
 								<s:Line width="100%" >
@@ -410,7 +444,7 @@
 									</s:stroke>					
 								</s:Line>
 								<s:HGroup width="100%">
-									<s:TextInput id="Gp2I" width="100%" text="{'[022000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="Gp2I" width="100%" text="{'[022000000|'+txtTypeGen+txtLibGen+']'}" />
 									<s:TextInput id="GTp2I" width="100%" color="#117E20" text="---" />				
 								</s:HGroup>
 								<s:Line width="100%" >
@@ -419,13 +453,13 @@
 									</s:stroke>					
 								</s:Line>
 								<s:HGroup width="100%">
-									<s:TextInput id="Gp3I" width="100%" text="{'[023000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="Gp3I" width="100%" text="{'[023000000|'+txtTypeGen+txtLibGen+']'}" />
 									<s:TextInput id="GTp3I" width="100%" color="#117E20" text="---" />				
 								</s:HGroup>
 							</s:VGroup>
 							<s:VGroup width="100%" height="100%">					
 								<s:HGroup width="100%">
-									<s:TextInput id="Gp4I" width="100%" text="{'[024000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="Gp4I" width="100%" text="{'[024000000|'+txtTypeGen+txtLibGen+']'}" />
 									<s:TextInput id="GTp4I" width="100%" color="#117E20" text="---" />				
 								</s:HGroup>
 								<s:Line width="100%" >
@@ -434,7 +468,7 @@
 									</s:stroke>					
 								</s:Line>
 								<s:HGroup width="100%">
-									<s:TextInput id="Gp5I" width="100%" text="{'[025000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="Gp5I" width="100%" text="{'[025000000|'+txtTypeGen+txtLibGen+']'}" />
 									<s:TextInput id="GTp5I" width="100%" color="#117E20" text="---" />				
 								</s:HGroup>
 								<s:Line width="100%" >
@@ -443,7 +477,7 @@
 									</s:stroke>					
 								</s:Line>
 								<s:HGroup width="100%">
-									<s:TextInput id="Gp6I" width="100%" text="{'[027000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="Gp6I" width="100%" text="{'[027000000|'+txtTypeGen+txtLibGen+']'}" />
 									<s:TextInput id="GTp6I" width="100%" color="#117E20" text="---" />				
 								</s:HGroup>
 							</s:VGroup>
@@ -453,7 +487,7 @@
 						<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
 							<s:VGroup width="100%" height="100%">					
 								<s:HGroup width="100%">
-									<s:TextInput id="Gp1PS" width="100%" text="{'[031000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="Gp1PS" width="100%" text="{'[031000000|'+txtTypeGen+txtLibGen+']'}" />
 									<s:TextInput id="GTp1PS" width="100%" color="#117E20" text="---" />				
 								</s:HGroup>
 								<s:Line width="100%" >
@@ -462,7 +496,7 @@
 									</s:stroke>					
 								</s:Line>
 								<s:HGroup width="100%">
-									<s:TextInput id="Gp2PS" width="100%" text="{'[032000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="Gp2PS" width="100%" text="{'[032000000|'+txtTypeGen+txtLibGen+']'}" />
 									<s:TextInput id="GTp2PS" width="100%" color="#117E20" text="---" />				
 								</s:HGroup>
 								<s:Line width="100%" >
@@ -471,13 +505,13 @@
 									</s:stroke>					
 								</s:Line>
 								<s:HGroup width="100%">
-									<s:TextInput id="Gp3PS" width="100%" text="{'[033000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="Gp3PS" width="100%" text="{'[033000000|'+txtTypeGen+txtLibGen+']'}" />
 									<s:TextInput id="GTp3PS" width="100%" color="#117E20" text="---" />				
 								</s:HGroup>
 							</s:VGroup>
 							<s:VGroup width="100%" height="100%">					
 								<s:HGroup width="100%">
-									<s:TextInput id="Gp4PS" width="100%" text="{'[034000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="Gp4PS" width="100%" text="{'[034000000|'+txtTypeGen+txtLibGen+']'}" />
 									<s:TextInput id="GTp4PS" width="100%" color="#117E20" text="---" />				
 								</s:HGroup>
 								<s:Line width="100%" >
@@ -486,7 +520,7 @@
 									</s:stroke>					
 								</s:Line>
 								<s:HGroup width="100%">
-									<s:TextInput id="Gp5PS" width="100%" text="{'[035000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="Gp5PS" width="100%" text="{'[035000000|'+txtTypeGen+txtLibGen+']'}" />
 									<s:TextInput id="GTp5PS" width="100%" color="#117E20" text="---" />				
 								</s:HGroup>
 								<s:Line width="100%" >
@@ -495,7 +529,7 @@
 									</s:stroke>					
 								</s:Line>
 								<s:HGroup width="100%">
-									<s:TextInput id="Gp6PS" width="100%" text="{'[037000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="Gp6PS" width="100%" text="{'[037000000|'+txtTypeGen+txtLibGen+']'}" />
 									<s:TextInput id="GTp6PS" width="100%" color="#117E20" text="---" />				
 								</s:HGroup>
 							</s:VGroup>
@@ -505,7 +539,7 @@
 						<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
 							<s:VGroup width="100%" height="100%">					
 								<s:HGroup width="100%">
-									<s:TextInput id="Gp1F" width="100%" text="{'[041000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="Gp1F" width="100%" text="{'[041000000|'+txtTypeGen+txtLibGen+']'}" />
 									<s:TextInput id="GTp1F" width="100%" color="#117E20" text="---" />				
 								</s:HGroup>
 								<s:Line width="100%" >
@@ -514,7 +548,7 @@
 									</s:stroke>					
 								</s:Line>
 								<s:HGroup width="100%">
-									<s:TextInput id="Gp2F" width="100%" text="{'[042000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="Gp2F" width="100%" text="{'[042000000|'+txtTypeGen+txtLibGen+']'}" />
 									<s:TextInput id="GTp2F" width="100%" color="#117E20" text="---" />				
 								</s:HGroup>
 								<s:Line width="100%" >
@@ -523,13 +557,13 @@
 									</s:stroke>					
 								</s:Line>
 								<s:HGroup width="100%">
-									<s:TextInput id="Gp3F" width="100%" text="{'[043000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="Gp3F" width="100%" text="{'[043000000|'+txtTypeGen+txtLibGen+']'}" />
 									<s:TextInput id="GTp3F" width="100%" color="#117E20" text="---" />				
 								</s:HGroup>
 							</s:VGroup>
 							<s:VGroup width="100%" height="100%">					
 								<s:HGroup width="100%">
-									<s:TextInput id="Gp4F" width="100%" text="{'[044000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="Gp4F" width="100%" text="{'[044000000|'+txtTypeGen+txtLibGen+']'}" />
 									<s:TextInput id="GTp4F" width="100%" color="#117E20" text="---" />				
 								</s:HGroup>
 								<s:Line width="100%" >
@@ -538,7 +572,7 @@
 									</s:stroke>					
 								</s:Line>
 								<s:HGroup width="100%">
-									<s:TextInput id="Gp5F" width="100%" text="{'[045000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="Gp5F" width="100%" text="{'[045000000|'+txtTypeGen+txtLibGen+']'}" />
 									<s:TextInput id="GTp5F" width="100%" color="#117E20" text="---" />				
 								</s:HGroup>
 								<s:Line width="100%" >
@@ -547,7 +581,7 @@
 									</s:stroke>					
 								</s:Line>
 								<s:HGroup width="100%">
-									<s:TextInput id="Gp6F" width="100%" text="{'[047000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="Gp6F" width="100%" text="{'[047000000|'+txtTypeGen+txtLibGen+']'}" />
 									<s:TextInput id="GTp6F" width="100%" color="#117E20" text="---" />				
 								</s:HGroup>
 							</s:VGroup>
@@ -557,7 +591,7 @@
 						<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
 							<s:VGroup width="100%" height="100%">					
 								<s:HGroup width="100%">
-									<s:TextInput id="Gp1C" width="100%" text="{'[051000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="Gp1C" width="100%" text="{'[051000000|'+txtTypeGen+txtLibGen+']'}" />
 									<s:TextInput id="GTp1C" width="100%" color="#117E20" text="---" />				
 								</s:HGroup>
 								<s:Line width="100%" >
@@ -566,7 +600,7 @@
 									</s:stroke>					
 								</s:Line>
 								<s:HGroup width="100%">
-									<s:TextInput id="Gp2C" width="100%" text="{'[052000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="Gp2C" width="100%" text="{'[052000000|'+txtTypeGen+txtLibGen+']'}" />
 									<s:TextInput id="GTp2C" width="100%" color="#117E20" text="---" />				
 								</s:HGroup>
 								<s:Line width="100%" >
@@ -575,13 +609,13 @@
 									</s:stroke>					
 								</s:Line>
 								<s:HGroup width="100%">
-									<s:TextInput id="Gp3C" width="100%" text="{'[053000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="Gp3C" width="100%" text="{'[053000000|'+txtTypeGen+txtLibGen+']'}" />
 									<s:TextInput id="GTp3C" width="100%" color="#117E20" text="---" />				
 								</s:HGroup>
 							</s:VGroup>
 							<s:VGroup width="100%" height="100%">					
 								<s:HGroup width="100%">
-									<s:TextInput id="Gp4C" width="100%" text="{'[054000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="Gp4C" width="100%" text="{'[054000000|'+txtTypeGen+txtLibGen+']'}" />
 									<s:TextInput id="GTp4C" width="100%" color="#117E20" text="---" />				
 								</s:HGroup>
 								<s:Line width="100%" >
@@ -590,7 +624,7 @@
 									</s:stroke>					
 								</s:Line>
 								<s:HGroup width="100%">
-									<s:TextInput id="Gp5C" width="100%" text="{'[055000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="Gp5C" width="100%" text="{'[055000000|'+txtTypeGen+txtLibGen+']'}" />
 									<s:TextInput id="GTp5C" width="100%" color="#117E20" text="---" />				
 								</s:HGroup>
 								<s:Line width="100%" >
@@ -599,7 +633,7 @@
 									</s:stroke>					
 								</s:Line>
 								<s:HGroup width="100%">
-									<s:TextInput id="Gp6C" width="100%" text="{'[057000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="Gp6C" width="100%" text="{'[057000000|'+txtTypeGen+txtLibGen+']'}" />
 									<s:TextInput id="GTp6C" width="100%" color="#117E20" text="---" />				
 								</s:HGroup>
 							</s:VGroup>
@@ -609,7 +643,7 @@
 						<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
 							<s:VGroup width="100%" height="100%">					
 								<s:HGroup width="100%">
-									<s:TextInput id="Gp1S" width="100%" text="{'[061000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="Gp1S" width="100%" text="{'[061000000|'+txtTypeGen+txtLibGen+']'}" />
 									<s:TextInput id="GTp1S" width="100%" color="#117E20" text="---" />				
 								</s:HGroup>
 								<s:Line width="100%" >
@@ -618,7 +652,7 @@
 									</s:stroke>					
 								</s:Line>
 								<s:HGroup width="100%">
-									<s:TextInput id="Gp2S" width="100%" text="{'[062000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="Gp2S" width="100%" text="{'[062000000|'+txtTypeGen+txtLibGen+']'}" />
 									<s:TextInput id="GTp2S" width="100%" color="#117E20" text="---" />				
 								</s:HGroup>
 								<s:Line width="100%" >
@@ -627,13 +661,13 @@
 									</s:stroke>					
 								</s:Line>
 								<s:HGroup width="100%">
-									<s:TextInput id="Gp3S" width="100%" text="{'[063000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="Gp3S" width="100%" text="{'[063000000|'+txtTypeGen+txtLibGen+']'}" />
 									<s:TextInput id="GTp3S" width="100%" color="#117E20" text="---" />				
 								</s:HGroup>
 							</s:VGroup>
 							<s:VGroup width="100%" height="100%">					
 								<s:HGroup width="100%">
-									<s:TextInput id="Gp4S" width="100%" text="{'[064000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="Gp4S" width="100%" text="{'[064000000|'+txtTypeGen+txtLibGen+']'}" />
 									<s:TextInput id="GTp4S" width="100%" color="#117E20" text="---" />				
 								</s:HGroup>
 								<s:Line width="100%" >
@@ -642,7 +676,7 @@
 									</s:stroke>					
 								</s:Line>
 								<s:HGroup width="100%">
-									<s:TextInput id="Gp5S" width="100%" text="{'[065000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="Gp5S" width="100%" text="{'[065000000|'+txtTypeGen+txtLibGen+']'}" />
 									<s:TextInput id="GTp5S" width="100%" color="#117E20" text="---" />				
 								</s:HGroup>
 								<s:Line width="100%" >
@@ -651,7 +685,7 @@
 									</s:stroke>					
 								</s:Line>
 								<s:HGroup width="100%">
-									<s:TextInput id="Gp6S" width="100%" text="{'[067000000|v_'+oConcept.lib+']'}" />
+									<s:TextInput id="Gp6S" width="100%" text="{'[067000000|'+txtTypeGen+txtLibGen+']'}" />
 									<s:TextInput id="GTp6S" width="100%" color="#117E20" text="---" />				
 								</s:HGroup>
 							</s:VGroup>
@@ -661,19 +695,19 @@
 						<s:HGroup width="100%" height="100%" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
 							<s:VGroup width="100%" height="100%">					
 								<s:FormHeading label="Participe passé" />
-								<s:TextInput id="GpPP" width="100%" text="{'[080000000|v_'+oConcept.lib+']'}" />
+								<s:TextInput id="GpPP" width="100%" text="{'[080000000|'+txtTypeGen+txtLibGen+']'}" />
 								<s:TextInput id="GTpPP" width="100%" color="#117E20" text="---" />									
 							</s:VGroup>
 							<s:VGroup height="100%" width="100%" >
 								<s:FormHeading label="Infinitif présent" />
-								<s:TextInput id="GpIP" width="100%" text="{'[09000000|v_'+oConcept.lib+']'}" />
+								<s:TextInput id="GpIP" width="100%" text="{'[09000000|'+txtTypeGen+txtLibGen+']'}" />
 								<s:TextInput id="GTpIP" width="100%" color="#117E20" text="---" />									
 							</s:VGroup>
 						</s:HGroup>
 					</s:NavigatorContent>
 				</mx:TabNavigator>
 				<s:HGroup verticalAlign="middle">
-					<s:Button label="Annuler" click="vs.selectedChild = lecture" />
+					<s:Button label="Annuler" click="{if(!bShowConceptsLies)vs.selectedChild = assos; else vs.selectedChild = lecture;}" />
 					<s:Button label="Tester" click="tester_clickHandler(event)" />
 				</s:HGroup>
 			</s:VGroup>			
@@ -698,5 +732,19 @@
 				</s:HGroup>
 			</s:VGroup>				
 		</mx:Canvas>
+		<mx:Canvas width="100%" height="100%" id="assos" >
+			<s:VGroup width="100%" height="100%" paddingBottom="4" paddingLeft="4" paddingRight="4" paddingTop="4" >
+				<s:HGroup verticalAlign="middle" >
+					<mx:LinkButton width="20" click="enregistrer_clickHandler(event)" visible="{bChange}"
+								   icon="@Embed('images/UpdateRecord.png')" toolTip="Enregistrer les modifications"/>					
+					<mx:LinkButton visible="{bAjout}" width="20" click="{vs.selectedChild=ecriture}" 
+								   icon="@Embed('images/AddRecord.png')" toolTip="Ajouter un item"/>					
+					<mx:LinkButton width="20" click="remove_clickHandler(event)" visible="{bRemove}" icon="@Embed('images/DeleteRecord.png')" toolTip="Supprimer un item"/>
+					<s:Button label="Tester" click="vs.selectedChild = tests" />
+				</s:HGroup>
+				<s:List id="listAssos" width="100%" height="100%" borderVisible="false" itemRenderer="compo.irVerbe" valueCommit="list_valueCommitHandler(event)" click="listAssos_clickHandler(event)"    />
+			</s:VGroup>
+		</mx:Canvas>		
+
 	</mx:ViewStack>						
 </s:Group>

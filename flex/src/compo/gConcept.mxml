@@ -127,6 +127,7 @@
 							var eG:gG = new gG();
 							eG.idDico = this.idDico;
 							eG.oConcept = oItem;
+							eG.bShowTablesLies = true;
 							dgDetail.addElement(eG);
 							break; 
 					}					

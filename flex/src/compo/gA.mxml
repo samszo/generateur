@@ -35,6 +35,9 @@
 			[Bindable] public var cptParent:gConcept;
 			[Bindable] public var bChange:Boolean=false;
 			[Bindable] public var arrChange:Array=new Array;
+			[Bindable] public var bShowConceptsLies:Boolean=true;
+			[Bindable] public var listSelect:List;
+			[Bindable] public var txtGen:String;
 			
 			private var action:String="";
 			private var arrR:Array;
@@ -55,6 +58,9 @@
 				bModif = this.parentApplication.uti.écriture;
 				bRemove = this.parentApplication.uti.suppression;
 				
+				//vérifie s'il faut ajouter les concepts liés
+				if(!bShowConceptsLies) vs.selectedChild = assos;
+
 				if(oConcept){
 					ROCA.findByIdConcept(oConcept.id_concept);
 					bCptAjout = false;
@@ -66,11 +72,21 @@
 			
 			protected function findByIdConcept_resultHandler(event:ResultEvent):void
 			{
-				list.dataProvider = null;
+				//précise la liste sélectionnée
+				if(!bShowConceptsLies){
+					listSelect = this.listAssos;
+					if(oConcept.type=="carac" || oConcept.type=="caract") 
+						txtGen = oConcept.type+oConcept.lib;
+					else
+						txtGen = oConcept.type+'-'+oConcept.lib;					
+				}
+				else listSelect = this.list;
+				
+				listSelect.dataProvider = null;
 				if(event.result){
 					var ac:ArrayCollection = new ArrayCollection(event.result as Array);
 					//ac.addEventListener(CollectionEvent.COLLECTION_CHANGE,changeList);
-					list.dataProvider = ac;
+					listSelect.dataProvider = ac;
 				}				
 			}
 
@@ -111,11 +127,29 @@
 				}
 			}
 
+			protected function testAssos_clickHandler(event:MouseEvent):void
+			{
+				if(this.parentApplication.verifDico()){
+					var arrT:Array = new Array();
+					var arrO:Array = new Array();
+					arrT.push(Gm_sA.text);
+					arrO.push(GTm_sA);
+					arrT.push(Gf_sA.text);
+					arrO.push(GTf_sA);
+					arrT.push(Gm_pA.text);
+					arrO.push(GTm_pA);
+					arrT.push(Gf_pA.text);
+					arrO.push(GTf_pA);
+					
+					this.parentApplication.testerGen(arrT,arrO);
+				}				
+			}
+			
 			protected function enregistrer_clickHandler(event:MouseEvent):void
 			{
 				//récupère les modifications
 				arrChange=new Array;
-				for each(var obj:Object in list.dataProvider){
+				for each(var obj:Object in listSelect.dataProvider){
 					if(obj.change["fp"] || obj.change["m_p"] || obj.change["f_s"] || obj.change["m_s"] || obj.change["prefix"] || obj.change["genre"] || obj.change["elision"]){
 						var arr:Array = new Array;
 						arr["id_adj"]=obj.id_adj;
@@ -203,11 +237,22 @@
 			
 			protected function remove_clickHandler(event:MouseEvent):void
 			{
-				if(list.selectedItem){					
-					idAdj = list.selectedItem.id_adj;
+				if(listSelect.selectedItem){					
+					idAdj = listSelect.selectedItem.id_adj;
 					Alert.show("Confirmez-vous la suppression de l'item ?",
 						"Confirmation Suppression", 3, this, removeItemHandler);									
 				}
+			}
+			
+			protected function listAssos_clickHandler(event:MouseEvent):void
+			{
+				donnee = listAssos.selectedItem;
+				
+			}
+			
+			protected function list_clickHandler(event:MouseEvent):void
+			{
+				donnee = list.selectedItem;
 			}
 			
 		]]>
@@ -254,7 +299,7 @@
 											   icon="@Embed('images/AddRecord.png')" toolTip="Ajouter un item"/>					
 								<mx:LinkButton width="20" click="remove_clickHandler(event)" visible="{bRemove}" icon="@Embed('images/DeleteRecord.png')" toolTip="Supprimer un item"/>
 							</s:HGroup>
-							<s:List id="list" width="100%" height="100%" itemRenderer="compo.irAdj" valueCommit="list_valueCommitHandler(event)" borderVisible="false"   />							
+							<s:List id="list" width="100%" height="100%" itemRenderer="compo.irAdj" valueCommit="list_valueCommitHandler(event)" borderVisible="false" click="list_clickHandler(event)"   />							
 						</s:VGroup>
 					</s:NavigatorContent>
 					<s:NavigatorContent width="100%" height="100%" label="générateurs associés">
@@ -290,5 +335,30 @@
 				</s:HGroup>
 			</s:VGroup>				
 		</mx:Canvas>
+		<mx:Canvas width="100%" height="100%" id="assos" >
+			<s:VGroup width="100%" height="100%" paddingBottom="4" paddingLeft="4" paddingRight="4" paddingTop="4" >
+				<s:HGroup width="100%" verticalAlign="middle">
+					<s:Image source="@Embed('images/masulin.jpg')" /><s:Spacer width="20"/>			
+					<s:TextInput width="100%" id="Gm_sA" text="{'[32|m_mot] ['+txtGen+']'}"/><s:Label width="100%" color="#E01919" text="---" id="GTm_sA" />
+					<s:Image source="@Embed('images/feminin.jpg')" /><s:Spacer width="20"/>			
+					<s:TextInput width="100%" id="Gf_sA" text="{'[32|m_phrase] ['+txtGen+']'}"/><s:Label  width="100%" color="#E01919" text="---" id="GTf_sA" />
+				</s:HGroup>
+				<s:HGroup width="100%" verticalAlign="middle">
+					<s:Image source="@Embed('images/masulin.jpg')" /><s:Image source="@Embed('images/masulin.jpg')" />
+					<s:TextInput width="100%" id="Gm_pA" text="{'[82|m_mot] ['+txtGen+']'}"/><s:Label width="100%" color="#E01919" text="---" id="GTm_pA" />
+					<s:Image source="@Embed('images/feminin.jpg')" /><s:Image source="@Embed('images/feminin.jpg')" />			
+					<s:TextInput width="100%" id="Gf_pA" text="{'[82|m_phrase] ['+txtGen+']'}" /><s:Label width="100%" color="#E01919" text="---" id="GTf_pA" />
+				</s:HGroup>
+				<s:HGroup verticalAlign="middle">
+					<mx:LinkButton width="20" click="enregistrer_clickHandler(event)" visible="{bChange}"
+								   icon="@Embed('images/UpdateRecord.png')" toolTip="Enregistrer les modifications"/>					
+					<mx:LinkButton visible="{bAjout}" width="20" click="{vs.selectedChild=ecriture}" 
+								   icon="@Embed('images/AddRecord.png')" toolTip="Ajouter un item"/>					
+					<mx:LinkButton width="20" click="remove_clickHandler(event)" visible="{bRemove}" icon="@Embed('images/DeleteRecord.png')" toolTip="Supprimer un item"/>
+					<s:Button label="Tester les adjectifs" click="testAssos_clickHandler(event)" />
+				</s:HGroup>
+				<s:List id="listAssos" width="100%" height="100%" borderVisible="false" itemRenderer="compo.irAdj" valueCommit="list_valueCommitHandler(event)" click="listAssos_clickHandler(event)"    />
+			</s:VGroup>
+		</mx:Canvas>		
 	</mx:ViewStack>			
 </s:Group>
