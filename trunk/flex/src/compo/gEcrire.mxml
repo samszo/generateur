@@ -151,6 +151,12 @@
 					case "v": 
 						txtGen.text += param+ "|" + selectCpt.type+ "_" + selectCpt.lib+ "]";
 						break; 
+					case "carac": 
+						txtGen.text += "[" + selectCpt.type+selectCpt.lib+ "]";
+						break; 
+					case "caract": 
+						txtGen.text += "[" + selectCpt.type+selectCpt.lib+ "]";
+						break; 
 					default: 
 						txtGen.text += "[" + selectCpt.type+ "-" + selectCpt.lib+ "]";
 						break; 

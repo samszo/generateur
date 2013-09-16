@@ -76,10 +76,7 @@
 						else
 							rocItem.remove(idItem);
 					if(actionItem=="modifier"){
-						if(rocItem.source=="Model_DbTable_Gen_determinants")
-							rocItem.editMulti(dataItem);					
-						else
-							rocItem.edit(idItem, dataItem);					
+						modifier();				
 					}
 					//réinitialise le tableau général des concepts
 					this.parentApplication.allConcept=null;

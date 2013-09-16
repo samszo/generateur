@@ -20,6 +20,8 @@
 				super.data = value;
 				if(data!=null){
 					prefix.text = data.prefix;
+					s.text = data.s;
+					p.text = data.p;
 					if(data.elision=="0")elision.selected = false;
 					else elision.selected = true;
 					if(data.genre=="2") genre2.selected = true;
@@ -60,6 +62,8 @@
 		<s:CheckBox label="élision" id="elision" change="elision_changeHandler(event)"/>
 		<s:RadioButton label="Féminin" id="genre2" groupName="genre" change="genre_changeHandler(event)" />
 		<s:RadioButton label="Masuclin" id="genre1" groupName="genre" change="genre_changeHandler(event)" />
+		<s:Label text="singulier :" /><s:TextInput id="s" change="t_changeHandler(event)" />			
+		<s:Label text="pluriel :" /><s:TextInput id="p" change="t_changeHandler(event)" />			
 		<!--
 		<mx:LinkButton width="20" click="removeItem()" icon="@Embed('images/DeleteRecord.png')" toolTip="Supprimer un item"/>
 		-->

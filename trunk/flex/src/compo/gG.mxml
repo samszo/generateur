@@ -33,6 +33,7 @@
 			[Bindable] public var cptParent:gConcept;
 			[Bindable] public var bChange:Boolean=false;
 			[Bindable] public var arrChange:Array=new Array;
+			[Bindable] public var bShowTablesLies:Boolean=false;
 			private var action:String="";
 			private var arrR:Array;
 			private var newVal:String;	
@@ -55,6 +56,11 @@
 				
 				if(oConcept && this.parentApplication.verifDico()){
 					ROCG.findByIdConcept(oConcept.id_concept);
+					if(oConcept.type=="carac" || oConcept.type=="caract") 
+						G.text += "[" + oConcept.type+oConcept.lib+ "]";
+					else
+						G.text='['+oConcept.type+'-'+oConcept.lib+']';
+					if(bShowTablesLies) ROC.findTablesLies(oConcept.id_concept);
 				}else{
 					vs.selectedChild = ecriture;
 				}
@@ -87,10 +93,23 @@
 				}
 			}
 
+			protected function testItem_clickHandler(event:MouseEvent):void
+			{
+				if(this.parentApplication.verifDico() && donnee){
+					var arrT:Array = new Array();
+					var arrO:Array = new Array();
+					arrT.push(donnee.valeur);
+					arrO.push(GT);
+					this.parentApplication.testerGen(arrT,arrO);
+				}
+				
+			}
+			
 			private function selectDgItem(event:Event):void {
 				
 				donnee=event.currentTarget.selectedItem;
 				if(donnee){
+					btnTestItem.visible = true;
 					bChange = true;
 					//récupère les éléments génératifs du texte
 					var arrGdeb:Array = String(donnee.valeur).split("[");
@@ -230,6 +249,56 @@
 
 			}
 			
+			protected function findTablesLies_resultHandler(event:ResultEvent):void
+			{
+				if(event.result){
+					var arr:Array = event.result as Array;
+					var nc:NavigatorContent = new NavigatorContent;
+					nc.percentHeight = 100;
+					nc.percentWidth = 100;
+					if(arr[0]["nbA"]!=0){
+						nc.label = "Adjectifs associés";
+						var fA:gA = new gA;
+						fA.idDico = this.idDico;
+						fA.cptParent = this.cptParent;
+						fA.oConcept = this.oConcept;
+						fA.bShowConceptsLies = false;
+						nc.addElement(fA);
+						tn.addElement(nc);
+					}
+					if(arr[0]["nbM"]!=0){
+						nc.label = "Substantifs associés";
+						var fM:gM = new gM;
+						fM.idDico = this.idDico;
+						fM.cptParent = this.cptParent;
+						fM.oConcept = this.oConcept;
+						fM.bShowConceptsLies = false;
+						nc.addElement(fM);
+						tn.addElement(nc);
+					}
+					if(arr[0]["nbS"]!=0){
+						nc.label = "Syntagmes associés";
+						var fS:gS = new gS;
+						fS.idDico = this.idDico;
+						fS.cptParent = this.cptParent;
+						fS.oConcept = this.oConcept;
+						fS.bShowConceptsLies = false;
+						nc.addElement(fS);
+						tn.addElement(nc);
+					}
+					if(arr[0]["nbV"]!=0){
+						nc.label = "Verbes associés";
+						var fV:gV = new gV;
+						fV.idDico = this.idDico;
+						fV.cptParent = this.cptParent;
+						fV.oConcept = this.oConcept;
+						fV.bShowConceptsLies = false;
+						nc.addElement(fV);
+						tn.addElement(nc);
+					}
+				}
+			}
+			
 		]]>
 	</fx:Script>
 		
@@ -248,7 +317,8 @@
 						source="Model_DbTable_Gen_concepts" destination="zend" 
 						showBusyCursor="true"
 						fault="faultHandlerService(event)">
-			<s:method name="ajouter" result="ajouterCpt_resultHandler(event)" />  	
+			<s:method name="ajouter" result="ajouterCpt_resultHandler(event)" />
+			<s:method name="findTablesLies" result="findTablesLies_resultHandler(event)" />
 		</s:RemoteObject>
 
 	</fx:Declarations>
@@ -259,27 +329,32 @@
 					<s:Label text="Nom du texte génératif :" /><s:Label text="{oConcept.lib}" />			
 					<s:Label text="Type :" /><s:Label text="{oConcept.type}" />			
 				</s:HGroup>
-				<compo:hbFilterControl id="dgFilter"  />
 				<s:HGroup width="100%" height="100%" >
-					<s:VGroup width="100%" height="100%" >
-						<s:HGroup>
-							<mx:LinkButton visible="{bRemove}" width="20" click="removeItem()" 
-										   icon="@Embed('images/DeleteRecord.png')" toolTip="Supprimer un item"/>
-							<mx:LinkButton id="btnAddNew" visible="{bAjout}" width="20" click="btnAddNew_clickHandler(event)" 
-										   icon="@Embed('images/AddRecord.png')" toolTip="Ajouter un item"/>					
-							<mx:LinkButton id="btnUpdate" visible="{bModif}" width="20" click="btnUpdate_clickHandler(event)" 
-										   icon="@Embed('images/UpdateRecord.png')" toolTip="Modifier un item"/>					
-						</s:HGroup>
-						<mx:DataGrid id="dg" width="100%" height="100%" click="selectDgItem(event);" editable="false" >
-							<mx:columns>
-								<mx:DataGridColumn dataField="id_gen" editable="false" visible="false" headerText="id_gen" />
-								<mx:DataGridColumn dataField="valeur" headerText="Descripteur" editable="true" />
-							</mx:columns>
-						</mx:DataGrid>
-					</s:VGroup>
+					<mx:TabNavigator width="100%" height="100%" id="tn" >
+						<s:NavigatorContent width="100%" height="100%" label="liste des générateurs" visible="true">
+							<s:VGroup width="100%" height="100%" >
+								<compo:hbFilterControl id="dgFilter"  />
+								<s:HGroup>
+									<mx:LinkButton visible="{bRemove}" width="20" click="removeItem()" 
+												   icon="@Embed('images/DeleteRecord.png')" toolTip="Supprimer un item"/>
+									<mx:LinkButton id="btnAddNew" visible="{bAjout}" width="20" click="btnAddNew_clickHandler(event)" 
+												   icon="@Embed('images/AddRecord.png')" toolTip="Ajouter un item"/>					
+									<mx:LinkButton id="btnUpdate" visible="{bModif}" width="20" click="btnUpdate_clickHandler(event)" 
+												   icon="@Embed('images/UpdateRecord.png')" toolTip="Modifier un item"/>
+									<s:Button id="btnTestItem" label="Tester l'item sélectionné" click="testItem_clickHandler(event)" visible="false" />
+								</s:HGroup>
+								<mx:DataGrid id="dg" width="100%" height="100%" click="selectDgItem(event);" editable="false" >
+									<mx:columns>
+										<mx:DataGridColumn dataField="id_gen" editable="false" visible="false" headerText="id_gen" />
+										<mx:DataGridColumn dataField="valeur" headerText="Descripteur" editable="true" />
+									</mx:columns>
+								</mx:DataGrid>
+							</s:VGroup>
+						</s:NavigatorContent>
+					</mx:TabNavigator>
 					<s:VGroup width="100%" height="100%" >
 						<s:Button label="Tester" click="tester_clickHandler(event)" />
-						<s:TextInput width="100%" id="G" text="{'['+oConcept.type+'-'+oConcept.lib+']'}"/>
+						<s:TextInput width="100%" id="G" />
 						<s:RichText id="GT" width="100%" height="100%" /> 
 					</s:VGroup>
 				</s:HGroup>
