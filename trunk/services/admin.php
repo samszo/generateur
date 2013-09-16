@@ -27,10 +27,10 @@ try {
 	
 	
 	/*
-	$idDico = 110;
+	$idDico = 118;
 	$idConj = 44;
     $oDico = new Gen_Dico();
-    $oDico->importCSV($idDico, array("path_source"=>"http://localhost/generateur/data/dicos/522577f966afd.csv"));
+    $oDico->importCSV($idDico, array("path_source"=>"http://localhost/generateur/data/dicos/5236b986d497f.csv"));
     $oDico->GetMacToXml($idDico);
     $oDico->SaveBdd($idDico, $idConj);
 	*/
@@ -87,7 +87,7 @@ try {
 	*/
 	
 	/*
-	$arrVerifDico = array("concepts"=>"111, 112, 34"	
+	$arrVerifDico = array("concepts"=>"118, 34"	
 		,"conjugaisons"=>"44"	
 		,"déterminants"=>"46"	
 		,"négations"=>"16"	
@@ -98,7 +98,7 @@ try {
 		,"syntagmes"=>"4");	
 		
 		
-	$txts = array("[010000000|v_sembler 1] [090000000|v_accepter 1]");	
+	$txts = array("[62|m_phrase][carachabitant ville]");	
 	$m = new Gen_Moteur();
 	$var = $m->Tester($txts, $arrVerifDico);
 	$m->getArbreGen("[010000000|v_sembler 1] [090000000|v_accepter 1] ",$arrVerifDico);
