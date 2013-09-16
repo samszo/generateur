@@ -61,20 +61,59 @@ class Gen_Dico
 	try {
 		$this->dbCon = new Model_DbTable_Gen_concepts();
 		$this->dbGen = new Model_DbTable_Gen_generateurs();
+		$this->dbSub = new Model_DbTable_Gen_substantifs();
+		$this->dbAdj = new Model_DbTable_Gen_adjectifs();
+		$this->dbVer = new Model_DbTable_Gen_verbes();
+		$this->dbConj = new Model_DbTable_Gen_conjugaisons();
+		$this->dbOdu = new Model_DbTable_Gen_oeuvresxdicosxutis();
 		
 	    //chargement du fichier
 		$arr = $this->csvToArray($docInfos['path_source']);
 		$cpt = "";
+		$first = true;
+		$type = "";
 		foreach ($arr as $v) {
-			if(count($v)!=3) throw new Exception("Le fichier est mal formaté : il n'y a pas 3 colonnes.");
-			if($v[0]!="concept" && $v[1]!="type" && $v[2]!="valeur"){
+			//if(count($v)==3) throw new Exception("Le fichier est mal formaté : il n'y a pas 3 colonnes.");
+			if(count($v)==3) $type="gen";
+			if(count($v)==5) $type="ver";
+			if(count($v)==7) $type="sub";
+			if(count($v)==8) $type="adj";
+			
+			if(!$first){
 				//vérifie si on traite le même concept
 				if($cpt!=$v[0]){
 					$idC = $this->dbCon->ajouter(array("id_dico"=>$idDico,"lib"=>$v[0],"type"=>$v[1]));
 					$cpt=$v[0];						
 				}
-	    		$this->dbGen->ajouter($idC, array("id_dico"=>$idDico,"valeur"=>$v[2]));
+				switch ($type) {
+					case "gen":
+			    		$this->dbGen->ajouter($idC, array("id_dico"=>$idDico,"valeur"=>$v[2]));
+						break;
+					case "sub":
+			    		$this->dbSub->ajouter(array("id_concept"=>$idC), array("id_dico"=>$idDico,"elision"=>$v[2],"genre"=>$v[3],"prefix"=>$v[4],"s"=>$v[5],"p"=>$v[6]));
+						break;
+					case "adj":
+			    		$this->dbAdj->ajouter(array("id_concept"=>$idC), array("id_dico"=>$idDico,"elision"=>$v[2],"prefix"=>$v[3],"m_s"=>$v[4],"f_s"=>$v[5],"m_p"=>$v[6],"f_p"=>$v[7]));
+						break;
+					case "ver":
+						if(!$idConj){
+							//recherche le dico de conjugaison
+							$arrConj = $this->dbOdu->findByDicoType($idDico, "conjugaisons");
+							if(!$arrConj)$idConj=1;
+							else{
+								//recherche le modèle
+								$arrConj = $this->dbConj->findByDicoModele($arrConj[0]["id_dico"], $v[4]);
+								if(!$arrConj)$idConj=1;
+								else $idConj = $arrConj[0]["id_conj"];
+							}
+						}
+			    		$this->dbVer->ajouterCpt(array("id_concept"=>$idC), array("id_dico"=>$idDico,"elision"=>$v[2],"prefix"=>$v[3],"id_conj"=>$idConj));
+						break;
+					default:
+						break;
+				}
 			}
+			$first = false;
 		}
 		// print the array of the csv file.
 		//print_r($arr);
