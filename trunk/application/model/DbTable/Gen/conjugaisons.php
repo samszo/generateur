@@ -359,5 +359,22 @@ class Model_DbTable_Gen_conjugaisons extends Zend_Db_Table_Abstract
         return $this->fetchAll($query)->toArray(); 
     }
     
+    /**
+     * Recherche une entrée Gen_conjugaisons avec la valeur spécifiée
+     * et retourne cette entrée.
+     *
+     * @param int 		$idDico
+     * @param varchar 	$num
+     *
+     * @return array
+     */
+    public function findByDicoNum($idDico, $num)
+    {
+        $query = $this->select()
+			->from( array("g" => "gen_conjugaisons") )                           
+            ->where( "g.id_dico =".$idDico." AND g.num = ?", $num);
+
+        return $this->fetchAll($query)->toArray(); 
+    }
     
 }
