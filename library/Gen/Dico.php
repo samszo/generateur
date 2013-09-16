@@ -102,7 +102,10 @@ class Gen_Dico
 							if(!$arrConj)$idConj=1;
 							else{
 								//recherche le modèle
-								$arrConj = $this->dbConj->findByDicoModele($arrConj[0]["id_dico"], $v[4]);
+								if(is_int($v[4]))
+									$arrConj = $this->dbConj->findByDicoNum($arrConj[0]["id_dico"], $v[4]);
+								else
+									$arrConj = $this->dbConj->findByDicoModele($arrConj[0]["id_dico"], $v[4]);
 								if(!$arrConj)$idConj=1;
 								else $idConj = $arrConj[0]["id_conj"];
 							}
