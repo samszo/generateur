@@ -61,6 +61,7 @@
 					else
 						G.text='['+oConcept.type+'-'+oConcept.lib+']';
 					if(bShowTablesLies) ROC.findTablesLies(oConcept.id_concept);
+					else tnTest.width = 0;
 				}else{
 					vs.selectedChild = ecriture;
 				}
@@ -84,6 +85,7 @@
 
 			protected function tester_clickHandler(event:MouseEvent):void
 			{
+				tnTest.selectedChild = ncTest;
 				if(this.parentApplication.verifDico()){
 					var arrT:Array = new Array();
 					var arrO:Array = new Array();
@@ -95,6 +97,7 @@
 
 			protected function testItem_clickHandler(event:MouseEvent):void
 			{
+				tnTest.selectedChild = ncTest;
 				if(this.parentApplication.verifDico() && donnee){
 					var arrT:Array = new Array();
 					var arrO:Array = new Array();
@@ -109,12 +112,15 @@
 				
 				donnee=event.currentTarget.selectedItem;
 				if(donnee){
-					btnTestItem.visible = true;
+					Gi.text = donnee.valeur;
 					bChange = true;
 					//récupère les éléments génératifs du texte
 					var arrGdeb:Array = String(donnee.valeur).split("[");
 					for each(var g:String in arrGdeb){
 						var arrGFin:Array = g.split("]");
+					}
+					if(cc){
+						cc.init();
 					}
 				}
 
@@ -298,6 +304,26 @@
 					}
 				}
 			}
+						
+			protected function diffuse_changeHandler(event:Event):void
+			{
+				if(event.target.id=="cptSelect"){
+					cc.oItem = oConcept;
+				}else{
+					cc.oItem = donnee;					
+				}
+				cc.init();
+				
+			}
+			
+			protected function verif_clickHandler(event:MouseEvent):void
+			{
+				tnTest.selectedChild = ncTest;
+				if(this.parentApplication.verifDico()){
+					this.parentApplication.verifierGen(G.text,GT);
+				}
+				
+			}
 			
 		]]>
 	</fx:Script>
@@ -324,15 +350,15 @@
 	</fx:Declarations>
 	<mx:ViewStack id="vs" width="100%" height="100%">
 		<mx:Canvas width="100%" height="100%" id="lecture" >					
-			<s:VGroup width="100%" height="100%" id="detail" >
-				<s:HGroup width="100%" verticalAlign="middle">
-					<s:Label text="Nom du texte génératif :" /><s:Label text="{oConcept.lib}" />			
-					<s:Label text="Type :" /><s:Label text="{oConcept.type}" />			
-				</s:HGroup>
-				<s:HGroup width="100%" height="100%" >
+			<mx:HDividedBox id="dgDivBox" width="100%" height="100%" >
+				<s:VGroup width="100%" height="100%" id="detail" >
+					<s:HGroup width="100%" verticalAlign="middle">
+						<s:Label text="Nom du texte génératif :" /><s:Label text="{oConcept.lib}" />			
+						<s:Label text="Type :" /><s:Label text="{oConcept.type}" />			
+					</s:HGroup>
 					<mx:TabNavigator width="100%" height="100%" id="tn" >
 						<s:NavigatorContent width="100%" height="100%" label="liste des générateurs" visible="true">
-							<s:VGroup width="100%" height="100%" >
+							<s:VGroup width="100%" height="100%" paddingBottom="4" paddingLeft="4" paddingRight="4" paddingTop="4" >
 								<compo:hbFilterControl id="dgFilter"  />
 								<s:HGroup>
 									<mx:LinkButton visible="{bRemove}" width="20" click="removeItem()" 
@@ -341,7 +367,6 @@
 												   icon="@Embed('images/AddRecord.png')" toolTip="Ajouter un item"/>					
 									<mx:LinkButton id="btnUpdate" visible="{bModif}" width="20" click="btnUpdate_clickHandler(event)" 
 												   icon="@Embed('images/UpdateRecord.png')" toolTip="Modifier un item"/>
-									<s:Button id="btnTestItem" label="Tester l'item sélectionné" click="testItem_clickHandler(event)" visible="false" />
 								</s:HGroup>
 								<mx:DataGrid id="dg" width="100%" height="100%" click="selectDgItem(event);" editable="false" >
 									<mx:columns>
@@ -352,13 +377,34 @@
 							</s:VGroup>
 						</s:NavigatorContent>
 					</mx:TabNavigator>
-					<s:VGroup width="100%" height="100%" >
-						<s:Button label="Tester" click="tester_clickHandler(event)" />
-						<s:TextInput width="100%" id="G" />
-						<s:RichText id="GT" width="100%" height="100%" /> 
-					</s:VGroup>
-				</s:HGroup>
-			</s:VGroup>
+				</s:VGroup>
+				<mx:TabNavigator width="100%" height="100%" id="tnTest" >
+					<s:NavigatorContent width="100%" height="100%" id="ncTest" label="Tester" visible="true">
+						<s:VGroup width="100%" height="100%" paddingBottom="4" paddingLeft="4" paddingRight="4" paddingTop="4" >
+							<s:HGroup verticalAlign="middle" width="100%" >
+								<s:Button label="Tester le concept" click="tester_clickHandler(event)" />
+								<s:Button label="Vérifier le concept" click="verif_clickHandler(event)" />
+								<s:TextInput width="100%" id="G" />									
+							</s:HGroup>
+							<s:HGroup verticalAlign="middle" width="100%" >
+								<s:Button id="btnTestItem" label="Tester l'item sélectionné" click="testItem_clickHandler(event)" />
+								<s:TextInput width="100%" id="Gi" />									
+							</s:HGroup>
+							<s:RichText id="GT" width="100%" height="100%" /> 
+						</s:VGroup>
+					</s:NavigatorContent>
+					<s:NavigatorContent width="100%" height="100%" label="Diffuser" visible="true">
+						<s:VGroup width="100%" height="100%" paddingBottom="4" paddingLeft="4" paddingRight="4" paddingTop="4" >
+							<s:HGroup verticalAlign="middle" width="100%" >
+								<s:Label text="Sélectionner :" />
+								<s:RadioButton id="cptSelect" groupName="diffuse" label="le concept" change="diffuse_changeHandler(event)"  />
+								<s:RadioButton id="itemSelect" groupName="diffuse" label="l'item" change="diffuse_changeHandler(event)" />
+							</s:HGroup>
+							<compo:gCreaCode id="cc" oItem="{donnee}" idOeu="{this.parentApplication.dgOeuParam.idOeu}" />
+						</s:VGroup>
+					</s:NavigatorContent>
+				</mx:TabNavigator>
+			</mx:HDividedBox>				
 		</mx:Canvas>
 		<mx:Canvas width="100%" height="100%" id="ecriture" >
 			<s:VGroup width="100%" height="100%"  >

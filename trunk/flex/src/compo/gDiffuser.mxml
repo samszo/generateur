@@ -2,8 +2,7 @@
 <s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" height="100%"
-		 xmlns:flexiframe="http://code.google.com/p/flex-iframe/"
-		 creationComplete="creationCompleteHandler(event)" >
+		 creationComplete="creationCompleteHandler(event)" xmlns:compo="compo.*" >
 	<s:layout>
 		<s:VerticalLayout paddingBottom="4" paddingLeft="4" paddingRight="4" paddingTop="4"/>
 	</s:layout>
@@ -49,8 +48,7 @@
 			protected function dgDico_clickHandler(event:MouseEvent):void
 			{
 				if(event.currentTarget.selectedItem)roC.getCptForDiffusion(event.currentTarget.selectedItem.id_dico);
-				fi.source = "vide.html";
-				taCS.text = "";
+				cc.init();
 			}
 			
 			protected function getDicoForDiffusion_resultHandler(e:ResultEvent):void
@@ -70,53 +68,9 @@
 			protected function dgCpt_clickHandler(event:MouseEvent):void
 			{
 				oItem = event.currentTarget.selectedItem;
-				if(oItem){
-					txtGen.text = '['+oItem.type+'-'+oItem.lib+']';
-				}
-				fi.source = "vide.html";
-				taCS.text = "";
+				cc.init();
 			}
 
-			protected function html1_clickHandler(event:MouseEvent):void
-			{
-				if(oItem){
-					txtLien.text = this.parentApplication.urlAPI+"?oeu="+idOeu+"&cpt="+oItem.id_concept+"&nb="+nsTB.value;					
-					loadUrl(txtLien.text)
-				}
-			}
-
-			protected function html2_clickHandler(event:MouseEvent):void
-			{
-				if(oItem){
-					txtLien.text = this.parentApplication.urlAPI+"?oeu="+idOeu+"&cpt="+oItem.id_concept+"&frt=html";
-					if(cbBtnGen2.selected)txtLien.text += "&btn=1"; 
-					loadUrl(txtLien.text)
-				}
-			}
-			
-			protected function html3_clickHandler(event:MouseEvent):void
-			{
-				if(oItem){
-					txtLien.text = this.parentApplication.urlAPI+"?oeu="+idOeu+"&cpt="+oItem.id_concept+"&frt=iframe";					
-					if(cbBtnGen3.selected)txtLien.text += "&btn=1"; 
-					loadUrl(txtLien.text)
-				}
-			}
-
-			protected function loadUrl(url:String):void
-			{
-				textLoader = new URLLoader();
-				var textReq:URLRequest = new URLRequest(url);
-				
-				textLoader.load(textReq);
-				textLoader.addEventListener(Event.COMPLETE, textLoadComplete);							
-			}
-
-			protected function textLoadComplete(event:Event):void
-			{
-				fi.source = txtLien.text;
-				taCS.text = textLoader.data;
-			}
 			
 		]]>
 	</fx:Script>
@@ -165,6 +119,8 @@
 		</s:Panel>		
 	</s:HGroup>
 	<s:Panel width="100%" height="100%" title="3. Choisissez le type de code">
+		<compo:gCreaCode id="cc" oItem="{oItem}" idOeu="{idOeu}" />
+		<!--
 		<s:VGroup width="100%" height="100%" paddingBottom="4" paddingLeft="4" paddingRight="4" paddingTop="4">
 			<s:HGroup width="100%" verticalAlign="middle" fontSize="18" >
 				<s:Label text="Texte génératif :" />
@@ -177,7 +133,7 @@
 					<s:VGroup paddingBottom="4" paddingLeft="4" paddingRight="4" paddingTop="4">
 						<s:Label text="Lien pour du texte brut" />
 						<s:HGroup verticalAlign="middle">
-							<s:Label text="Nb. de génration :" />
+							<s:Label text="Nb. de génération :" />
 							<s:NumericStepper id="nsTB" maximum="200" value="1" />							
 						</s:HGroup>
 						<s:Button label="Tester" click="html1_clickHandler(event)" />					
@@ -195,7 +151,7 @@
 				<s:Panel width="100%" height="100%" title="Résultat du test">
 					<s:HGroup width="100%" height="100%" fontSize="18" paddingBottom="4" paddingLeft="4" paddingRight="4" paddingTop="4">						
 						<s:VGroup height="100%" width="100%">
-							<s:Label text="code source : " />
+							<s:Label text="texte brut : " />
 							<s:TextArea id="taCS" width="100%" height="100%" />
 						</s:VGroup>
 						<s:VGroup height="100%" width="100%">
@@ -211,6 +167,7 @@
 				</s:Panel>
 			</s:HGroup>
 		</s:VGroup>
+		-->
 	</s:Panel>
 	
 </s:Group>

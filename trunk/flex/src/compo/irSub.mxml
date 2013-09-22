@@ -60,8 +60,8 @@
 	<s:HGroup width="100%" verticalAlign="middle" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
 		<s:Label text="prefix :" /><s:TextInput id="prefix" change="t_changeHandler(event)" />			
 		<s:CheckBox label="élision" id="elision" change="elision_changeHandler(event)"/>
-		<s:RadioButton label="Féminin" id="genre2" groupName="genre" change="genre_changeHandler(event)" />
-		<s:RadioButton label="Masuclin" id="genre1" groupName="genre" change="genre_changeHandler(event)" />
+		<s:Image source="@Embed('images/feminin.jpg')" /><s:RadioButton id="genre2" groupName="genre" change="genre_changeHandler(event)" />
+		<s:Image source="@Embed('images/masulin.jpg')" /><s:RadioButton id="genre1" groupName="genre" change="genre_changeHandler(event)" />
 		<s:Label text="singulier :" /><s:TextInput id="s" change="t_changeHandler(event)" />			
 		<s:Label text="pluriel :" /><s:TextInput id="p" change="t_changeHandler(event)" />			
 		<!--
