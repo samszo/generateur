@@ -222,6 +222,16 @@
 					ROC.utilise(oItem.id_concept, oItem.type+"_"+oItem.lib);
 				}				
 			}
+
+			protected function btnExport_clickHandler(event:MouseEvent):void
+			{
+				if(oItem){
+					var url:String = this.parentApplication.ENDPOINT_EXPORT+"?idDico=" + oItem.id_dico+"&idCpt=" + oItem.id_concept;
+					navigateToURL(new URLRequest(url), '_blank');				
+				}else
+					Alert.show("Veuillez sélectionner un item.","Exportation d'un item");				
+
+			}
 			
 		]]>
 	</fx:Script>
@@ -248,7 +258,8 @@
 							<mx:LinkButton visible="{bRemove}" width="20" click="removeItem()"
 										   icon="@Embed('images/DeleteRecord.png')" toolTip="{'Supprimer un item'}"/>
 							<mx:LinkButton id="btnAddNew" visible="{bAjout}" width="20" click="{vs.selectedChild = ecriture;}"
-										   icon="@Embed('images/AddRecord.png')" toolTip="{'Ajouter un item'}"/>					
+										   icon="@Embed('images/AddRecord.png')" toolTip="{'Ajouter un item'}"/>
+							<s:Button id="btnExport" click="btnExport_clickHandler(event)" label="Exporter" toolTip="Exporter un item" />
 						</s:HGroup>
 						<mx:DataGrid id="dg" width="100%" height="100%" click="selectDgItem(event);" editable="true" itemEditEnd="dg_itemEditEndHandler(event)" >
 							<mx:columns>

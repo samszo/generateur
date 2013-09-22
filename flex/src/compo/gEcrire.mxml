@@ -256,7 +256,9 @@
 			<mx:Label text="Texte génératif :" />
 			<mx:TextArea id="txtGen" width="100%" text="{oItem.valeur}" />
 			<mx:Label text="Résultat de la génération :" />
-			<s:RichText id="txtRes" width="100%" height="100%" />
+			<s:Scroller width="100%" height="100%" >
+				<s:RichEditableText id="txtRes" width="100%" height="100%" editable="true" backgroundColor="red" backgroundAlpha="0.1"	selectable="true" />
+			</s:Scroller>  
 			<mx:HBox>
 				<mx:Button label="Enregistrer" click="{fctEnregistrer(txtGen.text, oItem)}" visible="{bModif}" />
 				<mx:Button label="Tester" click="tester_clickHandler(event)" />
