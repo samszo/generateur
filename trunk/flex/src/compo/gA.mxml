@@ -258,6 +258,15 @@
 				}
 			}
 			
+			protected function verif_clickHandler(event:MouseEvent):void
+			{
+				tnTest.selectedChild = ncTest;
+				if(this.parentApplication.verifDico()){
+					this.parentApplication.verifierGen(G.text,GT);
+				}
+				
+			}
+			
 		]]>
 	</fx:Script>
 		
@@ -316,6 +325,13 @@
 								<s:Image source="@Embed('images/feminin.jpg')" /><s:Image source="@Embed('images/feminin.jpg')" />			
 								<s:TextInput width="100%" id="Gf_p" text="{'[82|m_phrase] [a_'+oConcept.lib+']'}" /><s:Label width="100%" color="#E01919" text="---" id="GTf_p" />
 							</s:HGroup>
+							<s:HGroup verticalAlign="middle" width="100%" >
+								<s:TextInput width="100%" id="G" text="{'[32|m_mot] [a_'+oConcept.lib+']'}"/>
+								<s:Button label="Vérifier le concept" click="verif_clickHandler(event)" />								
+							</s:HGroup>
+							<s:Scroller width="100%" height="100%" >
+								<s:RichEditableText id="GT" width="100%" height="100%" editable="true" selectable="true" />
+							</s:Scroller>  
 						</s:VGroup>
 					</s:NavigatorContent>
 					<s:NavigatorContent width="100%" height="100%" label="Diffuser" visible="true">

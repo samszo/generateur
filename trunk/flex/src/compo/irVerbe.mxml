@@ -16,6 +16,7 @@
 				super.data = value;
 				if(data!=null){
 					prefix.text = data.prefix;
+					id_verbe.text = data.id_verbe;
 					if(data.elision=="0")elision.selected = false;
 					else elision.selected = true;
 					selectItem(data.id_conj);
@@ -53,6 +54,7 @@
 	</fx:Script>
 	
 	<s:HGroup width="100%" verticalAlign="middle" paddingBottom="2" paddingLeft="2" paddingRight="2" paddingTop="2">
+		<s:Label id="id_verbe" text="" />			
 		<s:Label text="prefix :" /><s:TextInput id="prefix" change="t_changeHandler(event)" />			
 		<s:CheckBox label="élision" id="elision" change="elision_changeHandler(event)"/>
 		<s:Label text="modèle de conjugaison :" />
