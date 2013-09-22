@@ -393,5 +393,40 @@ class Model_DbTable_Gen_concepts extends Zend_Db_Table_Abstract
 		$smtp = $this->_db->query($sql);
         return $smtp->fetchAll();
     }
-    
+
+    /**
+     * renvoie le texte génératif conrrespondant à un concept
+     *
+     * @param array $idCpt
+     *
+     * @return string
+     */
+    public function getGenTexte($cpt)
+    {
+    	$txtGen = "";
+    	switch ($cpt["type"]) {
+			case "a":
+				$txtGen = " [".$cpt["type"]. "_".$cpt["lib"]. "]";
+				break; 
+			case "m": 
+				$txtGen = " [".$cpt["type"]. "_".$cpt["lib"]. "]";
+				break; 
+			case "s":
+				$txtGen = " [".$cpt["type"]. "_".$cpt["lib"]. "]";
+				break;
+			case "v": 
+				$txtGen = " [".$cpt["type"]. "_".$cpt["lib"]. "]";
+				break; 
+			case "carac": 
+				$txtGen = "[".$cpt["type"].$cpt["lib"]. "]";
+				break; 
+			case "caract": 
+				$txtGen = "[".$cpt["type"].$cpt["lib"]. "]";
+				break; 
+			default: 
+				$txtGen = "[".$cpt["type"]. "-".$cpt["lib"]. "]";
+				break; 
+        }
+    	return $txtGen;
+    }
 }

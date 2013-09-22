@@ -312,22 +312,52 @@ class Model_DbTable_Gen_dicos extends Zend_Db_Table_Abstract
     /**
      * exporte un dictionnaire au format csv
      * 
-     * @param int $idDico
+     * @param int 		$idDico
+     * @param string 	$type
+     * @param int 		$idCpt
      *
      * @return array
      */
-    public function exporter($idDico)
+    public function exporter($idDico, $type, $idCpt=false)
     {
-    	$sql = "SELECT 
-			c.lib as concept, c.type
-			, g.valeur
-			FROM gen_dicos d
-			INNER JOIN gen_concepts c ON d.id_dico = c.id_dico
-			INNER JOIN gen_concepts_generateurs cg ON c.id_concept = cg.id_concept
-			INNER JOIN gen_generateurs g ON cg.id_gen = g.id_gen
-			WHERE d.id_dico = ".$idDico;
-    	 
-   		$stmt = $this->_db->query($sql);
+    	if($idCpt)
+			$where = " WHERE c.id_concept = ".$idCpt;
+		else 
+			$where = " WHERE d.id_dico = ".$idDico;
+    	
+		$sql = "SELECT c.lib as concept, c.type ";
+		switch ($type) {
+			case "gen":
+				$sql .= ", g.valeur
+					FROM gen_dicos d
+					INNER JOIN gen_concepts c ON d.id_dico = c.id_dico
+					INNER JOIN gen_concepts_generateurs cg ON c.id_concept = cg.id_concept
+					INNER JOIN gen_generateurs g ON cg.id_gen = g.id_gen";
+			break;
+			case "adj":
+				$sql .= ", a.elision, a.prefix, a.m_s, a.f_s, a.m_p, a.f_p
+					FROM gen_dicos d
+					INNER JOIN gen_concepts c ON d.id_dico = c.id_dico
+					INNER JOIN gen_concepts_adjectifs ca ON c.id_concept = ca.id_concept
+					INNER JOIN gen_adjectifs a ON a.id_adj = ca.id_adj";
+				break;
+			case "sub":
+				$sql .= ", s.elision, s.prefix, s.genre, s.s, s.p
+					FROM gen_dicos d
+					INNER JOIN gen_concepts c ON d.id_dico = c.id_dico
+					INNER JOIN gen_concepts_substantifs cs ON c.id_concept = cs.id_concept
+					INNER JOIN gen_substantifs s ON s.id_sub = cs.id_sub";
+			break;
+			case "ver":
+				$sql .= ", v.id_conj, v.elision, v.prefix			
+				FROM gen_dicos d
+				INNER JOIN gen_concepts c ON d.id_dico = c.id_dico
+				INNER JOIN gen_concepts_verbes cv ON c.id_concept = cv.id_concept
+				INNER JOIN gen_verbes v ON v.id_verbe = cv.id_verbe";
+			break;
+		}	
+		$sql .= $where;	
+		$stmt = $this->_db->query($sql);
     	return $stmt->fetchAll();
     }    
     
