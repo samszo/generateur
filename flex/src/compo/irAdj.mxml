@@ -19,6 +19,7 @@
 			{
 				super.data = value;
 				if(data!=null){
+					id_adj.text = data.id_adj;
 					prefix.text = data.prefix;
 					if(data.elision=="0")elision.selected = false;
 					else elision.selected = true;
@@ -49,6 +50,7 @@
 	</fx:Script>
 	
 	<s:HGroup width="100%" verticalAlign="middle">
+		<s:Label id="id_adj" text="" />			
 		<s:Label text="prefix :" /><s:TextInput id="prefix" width="100%" change="t_changeHandler(event)" />			
 		<s:CheckBox label="élision" id="elision" change="elision_changeHandler(event)" /> 			
 		<s:Image source="@Embed('images/masulin.jpg')" /><s:TextInput id="m_s" width="40" change="t_changeHandler(event)"/>			
