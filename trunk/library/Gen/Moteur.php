@@ -142,7 +142,7 @@ class Gen_Moteur
 			$xDicos->appendChild($xDico);
 		}
 		$this->xmlRoot->appendChild($xDicos);		
-		$this->Verification($texte);
+		$this->Verifier($texte);
 		echo $this->xml->saveXML();
 	}
 	
@@ -223,30 +223,31 @@ class Gen_Moteur
      * Fonction du moteur
      *
      * @param string $texte
+     * @param array $arrDicos
      * @param boolean $html
      *
      */
-	public function Verification($texte, $html=false){
+	public function Verifier($texte, $arrDicos, $html=false){
 		
 		$this->setCache();
 		$this->verif = true;				
 		$this->ordre = 0;
 		$this->typeChoix = "tout";
+		$this->arrDicos = $arrDicos;
+		$this->showErr = true;	
+		
 		if($this->niv > 2) return;
-		//parcourt l'ensemble de la chaine
-		for($i = 0; $i < strlen($texte); $i++)
-        {
-        	$c = $texte[$i];
-        	if($c == "["){
-        		//c'est le début d'une classe
-        		//on récupère la valeur de la classe et la position des caractères dans la chaine
-        		$i = $this->traiteClass($texte, $i);
-				$this->ordre ++;
-        	}
-        }                
-
+		//création de l'xml de réponse
+		$this->xml = new DOMDocument('1.0', 'UTF-8');
+		$this->xml->appendChild(new DOMComment('Vérification de '.$texte));
+		$this->xmlRoot = $this->xml->appendChild(new DOMElement('gen'));
+		
+		$this->Generation($texte);
+				
         if($html){
-			$this->detail = $this->arrayVersHTML($this->arrClass);    	
+			return $this->arrayVersHTML($this->arrClass);    	
+        }else{
+        	return $this->texte;
         }
        
 	}
@@ -1052,7 +1053,7 @@ class Gen_Moteur
      */
 	public function getClassMoteur($moteur){
 
-		if($this->verif){
+		if($this->verif && false){
 			//construction du xml			
 			//$this->xmlVerif->addChild("node",$c);
 			$t = "toto";
@@ -1537,13 +1538,8 @@ class Gen_Moteur
         //enregistre le potentiel
         $this->potentiel += count($arrCpt["dst"]);
         
-        if($this->typeChoix=="tout"){
-        	//pour la vérification
-        	$i=0;
-        	foreach($arrCpt["dst"] as $dst){
-	        	$this->arrClass[$this->ordre][$i][] = $this->getClassGen($dst, $class);
-	        	$i++;
-        	}
+        if($this->typeChoix=="tout" && $this->niv < 1 && count($arrCpt["dst"]) > 1){
+        	$this->verifClass($arrCpt);
         	$cpt = false;
         }else{
 	        //choisi un concept aléatoirement
@@ -1552,28 +1548,69 @@ class Gen_Moteur
         	
 	        $a = mt_rand(0, count($arrCpt["dst"])-1);        
 	        
-	        $cpt = $this->getClassGen($arrCpt["dst"][$a],$class);
-	        
-	        if($cpt){
-	        	//conserve le parent pour le lien vers l'administration
-	        	$cpt["idParent"] = $arrCpt["src"]["id_concept"];
-		        //vérifie s'il faut conserver un caractx
-		        if(substr($class,0,7)=="carac_t"){
-		        	$this->arrCaract[$class] = $arrCpt["dst"][$a];
-		        }
-	        }
-	        
-	        //vérifie s'il faut transférer le déterminant de verbe
-	        if($arrCpt["src"]["type"]=="v" && isset($this->arrClass[$this->ordre-1]["determinant_verbe"]) && !isset($this->arrClass[$this->ordre-1]["verbe"])){
-	        	$this->arrClass[$this->ordre]["determinant_verbe"]=$this->arrClass[$this->ordre-1]["determinant_verbe"];
-	        }
-	        
+	        $cpt = $this->getClassGen($arrCpt["dst"][$a],$class);        
         }
-                	
+
+        if($cpt){
+        	//conserve le parent pour le lien vers l'administration
+        	$cpt["idParent"] = $arrCpt["src"]["id_concept"];
+	        //vérifie s'il faut conserver un caractx
+	        if(substr($class,0,7)=="carac_t"){
+	        	$this->arrCaract[$class] = $arrCpt["dst"][$a];
+	        }
+        }
+        
+        //vérifie s'il faut transférer le déterminant de verbe
+        if($arrCpt["src"]["type"]=="v" && isset($this->arrClass[$this->ordre-1]["determinant_verbe"]) && !isset($this->arrClass[$this->ordre-1]["verbe"])){       	
+        	$this->arrClass[$this->ordre]["determinant_verbe"]=$this->arrClass[$this->ordre-1]["determinant_verbe"];
+        }
+        
 		return $cpt; 			
 		
 	}
 
+    /**
+     * Fonction du moteur
+     *
+     *
+     */
+	function verifClass($arrCpt)
+	{
+        //pour la vérification
+        $this->arrClass[$this->ordre]["texte"] = "%";        	
+        $this->ordre++;
+        $j=1;
+        foreach($arrCpt["dst"] as $dst){
+        	//ajoute le texte de la génération
+	        $this->arrClass[$this->ordre]["texte"] = $j." : ";
+	        $this->ordre++;
+	        //calcul la vérification
+        	$cpt = $this->getClassGen($dst, $class);
+	        if($cpt){
+	        	$this->getClassType($dst);
+		        //vérifie s'il faut transférer le déterminant de verbe
+		        if(($arrCpt["src"]["type"]=="v" || isset($dst["id_verbe"])))
+		        {
+			        for($i = $this->ordre-1; $i >= 0; $i--){
+		        		if(intval($this->arrClass[$i]["determinant_verbe"])!=0){
+							$class = $this->arrClass[$i]["determinant_verbe"];
+							$i=-1;        				
+		        		}
+		        	}
+		        	$this->arrClass[$this->ordre]["determinant_verbe"]=$class;
+		        }
+	        	
+	        }else{
+	        	$this->arrClass[$this->ordre] = $cpt;
+	        } 	                	
+        	$j++;
+        	$this->ordre++;
+        	$this->arrClass[$this->ordre]["texte"] = "%";        	
+        	$this->ordre++;
+        }
+		
+	}
+	
     /**
      * Fonction du moteur
      *
@@ -1605,17 +1642,14 @@ class Gen_Moteur
 			if($this->verif){
 				$m->verif = $this->verif;
 				$m->arrDoublons = $this->arrDoublons;
-			}
-
-			if($this->verif){
 				//vérifie la class
 				$m->xml = $this->xml;
 				$m->xmlRoot = $this->xmlGen;
-				$m->Verification($cpt['valeur'], $this->niv+1);				
-			}else{
-				//génére la classe
-				$m->Generation($cpt['valeur'],false,$this->cache);				
+				//$m->Verification($cpt['valeur'], $this->niv+1);				
 			}
+			
+			//génére la classe
+			$m->Generation($cpt['valeur'],false,$this->cache);				
 			
 			/*vérifie que la classe n'a pas déjà été générée
 			if($this->in_multiarray($cpt['valeur'],$this->arrClass)){
