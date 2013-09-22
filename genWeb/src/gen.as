@@ -34,12 +34,12 @@ public var actionItem:String;
 public var actisItem:String;
 public var idDicoItem:String;
 
-public var urlAPI:String = "http://localhost/generateur/services/api.php";
-//public var urlAPI:String = "http://generator.digitalartimag.org/services/api.php";
-public const ENDPOINT_IMPORT:String = "http://localhost/generateur/services/import.php";
-//public const ENDPOINT_IMPORT:String = "http://generator.digitalartimag.org/services/import.php";
-public const ENDPOINT_EXPORT:String = "http://localhost/generateur/services/export.php";
-//public const ENDPOINT_EXPORT:String = "http://generator.digitalartimag.org/services/export.php";
+//public var urlAPI:String = "http://localhost/generateur/services/api.php";
+public var urlAPI:String = "http://generator.digitalartimag.org/services/api.php";
+//public const ENDPOINT_IMPORT:String = "http://localhost/generateur/services/import.php";
+public const ENDPOINT_IMPORT:String = "http://generator.digitalartimag.org/services/import.php";
+//public const ENDPOINT_EXPORT:String = "http://localhost/generateur/services/export.php";
+public const ENDPOINT_EXPORT:String = "http://generator.digitalartimag.org/services/export.php";
 
 protected function gereuti_clickHandler(event:MouseEvent):void
 {
@@ -56,6 +56,13 @@ public function testerGen(txts:Array, ctrls:Array):void
 	ROMOTEUR.Tester(txts, arrVerifDico);
 }
 
+
+public function verifierGen(txt:String, ctrl:Object):void
+{
+	arrCtrls = [ctrl];
+	ROMOTEUR.Verifier(txt, arrVerifDico);
+}
+
 protected function testerMoteur_resultHandler(event:ResultEvent):void
 {
 	var arrResult:Array = event.result as Array;
@@ -63,12 +70,23 @@ protected function testerMoteur_resultHandler(event:ResultEvent):void
 	for each(var txt:String in arrResult){
 		//vérifie le type du champ texte		 
 		var oName:String = getQualifiedClassName(arrCtrls[i]);
-		if(oName=="spark.components::RichText")
+		if(oName=="spark.components::RichText" || oName=="spark.components::RichEditableText")
 			arrCtrls[i].textFlow = TextConverter.importToFlow(txt, TextConverter.TEXT_FIELD_HTML_FORMAT);
 		else
 			arrCtrls[i].text = txt;
 		i++;
 	}	
+}
+
+protected function verifierMoteur_resultHandler(event:ResultEvent):void
+{
+	//vérifie le type du champ texte		 
+	var oName:String = getQualifiedClassName(arrCtrls[0]);
+	if(oName=="spark.components::RichText" || oName=="spark.components::RichEditableText")
+		arrCtrls[0].textFlow = TextConverter.importToFlow(event.result, TextConverter.TEXT_FIELD_HTML_FORMAT);
+	else
+		arrCtrls[0].text = event.result;
+	
 }
 
 public function verifActi(arrR:Array, action:String, actis:String, ROC:Object, id:String, data:Array, idDico:String):void
