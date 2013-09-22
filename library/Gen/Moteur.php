@@ -1053,29 +1053,29 @@ class Gen_Moteur
      */
 	public function getClassMoteur($moteur){
 
-		if($this->verif && false){
-			//construction du xml			
-			//$this->xmlVerif->addChild("node",$c);
-			$t = "toto";
-		}else{
-			//ajoute les classes générées
-			foreach($moteur->arrClass as $k=>$c){
-				$this->ordre ++;
-				//dans le cas d'un changement de position
-				if(count($this->arrPosi)>1){
-		        	//change l'ordre pour que la class soit placée après
-		        	$this->ordre ++;
-					$this->arrClass[$this->ordre] = $this->arrClass[($this->ordre-1)];
-		        	//redéfini l'ordre pour que la class soit placée avant sans écraser la class précédente
-		        	$this->ordre --;
-				}
-				$this->arrClass[$this->ordre] = $c;
+		//ajoute les classes générées
+		foreach($moteur->arrClass as $k=>$c){
+			$this->ordre ++;
+			//dans le cas d'un changement de position
+			if(count($this->arrPosi)>1){
+	        	//change l'ordre pour que la class soit placée après
+	        	$this->ordre ++;
+				$this->arrClass[$this->ordre] = $this->arrClass[($this->ordre-1)];
+	        	//redéfini l'ordre pour que la class soit placée avant sans écraser la class précédente
+	        	$this->ordre --;
 			}
-			//ajoute les caractères générées
-			foreach($moteur->arrCaract as $k=>$c){
-				$this->arrCaract[$k] = $c;
-			}			
-		}		
+			$this->arrClass[$this->ordre] = $c;
+		}
+		//ajoute les caractères générées
+		foreach($moteur->arrCaract as $k=>$c){
+			$this->arrCaract[$k] = $c;
+		}
+		//ajoute les déterminants
+		if($this->verif){
+			
+		}
+		
+
 	}
 	
 	
@@ -1582,27 +1582,19 @@ class Gen_Moteur
         $j=1;
         foreach($arrCpt["dst"] as $dst){
         	//ajoute le texte de la génération
-	        $this->arrClass[$this->ordre]["texte"] = $j." : ";
+        	$id = $j;
+        	if($dst["id_gen"])$id = $dst["id_gen"];
+        	if($dst["id_adj"])$id = $dst["id_adj"];
+        	if($dst["id_verbe"])$id = $dst["id_verbe"];
+        	if($dst["id_sub"])$id = $dst["id_sub"];
+        	$this->arrClass[$this->ordre]["texte"] = $id." : ";
 	        $this->ordre++;
 	        //calcul la vérification
         	$cpt = $this->getClassGen($dst, $class);
 	        if($cpt){
 	        	$this->getClassType($dst);
-		        //vérifie s'il faut transférer le déterminant de verbe
-		        if(($arrCpt["src"]["type"]=="v" || isset($dst["id_verbe"])))
-		        {
-			        for($i = $this->ordre-1; $i >= 0; $i--){
-		        		if(intval($this->arrClass[$i]["determinant_verbe"])!=0){
-							$class = $this->arrClass[$i]["determinant_verbe"];
-							$i=-1;        				
-		        		}
-		        	}
-		        	$this->arrClass[$this->ordre]["determinant_verbe"]=$class;
-		        }
-	        	
-	        }else{
-	        	$this->arrClass[$this->ordre] = $cpt;
-	        } 	                	
+	        }
+	        $this->verifTransfert($arrCpt, $dst); 	                	
         	$j++;
         	$this->ordre++;
         	$this->arrClass[$this->ordre]["texte"] = "%";        	
@@ -1610,6 +1602,43 @@ class Gen_Moteur
         }
 		
 	}
+
+	
+    /**
+     * Fonction du moteur
+     *
+     *
+     */
+	function verifTransfert($arrCpt, $dst){
+        //vérifie s'il faut transférer le déterminant de verbe
+        if(($arrCpt["src"]["type"]=="v" || isset($dst["id_verbe"])))
+        {
+	        for($i = $this->ordre-1; $i >= 0; $i--){
+        		if(intval($this->arrClass[$i]["determinant_verbe"])!=0){
+					$class = $this->arrClass[$i]["determinant_verbe"];
+					$i=-1;        				
+        		}
+        	}
+        	$this->arrClass[$this->ordre]["determinant_verbe"]=$class;
+        }
+        //vérifie s'il faut transférer le vecteur du substantif
+        if(($arrCpt["src"]["type"]=="m" || isset($dst["id_sub"])))
+        {
+	        for($i = $this->ordre-1; $i >= 0; $i--){
+        		$c = $this->arrClass[$i];
+	        	if(isset($c["vecteur"])){
+        			foreach ($c["vecteur"] as $k => $v) {
+			        	$this->arrClass[$this->ordre]["vecteur"][$k]=$v;
+        			}
+        		}
+        		if(isset($c["determinant"])){
+		        	$this->arrClass[$this->ordre]["determinant"]=$c["determinant"];		        			
+        		}
+	        }
+        }
+		
+	}
+	
 	
     /**
      * Fonction du moteur
@@ -1639,17 +1668,25 @@ class Gen_Moteur
 			$m->niv = $this->niv+1;
 			$m->arrDicos = $this->arrDicos;
 			$m->arrCaract = $this->arrCaract;
-			if($this->verif){
-				$m->verif = $this->verif;
-				$m->arrDoublons = $this->arrDoublons;
-				//vérifie la class
-				$m->xml = $this->xml;
-				$m->xmlRoot = $this->xmlGen;
-				//$m->Verification($cpt['valeur'], $this->niv+1);				
-			}
-			
+						
 			//génére la classe
 			$m->Generation($cpt['valeur'],false,$this->cache);				
+			
+			if($this->verif){
+				//vérifie si un déterminant est définie
+				if(isset($this->arrClass[0]["determinant"])){
+					$m->arrClass[(count($m->arrClass)-1)]["determinant"]=$this->arrClass[0]["determinant"];
+					foreach ($this->arrClass[0]["vecteur"] as $k => $v) {
+			        	$m->arrClass[(count($m->arrClass)-1)]["vecteur"][$k]=$v;
+        			}
+					
+				}
+				if(isset($this->arrClass[0]["determinant_verbe"]))$m->arrClass[(count($m->arrClass)-1)]["determinant_verbe"]=$this->arrClass[0]["determinant_verbe"];
+				//genere le texte
+				$m->genereTexte();
+				$this->arrClass[$this->ordre]["texte"] = $m->texte;
+				return false;					
+			}
 			
 			/*vérifie que la classe n'a pas déjà été générée
 			if($this->in_multiarray($cpt['valeur'],$this->arrClass)){
