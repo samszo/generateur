@@ -17,6 +17,7 @@
 				if(data!=null){
 					lib.text = data.lib;
 					data.change = new Array;
+					data.modif = false;
 				}
 			}  			
 
@@ -25,6 +26,7 @@
 				var tx:TextInput = event.target as TextInput;
 				tx.setStyle("color","red");
 				data.change[tx.id]  = tx.text;
+				data.modif = true;
 			}
 		]]>
 	</fx:Script>

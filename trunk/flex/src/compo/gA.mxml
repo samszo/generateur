@@ -150,7 +150,7 @@
 				//récupère les modifications
 				arrChange=new Array;
 				for each(var obj:Object in listSelect.dataProvider){
-					if(obj.change["fp"] || obj.change["m_p"] || obj.change["f_s"] || obj.change["m_s"] || obj.change["prefix"] || obj.change["genre"] || obj.change["elision"]){
+					if(obj.modif){
 						var arr:Array = new Array;
 						arr["id_adj"]=obj.id_adj;
 						arr["val"]=obj.change;

@@ -450,10 +450,10 @@
 											<mx:DataGrid width="100%" id="dgDico" click="dgDico_clickHandler(event)" dataProvider="{arrDicoAssos}"
 												 rowCount="3" >
 												<mx:columns>
+													<mx:DataGridColumn headerText="Id" dataField="id_dico" />
 													<mx:DataGridColumn headerText="Nom" dataField="nom" />
 													<mx:DataGridColumn headerText="Type" dataField="type" />
 													<mx:DataGridColumn headerText="Langue" dataField="langue" />
-													<mx:DataGridColumn headerText="Id Dico" dataField="id_dico" visible="false"/>
 												</mx:columns>
 											</mx:DataGrid>
 											<co:gDico id="detailDico" visible="false" />
