@@ -79,6 +79,20 @@ class Model_DbTable_Gen_conceptsxadjectifs extends Zend_Db_Table_Abstract
    	
     	$this->update($data, 'gen_concepts_adjectifs.id_concept = ' . $id);
     }
+
+    /**
+     * modifie des entrées avec les nouvelles données.
+     *
+     * @param array $data
+     *
+     * @return void
+     */
+    public function editMulti($data)
+    {
+    	$dbA = new Model_DbTable_Gen_adjectifs();
+   		$dbA->editMulti($data);
+    }
+    
     
     /**
      * Recherche une entrée Gen_concepts_adjectifs avec la clef primaire spécifiée

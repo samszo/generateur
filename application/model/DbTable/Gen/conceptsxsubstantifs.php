@@ -81,6 +81,19 @@ class Model_DbTable_Gen_conceptsxsubstantifs extends Zend_Db_Table_Abstract
     }
     
     /**
+     * modifie des entrées avec les nouvelles données.
+     *
+     * @param array $data
+     *
+     * @return void
+     */
+    public function editMulti($data)
+    {
+    	$db = new Model_DbTable_Gen_substantifs();
+   		$db->editMulti($data);
+    }
+    
+    /**
      * Recherche une entrée Gen_concepts_substantifs avec la clef primaire spécifiée
      * et supprime cette entrée.
      *

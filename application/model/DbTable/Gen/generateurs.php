@@ -79,16 +79,19 @@ class Model_DbTable_Gen_generateurs extends Zend_Db_Table_Abstract
      * @param int $idCpt
      * @param array $data
      * @param boolean $existe
+     * @param boolean $modif
      *  
      * @return integer
      */
-    public function ajouter($idCpt, $data, $existe=true)
+    public function ajouter($idCpt, $data, $existe=true, $modif=false)
     {
     	
     	$id=false;
     	if($existe)$id = $this->existe($data);
     	if(!$id){
     	 	$id = $this->insert($data);
+    	}elseif ($modif){
+    		$this->edit($id, $data);
     	}
     	//création du lien entre l'adjectif et le concept
     	$dbCptGen = new Model_DbTable_Gen_conceptsxgenerateurs();
