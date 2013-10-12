@@ -26,8 +26,9 @@
 					if(data.elision=="0")elision.selected = false;
 					else elision.selected = true;
 					if(data.genre=="2") genre2.selected = true;
-					else genre1.selected = true;
+					if(data.genre=="1") genre1.selected = true;
 					data.change = new Array;
+					data.modif = false;
 				}
 			}  			
 
@@ -37,6 +38,7 @@
 				var tx:TextInput = event.target as TextInput;
 				tx.setStyle("color","red");
 				data.change[tx.id]  = tx.text;
+				data.modif = true;
 			}
 			protected function genre_changeHandler(event:Event):void
 			{
@@ -46,7 +48,7 @@
 					data.change["genre"]= "2";
 				genre1.setStyle("color","red");
 				genre2.setStyle("color","red");
-				
+				data.modif = true;				
 			}
 			protected function elision_changeHandler(event:Event):void
 			{
@@ -54,6 +56,7 @@
 					data.change["elision"]= "1";
 				else
 					data.change["elision"]= "0";				
+				data.modif = true;
 			}
 		]]>
 	</fx:Script>

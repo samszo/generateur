@@ -29,15 +29,16 @@
 					f_p.text = data.f_p;			
 					
 					data.change = new Array;
+					data.modif = false;
 				}
 			}  			
 
 			protected function t_changeHandler(event:TextOperationEvent):void
 			{
-				
 				var tx:TextInput = event.target as TextInput;
 				tx.setStyle("color","red");
 				data.change[tx.id]  = tx.text;
+				data.modif = true;
 			}
 			protected function elision_changeHandler(event:Event):void
 			{
@@ -45,6 +46,7 @@
 					data.change["elision"]= "1";
 				else
 					data.change["elision"]= "0";				
+				data.modif = true;
 			}
 		]]>
 	</fx:Script>

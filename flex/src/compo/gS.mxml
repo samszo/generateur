@@ -115,7 +115,7 @@
 				//récupère les modifications
 				arrChange=new Array;
 				for each(var obj:Object in listSelect.dataProvider){
-					if(obj.change["lib"] ){
+					if(obj.modif){
 						var arr:Array = new Array;
 						arr["id_syn"]=obj.id_syn;
 						arr["val"]=obj.change;

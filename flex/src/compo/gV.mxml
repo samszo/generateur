@@ -207,7 +207,7 @@
 			{
 				arrChange=new Array;
 				for each(var obj:Object in listSelect.dataProvider){
-					if(obj.change["prefix"] || obj.change["id_conj"] || obj.change["elision"]){
+					if(obj.modif){
 						var arr:Array = new Array;
 						arr["id_verbe"]=obj.id_verbe;
 						arr["val"]=obj.change;
