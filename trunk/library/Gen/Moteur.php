@@ -235,6 +235,7 @@ class Gen_Moteur
 		$this->typeChoix = "tout";
 		$this->arrDicos = $arrDicos;
 		$this->showErr = true;	
+		$this->forceCalcul = true;
 		
 		if($this->niv > 2) return;
 		//création de l'xml de réponse
@@ -549,6 +550,7 @@ class Gen_Moteur
 						$genre = $vecteur["genre"];     	
 						//génère le pronom
 						$m = new Gen_Moteur($this->urlDesc,$this->forceCalcul, $this->xmlDesc);
+						$m->showErr = $this->showErr;
 						$m->timeDeb = $this->timeDeb;
 						$m->arrDicos = $this->arrDicos;
 						$m->Generation($pr,false,$this->cache);
@@ -573,6 +575,7 @@ class Gen_Moteur
 					$genre = $vecteur["genre"];     	
 		        	//génère le pronom
 					$m = new Gen_Moteur($this->urlDesc,$this->forceCalcul,$this->xmlDesc);
+					$m->showErr = $this->showErr;
 					$m->timeDeb = $this->timeDeb;
 					$m->arrDicos = $this->arrDicos;
 					$m->Generation($arr["prodem"]["lib"],false,$this->cache);
@@ -1664,6 +1667,7 @@ class Gen_Moteur
         if(isset($cpt["id_gen"])){
         	//générer l'expression
 			$m = new Gen_Moteur($this->urlDesc,$this->forceCalcul,$this->xmlDesc);
+			$m->showErr = $this->showErr;
 			$m->timeDeb = $this->timeDeb;
 			$m->niv = $this->niv+1;
 			$m->arrDicos = $this->arrDicos;
