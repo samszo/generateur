@@ -46,14 +46,14 @@ class Gen_Moteur
 	var $forceCalcul;
 	var $finLigne = "<br/>";
 	var $showErr = false;
-	var $maxNiv = 1000;
+	var $maxNiv = 10;
 	var $niv = 0;
 	var $arrDoublons = array();
 	var $arrPosi;
 	var $arrCaract = array();
 	var $verif = false;
 	var $timeDeb;
-	var $timeMax = 10000;
+	var $timeMax = 1000;
 	var $xml;
 	var $xmlRoot;
 	var $xmlGen;
@@ -168,9 +168,9 @@ class Gen_Moteur
 		$this->segment = 0;
 		$this->arrClass[$this->ordre]["generation"] = $texte;
 		$this->arrClass[$this->ordre]["niveau"] = $this->niv;
-		if($this->niv>$this->maxNiv){
+		if($this->niv > $this->maxNiv){
 			$this->arrClass[$this->ordre]["ERREUR"] = "problème de boucle trop longue : ".$texte;			
-			throw new Exception("problème de boucle trop longue");			
+			throw new Exception("problème de boucle trop longue.<br/>".$this->detail);			
 		}
 		
 		//parcourt l'ensemble de la chaine
@@ -189,7 +189,8 @@ class Gen_Moteur
 
         	$c = $texte[$i];
         	if($c == "["){
-        		//c'est le début d'une classe
+        		//c'est le début d'une classe on initialise les positions
+        		$this->arrPosi = false;
         		//on récupère la valeur de la classe et la position des caractères dans la chaine
         		$i = $this->traiteClass($texte, $i);
         	}elseif($c == "="){
@@ -236,6 +237,8 @@ class Gen_Moteur
 		$this->arrDicos = $arrDicos;
 		$this->showErr = true;	
 		$this->forceCalcul = true;
+		$this->maxNiv = 3;
+		$this->timeMax = 10;
 		
 		if($this->niv > 2) return;
 		//création de l'xml de réponse
@@ -402,6 +405,8 @@ class Gen_Moteur
 		$this->texte = str_replace(" .",".",$this->texte);
 		$this->texte = str_replace(" 's","'s",$this->texte);
 		$this->texte = str_replace(" -","-",$this->texte);
+		$this->texte = str_replace("( ","(",$this->texte);
+		$this->texte = str_replace(" )",")",$this->texte);
 		
 		//gestion des majuscules sauf pour twitter
 		if(strrpos($this->arrDicos["concepts"],"96")===false){
@@ -425,7 +430,8 @@ class Gen_Moteur
 	public function genereMajuscules(){
 		//merci à http://uk.php.net/manual/fr/function.preg-replace-callback.php#101774
 
-		//$arrPct = array(".","?","!");
+		//suprime les espaces avant
+		$this->texte = trim($this->texte);
 		
 			$this->texte = preg_replace_callback(
 				'|(?:\?)(?:\s*)(\w{1})|Ui',
@@ -440,7 +446,7 @@ class Gen_Moteur
 				create_function('$matches', 'return "! ".strtoupper($matches[1]);'), ucfirst($this->texte)
 			); 
 			
-			$this->texte = $this->sentence_cap("<br/> ",$this->texte);			
+			$this->texte = $this->sentence_cap($this->finLigne,$this->texte);			
 			
 	}
 
@@ -725,6 +731,9 @@ class Gen_Moteur
 					
 		$txt = $this->getTerminaison($arr["verbe"]["id_conj"],$num);
 
+		//gestion des terminaisons ---
+		if($txt=="---")$txt="";
+		
 		return $txt;
 	}
 	
@@ -1117,9 +1126,12 @@ class Gen_Moteur
 		$deb = strpos($txt,"[",$i);
 		$fin = strpos($txt,"]",$deb+1);
 		
-		//dan sle cas de ado par exemple = pas de crochet
+		//dans le cas de ado par exemple = pas de crochet
 		if($deb===false){
 	        $class = $txt;
+		}elseif(!$fin){
+			$this->arrClass[$this->ordre]["ERREUR"] = "Item mal formaté.<br/>il manque un ] : ".$txt."<br/>";			
+        	return array("deb"=>$deb,"fin"=>strlen($txt),"valeur"=>"","arr"=>"");
 		}else{
 			//on récupère la valeur de la classe
 	        $class = substr($txt, $deb+1, -(strlen($txt)-$fin));
