@@ -34,12 +34,11 @@ public var actionItem:String;
 public var actisItem:String;
 public var idDicoItem:String;
 
-public var urlAPI:String = "http://localhost/generateur/services/api.php";
-//public var urlAPI:String = "http://generator.digitalartimag.org/services/api.php";
-public const ENDPOINT_IMPORT:String = "http://localhost/generateur/services/import.php";
-//public const ENDPOINT_IMPORT:String = "http://generator.digitalartimag.org/services/import.php";
-public const ENDPOINT_EXPORT:String = "http://localhost/generateur/services/export.php";
-//public const ENDPOINT_EXPORT:String = "http://generator.digitalartimag.org/services/export.php";
+//public var urlDomain:String = "http://localhost/generateur";
+public var urlDomain:String = "http://generator.digitalartimag.org";
+public var urlAPI:String = urlDomain+"/services/api.php";
+public const ENDPOINT_IMPORT:String = urlDomain+"/services/import.php";
+public const ENDPOINT_EXPORT:String = urlDomain+"/services/export.php";
 
 protected function gereuti_clickHandler(event:MouseEvent):void
 {
