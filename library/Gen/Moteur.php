@@ -445,6 +445,10 @@ class Gen_Moteur
 				'|(?:\!)(?:\s*)(\w{1})|Ui',
 				create_function('$matches', 'return "! ".strtoupper($matches[1]);'), ucfirst($this->texte)
 			); 
+			$this->texte = preg_replace_callback(
+				'|(?:<br/>)(?:\s*)(\w{1})|Ui',
+				create_function('$matches', 'return "<br/> ".strtoupper($matches[1]);'), ucfirst($this->texte)
+			); 
 			
 			$this->texte = $this->sentence_cap($this->finLigne,$this->texte);			
 			
