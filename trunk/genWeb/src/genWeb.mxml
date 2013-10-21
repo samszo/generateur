@@ -11,6 +11,7 @@
 			
 			
 			
+			
 		]]>
 	</fx:Script>
 	
@@ -19,7 +20,7 @@
 		<s:RemoteObject id="ROMOTEUR"
 						source="Gen_Moteur" destination="zend" 
 						showBusyCursor="true"
-						fault="faultHandlerService(event)">
+						fault="ROMOTEUR_faultHandler(event)" >
 			<s:method name="Tester" result="testerMoteur_resultHandler(event)" /> 
 			<s:method name="Verifier" result="verifierMoteur_resultHandler(event)" /> 
 		</s:RemoteObject>

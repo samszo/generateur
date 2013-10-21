@@ -114,6 +114,25 @@ public function faultHandlerService(fault:FaultEvent):void
 	Alert.show(str, "ERREUR : Gen AIR");
 }
 
+protected function ROMOTEUR_faultHandler(fault:FaultEvent):void
+{
+	// TODO Auto-generated method stub
+	var str:String;
+	str = "Code: "+fault.fault.faultCode.toString()+"\n"+
+		"Detail: "+fault.fault.faultDetail.toString()+"\n"+
+		"String: "+fault.fault.faultString.toString()+"\n";
+
+	var i:int = 0;
+	//vérifie le type du champ texte		 
+	var oName:String = getQualifiedClassName(arrCtrls[i]);
+	if(oName=="spark.components::RichText" || oName=="spark.components::RichEditableText")
+		arrCtrls[i].textFlow = TextConverter.importToFlow(str, TextConverter.TEXT_FIELD_HTML_FORMAT);
+	else
+		arrCtrls[i].text = str;
+	
+}
+
+
 public function login():void
 {
 	//création de la fenêtre de login
