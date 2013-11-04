@@ -33,6 +33,7 @@ class Model_DbTable_Gen_dicos extends Zend_Db_Table_Abstract
         ,"Model_DbTable_Gen_substantifs"
         ,"Model_DbTable_Gen_syntagmes"
         ,"Model_DbTable_Gen_verbes"
+        ,"Model_DbTable_Gen_oeuvresxdicosxutis"
         );    
     
     /**
