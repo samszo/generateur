@@ -131,7 +131,7 @@ class Gen_Dico
 	function csvToArray($file){
 		# Open the File.
 	    if (($handle = fopen($file, "r")) !== FALSE) {
-	        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+	        while (($data = fgetcsv($handle, 0, ",")) !== FALSE) {
 	            $csvarray[] = $data;
 	        }
 	        fclose($handle);

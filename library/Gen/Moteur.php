@@ -893,7 +893,7 @@ class Gen_Moteur
 		}
 		//gestion de l'ordre normal
 		if($verbe==""){
-			$verbe = $centre.$arr["finneg"];
+			$verbe = $centre." ".$arr["finneg"];
 			if($arr["prodem"]!=""){
 				if($eli==0){
 					$verbe = $arr["prodem"]["lib"]." ".$verbe; 
