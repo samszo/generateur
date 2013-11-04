@@ -5,20 +5,45 @@ try {
 	require_once( "../application/configs/config.php" );
 	$application->bootstrap();
 	
-	header("Content-Disposition: attachment; filename=\"dico.csv\"; ");
+	$_GET['idDico'] = 118;
+	
+	header("Content-Disposition: attachment; filename=\"exportGenerateur.csv\"; ");
 	header("Content-Type: text/csv");
-	if(isset($_GET['idDico'])){
+	if(isset($_GET['idCpt']))$idCpt=$_GET['idCpt']; else $idCpt=false;	
+	if(isset($_GET['idDico'])){	
 		$dbDico = new Model_DbTable_Gen_dicos();
-		$arr = $dbDico->exporter($_GET['idDico']);
-		$csv_data = array_to_scv($arr);
-		print_r($csv_data);
- 	}else
+		$header = true;
+		$arr = $dbDico->exporter($_GET['idDico'],"adj", $idCpt);
+		if(count($arr)>0){
+			$csv_data = array_to_scv($arr, $header);
+			print_r($csv_data);
+			$header = false;
+		}
+		$arr = $dbDico->exporter($_GET['idDico'],"sub", $idCpt);
+		if(count($arr)>0){
+			$csv_data = array_to_scv($arr, $header);
+			print_r($csv_data);
+			$header = false;
+		}
+		$arr = $dbDico->exporter($_GET['idDico'],"ver", $idCpt);
+		if(count($arr)>0){
+			$csv_data = array_to_scv($arr, $header);
+			print_r($csv_data);
+			$header = false;
+		}
+		$arr = $dbDico->exporter($_GET['idDico'],"gen", $idCpt);
+		if(count($arr)>0){
+			$csv_data = array_to_scv($arr, $header);
+			print_r($csv_data);
+		}
+	}else
 		echo "ERREUR : aucun dictionnaire n'est spécifié.";
 	
 }catch (Zend_Exception $e) {
 	echo "Récupère exception: " . get_class($e) . "\n";
     echo "Message: " . $e->getMessage() . "\n";
 }
+
 
 /**
 * Generatting CSV formatted string from an array.

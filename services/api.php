@@ -9,6 +9,12 @@ try {
 	$_GET['oeu']=6;
 	$_GET['cpt']=157623;
 	*/
+	if(isset($_GET['frt']))$frt=$_GET['frt'];
+	
+	if($frt == "html" || $frt == "frg" )
+		$rtn = "<br/>";
+	else
+		$rtn = "\n";
 	
 	//récupération des paramètres
 	if(isset($_GET['oeu']))
@@ -33,10 +39,6 @@ try {
 	else
 		$nb = 1;
 
-	if($frt == "html" || $frt == "frg" )
-		$rtn = "<br/>";
-	else
-		$rtn = "\n";
 		
 	if(!$err){
 		//récupère les dictionnaires
@@ -66,23 +68,31 @@ try {
 		//récupère le texte génératif
 		$dbCpt = new Model_DbTable_Gen_concepts();
 		$arrCpt = $dbCpt->findById_concept($idCpt);
-		$txtGen = '['.$arrCpt[0]["type"].'-'.$arrCpt[0]["lib"].']';
+		$txtGen = $dbCpt->getGenTexte($arrCpt[0]);
 		
 		//génére le texte
 		$m = new Gen_Moteur();
 		$m->arrDicos = $arrVerifDico;
 		$m->forceCalcul = false;
 		
-		$txt = "";
+		$txts = "";
 		for ($i = 0; $i < $nb; $i++) {
-			$txt .= $m->Generation($txtGen).$rtn;			
+			$txt = $m->Generation($txtGen).$rtn;
+			if($rtn == "\n")$txt = str_replace("<br/>", "\n", $txt);
+			$txts .= $txt;			
 		}
 		
 	}
-		
-	header('Content-Type: text/html; charset=UTF-8');
+	//pour l'exécution du script dans une page extérieur au domaine
+	header('Access-Control-Allow-Origin: *');
+	header("X-XSS-Protection: 0");	
 	
-		
+	//vérifie le content type à retourner
+	if($frt == "html" || $frt == "frg" )
+		header('Content-Type: text/html; charset=UTF-8');
+	else
+		header('Content-Type: text/plain; charset=UTF-8');
+	
 	//construction du code pour le bouton
 	$script = "";
 	$scodeBtn = "";
@@ -91,26 +101,18 @@ try {
 		//construction de l'url de génération
 		$params = str_replace("frt=iframe", "frt=frg", $_SERVER['QUERY_STRING']);
 		$params = str_replace("frt=html", "frt=frg", $params);
-		$urlGen = WEB_ROOT.'/services/api.php?'.$params;  
+		$urlGen = WEB_ROOT.'/services/api.php';  
 		
 		$script ='
-<script type="text/javascript" src="http://mbostock.github.com/d3/d3.js"></script>
-<script type="text/javascript">
-	var urlGen = "'.$urlGen.'";
-	function load() {
-		d3.text(urlGen, function(fragment) {
-			d3.select("#generation").html(fragment);
-		});
-	}
-</script>';
-		$codeBtn = '<button type="button" onclick="load()">Génère</button>';		
-		$codeDiv = "<div id='generation' >".$txt."</div>".$codeBtn;		
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>';
+		$codeBtn = '<button type="button" onclick="$.get(\''.$urlGen.'\', {\'oeu\':'.$idOeu.', \'cpt\':'.$idCpt.', \'frt\':\'frg\'}, function(fragment){$(\'#gen'.$idOeu.'_'.$idCpt.'\').html(fragment);});">Génère</button>';		
+		$codeDiv = "<div id='gen".$idOeu."_".$idCpt."' >".$txts."</div>".$codeBtn;		
 	}else{
-		$codeDiv = $txt;
+		$codeDiv = $txts;
 	}
 	
 	if($frt == "frg"){
-		echo "<div>".$err.$rtn.$txt."</div>";
+		echo "<div>".$err.$rtn.$txts."</div>";
 	}
 	
 	if($frt == "html"){
@@ -127,7 +129,7 @@ try {
 
 	if($frt == "txt"){
 		echo $err;
-		echo $txt;		
+		echo $txts;		
 	}
 
 	if($frt == "iframe"){
