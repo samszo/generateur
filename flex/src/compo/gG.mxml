@@ -325,6 +325,29 @@
 				
 			}
 			
+			protected function enregistrer_clickHandler(event:MouseEvent):void
+			{
+				ROC.utilise(oConcept.id_concept, tiType.text+"_"+tiLib.text);
+			}
+			
+			protected function editCpt_resultHandler(event:ResultEvent):void
+			{
+				// TODO Auto-generated method stub
+				
+			}
+
+			protected function utiliseCpt_resultHandler(event:ResultEvent):void
+			{
+				arrR = event.result as Array;				
+				var arrN:Array = new Array;
+				arrN["lib"]=tiLib.text;					
+				arrN["type"]=tiType.text;
+				var actis:String = "";
+				action = "modifier";
+				actis = "dictionnaire concept : modifier "+arrR[0]['nbGen']+" items pour "+arrR[0]['nbUti']+" utilisateurs : ";
+				actis = actis+oConcept.type+"_"+oConcept.lib+" -> "+tiType.text+"_"+tiLib.text+" (ref="+idDico+"_"+oConcept.id_concept+")";				
+				this.parentApplication.verifActi(arrR[0], action, actis, ROC, oConcept.id_concept, arrN, idDico);				
+			}			
 		]]>
 	</fx:Script>
 		
@@ -343,7 +366,9 @@
 						source="Model_DbTable_Gen_concepts" destination="zend" 
 						showBusyCursor="true"
 						fault="faultHandlerService(event)">
+			<s:method name="edit"  result="editCpt_resultHandler(event)" />  	
 			<s:method name="ajouter" result="ajouterCpt_resultHandler(event)" />
+			<s:method name="utilise" result="utiliseCpt_resultHandler(event)" />
 			<s:method name="findTablesLies" result="findTablesLies_resultHandler(event)" />
 		</s:RemoteObject>
 
@@ -353,8 +378,9 @@
 			<mx:HDividedBox id="dgDivBox" width="100%" height="100%" >
 				<s:VGroup width="100%" height="100%" id="detail" >
 					<s:HGroup width="100%" verticalAlign="middle">
-						<s:Label text="Nom du texte génératif :" /><s:Label text="{oConcept.lib}" />			
-						<s:Label text="Type :" /><s:Label text="{oConcept.type}" />			
+						<s:Label text="Nom du texte génératif :" /><s:TextInput id="tiLib" text="{oConcept.lib}" />			
+						<s:Label text="Type :" /><s:TextInput id="tiType" text="{oConcept.type}" />			
+						<s:Button label="Enrgistrer" click="enregistrer_clickHandler(event)"  />
 					</s:HGroup>
 					<mx:TabNavigator width="100%" height="100%" id="tn" >
 						<s:NavigatorContent width="100%" height="100%" label="liste des générateurs" visible="true">
