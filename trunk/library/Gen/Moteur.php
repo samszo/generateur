@@ -57,6 +57,12 @@ class Gen_Moteur
 	var $xml;
 	var $xmlRoot;
 	var $xmlGen;
+    //pour l'optimisation
+    var $bTrace = false;
+    var $echoTrace = false;
+    var $temps_debut;
+    var $temps_inter;
+    var $temps_nb=0;
 	
     /**
      * Fonction du moteur
@@ -75,6 +81,28 @@ class Gen_Moteur
 		$this->forceCalcul = $forceCalcul;	
 	}
 
+	
+    /**
+     * trace l'éxécution du code
+     *
+     * @param string $message
+     * 
+     */
+	public function trace($message){
+		if($this->bTrace){
+			$temps_fin = microtime(true);
+			$tG = str_replace(".",",",round($temps_fin - $this->temps_debut, 4));
+			$tI = str_replace(".",",",round($temps_fin - $this->temps_inter, 4));
+			$mess = $this->temps_nb." | ".$message." |".$tG."|".$tI."<br/>";
+			if($this->echoTrace)
+				$this->echoTrace .= $mess;
+			else
+				echo $mess;
+			$this->temps_inter = $temps_fin;
+			$this->temps_nb ++;
+		}		
+	}
+	
     /**
      * Fonction du moteur
      *
@@ -93,24 +121,68 @@ class Gen_Moteur
 		$this->cache = Zend_Cache::factory('Core','File',$frontendOptions,$backendOptions);				
 	}
 	
+	
+	
+    /**
+     * récupère les dictionnaires pour une oeuvre
+     *
+     * @param int $idOeu
+     * 
+     * @return array
+     */
+	public function getDicosOeuvre($idOeu){
+		$dbODU = new Model_DbTable_Gen_oeuvresxdicosxutis();
+		$arrDico = $dbODU->findByIdOeu($idOeu);		
+		foreach ($arrDico as $dico) {
+			if(substr($dico["type"],0,7)=="pronoms" ){
+				if($arrVerifDico["pronoms"]){
+					$arrVerifDico["pronoms"] .= ", ".$dico["id_dico"];
+				}else{
+					$arrVerifDico["pronoms"]=$dico["id_dico"];
+				}			
+			}
+			if($dico["type"]=="négations" ){
+				if($arrVerifDico["negations"]){
+					$arrVerifDico["negations"] .= ", ".$dico["id_dico"];
+				}else{
+					$arrVerifDico["negations"]=$dico["id_dico"];
+				}			
+			}
+			if($arrVerifDico[$dico["type"]]){
+				$arrVerifDico[$dico["type"]] .= ", ".$dico["id_dico"];
+			}else{
+				$arrVerifDico[$dico["type"]]=$dico["id_dico"];
+			}
+		}
+		return $arrVerifDico;
+	}
+	
     /**
      * Fonction du moteur
      *
      * @param array $arrTextes
      * @param array $arrDicos
+     * @param boolean $trace
      * 
      * @return array
      */
-	public function Tester($arrTextes, $arrDicos){
+	public function Tester($arrTextes, $arrDicos, $trace=false){
 
 		$this->forceCalcul = true;
 		$this->arrDicos = $arrDicos;	
 		$this->showErr = true;
+		//
+    	$this->bTrace = $trace; // pour afficher les traces   	
+    	$this->temps_debut = microtime(true);
+		$this->trace("DEBUT ".__METHOD__);
 		
 		foreach ($arrTextes as $texte) {
 			$this->Generation($texte);
 			$arrResult[]=$this->texte;	
 		}
+		
+		$this->trace("FIN ".__METHOD__);
+		
 		return $arrResult; 				
 	}
 
@@ -156,6 +228,7 @@ class Gen_Moteur
      */
 	public function Generation($texte, $getTexte=true, $cache=false){
 		
+		$this->trace("DEBUT ".__METHOD__);
 		if(!$cache){
 			$this->setCache();
 			$this->timeDeb = microtime(true);
@@ -188,6 +261,7 @@ class Gen_Moteur
         	}
 
         	$c = $texte[$i];
+			$this->trace(__METHOD__." : ".$i." = ".$c);
         	if($c == "["){
         		//c'est le début d'une classe on initialise les positions
         		$this->arrPosi = false;
@@ -217,7 +291,9 @@ class Gen_Moteur
         if($getTexte){
         	$this->genereTexte();
         }
-		return $this->texte;
+        
+		$this->trace("FIN ".__METHOD__);
+        return $this->texte;
 	}
 
     /**
@@ -593,7 +669,7 @@ class Gen_Moteur
 					$m->arrClass[0]["pluriel"]=$pluriel;						
 					$this->potentiel += $m->potentiel;
 					$m->genereTexte();						
-					$arr["prodem"]["lib"] = $m->texte;
+					$arr["prodem"]["lib"] = strtolower($m->texte);
 		        }
 			}			
 		}		
@@ -859,36 +935,62 @@ class Gen_Moteur
 			
 			//construction de la forme verbale
 			$verbe = "";
-			//gestion de l'infinitif
-			if($arr["determinant_verbe"][1]==9){
+			/*gestion de l'infinitif et de l'impératif
+			 * 
+			 */
+			if($arr["determinant_verbe"][1]==9 || $arr["determinant_verbe"][1]==7){
 				$verbe = $centre;
+				if($arr["prodem"]!=""){
+					if($arr["prodem"]["num"]!=39 && $arr["prodem"]["num"]!=40 && $arr["prodem"]["num"]!=41){
+						if($eli==0){
+							$verbe = $arr["prodem"]["lib"]." ".$verbe; 
+						}else{
+							$verbe = $arr["prodem"]["lib_eli"].$verbe; 
+						}
+					}
+					$eli=0;
+				}
+				//les deux parties de la négation se placent avant le verbe pour les valeurs 1,2, 3, 4, 7 et 8 
+				if($arr["determinant_verbe"][0]==1 || $arr["determinant_verbe"][0]==2 || $arr["determinant_verbe"][0]==3 || $arr["determinant_verbe"][0]==4 || $arr["determinant_verbe"][0]==7 || $arr["determinant_verbe"][0]==8){
+					$verbe = "ne ".$arr["finneg"]." ".$verbe;
+				}else{
+					if(in_array($verbe[0], $arrEli)){
+						$verbe = "n'".$verbe." ".$arr["finneg"];
+					}else{
+						$verbe = $arr["debneg"].$verbe." ".$arr["finneg"];
+					}
+				}
+				if($arr["prodem"]!=""){
+					//le pronom complément se place en tête lorsqu’il a les valeurs 39, 40, 41
+					if($arr["prodem"]["num"]==39 || $arr["prodem"]["num"]==40 || $arr["prodem"]["num"]==41){
+						$verbe = $arr["prodem"]["lib"]." ".$verbe; 
+					}
+				}
+				
+			}		
+			//gestion de l'ordre inverse
+			if($arr["determinant_verbe"][5]==1){
+				$verbe = $centre."-";
 				if($arr["prodem"]!=""){
 					if($eli==0){
 						$verbe = $arr["prodem"]["lib"]." ".$verbe; 
 					}else{
 						$verbe = $arr["prodem"]["lib_eli"].$verbe; 
 					}
-					$eli=0;
-				}
-				if($arr["finneg"]!=""){	
-					$verbe = $arr["finneg"]." ".$verbe;
-					$arr["debneg"] = "ne ";
-				} 
-				if($arr["debneg"]!=""){
-					$verbe = $arr["debneg"].$verbe; 
 				}	
-			}		
-			//gestion de l'ordre inverse
-			if($arr["determinant_verbe"][5]==1){
-				$verbe = $centre."-";
 				$c = substr($centre,strlen($centre)-1);
 				if(($c == "e" || $c == "a") && $arr["terminaison"]==3){
 					$verbe .= "t-"; 
+				}elseif($c == "e" && $arr["terminaison"]==1){
+					$verbe = substr($verbe,0,-2)."é-"; 
 				}
-				if($c == "e" && $arr["terminaison"]==1){
-					$verbe = substr($centre,-1)."é-"; 
+				if(in_array($verbe[0], $arrEli)){
+					$verbe = "n'".$verbe.$arr["prosuj"]["lib"]." ".$arr["finneg"]; 
+				}else{
+					$verbe = $arr["debneg"]." ".$verbe.$arr["prosuj"]["lib"]." ".$arr["finneg"];
 				}
-				$verbe = $arr["debneg"]." ".$arr["prodem"]." ".$verbe." ".$arr["prosuj"]["lib"].$arr["prodem"]["lib"];
+				
+				
 			}
 		}
 		//gestion de l'ordre normal
@@ -903,7 +1005,11 @@ class Gen_Moteur
 				}
 			}	
 			if($arr["debneg"]!=""){
-				$verbe = $arr["debneg"].$verbe; 
+				if(in_array($verbe[0], $arrEli)){
+					$verbe = "n'".$verbe; 
+				}else{
+					$verbe = $arr["debneg"].$verbe; 
+				}
 			}	
 			if($arr["prosuj"]!=""){
 				if($eli==0){
