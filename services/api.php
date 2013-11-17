@@ -6,10 +6,20 @@ try {
 	
 
 	/*
-	$_GET['oeu']=6;
-	$_GET['cpt']=157623;
+	$_GET['oeu']=32;
+	$_GET['cpt']=158586;
 	*/
-	if(isset($_GET['frt']))$frt=$_GET['frt'];
+
+	if(isset($_GET['test'])){
+		$test = true;
+		$_GET['frt'] = "html";
+	}else
+		$test = false;
+	
+	if(isset($_GET['frt']))
+		$frt = $_GET['frt'];
+	else
+		$frt = "txt";
 	
 	if($frt == "html" || $frt == "frg" )
 		$rtn = "<br/>";
@@ -26,10 +36,6 @@ try {
 		$idCpt = $_GET['cpt'];
 	else
 		$err .= "ERREUR : aucun texte génératif n'est défini.".$rtn;
-	if(isset($_GET['frt']))
-		$frt = $_GET['frt'];
-	else
-		$frt = "txt";
 	if(isset($_GET['btn']))
 		$btn = $_GET['btn'];
 	else
@@ -38,48 +44,27 @@ try {
 		$nb = $_GET['nb'];
 	else
 		$nb = 1;
-
+			
 		
 	if(!$err){
-		//récupère les dictionnaires
-		$dbODU = new Model_DbTable_Gen_oeuvresxdicosxutis();
-		$arrDico = $dbODU->findByIdOeu($idOeu);		
-		foreach ($arrDico as $dico) {
-			if(substr($dico["type"],0,7)=="pronoms" ){
-				if($arrVerifDico["pronoms"]){
-					$arrVerifDico["pronoms"] .= ", ".$dico["id_dico"];
-				}else{
-					$arrVerifDico["pronoms"]=$dico["id_dico"];
-				}			
-			}
-			if($dico["type"]=="négations" ){
-				if($arrVerifDico["negations"]){
-					$arrVerifDico["negations"] .= ", ".$dico["id_dico"];
-				}else{
-					$arrVerifDico["negations"]=$dico["id_dico"];
-				}			
-			}
-			if($arrVerifDico[$dico["type"]]){
-				$arrVerifDico[$dico["type"]] .= ", ".$dico["id_dico"];
-			}else{
-				$arrVerifDico[$dico["type"]]=$dico["id_dico"];
-			}
-		}
 		//récupère le texte génératif
 		$dbCpt = new Model_DbTable_Gen_concepts();
 		$arrCpt = $dbCpt->findById_concept($idCpt);
 		$txtGen = $dbCpt->getGenTexte($arrCpt[0]);
 		
-		//génére le texte
+		//initialisation du moteur
 		$m = new Gen_Moteur();
-		$m->arrDicos = $arrVerifDico;
-		$m->forceCalcul = false;
 		
+		//récupère les dictionnaires
+		$m->arrDicos = $m->getDicosOeuvre($idOeu);
+		$m->showErr = $test;
+		$m->forceCalcul = false;
 		$txts = "";
 		for ($i = 0; $i < $nb; $i++) {
 			$txt = $m->Generation($txtGen).$rtn;
 			if($rtn == "\n")$txt = str_replace("<br/>", "\n", $txt);
-			$txts .= $txt;			
+			$txts .= $txt;
+			if($test)$txts .= "<br>".$m->detail;
 		}
 		
 	}
