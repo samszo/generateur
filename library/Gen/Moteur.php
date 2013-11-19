@@ -586,50 +586,49 @@ class Gen_Moteur
 				//pronom indéfinie
 				$arr["prosuj"] = $this->getPronom($arr["determinant_verbe"][6],"sujet_indefini");
 				$arr["terminaison"] = 3;
+			}elseif($arr["determinant_verbe"][2]==0){
+				//pas de pronom
+				$arr["prosuj"] = "";
+				$arr["terminaison"] = 3;				
 			}else{
-				//pronom sujet			
-				if($arr["determinant_verbe"][2]==0){
-					//pas de pronom
-					$arr["prosuj"] = "";
+				//pronom définie
+				$numP = $arr["determinant_verbe"][2];
+				$pr = "";
+				//définition des terminaisons et du pluriel
+				if($numP==6){
+					//il/elle singulier
+					$pr = "[a_il]";
+					$pluriel = false;
 					$arr["terminaison"] = 3;				
-				}else{
-					//pronom définie
-					$numP = $arr["determinant_verbe"][2];
-					$pr = "";
-					//définition des terminaisons et du pluriel
-					if($numP==6){
-						//il/elle singulier
-						$pr = "[a_il]";
-						$pluriel = false;
-						$arr["terminaison"] = 3;				
-					}	
-					if($numP==7){
-						//il/elle pluriel
-						$pr = "[a_il]";
-						$pluriel = true;
-						$arr["terminaison"] = 6;				
-					}	
-					if($numP==8){
-						//pas de pronom singulier
-						$pr = "[a_zéro]";
-						$pluriel = false;
-						$arr["terminaison"] = 3;				
-					}	
-					if($numP==9){
-						//pas de pronom pluriel
-						$pr = "[a_zéro]";
-						$pluriel = true;
-						$arr["terminaison"] = 6;				
-					}
-					if($numP==1 || $numP==2){
-						$pluriel = false;
-						$arr["terminaison"] = $numP;				
-					}
-					if($numP==4 || $numP==5){
-						$pluriel = true;
-						$arr["terminaison"] = $numP;				
-					}
-					
+				}	
+				if($numP==7){
+					//il/elle pluriel
+					$pr = "[a_il]";
+					$pluriel = true;
+					$arr["terminaison"] = 6;				
+				}	
+				if($numP==8){
+					//pas de pronom singulier
+					$pr = "[a_zéro]";
+					$pluriel = false;
+					$arr["terminaison"] = 3;				
+				}	
+				if($numP==9){
+					//pas de pronom pluriel
+					$pr = "[a_zéro]";
+					$pluriel = true;
+					$arr["terminaison"] = 6;				
+				}
+				if($numP==1 || $numP==2){
+					$pluriel = false;
+					$arr["terminaison"] = $numP;				
+				}
+				if($numP==4 || $numP==5){
+					$pluriel = true;
+					$arr["terminaison"] = $numP;				
+				}
+				
+				if($arr["prosuj"]==""){
 					if($numP>=6){	
 						//récupère le vecteur
 						$vecteur = $this->getVecteur("genre",-1,$arr["determinant_verbe"][7]);
@@ -644,8 +643,8 @@ class Gen_Moteur
 						$m->arrClass[0]["vecteur"]["pluriel"]=$pluriel;						
 						$this->potentiel += $m->potentiel;
 						$m->genereTexte();						
-						$arr["prosuj"]["lib"] = $m->texte;
-						$arr["prosuj"]["lib_eli"] = $m->texte;
+						$arr["prosuj"]["lib"] = strtolower($m->texte);
+						$arr["prosuj"]["lib_eli"] = strtolower($m->texte);;
 					}else{
 						$arr["prosuj"] = $this->getPronom($numP,"sujet");
 					}
@@ -954,7 +953,7 @@ class Gen_Moteur
 				if($arr["determinant_verbe"][0]==1 || $arr["determinant_verbe"][0]==2 || $arr["determinant_verbe"][0]==3 || $arr["determinant_verbe"][0]==4 || $arr["determinant_verbe"][0]==7 || $arr["determinant_verbe"][0]==8){
 					$verbe = "ne ".$arr["finneg"]." ".$verbe;
 				}else{
-					if(in_array($verbe[0], $arrEli)){
+					if(in_array($verbe[0], $arrEli) && $arr["debneg"]!=""){
 						$verbe = "n'".$verbe." ".$arr["finneg"];
 					}else{
 						$verbe = $arr["debneg"].$verbe." ".$arr["finneg"];
@@ -963,7 +962,10 @@ class Gen_Moteur
 				if($arr["prodem"]!=""){
 					//le pronom complément se place en tête lorsqu’il a les valeurs 39, 40, 41
 					if($arr["prodem"]["num"]==39 || $arr["prodem"]["num"]==40 || $arr["prodem"]["num"]==41){
-						$verbe = $arr["prodem"]["lib"]." ".$verbe; 
+						if(in_array($verbe[0], $arrEli))
+							$verbe = $arr["prodem"]["lib_eli"]." ".$verbe; 
+						else
+							$verbe = $arr["prodem"]["lib"]." ".$verbe; 
 					}
 				}
 				
@@ -984,7 +986,7 @@ class Gen_Moteur
 				}elseif($c == "e" && $arr["terminaison"]==1){
 					$verbe = substr($verbe,0,-2)."é-"; 
 				}
-				if(in_array($verbe[0], $arrEli)){
+				if(in_array($verbe[0], $arrEli) && $arr["debneg"]!=""){
 					$verbe = "n'".$verbe.$arr["prosuj"]["lib"]." ".$arr["finneg"]; 
 				}else{
 					$verbe = $arr["debneg"]." ".$verbe.$arr["prosuj"]["lib"]." ".$arr["finneg"];
@@ -1012,10 +1014,10 @@ class Gen_Moteur
 				}
 			}	
 			if($arr["prosuj"]!=""){
-				if($eli==0){
-					$verbe = $arr["prosuj"]["lib"]." ".$verbe; 
-				}else{
+				if(in_array($verbe[0], $arrEli)){
 					$verbe = $arr["prosuj"]["lib_eli"].$verbe; 
+				}else{
+					$verbe = $arr["prosuj"]["lib"]." ".$verbe; 
 				}
 			}	
 		}
