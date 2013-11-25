@@ -267,9 +267,11 @@ class Gen_Moteur
         		$this->arrPosi = false;
         		//on récupère la valeur de la classe et la position des caractères dans la chaine
         		$i = $this->traiteClass($texte, $i);
+        	/*
         	}elseif($c == "="){
         		//c'est le début d'une notification de format
         		$i = $this->traiteFormat($texte, $i);
+        	*/
         	}elseif($c == "F"){
         		if($texte[$i+1]=="F"){
 	        		//c'est la fin du segment
@@ -1128,9 +1130,9 @@ class Gen_Moteur
 			}
 	
 			//vérifie si la class possède un blocage d'information
-			if(substr($class,0,1)=="="){
+			if(substr($class,0,1)=="=" && is_numeric(substr($class,1,1)) ){
 				$this->getBlocage($class);	
-			}
+			}        
 			
 			//vérifie si la class est un type spécifique
 			$c = strpos($class,"-");
@@ -1303,7 +1305,7 @@ class Gen_Moteur
 
         //récupère le numéro du blocage
         $num=substr($class,1);
-		        
+        
 	    if($num=="x"){
         	//on applique le masculin singulier
 	        $this->arrClass[$this->ordre]["vecteur"]["pluriel"] = false; 
