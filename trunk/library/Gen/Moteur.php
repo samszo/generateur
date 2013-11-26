@@ -63,7 +63,10 @@ class Gen_Moteur
     var $temps_debut;
     var $temps_inter;
     var $temps_nb=0;
-	
+	var $arrEli = array("a", "e", "é", "ê", "i","y");
+	var $arrEliCode = array(195);
+    
+    
     /**
      * Fonction du moteur
      *
@@ -708,12 +711,13 @@ class Gen_Moteur
     /**
      * Fonction du moteur
      *
-     * @param string $type
-     * @param string $dir
-     * @param int $num
+     * @param string 	$type
+     * @param string 	$dir
+     * @param int 		$num
+     * @param string 	$classTypeExclu
      *
      */
-	public function getVecteur($type,$dir,$num=1){
+	public function getVecteur($type,$dir,$num=1,$classTypeExclu=false){
 		
 		//pour les verbes
 		if($num==0)$num=1;
@@ -723,27 +727,51 @@ class Gen_Moteur
 		if($dir>0){
 			for ($i = $this->ordre; $i < count($this->arrClass); $i++) {
 				if(isset($this->arrClass[$i]["vecteur"][$type])){
-					if($num == $j){
-						return $this->arrClass[$i]["vecteur"];
+					if(!$classTypeExclu){
+						if($num == $j){
+							return $this->arrClass[$i]["vecteur"];
+						}else{
+							$j ++;							
+						}
 					}else{
-						$j ++;							
+						//pour éviter de récupérer le vecteur d'un adjectif
+						if(!isset($this->arrClass[$i][$classTypeExclu])){
+							if($num == $j){
+								return $this->arrClass[$i]["vecteur"];
+							}else{
+								$j ++;							
+							}
+						}
 					}
 				}
 			}
 		}
 		if($dir<0){
 			for ($i = $this->ordre; $i >= 0; $i--) {
+				//on récupère le vecteur 
 				if(isset($this->arrClass[$i]["vecteur"][$type])){
-					if($num == $j){
-						return $this->arrClass[$i]["vecteur"];
+					if(!$classTypeExclu){
+						if($num == $j){
+							return $this->arrClass[$i]["vecteur"];
+						}else{
+							$j ++;							
+						}
 					}else{
-						$j ++;							
+						//pour éviter de récupérer le vecteur d'un adjectif
+						if(!isset($this->arrClass[$i][$classTypeExclu])){
+							if($num == $j){
+								return $this->arrClass[$i]["vecteur"];
+							}else{
+								$j ++;							
+							}
+						}
 					}
 				}
 			}
 		}
 		return $vecteur;
 	}
+		
 	
     /**
      * Fonction du moteur
@@ -891,7 +919,6 @@ class Gen_Moteur
 		$arr["debneg"]="";
 		$arr["finneg"]="";
 		$arr["prodem"]="";		
-		$arrEli = array("a", "e", "é", "ê", "i","y");
 		
 		//vérifie s'il faut récupérer le 
 		$arr = $this->getDerterminantVerbe($arr);    	
@@ -908,14 +935,7 @@ class Gen_Moteur
 		//construction de l'élision
 		$eli = $arr["verbe"]["elision"];
 		if($eli==0){
-			//attention aux caractères bizares
-			$arrEliCode = array(195);
-			$initial = $centre[0];
-			if(in_array($initial, $arrEli))$eli=1;
-			if($eli==0){
-				$initial = ord($initial);
-				if(in_array($initial, $arrEliCode))$eli=1;				
-			}
+			$eli = $this->isEli($centre);
 		}
 		
 		$verbe="";
@@ -955,7 +975,7 @@ class Gen_Moteur
 				if($arr["determinant_verbe"][0]==1 || $arr["determinant_verbe"][0]==2 || $arr["determinant_verbe"][0]==3 || $arr["determinant_verbe"][0]==4 || $arr["determinant_verbe"][0]==7 || $arr["determinant_verbe"][0]==8){
 					$verbe = "ne ".$arr["finneg"]." ".$verbe;
 				}else{
-					if(in_array($verbe[0], $arrEli) && $arr["debneg"]!=""){
+					if($this->isEli($verbe) && $arr["finneg"]!=""){
 						$verbe = "n'".$verbe." ".$arr["finneg"];
 					}else{
 						$verbe = $arr["debneg"].$verbe." ".$arr["finneg"];
@@ -964,10 +984,11 @@ class Gen_Moteur
 				if($arr["prodem"]!=""){
 					//le pronom complément se place en tête lorsqu’il a les valeurs 39, 40, 41
 					if($arr["prodem"]["num"]==39 || $arr["prodem"]["num"]==40 || $arr["prodem"]["num"]==41){
-						if(in_array($verbe[0], $arrEli))
+						if($this->isEli($verbe)){
 							$verbe = $arr["prodem"]["lib_eli"]." ".$verbe; 
-						else
+						}else{
 							$verbe = $arr["prodem"]["lib"]." ".$verbe; 
+						}
 					}
 				}
 				
@@ -988,7 +1009,7 @@ class Gen_Moteur
 				}elseif($c == "e" && $arr["terminaison"]==1){
 					$verbe = substr($verbe,0,-2)."é-"; 
 				}
-				if(in_array($verbe[0], $arrEli) && $arr["debneg"]!=""){
+				if($this->isEli($verbe) && $arr["debneg"]!=""){
 					$verbe = "n'".$verbe.$arr["prosuj"]["lib"]." ".$arr["finneg"]; 
 				}else{
 					$verbe = $arr["debneg"]." ".$verbe.$arr["prosuj"]["lib"]." ".$arr["finneg"];
@@ -1009,14 +1030,14 @@ class Gen_Moteur
 				}
 			}	
 			if($arr["debneg"]!=""){
-				if(in_array($verbe[0], $arrEli)){
+				if($this->isEli($verbe)){
 					$verbe = "n'".$verbe; 
 				}else{
 					$verbe = $arr["debneg"].$verbe; 
 				}
 			}	
 			if($arr["prosuj"]!=""){
-				if(in_array($verbe[0], $arrEli)){
+				if($this->isEli($verbe)){
 					$verbe = $arr["prosuj"]["lib_eli"].$verbe; 
 				}else{
 					$verbe = $arr["prosuj"]["lib"]." ".$verbe; 
@@ -1025,6 +1046,11 @@ class Gen_Moteur
 		}
 		
 		return $verbe;
+	}
+
+	public function isEli($s){
+		if(in_array($s[0], $this->arrEli) || in_array(ord($s), $this->arrEliCode))return true;
+		else return false;
 	}
 	
 	public function getDerterminantVerbe($arr){
