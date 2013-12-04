@@ -57,7 +57,8 @@ class Gen_Moteur
 	var $xml;
 	var $xmlRoot;
 	var $xmlGen;
-    //pour l'optimisation
+	var $coupures=array();
+	//pour l'optimisation
     var $bTrace = false;
     var $echoTrace = false;
     var $temps_debut;
@@ -496,8 +497,23 @@ class Gen_Moteur
 		
 		//mise en forme du texte
 		$LT = strlen($this->texte);
-		//mise en forme poésie
-		
+		/*coupure de phrase
+		if(count($this->coupures)=2){
+			$nbCaractCoupure = mt_rand($this->coupures[0], $this->coupures[1]);
+			$start = 0;			
+			for ($i = $nbCaractCoupure; $i < $LT; $i++) {
+				//trouve la coupure
+				$c = $this->texte[$i];
+				while ($c != " " || $c != "," || $c != "." || $c != ";") {
+					$i --;
+					$c = $this->texte[$i];
+				}
+				$this->texte = substr($this->texte, $start, $i).$this->finLigne.substr($this->texte, $i);
+				$start = $i;
+				$i += $nbCaractCoupure;
+			}
+		}
+		*/
 		//création du tableau de génération
 		$this->detail = "ordreDeb=$ordreDeb ordreFin=$ordreFin<br/>".$this->arrayVersHTML($this->arrClass);
 		
@@ -714,10 +730,10 @@ class Gen_Moteur
      * @param string 	$type
      * @param string 	$dir
      * @param int 		$num
-     * @param string 	$classTypeExclu
+     * @param string 	$classType
      *
      */
-	public function getVecteur($type,$dir,$num=1,$classTypeExclu=false){
+	public function getVecteur($type,$dir,$num=1,$classType=false){
 		
 		//pour les verbes
 		if($num==0)$num=1;
@@ -727,7 +743,7 @@ class Gen_Moteur
 		if($dir>0){
 			for ($i = $this->ordre; $i < count($this->arrClass); $i++) {
 				if(isset($this->arrClass[$i]["vecteur"][$type])){
-					if(!$classTypeExclu){
+					if(!$classType){
 						if($num == $j){
 							return $this->arrClass[$i]["vecteur"];
 						}else{
@@ -735,7 +751,7 @@ class Gen_Moteur
 						}
 					}else{
 						//pour éviter de récupérer le vecteur d'un adjectif
-						if(!isset($this->arrClass[$i][$classTypeExclu])){
+						if(isset($this->arrClass[$i][$classType])){
 							if($num == $j){
 								return $this->arrClass[$i]["vecteur"];
 							}else{
@@ -1107,14 +1123,16 @@ class Gen_Moteur
         	//change l'ordre pour que la class soit placée après
         	$this->ordre ++;
         	//avec le vecteur
-        	$this->arrClass[$this->ordre]["vecteur"] = $this->arrClass[($this->ordre-1)]["vecteur"]; 
+        	$vDet = $this->arrClass[($this->ordre-1)]["vecteur"];
+        	$this->arrClass[$this->ordre]["vecteur"] = $vDet; 
         	$this->getClass($this->arrPosi[1]);
         	//redéfini l'ordre pour que la class soit placée avant
         	$this->ordre --;
         	//avec le nouveau vecteur
         	$this->arrClass[$this->ordre]["vecteur"] = $this->arrClass[($this->ordre+1)]["vecteur"]; 
-        	//$this->getClass($this->arrPosi[0]);
         	$class = $this->arrPosi[0];
+        	//rédifini l'élision du déterminant
+        	$this->arrClass[$this->ordre-2]["vecteur"]["elision"]=$vecteurAdj["elision"];
         	//return;
         }
         
@@ -1337,8 +1355,13 @@ class Gen_Moteur
 	        $this->arrClass[$this->ordre]["vecteur"]["pluriel"] = false; 
 	        $this->arrClass[$this->ordre]["vecteur"]["genre"] = 1;
         }else{
+        	$classType = false;
+        	//vérifie si on doit prendre le substantif de l'adjectif
+        	//selon jpb la vérification n'est pas nécessaire
+        	$classType="substantif";
+        	
 	        //Récupère les informations de genre
-        	$vecteur = $this->getVecteur("genre",-1,$num);
+        	$vecteur = $this->getVecteur("genre",-1,$num,$classType);
         	if(!isset($vecteur["genre"])){
         		$genre = 1;
         	}else{
@@ -1346,7 +1369,7 @@ class Gen_Moteur
         	}
         	if(!isset($vecteur["pluriel"])){
         		//récupère le vecteur de pluriel
-		        $vecteurPlus = $this->getVecteur("pluriel",-1,$num);        		
+		        $vecteurPlus = $this->getVecteur("pluriel",-1,$num,$classType);        		
         		$pluriel = $vecteurPlus["pluriel"];
         	}else{
         		$pluriel = $vecteur["pluriel"];
