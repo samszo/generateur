@@ -20,6 +20,11 @@ try {
 		$frt = $_GET['frt'];
 	else
 		$frt = "txt";
+
+	if(isset($_GET['audio'])){
+		$audio=$_GET['audio'];
+		$frt = "html";
+	}
 	
 	if($frt == "html" || $frt == "frg" )
 		$rtn = "<br/>";
@@ -78,6 +83,23 @@ try {
 	else
 		header('Content-Type: text/plain; charset=UTF-8');
 	
+	//construction de l'audio
+	if($audio){
+		$today = getdate();
+		// Save the MP3 file in this folder with the .mp3 extension 
+		$file = $idOeu."_".$idCpt."_".$today[0].".mp3";
+		// If the MP3 file exists, do not create a new request
+		$audioPath = ROOT_PATH."/data/audio/".$file;
+		echo $audioPath."<br/>"; 
+		if (!file_exists($audioPath)) {
+	    	$mp3 = file_get_contents('http://translate.google.com/translate_tts?ie=UTF-8&q='.$m->texte.'&tl=fr&textlen='.strlen($m->texte).'&idx=0&total=1');
+			file_put_contents($audioPath, $mp3);
+		}
+		$audioPath = WEB_ROOT."/data/audio/".$file;
+		$audio='<video controls="true" autoplay="true" name="media"><source src="'.$audioPath.'" type="audio/mpeg"></video>';		
+	}
+		
+		
 	//construction du code pour le bouton
 	$script = "";
 	$scodeBtn = "";
@@ -91,13 +113,14 @@ try {
 		$script ='
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>';
 		$codeBtn = '<button type="button" onclick="$.get(\''.$urlGen.'\', {\'oeu\':'.$idOeu.', \'cpt\':'.$idCpt.', \'frt\':\'frg\'}, function(fragment){$(\'#gen'.$idOeu.'_'.$idCpt.'\').html(fragment);});">Génère</button>';		
-		$codeDiv = "<div id='gen".$idOeu."_".$idCpt."' >".$txts."</div>".$codeBtn;		
+		$codeDiv = "<div id='gen".$idOeu."_".$idCpt."' >".$txts."</div>".$codeBtn.$audio;		
 	}else{
-		$codeDiv = $txts;
+		$codeDiv = $txts.$audio;
 	}
 	
+	
 	if($frt == "frg"){
-		echo "<div>".$err.$rtn.$txts."</div>";
+		echo "<div>".$err.$rtn.$txts.$audio."</div>";
 	}
 	
 	if($frt == "html"){
