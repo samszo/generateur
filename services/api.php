@@ -85,18 +85,8 @@ try {
 	
 	//construction de l'audio
 	if($audio){
-		$today = getdate();
-		// Save the MP3 file in this folder with the .mp3 extension 
-		$file = $idOeu."_".$idCpt."_".$today[0].".mp3";
-		// If the MP3 file exists, do not create a new request
-		$audioPath = ROOT_PATH."/data/audio/".$file;
-		echo $audioPath."<br/>"; 
-		if (!file_exists($audioPath)) {
-	    	$mp3 = file_get_contents('http://translate.google.com/translate_tts?ie=UTF-8&q='.$m->texte.'&tl=fr&textlen='.strlen($m->texte).'&idx=0&total=1');
-			file_put_contents($audioPath, $mp3);
-		}
-		$audioPath = WEB_ROOT."/data/audio/".$file;
-		$audio='<video controls="true" autoplay="true" name="media"><source src="'.$audioPath.'" type="audio/mpeg"></video>';		
+		//à revoir
+		include "http://localhost/jdc/public/flux/parole?txt=".urlencode($txt);
 	}
 		
 		
