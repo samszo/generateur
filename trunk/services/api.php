@@ -7,7 +7,10 @@ try {
 
 	/*
 	$_GET['oeu']=32;
-	$_GET['cpt']=158586;
+	$_GET['cpt']=158589;
+	$_GET['gen']=243199;
+	$_GET['minC']=3;
+	$_GET['maxC']=6;	
 	*/
 
 	if(isset($_GET['test'])){
@@ -41,6 +44,11 @@ try {
 		$idCpt = $_GET['cpt'];
 	else
 		$err .= "ERREUR : aucun texte génératif n'est défini.".$rtn;
+	if(isset($_GET['gen']))
+		$idGen = $_GET['gen'];
+	else
+		$idGen=false;
+				
 	if(isset($_GET['btn']))
 		$btn = $_GET['btn'];
 	else
@@ -49,13 +57,27 @@ try {
 		$nb = $_GET['nb'];
 	else
 		$nb = 1;
-			
+	if(isset($_GET['minC']))
+		$coupures[] = $_GET['minC'];
+	else
+		$coupures = false;
+	if(isset($_GET['maxC']))
+		$coupures[] = $_GET['maxC'];
+	else
+		$coupures = false;
 		
 	if(!$err){
 		//récupère le texte génératif
-		$dbCpt = new Model_DbTable_Gen_concepts();
-		$arrCpt = $dbCpt->findById_concept($idCpt);
-		$txtGen = $dbCpt->getGenTexte($arrCpt[0]);
+		if($idGen){
+			$dbGen = new Model_DbTable_Gen_generateurs();
+			$arrGen = $dbGen->findById_gen($idGen);
+			$txtGen = $arrGen[0]["valeur"];
+		}else{
+			$dbCpt = new Model_DbTable_Gen_concepts();
+			$arrCpt = $dbCpt->findById_concept($idCpt);
+			$txtGen = $dbCpt->getGenTexte($arrCpt[0]);
+		}
+		
 		
 		//initialisation du moteur
 		$m = new Gen_Moteur();
@@ -63,13 +85,16 @@ try {
 		//récupère les dictionnaires
 		$m->arrDicos = $m->getDicosOeuvre($idOeu);
 		$m->showErr = $test;
+		$m->bTrace = false;
 		$m->forceCalcul = false;
+		$m->coupures = $coupures;
+		$m->finLigne = $rtn;
 		$txts = "";
 		for ($i = 0; $i < $nb; $i++) {
 			$txt = $m->Generation($txtGen).$rtn;
-			if($rtn == "\n")$txt = str_replace("<br/>", "\n", $txt);
+			//if($rtn == "\n")$txt = str_replace("<br/>", "\n", $txt);
 			$txts .= $txt;
-			if($test)$txts .= "<br>".$m->detail;
+			if($test)$txts .= $m->finLigne.$m->detail;
 		}
 		
 	}
