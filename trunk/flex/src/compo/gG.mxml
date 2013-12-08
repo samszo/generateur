@@ -120,6 +120,13 @@
 						var arrGFin:Array = g.split("]");
 					}
 					if(cc){
+						if(cptSelect.selected){
+							cc.oItem = oConcept;
+							cc.idGen = 0;					
+						}else{
+							cc.oItem = donnee;					
+							cc.idGen = donnee.id_gen;					
+						}
 						cc.init();
 					}
 				}
@@ -309,8 +316,10 @@
 			{
 				if(event.target.id=="cptSelect"){
 					cc.oItem = oConcept;
+					cc.idGen = 0;					
 				}else{
 					cc.oItem = donnee;					
+					cc.idGen = donnee.id_gen;					
 				}
 				cc.init();
 				

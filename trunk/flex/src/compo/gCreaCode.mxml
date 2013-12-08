@@ -10,17 +10,33 @@
 	<fx:Script>
 		<![CDATA[
 			import flash.external.*;
-			
 			import mx.events.FlexEvent;
+			
+			import mx.controls.Alert;
 						
 			[Bindable] public var idOeu:int;
-			[Bindable] public var oItem:Object
+			[Bindable] public var oItem:Object;
+			[Bindable] public var idGen:int;
 			private var textLoader:URLLoader;
+			
+			private function getUrlParam():String{
+				var lien:String = this.parentApplication.urlAPI+"?oeu="+idOeu+"&cpt="+oItem.id_concept;					
+				if(idGen)lien += "&gen="+idGen;
+				if(minCoupure.value!=0){
+					if(minCoupure.value > maxCoupure.value){
+						Alert.show("L'intervale du nombre de caractère n'est pas bon.");
+					}else{
+						lien += "&minC="+minCoupure.value + "&maxC="+maxCoupure.value;
+					}
+				}
+
+				return lien;
+			}
 			
 			protected function html1_clickHandler(event:MouseEvent):void
 			{
 				if(oItem){
-					txtLien.text = this.parentApplication.urlAPI+"?oeu="+idOeu+"&cpt="+oItem.id_concept+"&nb="+nsTB.value;					
+					txtLien.text = getUrlParam()+"&nb="+nsTB.value;					
 					loadUrl(txtLien.text)
 				}
 			}
@@ -28,7 +44,7 @@
 			protected function html2_clickHandler(event:MouseEvent):void
 			{
 				if(oItem){
-					txtLien.text = this.parentApplication.urlAPI+"?oeu="+idOeu+"&cpt="+oItem.id_concept+"&frt=html";
+					txtLien.text = getUrlParam()+"&frt=html";
 					if(cbBtnGen2.selected)txtLien.text += "&btn=1"; 
 					loadUrl(txtLien.text)
 				}
@@ -37,7 +53,7 @@
 			protected function html3_clickHandler(event:MouseEvent):void
 			{
 				if(oItem){
-					txtLien.text = this.parentApplication.urlAPI+"?oeu="+idOeu+"&cpt="+oItem.id_concept+"&frt=iframe";					
+					txtLien.text = getUrlParam()+"&frt=iframe";					
 					if(cbBtnGen3.selected)txtLien.text += "&btn=1"; 
 					loadUrl(txtLien.text)
 				}
@@ -109,6 +125,13 @@
 		<s:HGroup width="100%" verticalAlign="middle" fontSize="18" >
 			<s:Label text="Lien vers le test :" />
 			<s:TextInput id="txtLien" text="" width="100%" />
+		</s:HGroup>
+		<s:HGroup width="100%" verticalAlign="middle" fontSize="18" >
+			<s:Label text="Coupure de phrase entre (0 = pas de coupure) " />
+			<s:NumericStepper id="minCoupure" maximum="200" value="0" />							
+			<s:Label text=" caractères et " />
+			<s:NumericStepper id="maxCoupure" maximum="200" value="0" />							
+			<s:Label text=" caractères" />
 		</s:HGroup>
 		<s:HGroup width="100%" height="100%" >
 			<s:Panel title="Codes Disponibles">
