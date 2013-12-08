@@ -5,7 +5,7 @@ try {
 	require_once( "../application/configs/config.php" );
 	$application->bootstrap();
 	
-	$_GET['idDico'] = 118;
+	//$_GET['idDico'] = 118;
 	
 	header("Content-Disposition: attachment; filename=\"exportGenerateur.csv\"; ");
 	header("Content-Type: text/csv");
