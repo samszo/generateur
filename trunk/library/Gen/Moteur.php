@@ -64,7 +64,7 @@ class Gen_Moteur
     var $temps_debut;
     var $temps_inter;
     var $temps_nb=0;
-	var $arrEli = array("a", "e", "é", "ê", "i","y");
+	var $arrEli = array("a", "e", "é", "ê", "i","o","u","y");
 	var $arrEliCode = array(195);
     
     
@@ -94,10 +94,12 @@ class Gen_Moteur
      */
 	public function trace($message){
 		if($this->bTrace){
+			if(!$this->temps_debut)$this->temps_debut = microtime(true);
+			
 			$temps_fin = microtime(true);
 			$tG = str_replace(".",",",round($temps_fin - $this->temps_debut, 4));
 			$tI = str_replace(".",",",round($temps_fin - $this->temps_inter, 4));
-			$mess = $this->temps_nb." | ".$message." |".$tG."|".$tI."<br/>";
+			$mess = $this->temps_nb." | ".$message." |".$tG."|".$tI.$this->finLigne;
 			if($this->echoTrace)
 				$this->echoTrace .= $mess;
 			else
@@ -487,6 +489,7 @@ class Gen_Moteur
 		$this->texte = str_replace(" .",".",$this->texte);
 		$this->texte = str_replace(" 's","'s",$this->texte);
 		$this->texte = str_replace(" -","-",$this->texte);
+		$this->texte = str_replace("- ","-",$this->texte);
 		$this->texte = str_replace("( ","(",$this->texte);
 		$this->texte = str_replace(" )",")",$this->texte);
 		
@@ -494,32 +497,59 @@ class Gen_Moteur
 		if(strrpos($this->arrDicos["concepts"],"96")===false){
 			$this->genereMajuscules();
 		}
-		
+
 		//mise en forme du texte
-		$LT = strlen($this->texte);
-		/*coupure de phrase
-		if(count($this->coupures)=2){
-			$nbCaractCoupure = mt_rand($this->coupures[0], $this->coupures[1]);
-			$start = 0;			
-			for ($i = $nbCaractCoupure; $i < $LT; $i++) {
-				//trouve la coupure
-				$c = $this->texte[$i];
-				while ($c != " " || $c != "," || $c != "." || $c != ";") {
-					$i --;
-					$c = $this->texte[$i];
-				}
-				$this->texte = substr($this->texte, $start, $i).$this->finLigne.substr($this->texte, $i);
-				$start = $i;
-				$i += $nbCaractCoupure;
-			}
-		}
-		*/
+		$this->coupures();
+		
 		//création du tableau de génération
-		$this->detail = "ordreDeb=$ordreDeb ordreFin=$ordreFin<br/>".$this->arrayVersHTML($this->arrClass);
+		if($this->showErr)$this->detail = "ordreDeb=$ordreDeb ordreFin=$ordreFin<br/>".$this->arrayVersHTML($this->arrClass);
 		
 	}
 
     /**
+     * Fonction du moteur
+     *
+     *
+     */
+	public function coupures(){
+		$this->trace("DEBUT ".__METHOD__);
+		//mise en forme du texte
+		/*coupure de phrase*/
+		if(count($this->coupures)==2){
+			$this->texte .= " ";
+			$LT = strlen($this->texte);
+			$nbCaractCoupure = mt_rand($this->coupures[0], $this->coupures[1]);
+			$i = $nbCaractCoupure;
+			while(($i+$this->coupures[1]) < $LT) {
+				//trouve la coupure
+				$c = substr($this->texte, $i, 1);
+				$this->trace($nbCaractCoupure." ".$c." ".$i."/".$LT);
+				$go = true;
+				$j = $i;
+				while ($go) {
+					if($c == "" || $c == " " || $c == "," || $c == "." || $c == ";"){
+						$go=false;
+						$i = $j;
+					}elseif ($j==0){
+						//coupe jusqu'au prochain espace
+						$i = strpos($this->texte, ' ', $i);
+						$go=false;
+					}else{
+						$j --;
+						$c = substr($this->texte, $j, 1);
+					}
+				}
+				$this->texte = trim(substr($this->texte, 0, $i)).$this->finLigne.trim(substr($this->texte, $i));
+				$nbCaractCoupure = mt_rand($this->coupures[0], $this->coupures[1]);
+				$i += $nbCaractCoupure+strlen($this->finLigne);
+				$LT = strlen($this->texte);
+			}
+			
+		}
+		$this->trace("FIN ".__METHOD__);
+	}
+	
+	/**
      * Fonction du moteur
      *
      *
@@ -934,7 +964,6 @@ class Gen_Moteur
 		*/
 		$arr["debneg"]="";
 		$arr["finneg"]="";
-		$arr["prodem"]="";		
 		
 		//vérifie s'il faut récupérer le 
 		$arr = $this->getDerterminantVerbe($arr);    	
@@ -962,7 +991,7 @@ class Gen_Moteur
 				if($eli==0){
 					$arr["debneg"] = "ne ";	
 				}else{
-					if(isset($arr["prodem"]) && !in_array(trim($arr["prodem"]["lib"]), $arrEli)){
+					if(isset($arr["prodem"]) && !$this->isEli($arr["prodem"]["lib"])){
 						$arr["debneg"] = "ne ";
 					}else{
 						$arr["debneg"] = "n'";						
@@ -1013,7 +1042,7 @@ class Gen_Moteur
 			if($arr["determinant_verbe"][5]==1){
 				$verbe = $centre."-";
 				if($arr["prodem"]!=""){
-					if($eli==0){
+					if(!$this->isEli($verbe)){
 						$verbe = $arr["prodem"]["lib"]." ".$verbe; 
 					}else{
 						$verbe = $arr["prodem"]["lib_eli"].$verbe; 
@@ -1038,7 +1067,8 @@ class Gen_Moteur
 		if($verbe==""){
 			$verbe = $centre." ".$arr["finneg"];
 			if($arr["prodem"]!=""){
-				if($eli==0){
+				//si le pronom eli = le pronom normal en met un espace
+				if(!$this->isEli($verbe) || $arr["prodem"]["lib"] == $arr["prodem"]["lib_eli"]){
 					$verbe = $arr["prodem"]["lib"]." ".$verbe; 
 				}else{
 					$verbe = $arr["prodem"]["lib_eli"].$verbe; 
@@ -1054,7 +1084,11 @@ class Gen_Moteur
 			}	
 			if($arr["prosuj"]!=""){
 				if($this->isEli($verbe)){
-					$verbe = $arr["prosuj"]["lib_eli"].$verbe; 
+					//vérification de l'apostrophe
+					if (strrpos($arr["prosuj"]["lib_eli"], "'") === false) { 
+						$verbe = $arr["prosuj"]["lib_eli"]." ".$verbe; 
+					}else
+						$verbe = $arr["prosuj"]["lib_eli"].$verbe; 
 				}else{
 					$verbe = $arr["prosuj"]["lib"]." ".$verbe; 
 				}
@@ -1120,20 +1154,27 @@ class Gen_Moteur
 		$arrPosi=explode("@", $class);
         if(count($arrPosi)>1){
         	$this->arrPosi=explode("@", $class);
-        	//change l'ordre pour que la class soit placée après
+        	$this->trace("récupère le vecteur du déterminant ".$this->ordre);
+        	$vDet = $this->arrClass[($this->ordre)]["vecteur"];
+        	$ordreDet = $this->ordre;
+        	//change l'ordre pour que la class substantif soit placée après
         	$this->ordre ++;
-        	//avec le vecteur
-        	$vDet = $this->arrClass[($this->ordre-1)]["vecteur"];
         	$this->arrClass[$this->ordre]["vecteur"] = $vDet; 
+        	//calcul le substantifs
         	$this->getClass($this->arrPosi[1]);
-        	//redéfini l'ordre pour que la class soit placée avant
+        	$vSub = $this->arrClass[($this->ordre)]["vecteur"];
+        	//redéfini l'ordre pour que la class adjectif soit placée avant
         	$this->ordre --;
-        	//avec le nouveau vecteur
-        	$this->arrClass[$this->ordre]["vecteur"] = $this->arrClass[($this->ordre+1)]["vecteur"]; 
-        	$class = $this->arrPosi[0];
-        	//rédifini l'élision du déterminant
-        	$this->arrClass[$this->ordre-2]["vecteur"]["elision"]=$vecteurAdj["elision"];
-        	//return;
+        	//avec le vecteur du substantif
+        	$this->arrClass[$this->ordre]["vecteur"] = $vSub; 
+        	//calcul l'adjectif
+        	$this->getClass($this->arrPosi[0]);
+        	$vAdj = $this->arrClass[($this->ordre-1)]["vecteur"];        	
+        	//rédifini l'élision et le genre du déterminant avec celui de l'adjectif
+        	$this->arrClass[$ordreDet]["vecteur"]["elision"]=$vAdj["elision"];
+        	$this->arrClass[$ordreDet]["vecteur"]["genre"]=$vSub["genre"];
+        	
+        	return;
         }
         
 		$this->arrClass[$this->ordre]["class"][] = $class;
@@ -1174,7 +1215,10 @@ class Gen_Moteur
 			}
 	
 			//vérifie si la class possède un blocage d'information
-			if(substr($class,0,1)=="=" && is_numeric(substr($class,1,1)) ){
+			if(substr($class,0,1)=="=" && is_numeric(substr($class,1,1))){
+				$this->getBlocage($class);	
+			}        
+			if(substr($class,0,1)=="=" && substr($class,1,1)=="x"){
 				$this->getBlocage($class);	
 			}        
 			
@@ -1352,7 +1396,8 @@ class Gen_Moteur
         
 	    if($num=="x"){
         	//on applique le masculin singulier
-	        $this->arrClass[$this->ordre]["vecteur"]["pluriel"] = false; 
+	        $this->arrClass[$this->ordre]["vecteur"]["blocage"] = true; 
+	    	$this->arrClass[$this->ordre]["vecteur"]["pluriel"] = false; 
 	        $this->arrClass[$this->ordre]["vecteur"]["genre"] = 1;
         }else{
         	$classType = false;
