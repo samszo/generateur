@@ -120,54 +120,6 @@
 	</s:HGroup>
 	<s:Panel width="100%" height="100%" title="3. Choisissez le type de code">
 		<compo:gCreaCode id="cc" oItem="{oItem}" idOeu="{idOeu}" />
-		<!--
-		<s:VGroup width="100%" height="100%" paddingBottom="4" paddingLeft="4" paddingRight="4" paddingTop="4">
-			<s:HGroup width="100%" verticalAlign="middle" fontSize="18" >
-				<s:Label text="Texte génératif :" />
-				<s:TextInput id="txtGen" text="" />			
-				<s:Label text="Lien vers le test :" />
-				<s:TextInput id="txtLien" text="" width="100%" />
-			</s:HGroup>
-			<s:HGroup width="100%" height="100%" >
-				<s:Panel title="Codes Disponibles">
-					<s:VGroup paddingBottom="4" paddingLeft="4" paddingRight="4" paddingTop="4">
-						<s:Label text="Lien pour du texte brut" />
-						<s:HGroup verticalAlign="middle">
-							<s:Label text="Nb. de génération :" />
-							<s:NumericStepper id="nsTB" maximum="200" value="1" />							
-						</s:HGroup>
-						<s:Button label="Tester" click="html1_clickHandler(event)" />					
-						<mx:HRule width="100%" height="3" />
-						<s:Label text="Code d'une page HTML" />
-						<s:CheckBox label="Avec bouton de génération" id="cbBtnGen2" />
-						<s:Button label="Tester" click="html2_clickHandler(event)" />					
-						<mx:HRule width="100%" height="3" />
-						<s:Label text="Code pour intégrer dans un page Web" />
-						<s:CheckBox label="Avec bouton de génération" id="cbBtnGen3" />
-						<s:Button label="Tester" click="html3_clickHandler(event)" />					
-						<mx:HRule width="100%" height="3" />
-					</s:VGroup>
-				</s:Panel>		
-				<s:Panel width="100%" height="100%" title="Résultat du test">
-					<s:HGroup width="100%" height="100%" fontSize="18" paddingBottom="4" paddingLeft="4" paddingRight="4" paddingTop="4">						
-						<s:VGroup height="100%" width="100%">
-							<s:Label text="texte brut : " />
-							<s:TextArea id="taCS" width="100%" height="100%" />
-						</s:VGroup>
-						<s:VGroup height="100%" width="100%">
-							<s:Label text="visualisation navigateur : " />
-							<s:BorderContainer height="100%" width="100%">
-								<s:layout>
-									<s:VerticalLayout paddingLeft="4" paddingRight="4" paddingTop="4" paddingBottom="4"/>
-								</s:layout>
-								<flexiframe:IFrame id="fi" height="100%" width="100%" /> 					
-							</s:BorderContainer>
-						</s:VGroup>
-					</s:HGroup>						
-				</s:Panel>
-			</s:HGroup>
-		</s:VGroup>
-		-->
 	</s:Panel>
 	
 </s:Group>
