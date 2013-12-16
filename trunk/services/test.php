@@ -8,10 +8,10 @@ try {
 	$application->bootstrap();
 	
 	$txts = array("1[thl-rivière-01] 2[thl-jardin-01] [s_prépo]) 3[thl-rivière-01]. 4[thl-rivière-01][s_ponctuer] 5[thl-Philos][s_ponctuer]  6[thl-champ-01][s_ponctuer] 7[thl-champ-01][s_ponctuer] 8[thl-champ-01][s_ponctuer] 9[thl-champ-01][s_ponctuer] 10[thl-champ-01][s_ponctuer] 11[thl-champ-01][[s_ponctuer] 12[thl-rivière-01][s_ponctuer] 13[thl-forêt-01][s_ponctuer] 14[thl-champ-01][s_ponctuer] 15[thl-village-01] 16([thl-jardin-01])[s_ponctuer] 17[thl-champ-01][s_ponctuer] 18[thl-champ-01][s_ponctuer] 19[thl-champ-01][s_ponctuer] 20[thl-champ-01][s_ponctuer] 21[thl-champ-01][s_ponctuer] 22[thl-champ-01][s_ponctuer] 23[thl-champ-01][s_ponctuer] 24[thl-champ-01][s_ponctuer] 25[thl-champ-01][s_ponctuer] 26[thl-champ-01] 27[s_prépo] 28[thl-forêt-01]. 29[thl-cielBleu-01] 30[s_prépo] 31[thl-Philos].");	
-	$txts = array("[32|a_beau 1@m_homme 1]");	
+	$txts = array("[122#] [1#] [20|m_âge] [010120000|v_menacer] [61#] [v_effrayer]");	
 	//$txts = array("[011000000|v_oser]");	
 	$m = new Gen_Moteur();
-	$m->coupures =  array(10, 30);
+	//$m->coupures =  array(10, 30);
 	$arrVerifDico = $m->getDicosOeuvre(38);
 	//$var = $m->Verifier($txts[0], $arrVerifDico);
 	$trace = false;
