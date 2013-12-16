@@ -64,7 +64,7 @@ class Gen_Moteur
     var $temps_debut;
     var $temps_inter;
     var $temps_nb=0;
-	var $arrEli = array("a", "e", "é", "ê", "i","o","u","y");
+	var $arrEli = array("a", "e", "é", "ê", "i","o","u","y","h");
 	var $arrEliCode = array(195);
     
     
@@ -707,7 +707,7 @@ class Gen_Moteur
 				$arr["prodem"] = $this->getPronom($numPC,"complément");
 		        if(substr($arr["prodem"]["lib"],0,1)== "["){
 					//récupère le vecteur
-					$vecteur = $this->getVecteur("genre",-1,$arr["determinant_verbe"][7]);
+					$vecteur = $this->getVecteur("genre",-1,$arr["determinant_verbe"][7],"substantif");
 					$genre = $vecteur["genre"];     	
 		        	//génère le pronom
 					$m = new Gen_Moteur($this->urlDesc,$this->forceCalcul,$this->xmlDesc);
@@ -715,8 +715,8 @@ class Gen_Moteur
 					$m->timeDeb = $this->timeDeb;
 					$m->arrDicos = $this->arrDicos;
 					$m->Generation($arr["prodem"]["lib"],false,$this->cache);
-					$m->arrClass[0]["genre"]=$genre;
-					$m->arrClass[0]["pluriel"]=$pluriel;						
+					$m->arrClass[0]["vecteur"]["genre"]=$genre;
+					$m->arrClass[0]["vecteur"]["pluriel"]=$pluriel;						
 					$this->potentiel += $m->potentiel;
 					$m->genereTexte();						
 					$arr["prodem"]["lib"] = strtolower($m->texte);
@@ -796,7 +796,7 @@ class Gen_Moteur
 			for ($i = $this->ordre; $i >= 0; $i--) {
 				//on récupère le vecteur 
 				if(isset($this->arrClass[$i]["vecteur"][$type])){
-					if(!$classTypeExclu){
+					if(!$classType){
 						if($num == $j){
 							return $this->arrClass[$i]["vecteur"];
 						}else{
@@ -804,7 +804,7 @@ class Gen_Moteur
 						}
 					}else{
 						//pour éviter de récupérer le vecteur d'un adjectif
-						if(!isset($this->arrClass[$i][$classTypeExclu])){
+						if(isset($this->arrClass[$i][$classType])){
 							if($num == $j){
 								return $this->arrClass[$i]["vecteur"];
 							}else{
@@ -978,9 +978,9 @@ class Gen_Moteur
 		$centre = $arr["verbe"]["prefix"].$term;
 		
 		//construction de l'élision
-		$eli = $arr["verbe"]["elision"];
-		if($eli==0){
-			$eli = $this->isEli($centre);
+		$eliVerbe = $arr["verbe"]["elision"];
+		if($eliVerbe==0){
+			$eliVerbe = $this->isEli($centre);
 		}
 		
 		$verbe="";
@@ -1008,17 +1008,16 @@ class Gen_Moteur
 				$verbe = $centre;
 				if($arr["prodem"]!=""){
 					if($arr["prodem"]["num"]!=39 && $arr["prodem"]["num"]!=40 && $arr["prodem"]["num"]!=41){
-						if($eli==0){
-							$verbe = $arr["prodem"]["lib"]." ".$verbe; 
+						if($eliVerbe==0){
+							$verbe = $arr["prodem"]["lib"]." ".$centre; 
 						}else{
-							$verbe = $arr["prodem"]["lib_eli"].$verbe; 
+							$verbe = $arr["prodem"]["lib_eli"].$centre; 
 						}
 					}
-					$eli=0;
 				}
 				//les deux parties de la négation se placent avant le verbe pour les valeurs 1,2, 3, 4, 7 et 8 
 				if($arr["determinant_verbe"][0]==1 || $arr["determinant_verbe"][0]==2 || $arr["determinant_verbe"][0]==3 || $arr["determinant_verbe"][0]==4 || $arr["determinant_verbe"][0]==7 || $arr["determinant_verbe"][0]==8){
-					$verbe = "ne ".$arr["finneg"]." ".$verbe;
+					$verbe = "ne ".$arr["finneg"]." ".$centre;
 				}else{
 					if($this->isEli($verbe) && $arr["finneg"]!=""){
 						$verbe = "n'".$verbe." ".$arr["finneg"];
@@ -1059,15 +1058,13 @@ class Gen_Moteur
 				}else{
 					$verbe = $arr["debneg"]." ".$verbe.$arr["prosuj"]["lib"]." ".$arr["finneg"];
 				}
-				
-				
 			}
 		}
 		//gestion de l'ordre normal
 		if($verbe==""){
 			$verbe = $centre." ".$arr["finneg"];
 			if($arr["prodem"]!=""){
-				//si le pronom eli = le pronom normal en met un espace
+				//si le pronom eli = le pronom normal on met un espace
 				if(!$this->isEli($verbe) || $arr["prodem"]["lib"] == $arr["prodem"]["lib_eli"]){
 					$verbe = $arr["prodem"]["lib"]." ".$verbe; 
 				}else{
