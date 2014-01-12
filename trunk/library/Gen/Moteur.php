@@ -1001,23 +1001,30 @@ class Gen_Moteur
 			
 			//construction de la forme verbale
 			$verbe = "";
-			/*gestion de l'infinitif et de l'impératif
+			/*gestion de l'infinitif 
 			 * 
 			 */
 			if($arr["determinant_verbe"][1]==9 || $arr["determinant_verbe"][1]==7){
 				$verbe = $centre;
 				if($arr["prodem"]!=""){
 					if($arr["prodem"]["num"]!=39 && $arr["prodem"]["num"]!=40 && $arr["prodem"]["num"]!=41){
-						if($eliVerbe==0){
-							$verbe = $arr["prodem"]["lib"]." ".$centre; 
+						if(!$this->isEli($verbe) || $arr["prodem"]["lib"] == $arr["prodem"]["lib_eli"]){
+							$verbe = $arr["prodem"]["lib"]." ".$verbe; 
 						}else{
-							$verbe = $arr["prodem"]["lib_eli"].$centre; 
+							$verbe = $arr["prodem"]["lib_eli"].$verbe; 
+							$eli=0;
 						}
 					}
 				}
-				//les deux parties de la négation se placent avant le verbe pour les valeurs 1,2, 3, 4, 7 et 8 
-				if($arr["determinant_verbe"][0]==1 || $arr["determinant_verbe"][0]==2 || $arr["determinant_verbe"][0]==3 || $arr["determinant_verbe"][0]==4 || $arr["determinant_verbe"][0]==7 || $arr["determinant_verbe"][0]==8){
-					$verbe = "ne ".$arr["finneg"]." ".$centre;
+				//les deux parties de la négation se placent avant le verbe pour les valeurs 1,2, 3, 4, 7 et 8
+				//uniquement pour l'infinitif 
+				if($arr["determinant_verbe"][1]==9 && (
+					$arr["determinant_verbe"][0]==1 || $arr["determinant_verbe"][0]==2 
+					|| $arr["determinant_verbe"][0]==3 
+					|| $arr["determinant_verbe"][0]==4 
+					|| $arr["determinant_verbe"][0]==7 
+					|| $arr["determinant_verbe"][0]==8)){
+					$verbe = "ne ".$arr["finneg"]." ".$verbe;
 				}else{
 					if($this->isEli($verbe) && $arr["finneg"]!=""){
 						$verbe = "n'".$verbe." ".$arr["finneg"];
@@ -1027,15 +1034,15 @@ class Gen_Moteur
 				}
 				if($arr["prodem"]!=""){
 					//le pronom complément se place en tête lorsqu’il a les valeurs 39, 40, 41
-					if($arr["prodem"]["num"]==39 || $arr["prodem"]["num"]==40 || $arr["prodem"]["num"]==41){
-						if($this->isEli($verbe)){
-							$verbe = $arr["prodem"]["lib_eli"]." ".$verbe; 
-						}else{
+	                if($arr["prodem"]["num"]==39 || $arr["prodem"]["num"]==40 || $arr["prodem"]["num"]==41){
+						if(!$this->isEli($verbe) || $arr["prodem"]["lib"] == $arr["prodem"]["lib_eli"]){
 							$verbe = $arr["prodem"]["lib"]." ".$verbe; 
+						}else{
+							$verbe = $arr["prodem"]["lib_eli"].$verbe; 
+							$eli=0;
 						}
 					}
-				}
-				
+				}								
 			}		
 			//gestion de l'ordre inverse
 			if($arr["determinant_verbe"][5]==1){
@@ -1122,9 +1129,11 @@ class Gen_Moteur
 						$arr["determinant_verbe"] = $this->arrClass[$i]["determinant_verbe"];
 						$i=-1;
 					}
+					/* règle supprimée suite à problème de transmission
 					if(isset($this->arrClass[$i]) && isset($this->arrClass[$i]["verbe"])){
 						$i=-1;
 					}
+					*/
 				}
 			}
 			if(!$deterPrec){
@@ -1416,7 +1425,7 @@ class Gen_Moteur
         	}else{
         		$pluriel = $vecteur["pluriel"];
         	}
-        	$this->arrClass[$this->ordre]["vecteur"]["pluriel"] = $pluriel; 
+        	$this->arrClass[$this->ordre]["vecteur"]["pluriel"] = isset($pluriel) ? $pluriel : false; 
 	        $this->arrClass[$this->ordre]["vecteur"]["genre"] = $genre;         	
         }
         
@@ -1783,6 +1792,10 @@ class Gen_Moteur
         //vérifie s'il faut transférer le déterminant de verbe
         if($arrCpt["src"]["type"]=="v" && isset($this->arrClass[$this->ordre-1]["determinant_verbe"]) && !isset($this->arrClass[$this->ordre-1]["verbe"])){       	
         	$this->arrClass[$this->ordre]["determinant_verbe"]=$this->arrClass[$this->ordre-1]["determinant_verbe"];
+        }
+        //vérifie s'il faut transférer le déterminant dussubstantif
+        if($arrCpt["src"]["type"]=="m" && isset($this->arrClass[$this->ordre-1]["vecteur"]["pluriel"])){       	
+				$this->arrClass[$this->ordre]["vecteur"]["pluriel"]=$this->arrClass[$this->ordre-1]["vecteur"]["pluriel"];
         }
         
 		return $cpt; 			
