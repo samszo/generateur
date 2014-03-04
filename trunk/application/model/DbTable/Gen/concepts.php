@@ -440,10 +440,11 @@ class Model_DbTable_Gen_concepts extends Zend_Db_Table_Abstract
      */
     public function findByGenDico($txt, $idDico)
     {
+    	$txt = str_replace("'", " ", $txt);
     	$sql ="SELECT c.lib, c.type, c.id_concept
 			FROM gen_concepts c
 			INNER JOIN gen_concepts_generateurs cg ON c.id_concept = cg.id_concept
-			INNER JOIN gen_generateurs g ON g.id_gen = cg.id_gen AND g.valeur LIKE '%".$txt."%'
+			INNER JOIN gen_generateurs g ON g.id_gen = cg.id_gen AND (g.valeur LIKE '%".$txt."%' OR g.id_gen = '".$txt."')
 			WHERE c.id_dico = ".$idDico."
 			GROUP BY c.id_concept";
 		$smtp = $this->_db->query($sql);
