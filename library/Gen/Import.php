@@ -22,9 +22,8 @@ class Gen_Import {
 			}
 		
 			$adapter = new Zend_File_Transfer_Adapter_Http();
-		    //echo ROOT_PATH.'/data/upload';
-		    $adapter->setDestination(ROOT_PATH.$rep);
 		    //echo ROOT_PATH.$rep;
+			$adapter->setDestination(ROOT_PATH.$rep);
 		    
 			if (!$adapter->receive()) {
 				$messages = $adapter->getMessages();
