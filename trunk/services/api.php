@@ -65,6 +65,10 @@ try {
 		$coupures[] = $_GET['maxC'];
 	else
 		$coupures = false;
+	if(isset($_GET['force']))
+		$force = $_GET['force'];
+	else
+		$force = false;
 		
 	if(!$err){
 		//récupère le texte génératif
@@ -86,7 +90,7 @@ try {
 		$m->arrDicos = $m->getDicosOeuvre($idOeu);
 		$m->showErr = $test;
 		$m->bTrace = false;
-		$m->forceCalcul = false;
+		$m->forceCalcul = $force;
 		$m->coupures = $coupures;
 		$m->finLigne = $rtn;
 		$txts = "";

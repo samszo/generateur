@@ -17,10 +17,10 @@ try {
 	*/
 	
 	
-	$txts = array(" [107#] [090030000|v_sentir]");	
+	$txts = array("[39#] [11|m_côté] [9|a_bon@a_vieux] [0|m_danse 1] [116#] [11|m_danse 1] [=1|a_conventionnel]");	
 	$m = new Gen_Moteur();
 	//$m->coupures =  array(10, 30);
-	$arrVerifDico = $m->getDicosOeuvre(38);
+	$arrVerifDico = $m->getDicosOeuvre(2);
 	//$var = $m->Verifier($txts[0], $arrVerifDico);
 	$trace = false;
 	$var = $m->Tester($txts, $arrVerifDico,$trace);
