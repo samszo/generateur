@@ -6,9 +6,10 @@ try {
 	
 
 	/*
-	$_GET['oeu']=32;
-	$_GET['cpt']=158589;
-	$_GET['gen']=243199;
+	$_GET['oeu']=41;
+	$_GET['cpt']=167638;
+	$_GET['gen']= 39610;
+	$_GET['nb']=1;
 	$_GET['minC']=3;
 	$_GET['maxC']=6;	
 	*/
