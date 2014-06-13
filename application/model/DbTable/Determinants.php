@@ -31,10 +31,16 @@ class Model_DbTable_Determinants extends Zend_Db_Table_Abstract
 
     public function obtenirDeterminantByDicoNumNombre($idDico, $num, $pluriel)
     {
-    	if($pluriel)
-	        $rs = $this->fetchAll('id_dico IN ('.$idDico.') AND num = '.$num.' AND ordre > 3');
+    	if($pluriel)    	
+	        $where = 'id_dico IN ('.$idDico.') AND num = '.$num.' AND ordre > 3';
 	    else
-	        $rs = $this->fetchAll('id_dico IN ('.$idDico.') AND num = '.$num.' AND ordre < 4');
+	    	$where = 'id_dico IN ('.$idDico.') AND num = '.$num.' AND ordre < 4';
+
+		$query = $this->select()
+        	->from( array("g" => "gen_determinants") )                           
+            ->order("ordre")
+        	->where($where);
+	    $rs = $this->fetchAll($query);
 	    
         if (!$rs) {
             throw new Exception("Count not find row $id");

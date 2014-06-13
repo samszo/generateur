@@ -2,8 +2,10 @@
 date_default_timezone_set('Europe/Paris');
 ini_set("memory_limit",'1600M');
 
+$www = "/Applications/XAMPP/xamppfiles/htdocs";
+
 define ("WEB_ROOT","http://localhost/generateur");
-define ("ROOT_PATH","c:\wamp\www\generateur");
+define ("ROOT_PATH", $www."/generateur");
 define ("WEB_ROOT_AJAX",WEB_ROOT."/public");
 
 
@@ -17,8 +19,8 @@ defined('APPLICATION_ENV')
 
 
 set_include_path(ROOT_PATH.'/library');       
-set_include_path(get_include_path().PATH_SEPARATOR."C:\wamp\www\Zend\library");
-set_include_path(get_include_path().PATH_SEPARATOR."C:\wamp\www\Zend\extras\library");
+set_include_path(get_include_path().PATH_SEPARATOR.$www."/Zend/library");
+set_include_path(get_include_path().PATH_SEPARATOR.$www."/Zend/extras/library");
 
 /** Zend_Application */
 require_once 'Zend/Application.php';
