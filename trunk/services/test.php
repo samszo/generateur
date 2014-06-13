@@ -17,14 +17,14 @@ try {
 	*/
 	
 	
-	$txts = array("[39#] [11|m_côté] [9|a_bon@a_vieux] [0|m_danse 1] [116#] [11|m_danse 1] [=1|a_conventionnel]");	
+	$txts = array("[0|caract2] [010000000|v_dire 4] [990000000|v_avoir] [0|m_peur] [40#] [126#]");	
 	$m = new Gen_Moteur();
 	//$m->coupures =  array(10, 30);
-	$arrVerifDico = $m->getDicosOeuvre(2);
+	$arrVerifDico = $m->getDicosOeuvre(41);
 	//$var = $m->Verifier($txts[0], $arrVerifDico);
 	$trace = false;
 	$var = $m->Tester($txts, $arrVerifDico,$trace);
-	echo $var[0];
+	echo "<br>".$m->texte;
 	echo "<br>".$m->detail;
 
 
