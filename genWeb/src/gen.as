@@ -34,8 +34,8 @@ public var actionItem:String;
 public var actisItem:String;
 public var idDicoItem:String;
 
-public var urlDomain:String = "http://gapai.univ-paris8.fr/generateur";
-//public var urlDomain:String = "http://localhost/generateur";
+//public var urlDomain:String = "http://gapai.univ-paris8.fr/generateur";
+public var urlDomain:String = "http://localhost/generateur";
 public var urlAPI:String = urlDomain+"/services/api.php";
 public const ENDPOINT_IMPORT:String = urlDomain+"/services/import.php";
 public const ENDPOINT_EXPORT:String = urlDomain+"/services/export.php";
