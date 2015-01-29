@@ -67,6 +67,7 @@ class Gen_Moteur
 	var $arrEli = array("a", "e", "é", "ê", "i","o","u","y","h");
 	var $arrEliCode = array(195);
     
+    
     /**
      * Fonction du moteur
      *
@@ -77,13 +78,10 @@ class Gen_Moteur
      */
 	public function __construct($urlDesc="", $forceCalcul = false, $xmlDesc=false) {
 
-		//
 		$this->urlDesc = $urlDesc;
 		if($this->urlDesc=="")$this->urlDesc=APPLICATION_PATH.'/configs/LangageDescripteur.xml';	
-		/*pas besoin du fichier de définition
-		if(!$xmlDesc) $this->xmlDesc = simplexml_load_file($this->urlDesc);		
+		if(!$xmlDesc) $this->xmlDesc = simplexml_load_file($this->urlDesc);
 		else $this->xmlDesc = $xmlDesc;
-		*/
 		$this->forceCalcul = $forceCalcul;	
 	}
 
@@ -994,13 +992,16 @@ class Gen_Moteur
 		
 		//construction de l'élision
 		$eliVerbe = $arr["verbe"]["elision"];
+		if($eliVerbe==0){
+			$eliVerbe = $this->isEli($centre);
+		}
 		
 		$verbe="";
 		if(isset($arr["determinant_verbe"])){
 			//génère la négation
 			if($arr["determinant_verbe"][0]!=0){
 				$arr["finneg"] = $this->getNegation($arr["determinant_verbe"][0]);
-				if(!$eliVerbe){
+				if($eli==0){
 					$arr["debneg"] = "ne ";	
 				}else{
 					if(isset($arr["prodem"]) && !$this->isEli($arr["prodem"]["lib"])){
@@ -1020,11 +1021,11 @@ class Gen_Moteur
 				$verbe = $centre;
 				if($arr["prodem"]!=""){
 					if($arr["prodem"]["num"]!=39 && $arr["prodem"]["num"]!=40 && $arr["prodem"]["num"]!=41){
-						if(!$eliVerbe || !$this->isEli($verbe) || $arr["prodem"]["lib"] == $arr["prodem"]["lib_eli"]){
+						if(!$this->isEli($verbe) || $arr["prodem"]["lib"] == $arr["prodem"]["lib_eli"]){
 							$verbe = $arr["prodem"]["lib"]." ".$verbe; 
 						}else{
 							$verbe = $arr["prodem"]["lib_eli"].$verbe; 
-							$eliVerbe=false;
+							$eli=0;
 						}
 					}
 				}
@@ -1038,7 +1039,7 @@ class Gen_Moteur
 					|| $arr["determinant_verbe"][0]==8)){
 					$verbe = "ne ".$arr["finneg"]." ".$verbe;
 				}else{
-					if($eliVerbe && $this->isEli($verbe) && $arr["finneg"]!=""){
+					if($this->isEli($verbe) && $arr["finneg"]!=""){
 						$verbe = "n'".$verbe." ".$arr["finneg"];
 					}else{
 						$verbe = $arr["debneg"].$verbe." ".$arr["finneg"];
@@ -1047,11 +1048,11 @@ class Gen_Moteur
 				if($arr["prodem"]!=""){
 					//le pronom complément se place en tête lorsqu’il a les valeurs 39, 40, 41
 	                if($arr["prodem"]["num"]==39 || $arr["prodem"]["num"]==40 || $arr["prodem"]["num"]==41){
-						if(!$eliVerbe || !$this->isEli($verbe) || $arr["prodem"]["lib"] == $arr["prodem"]["lib_eli"]){
+						if(!$this->isEli($verbe) || $arr["prodem"]["lib"] == $arr["prodem"]["lib_eli"]){
 							$verbe = $arr["prodem"]["lib"]." ".$verbe; 
 						}else{
 							$verbe = $arr["prodem"]["lib_eli"].$verbe; 
-							$eliVerbe=false;
+							$eli=0;
 						}
 					}
 				}								
@@ -1060,11 +1061,10 @@ class Gen_Moteur
 			if($arr["determinant_verbe"][5]==1){
 				$verbe = $centre."-";
 				if($arr["prodem"]!=""){
-					if(!$eliVerbe && !$this->isEli($verbe)){
+					if(!$this->isEli($verbe)){
 						$verbe = $arr["prodem"]["lib"]." ".$verbe; 
 					}else{
 						$verbe = $arr["prodem"]["lib_eli"].$verbe; 
-						$eliVerbe = false;
 					}
 				}	
 				$c = substr($centre,strlen($centre)-1);
@@ -1073,11 +1073,10 @@ class Gen_Moteur
 				}elseif($c == "e" && $arr["terminaison"]==1){
 					$verbe = substr($verbe,0,-2)."é-"; 
 				}
-				if(($eliVerbe || $this->isEli($verbe)) && $arr["debneg"]!=""){
+				if($this->isEli($verbe) && $arr["debneg"]!=""){
 					$verbe = "n'".$verbe.$arr["prosuj"]["lib"]." ".$arr["finneg"]; 
 				}else{
 					$verbe = $arr["debneg"]." ".$verbe.$arr["prosuj"]["lib"]." ".$arr["finneg"];
-					$eliVerbe=false;
 				}
 			}
 		}
@@ -1086,22 +1085,22 @@ class Gen_Moteur
 			$verbe = $centre." ".$arr["finneg"];
 			if($arr["prodem"]!=""){
 				//si le pronom eli = le pronom normal on met un espace
-				if(!$eliVerbe || !$this->isEli($verbe) || $arr["prodem"]["lib"] == $arr["prodem"]["lib_eli"]){
+				if(!$this->isEli($verbe) || $arr["prodem"]["lib"] == $arr["prodem"]["lib_eli"]){
 					$verbe = $arr["prodem"]["lib"]." ".$verbe; 
 				}else{
 					$verbe = $arr["prodem"]["lib_eli"].$verbe; 
-					$eliVerbe = false;
+					$eli=0;
 				}
 			}	
 			if($arr["debneg"]!=""){
-				if($eliVerbe && $this->isEli($verbe)){
+				if($this->isEli($verbe)){
 					$verbe = "n'".$verbe; 
 				}else{
 					$verbe = $arr["debneg"].$verbe; 
 				}
 			}	
 			if($arr["prosuj"]!=""){
-				if($eliVerbe || $this->isEli($verbe)){
+				if($this->isEli($verbe)){
 					//vérification de l'apostrophe
 					if (strrpos($arr["prosuj"]["lib_eli"], "'") === false) { 
 						$verbe = $arr["prosuj"]["lib_eli"]." ".$verbe; 
@@ -1143,15 +1142,14 @@ class Gen_Moteur
 			}
 			if(!$verbeTheo){
 				//vérifie si le déterminant n'est pas défini avant une génération de verbe en verbe
-				for ($i = $this->ordre; $i >= 0; $i--) {
-					//echo $i;
+				for ($i = $this->ordre-1; $i >= 0; $i--) {
 					if(isset($this->arrClass[$i]) && isset($this->arrClass[$i]["determinant_verbe"])){
 						$arr["determinant_verbe"] = $this->arrClass[$i]["determinant_verbe"];
 						$i=-1;
 						$deterPrec = true;
 					}
 					//vérifie la fin de la séquence générative
-					//if(isset($this->arrClass[$i]["generation"]))$i=-1;
+					if(isset($this->arrClass[$i]["generation"]))$i=-1;
 				}
 			}
 			if(!$deterPrec && !isset($arr["determinant_verbe"])){
@@ -1435,7 +1433,7 @@ class Gen_Moteur
         	$classType = false;
         	//vérifie si on doit prendre le substantif de l'adjectif
         	//selon jpb la vérification n'est pas nécessaire
-        	$classType=false;//"substantif";
+        	$classType="substantif";
         	
 	        //Récupère les informations de genre
         	$vecteur = $this->getVecteur("genre",-1,$num,$classType);
@@ -1498,7 +1496,7 @@ class Gen_Moteur
 			if(!$arrClass = $this->cache->load($c)) {
 		        $tDtr = new Model_DbTable_Determinants();
 	        	$arrClass = $tDtr->obtenirDeterminantByDicoNumNombre($this->arrDicos["déterminants"],$class,$pluriel);        				
-	        	$this->cache->save($arrClass, $c);
+			    $this->cache->save($arrClass, $c);
 			}
         }
         
