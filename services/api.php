@@ -132,8 +132,8 @@ try {
 		
 		$script ='
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>';
-		$codeBtn = '<button type="button" onclick="$.get(\''.$urlGen.'\', {\'oeu\':'.$idOeu.', \'cpt\':'.$idCpt.', \'frt\':\'frg\'}, function(fragment){$(\'#gen'.$idOeu.'_'.$idCpt.'\').html(fragment);});">Génère</button>';		
-		$codeDiv = "<div id='gen".$idOeu."_".$idCpt."' >".$txts."</div>".$codeBtn.$audio;		
+		$codeBtn = '<button class="genButton" type="button" onclick="$.get(\''.$urlGen.'\', {\'oeu\':'.$idOeu.', \'cpt\':'.$idCpt.', \'frt\':\'frg\'}, function(fragment){$(\'#gen'.$idOeu.'_'.$idCpt.'\').html(fragment);});">Génère</button>';		
+		$codeDiv = "<div class='genTxt' id='gen".$idOeu."_".$idCpt."' >".$txts."</div>".$codeBtn.$audio;		
 	}else{
 		$codeDiv = $txts.$audio;
 	}
@@ -147,6 +147,7 @@ try {
 		echo "<html>
 	<head>	
 		<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>
+		<link rel='stylesheet' type='text/css' href='".WEB_ROOT."/public/css/apiGen.css'>
 		".$script."
 	</head>
 	<body>
