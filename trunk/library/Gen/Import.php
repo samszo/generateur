@@ -34,7 +34,7 @@ class Gen_Import {
 				foreach ($files as $file => $info) {
 					// Les validateurs sont-ils OK ?
 					if (!$adapter->isValid($file)) {
-						print "Désolé mais $file ne correspond à ce que nous attendons";
+						print "Désolé mais $file ne correspond pas à ce que nous attendons";
 						continue;
 					}
 					//renomme le fichier pour éviter les doublons
@@ -65,6 +65,9 @@ class Gen_Import {
           	//entrainera la levée d'une exception dans Zend_Loader
           	echo "Récupère exception: " . get_class($e) . "\n";
           	echo "Message: " . $e->getMessage() . "\n";
+          	echo "Rep:".$data['rep'] . "\n";
+          	echo "Path:".$path . "\n";
+          	echo "url:".$url . "\n";
           	// puis tout le code nécessaire pour récupérer l'erreur
 		}
      	//echo json_encode(array("error"=>$info["error"]));   
