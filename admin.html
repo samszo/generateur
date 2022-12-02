@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur de textes</title>
+    <!-- CSS only -->
+    <link href="asset/css/bootstrap.min.css" rel="stylesheet">
+    <link href="asset/css/handsontable.full.min.css" rel="stylesheet">
+    <script type="module" src="main.js"></script>
+    <script src="asset/js/bootstrap.bundle.min.js"></script>
+    <script src="asset/js/d3.min.js"></script>
+    <script src="asset/js/anime.min.js"></script>
+    <script src="asset/js/all.min.js"></script>
+    <script src="asset/js/amazelogo.js"></script>
+    <script src="asset/js/handsontable.full.min.js"></script>
+    <style>
+        #logoMazePetit {
+            height: 60px;
+            width: 240px;
+        }
+
+        #contentDetails {
+            overflow-y: scroll;
+            overflow-x: hidden;
+        }
+
+        .editJSON {
+            overflow-x: scroll;
+            height: 650px;
+        }
+
+        .autofirst {
+            font-style: italic;
+            font-size: 1em;
+        }
+
+        .l {
+            font-style: italic;
+            font-size: 1em;
+        }
+
+        .mc {
+            padding: 1em;
+            font-size: 1em;
+            color: #dc3545
+        }
+
+        .noscroll {
+            overflow-x: hidden;
+        }
+
+        .fill {
+            min-height: 100%;
+            height: 100%;
+        }
+
+        html,
+        body {
+            margin: 0;
+            height: 100%;
+            overflow: hidden
+        }
+        .tab-pane {
+            height: 580px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <body class="d-flex h-100 text-center text-white bg-dark">
+
+        <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+
+
+            <header>
+                <div>
+
+                    <nav class="navbar navbar-expand-lg navbar-dark bg-black">
+                        <div class="container-fluid">
+                            <a class="navbar-brand" href="#">
+                                <div id="logoMazePetit"></div>
+                            </a>
+                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                                aria-expanded="false" aria-label="Toggle navigation">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+                            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                                <ul class="navbar-nav me-auto mb-2 mb-lg-2 align-middle">
+
+                                    <li class="nav-item mx-2">
+                                        <a class="nav-link" target="_blank"
+                                            href="https://www.univ-paris8.fr/EA-349-Laboratoire-Paragraphe">
+                                            <img style="height: 40px;"
+                                                src="asset/images/logos/logo-paragraphe-blanc.svg"
+                                                alt="Laboratoire Paragraphe" />
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item mx-2">
+                                        <a class="nav-link" target="_blank" href="https://www.univ-paris8.fr/">
+                                            <img style="height: 40px;" src="asset/images/logos/logo-p8-white.svg"
+                                                alt="Université Paris 8" />
+                                        </a>
+                                    </li>
+                                    <li class="nav-item ms-2 me-1">
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-danger dropdown-toggle"
+                                                data-bs-toggle="dropdown" aria-expanded="false">
+                                                Oeuvres
+                                            </button>
+                                            <ul id="menuOeuvres" class="dropdown-menu dropdown-menu-dark">
+                                            </ul>
+                                        </div>
+                                    </li>
+                                    <li>
+                                          <div class="input-group">
+                                            <span class="input-group-text" id="url-addon">@</span>
+                                            <input id="inptUrl" type="text" class="form-control" 
+                                                size="64" placeholder="" aria-label="" aria-describedby="url-addon">
+                                          </div>
+                                    </li>                                    
+                                </ul>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+            </header>
+            <script>
+                let mlPetit = new amazelogo({
+                    'idCont': 'logoMazePetit',
+                    'colorLettre': '#e52414',
+                    'colorMurLettre': '#e52414',
+                    'colorPoint': 'none',
+                    'textes': ['GENERATEUR', 'TEXTES', 'J-P BALPE']
+                });
+            </script>
+
+            <main id='mainContent' class="px-3">
+
+                <div class="container-fluid text-center">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div id="listDicos"></div>
+
+                        </div>
+                        <div class="col-sm-9 bg-black">
+                            <div class="h-100" id="contentDetails">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <footer class="mt-auto text-white-50">
+                <h3>
+                    Générateur balpien
+                </h3>
+                <p style="padding-top: 6px;">Design by <a href="https://samszo.univ-paris8.fr/"
+                        class="text-white">Samuel
+                        Szoniecky</a>
+                    <a target="_blank" href="https://www.univ-paris8.fr/EA-349-Laboratoire-Paragraphe">
+                        <img style="height: 40px;" src="asset/images/logos/logo-paragraphe-blanc.svg"
+                            alt="Laboratoire Paragraphe" />
+                    </a>
+                    <a target="_blank" href="https://github.com/samszo/ChaoticumSeminario/issues">
+                        <button type="button" class="btn btn-danger">
+                            <i class="fa-brands fa-github fa-2xl"></i>
+                        </button>
+                    </a>
+                    Template for <a href="https://getbootstrap.com/" class="text-white">Bootstrap</a>, by <a
+                        href="https://twitter.com/mdo" class="text-white">@mdo</a>.
+                </p>
+            </footer>
+
+        </div>
+
+    </body>
+
+</html>

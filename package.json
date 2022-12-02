@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "handsontable": "^12.2.0",
+    "js-crud-api": "^0.3.0",
+    "vanilla-jsoneditor": "^0.10.2"
+  }
+}
