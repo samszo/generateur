@@ -129,12 +129,15 @@ class oeuvres {
                 });                    
         }
 
-        this.searchClass = function(t,q){
-            let p = [], rs=[];
+        this.searchClass = async function(t,q){
+            let p = [], rs=[], f;
             //création des requêtes pour chaque dictionnaire de concept
             me.dicos.forEach(d=>{
-                if(d.type==t.type)
-                    p.push(me.api.list(t.t,{filter:['id_dico,eq,'+d.id_dico,q]}))
+                if(d.type==t.type){
+                    f = {filter:['id_dico,eq,'+d.id_dico]}
+                    q.forEach(i=>f.filter.push(i));
+                    p.push(me.api.list(t.t,f));
+                }
             }); 
             Promise.all(p).then((values) => {
                 values.forEach(v=>v.records.forEach(r=>rs.push(r)));

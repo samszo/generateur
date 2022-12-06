@@ -1,4 +1,7 @@
 
+//import sp from '../node_modules/synchronized-promise/dist/index.js';
+//import sp from '../node_modules/synchronized-promise'
+//const sp = require('synchronized-promise')
 class moteur {
     constructor(params) {
         var me = this;
@@ -7,6 +10,8 @@ class moteur {
         this.choix = params.choix ? params.choix : false;
         this.oeuvre = params.oeuvre;
         this.appUrl = params.appUrl;
+		//this.sp = sp.sp;
+		//this.syncSearchClass = this.sp(me.oeuvre.searchClass);
         this.strct = []; 
         this.posis = [];
         this.caracts = []; 
@@ -20,16 +25,20 @@ class moteur {
             console.log('init moteur');
         }
 
-        this.genere = async function(g){
+        this.genere = function(g){
+			let c, cls= [], p=[];
             //décompose le générateur
             me.ordre = 0
             for (var i = 0; i < g.valeur.length; i++) {
-                let c = g.valeur.charAt(i);
+				me.strct[me.ordre]={};
+                c = g.valeur.charAt(i);
                 if(c == "["){
                     //c'est le début d'une classe on initialise les positions
                     //$this->arrPosi = false;
                     //on récupère la valeur de la classe et la position des caractères dans la chaine
-                    i = await setClass(g.valeur, i);
+					cls = getClassVals(g.valeur,i);
+					me.strct[me.ordre]=cls;
+                    i = cls.fin;
                 }else if(c == "F"){
                     if(g.valeur.charAt(i+1)=="F"){
                         /*c'est la fin du segment
@@ -45,11 +54,21 @@ class moteur {
                     //on ajoute le caractère
                     me.strct[me.ordre].txt = c;
                 }
-                me.ordre ++;
-            }            
-        }
+                me.ordre ++;            
+			} 
+			console.log(me.strct);
+			//récupère la définition des classes
+			me.strct.forEach((s,i)=>{
+				if(s.cls){
+					s.cls.forEach((c,j)=>p.push({'i':i, 'j':j, p:getClass(c.k)}));
+				}
+			});
+			Promise.all(pl.map(d=>d.p)).then((vals) => {
 
-	function setClass(gen, i=0){
+
+        }
+	/*
+	async function setClass(gen, i=0){
 		let r = getClassVals(gen,i), p=[];
         r.cls.forEach(c=>p.push(getClass(c)));	        	
 		Promise.all(p).then((values) => {
@@ -57,6 +76,7 @@ class moteur {
 		});
 
 	}
+	*/
 
     function getClassVals(gen,i){
 
@@ -64,27 +84,58 @@ class moteur {
 	        return "";
 		}
 		
-		let cl,cls,acc,g,deb = gen.indexOf("[",i), fin = gen.indexOf("]",deb+1);
+		let cls=[],acc,g,deb = gen.indexOf("[",i), fin = gen.indexOf("]",deb+1);
 		
 		//dans le cas de ado par exemple = pas de crochet
 		if(deb===false){
-	        cl = gen;
+	        g = gen;
 		}else if(!fin){
 			me.strct[me.ordre].error = "Item mal formaté.<br/>il manque un ] : "+gen+"<br/>";			
-        	return {"deb":deb,"fin":strlen(gen),"cl":"","cls":[]};
+        	return {"deb":deb,"fin":strlen(gen),"g":gen,"cls":[]};
 		}else{
 			//on récupère la valeur de la classe
-	        cl = gen.substring(deb+1, fin);
+	        g = gen.substring(deb+1, fin);
 		}        
         
         //on récupère la définition de l'accord 
-        acc = cl.split("||");
+        acc = g.split("||");
 	    g = acc[0];        	 	
         if(acc.length>1){
 	        me.strct[me.ordre].accord = acc[1];
         }
         //on récupère le tableau des class
-        cls = g.split("|");        		        
+        g.split("|").forEach(c=>{
+			//gestion du changement de position de la classe
+			let posis=c.split("@");
+			if(posis.length>1){
+				//$this->trace("récupère le vecteur du déterminant ".$this->ordre);
+				let vAdj, vSub, vDet = me.strct[me.ordre].vecteur, ordreDet = me.ordre;
+				cls.push({'k':me.posis[0]});
+				cls.push({'k':me.posis[1]});
+				/*
+				//change l'ordre pour que la class substantif soit placée après
+				me.ordre ++;
+				if(!me.strct[me.ordre])me.strct[me.ordre]={};
+				me.strct[me.ordre].vecteur = vDet; 
+				//calcul le substantifs
+				getClass(me.posis[1]);
+				vSub = me.strct[me.ordre].vecteur;
+				//redéfini l'ordre pour que la class adjectif soit placée avant
+				me.ordre --;
+				//avec le vecteur du substantif
+				me.strct[me.ordre].vecteur = vSub; 
+				//calcul l'adjectif
+				getClass(me.posis[0]);
+				vAdj = me.strct[me.ordre-1].vecteur;        	
+				//rédifini l'élision et le genre du déterminant avec celui de l'adjectif
+				me.strct[ordreDet].vecteur.elision=vAdj.elision;
+				me.strct[ordreDet].vecteur.genre=vSub.genre;
+				*/
+			}else{
+				cls.push({'k':c});
+			}
+		})
+
         
         return {"deb":deb,"fin":fin,"g":g,"cls":cls};
 
@@ -93,41 +144,10 @@ class moteur {
     function getClass(c){
 
 		if(c=="")return;		
-
-		//gestion du changement de position de la classe
-		let posis=c.split("@");
-        if(posis.length>1){
-        	me.posis=c.split("@");
-        	//$this->trace("récupère le vecteur du déterminant ".$this->ordre);
-        	let vAdj, vSub, vDet = me.strct[me.ordre].vecteur,
-            	ordreDet = me.ordre;
-        	//change l'ordre pour que la class substantif soit placée après
-        	me.ordre ++;
-            if(!me.strct[me.ordre])me.strct[me.ordre]={};
-        	me.strct[me.ordre].vecteur = vDet; 
-        	//calcul le substantifs
-        	getClass(me.posis[1]);
-        	vSub = me.strct[me.ordre].vecteur;
-        	//redéfini l'ordre pour que la class adjectif soit placée avant
-        	me.ordre --;
-        	//avec le vecteur du substantif
-        	me.strct[me.ordre].vecteur = vSub; 
-        	//calcul l'adjectif
-        	getClass(me.posis[0]);
-        	vAdj = me.strct[me.ordre-1].vecteur;        	
-        	//rédifini l'élision et le genre du déterminant avec celui de l'adjectif
-        	me.strct[ordreDet].vecteur.elision=vAdj.elision;
-        	me.strct[ordreDet].vecteur.genre=vSub.genre;
-        	
-        	return;
-        }
         
-        if(!me.strct[me.ordre])me.strct[me.ordre]={};
-		me.strct[me.ordre].class = [c];
-
 		//vérifie si la class est un déterminant
 		if(!isNaN(c)){
-			let det = getDeterminant(c);
+			getDeterminant(c);
 		}
 		
 		//vérifie si la class possède un déterminant de class
@@ -267,8 +287,9 @@ class moteur {
         //TODO:gestion du cache
         //récupère la définition de la class
         let def =c.split("_"),
-		q = me.tables.c.k[0]+',eq,'+def[0],me.tables.c.k[1]+',eq,'+def[1]
+		q = [me.tables.c.k[1]+',eq,'+def[0],me.tables.c.k[0]+',eq,'+def[1]],
 		cpt = me.oeuvre.searchClass(me.tables.c,q);
+		//cpt = me.syncSearchClass(me.tables.c,q);
         return cpt;
 	}
     function getDeterminant(c){
@@ -301,7 +322,9 @@ class moteur {
         me.strct[me.ordre].vecteur.pluriel = pluriel; 
         //vérifie s'il faut chercher le déterminant
         if(c!=99 && c!=0){
-            cls = me.oeuvre.searchClass(me.tables.d,me.tables.d.k+',eq,'+c);
+            cls = me.oeuvre.searchClass(me.tables.d,[me.tables.d.k+',eq,'+c]);
+			//cls = me.syncSearchClass(me.tables.d,[me.tables.d.k+',eq,'+c]);
+
             //ajoute le déterminant
             me.strct[me.ordre].determinant = cls;                                    
             return cls;
