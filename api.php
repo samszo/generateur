@@ -12371,8 +12371,8 @@ namespace Tqdev\PhpCrudApi {
         // 'driver' => 'mysql',
         // 'address' => 'localhost',
         // 'port' => '3306',
-        'username' => 'root',
-        'password' => 'Lucie2014',
+        'username' => 'samszo',
+        'password' => 'samszo',
         'database' => 'generateur',
         // 'debug' => false
     ]);

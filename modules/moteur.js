@@ -1,7 +1,4 @@
 
-//import sp from '../node_modules/synchronized-promise/dist/index.js';
-//import sp from '../node_modules/synchronized-promise'
-//const sp = require('synchronized-promise')
 class moteur {
     constructor(params) {
         var me = this;
@@ -63,7 +60,9 @@ class moteur {
 					s.cls.forEach((c,j)=>p.push({'i':i, 'j':j, p:getClass(c.k)}));
 				}
 			});
-			Promise.all(pl.map(d=>d.p)).then((vals) => {
+			Promise.all(p.map(d=>d.p)).then((vals) => {
+				console.log(vals);
+			});
 
 
         }
@@ -294,7 +293,8 @@ class moteur {
 	}
     function getDeterminant(c){
         let cls = false, pluriel=false;
-        if(!me.strct[me.ordre].vecteur)me.strct[me.ordre].vecteur = {};
+        if(!me.strct[me.ordre])me.strct[me.ordre] = {};
+		if(!me.strct[me.ordre].vecteur)me.strct[me.ordre].vecteur = {};
         if(!me.strct[me.ordre].determinant)me.strct[me.ordre].determinant = {};
         if(!me.strct[me.ordre].determinant_verbe)me.strct[me.ordre].determinant_verbe = {};
 

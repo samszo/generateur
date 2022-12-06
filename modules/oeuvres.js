@@ -1,4 +1,4 @@
-import { JSONEditor } from '../node_modules/vanilla-jsoneditor/index.js'
+//import { JSONEditor } from '../node_modules/vanilla-jsoneditor/index.js'
 import oDico from '../modules/dico.js';
 import jscrudapi from '../node_modules/js-crud-api/index.js';
 
@@ -9,7 +9,8 @@ class oeuvres {
         this.tgtList = params.tgtList
         this.tgtContent = params.tgtContent
         this.appUrl = params.appUrl ? params.appUrl : false; 
-        this.api = jscrudapi('api.php');
+        this.apiUrl = params.apiUrl ? params.apiUrl : 'api.php';
+        this.api = jscrudapi(this.apiUrl);
         this.editor;
         this.curDico;
         this.oeuvres;
@@ -129,23 +130,20 @@ class oeuvres {
                 });                    
         }
 
-        this.searchClass = async function(t,q){
-            let p = [], rs=[], f;
+        this.searchClass = function(t,q){
+            let rs=[], r, f;
             //création des requêtes pour chaque dictionnaire de concept
             me.dicos.forEach(d=>{
                 if(d.type==t.type){
                     f = {filter:['id_dico,eq,'+d.id_dico]}
                     q.forEach(i=>f.filter.push(i));
-                    p.push(me.api.list(t.t,f));
+                    r = me.api.syncRequest(t.t,f);
+                    r.records.forEach(d=>rs.push(d));
                 }
             }); 
-            Promise.all(p).then((values) => {
-                values.forEach(v=>v.records.forEach(r=>rs.push(r)));
-                return rs;
-            });
+            return rs;
            
         }
-
         this.init();
     }
 }
