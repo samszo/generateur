@@ -137,7 +137,7 @@ class oeuvres {
                 if(d.type==t.type){
                     f = {filter:['id_dico,eq,'+d.id_dico]}
                     q.forEach(i=>f.filter.push(i));
-                    r = me.api.syncRequest(t.t,f);
+                    r = me.api.syncList(t.t,f);
                     r.records.forEach(d=>rs.push(d));
                 }
             }); 

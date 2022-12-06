@@ -7,14 +7,15 @@ class concept {
         this.api = params.api ? params.api : false;
         this.data = params.data ? params.data : false;
         this.tgtContent = params.tgtContent ? params.tgtContent : false;
-        this.appUrl = params.appUrl;
-        this.linkData;
-        this.m = new oMoteur.moteur({
+        this.appUrl = params.appUrl ? params.appUrl : false;
+        this.sync = params.sync ? params.sync : false;
+        this.m = params.m ? params.m : new oMoteur.moteur({
             'api':this.api,
             'tgtContent':this.tgtContent,
             'appUrl':this.appUrl,
             'oeuvre':me.oeuvre
         });    
+        this.linkData;
         this.init = function () {
             me.linkData=[
                 {t:'gen_concepts_adjectifs',n:'Adjectifs',lt:'gen_adjectifs',k:'id_adj',data:[]},
@@ -23,8 +24,38 @@ class concept {
                 {t:'gen_concepts_syntagmes',n:'Syntagmes',lt:'gen_syntagmes',k:'id_syn',data:[]},
                 {t:'gen_concepts_verbes',n:'Verbes',lt:'gen_verbes',k:'id_verbe',data:[]},
             ];
-            getLinkData();
+            if(me.sync)getSyncLinkData();
+            else getLinkData();
         }
+        function getSyncLinkData(){
+          let rs, rsL;
+          //ATTENTION il peut y avoir le même concept dans plusieurs dictionnaires
+          me.data.forEach(cpt=>{
+            me.linkData.forEach(d=>{
+              rs = me.api.syncList(d.t,{filter:'id_concept,eq,'+cpt.id_concept});
+              if(rs.records.length){
+                let idP=[],ids = rs.records.map(r=>r[d.k]);
+                //pagination tous les 50 
+                ids.forEach((id,j)=>{
+                    idP.push(id); 
+                    if(idP.length==50){
+                      rsL = me.api.syncRead(d.lt,idP);
+                      rsL = Array.isArray(rsL) ? rsL : [rsL];
+                      d.data=d.data.concat(rsL.map(obj => ({ ...obj, concept:cpt})));
+                      idP=[];
+                    }
+                });
+                if(idP.length){
+                  rsL = me.api.syncRead(d.lt,idP);
+                  rsL = Array.isArray(rsL) ? rsL : [rsL];
+                  d.data=d.data.concat(rsL.map(obj => ({ ...obj, concept:cpt})));
+                }
+              }
+            });  
+          })
+          return me.linkData;
+        }
+
         function getLinkData(){
             let p = [];
             me.linkData.forEach(d=>p.push(me.api.list(d.t,{filter:'id_concept,eq,'+me.data.id_concept})));

@@ -1,4 +1,6 @@
 
+import oConcept from '../modules/concept.js';
+import oMoteur from '../modules/moteur.js';
 class moteur {
     constructor(params) {
         var me = this;
@@ -33,8 +35,7 @@ class moteur {
                     //c'est le début d'une classe on initialise les positions
                     //$this->arrPosi = false;
                     //on récupère la valeur de la classe et la position des caractères dans la chaine
-					cls = getClassVals(g.valeur,i);
-					me.strct[me.ordre]=cls;
+					cls = setClass(g.valeur,i);
                     i = cls.fin;
                 }else if(c == "F"){
                     if(g.valeur.charAt(i+1)=="F"){
@@ -54,28 +55,14 @@ class moteur {
                 me.ordre ++;            
 			} 
 			console.log(me.strct);
-			//récupère la définition des classes
-			me.strct.forEach((s,i)=>{
-				if(s.cls){
-					s.cls.forEach((c,j)=>p.push({'i':i, 'j':j, p:getClass(c.k)}));
-				}
-			});
-			Promise.all(p.map(d=>d.p)).then((vals) => {
-				console.log(vals);
-			});
-
 
         }
-	/*
-	async function setClass(gen, i=0){
-		let r = getClassVals(gen,i), p=[];
-        r.cls.forEach(c=>p.push(getClass(c)));	        	
-		Promise.all(p).then((values) => {
-			return r.fin;
-		});
 
+	function setClass(gen, i=0){
+		let r = getClassVals(gen,i), p=[];
+        r.cls.forEach(c=>getClass(c));	        	
+		return r.fin;
 	}
-	*/
 
     function getClassVals(gen,i){
 
@@ -109,9 +96,6 @@ class moteur {
 			if(posis.length>1){
 				//$this->trace("récupère le vecteur du déterminant ".$this->ordre);
 				let vAdj, vSub, vDet = me.strct[me.ordre].vecteur, ordreDet = me.ordre;
-				cls.push({'k':me.posis[0]});
-				cls.push({'k':me.posis[1]});
-				/*
 				//change l'ordre pour que la class substantif soit placée après
 				me.ordre ++;
 				if(!me.strct[me.ordre])me.strct[me.ordre]={};
@@ -129,9 +113,8 @@ class moteur {
 				//rédifini l'élision et le genre du déterminant avec celui de l'adjectif
 				me.strct[ordreDet].vecteur.elision=vAdj.elision;
 				me.strct[ordreDet].vecteur.genre=vSub.genre;
-				*/
 			}else{
-				cls.push({'k':c});
+				cls.push(c);
 			}
 		})
 
@@ -219,7 +202,7 @@ class moteur {
 	function getAleaClass(c){
 		
         //cherche la définition de la class
-        let alea, aCpt, cpt = getClassDef(c);
+        let choix, alea, aCpt, cpt = getClassDef(c);
         
         //cas des class caract
         if(c.substring(0,7)=="carac_t" || c.substring(0,5)=="carac"){
@@ -243,53 +226,133 @@ class moteur {
         //cas des classes théoriques et des erreurs
         if(cpt.dst.length<1) return false;
 
-		me.strct[me.ordre].concept.id_concept = cpt.src.id_concept;
-		me.strct[me.ordre].concept.id_dico = cpt.src.id_dico;
+		me.strct[me.ordre].concepts = cpt.src;
 		
         //enregistre le potentiel
-        me.potentiel += cpt.dst.length;
+        cpt.dst.forEach(t=>me.potentiel+=t.data.length);
         
         if(me.choix=="tout" && me.niv < 1){
         	verifClass(cpt);
         	aCpt = false;
         }else{
-	        //choisi un concept aléatoirement
-            d3.randomInt(6)
-            alea = d3.randomInt(cpt.dst.length-1);        	        
-	        aCpt = getClassGen(cpt.dst[alea],c);        
+	        //choisi une valeur aléatoirement
+			choix = [];
+			cpt.dst.forEach(t=>{
+				if(t.data.length)choix=choix.concat(t.data);
+			});
+            alea = getRandomInt(choix.length-1);        	        
+	        aCpt = getClassGen(choix[alea],c);        
         }
 
         if(aCpt){
-        	//conserve le parent pour le lien vers l'administration
-        	aCpt.idParent = cpt.src.id_concept;
 	        //vérifie s'il faut conserver un caractx
 	        if(c.substring(0,7)=="carac_t"){
-	        	me.caracts[c] = cpt.dst[alea];
+	        	me.caracts[c] = aCpt;
 	        }
-        }
+			
+			//vérifie s'il faut transférer le déterminant de verbe
+			if(aCpt.src.type=="v" && me.strct[me.ordre-1].determinant_verbe && !me.strct[me.ordre-1].verbe){       	
+				me.strct[me.ordre].determinant_verbe=me.strct[me.ordre-1].determinant_verbe;
+			}
+			//vérifie s'il faut transférer le déterminant dus substantif
+			if((aCpt.src.type=="m" || aCpt.src.type=="carac") && me.strct[me.ordre-1].vecteur.pluriel){       	
+				me.strct[me.ordre].vecteur.pluriel=me.strct[me.ordre-1].vecteur.pluriel;
+			}
+		}
         
-        //vérifie s'il faut transférer le déterminant de verbe
-        if(cpt.src.type=="v" && me.strct[me.ordre-1].determinant_verbe && !me.strct[me.ordre-1].verbe){       	
-        	me.strct[me.ordre].determinant_verbe=me.strct[me.ordre-1].determinant_verbe;
-        }
-        //vérifie s'il faut transférer le déterminant dus substantif
-        if((cpt.src.type=="m" || cpt.src.type=="carac") && me.strct[me.ordre-1].vecteur.pluriel){       	
-			me.strct[me.ordre].vecteur.pluriel=me.strct[me.ordre-1].vecteur.pluriel;
-        }
-        
-		return $cpt; 			
+		return aCpt; 			
 		
 	}
+
+	function getRandomInt(max) {
+		return Math.floor(Math.random() * max);
+	}
+
+	function getClassGen(cpt,cls){
+		
+        //Vérifie si le concept est un générateur
+        if(cpt.id_gen){
+        	//générer l'expression
+			let m = new oMoteur.moteur({'api':me.api});    						
+			//génére la classe
+			m.genere(cpt.valeur);				
+			/*
+			if($this->verif){
+				//vérifie si un déterminant est définie
+				if(isset($this->arrClass[0]["determinant"])){
+					$m->arrClass[(count($m->arrClass)-1)]["determinant"]=$this->arrClass[0]["determinant"];
+					foreach ($this->arrClass[0]["vecteur"] as $k => $v) {
+			        	$m->arrClass[(count($m->arrClass)-1)]["vecteur"][$k]=$v;
+        			}
+				}
+				if(isset($this->arrClass[0]["determinant_verbe"]))$m->arrClass[(count($m->arrClass)-1)]["determinant_verbe"]=$this->arrClass[0]["determinant_verbe"];
+				//genere le texte
+				$m->genereTexte();
+				$this->arrClass[$this->ordre]["texte"] = $m->texte;
+				return false;					
+			}
+			*/
+						
+	        //vérifie s'il faut conserver un caractx
+	        if(cls.substring(0,7)=="carac_t"){
+				me.caracts[cls] = m;
+	        }
+						
+			//récupère les classes générées
+			getClassMoteur(m);
+			me.potentiel += m.potentiel;
+			cpt = false;
+		}
+		
+		return cpt; 			
+		
+	}
+
+
+	function getClassMoteur(m){
+		let ordreDep = me.ordre; 
+		//ajoute les classes générées
+		m.strct.forEach((k,c)=>{
+			me.ordre ++;
+			//dans le cas d'un changement de position
+			if(me.posis.length>1){
+	        	//change l'ordre pour que la class soit placée après
+	        	me.ordre ++;
+				me.strct[me.ordre]=me.strct[me.ordre-1];
+	        	//redéfini l'ordre pour que la class soit placée avant sans écraser la class précédente
+	        	me.ordre --;
+			}
+			//gestion du pluriel sur les caractères
+	        if(me.strct[ordreDep].class[1] && me.strct[ordreDep].class[1].substring(0,5)=="carac"){
+	        	//ajoute le pluriel le cas échéant
+		        if(me.strct[ordreDep].vecteur.pluriel){       	
+					c.vecteur.pluriel=me.strct[ordreDep].vecteur.pluriel;
+		        }
+	        }			
+			me.strct[me.ordre] = c;
+
+		});
+		//ajoute les caractères générées
+		m.caracts.forEach((k,c)=>me.caracts[k]=c);		
+
+	}
+
 
     function getClassDef(c){
 
         //TODO:gestion du cache
-        //récupère la définition de la class
+        //récupère les conepts correspondant à la class
         let def =c.split("_"),
 		q = [me.tables.c.k[1]+',eq,'+def[0],me.tables.c.k[0]+',eq,'+def[1]],
-		cpt = me.oeuvre.searchClass(me.tables.c,q);
-		//cpt = me.syncSearchClass(me.tables.c,q);
-        return cpt;
+		d = me.oeuvre.searchClass(me.tables.c,q),
+		//récupère les données liées pour chaque concept
+		cpt=new oConcept.concept({
+			'data':d,
+			'api':me.api,
+			'm':me,
+			'sync':true
+		});                
+        return {"src":d,"dst":cpt.linkData};
 	}
     function getDeterminant(c){
         let cls = false, pluriel=false;
