@@ -84,6 +84,7 @@ class dico {
         }
 
         function showConcept(d,id){
+            if(d === undefined && id===null) return;
             if(!id)id=d[0];//le grid ne renvoie pas des tableaux associatifs
             d=me.concepts.filter(r=>r.id_concept==id)[0];
             me.appUrl.change('id_concept',d.id_concept);

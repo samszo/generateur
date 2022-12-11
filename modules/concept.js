@@ -264,7 +264,7 @@ class concept {
         function genere(e,r,d){
             if(!r[d.k])r=d.data.filter(i=>i[d.k]==r[0])[0];
             me.appUrl.change(d.k,r[d.k]);
-            me.m.genere(r);
+            me.m.genere(r.valeur);
 
         }
 
