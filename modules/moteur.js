@@ -24,6 +24,7 @@ class moteur {
             t:{type:'teminaisons',t:'gen_terminaisons',k:['id_conj','num']}
         }; 
 		this.segments = [];
+		this.coupures = [];
 		this.texte="";
 		this.finLigne="<br/>";
 		this.elisions = ["a", "e", "é", "ê", "i","o","u","y","h"];
@@ -62,6 +63,7 @@ class moteur {
                 me.ordre ++;            
 			} 
 			console.log(me.strct);
+			if(getTexte)return genereTexte();
         }
 
 	function genereTexte(){
@@ -79,7 +81,7 @@ class moteur {
 			ordreDeb = 0;
 			ordreFin = me.strct.length-1;
 		}
-		for (let i = ordreDeb; i < ordreFin; i++) {
+		for (let i = ordreDeb; i <= ordreFin; i++) {
 			me.ordre = i;
 			texte = "";
 			if(me.strct[i]){
@@ -130,14 +132,14 @@ class moteur {
 						}else{
 							txtCondi = true;
 						}
-					}elseif(strct.texte=="{"){
+					}else if(strct.texte=="{"){
 						//on saute les crochets de test
 						for (j = me.ordre; j <= ordreFin; j++) {
 							if(me.strct[j].texte=="}"){
 								i = j+1;	
 							}
 						}
-					}elseif(txtCondi){
+					}else if(txtCondi){
 						if(strct.texte=="%"){
 							texte += me.finLigne;	
 						}else{
@@ -208,6 +210,46 @@ class moteur {
 		//mise en forme du texte
 		coupures();
 				
+	}
+
+	function coupures(){
+		//mise en forme du texte
+		/*coupure de phrase*/
+		if(me.coupures.length==2){
+			me.texte += " ";
+			let nbCaractCoupure = getRandomInt(me.coupures[0], me.coupures[1]),
+				i = nbCaractCoupure;
+			while((i+me.coupures[1]) < me.texte.length) {
+				//trouve la coupure
+				let c  = me.texte.substring(i, 1), go = true, j = i;
+				while (go) {
+					if(c == "" || c == " " || c == "," || c == "." || c == ";"){
+						go=false;
+						i = j;
+					}else if (j==0){
+						//coupe jusqu'au prochain espace
+						i = me.texte.indexOf(' ', i);
+						go=false;
+					}else{
+						j --;
+						c = me.texte.substring(j, 1);
+					}
+				}
+				me.texte = me.texte.substring(0,i).trim()+me.finLigne+me.texte.substring(i).trim();
+				nbCaractCoupure = getRandomInt(me.coupures[0], me.coupures[1]);
+				i += nbCaractCoupure+me.finLigne.length;
+			}
+			
+		}
+	}
+		
+
+	function genereMajuscules(){
+		let sentences = me.texte.match( /[^\.!\?]+[\.!\?]+/g );
+		if(sentences){
+			sentences.forEach(s=>s=s.charAt(0).toUpperCase()+s.substring(1));		
+			me.texte=sentences.join(" ");	
+		}
 	}
 
 	function genereAdjectif(adj){
@@ -323,7 +365,7 @@ class moteur {
 				let c = centre.substring(centre.length-1);
 				if((c == "e" || c == "a") && strct.terminaison==3){
 					verbe += "t-"; 
-				}elseif(c == "e" && strct.terminaison==1){
+				}else if(c == "e" && strct.terminaison==1){
 					verbe = verbe+substring(0,centre.length-2)+"é-"; 
 				}
 				if(isEli(verbe) && strct.debneg!=""){
@@ -602,7 +644,7 @@ class moteur {
 		}		
 		txt = strct.substantif.prefix+txt;
 				
-		return $txt;
+		return txt;
 	}
 
 
@@ -762,7 +804,7 @@ class moteur {
 		let v = false, j = 1;
 		if(dir>0){
 			for (let i = me.ordre; i < me.strct.length; i++) {
-				if(me.strct[i].vecteur && me.strct[i].vecteur[t]){
+				if(me.strct[i].vecteur && me.strct[i].vecteur[t] !== undefined){
 					if(!ct){
 						if(num == j){
 							return me.strct[i].vecteur;
@@ -785,7 +827,7 @@ class moteur {
 		if(dir<0){
 			for (let i = me.ordre; i >= 0; i--) {
 				//on récupère le vecteur 
-				if(me.strct[i].vecteur && me.strct[i].vecteur[t]){
+				if(me.strct[i].vecteur && me.strct[i].vecteur[t] !== undefined){
 					if(!ct){
 						if(num == j){
 							return me.strct[i].vecteur;
@@ -957,8 +999,8 @@ class moteur {
 		
 	}
 
-	function getRandomInt(max) {
-		return Math.floor(Math.random() * max);
+	function getRandomInt(max, min=false) {
+		return min ? Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min))) + Math.ceil(min) : Math.floor(Math.random() * max);
 	}
 
 	function getClassGen(cpt,cls){
