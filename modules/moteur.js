@@ -1,15 +1,13 @@
 
-import oConcept from '../modules/concept.js';
-import oMoteur from '../modules/moteur.js';
-class moteur {
+import {concept} from '../modules/concept.js';
+export class moteur {
     constructor(params) {
         var me = this;
         this.api = params.api ? params.api : false;
-        this.tgtContent = params.tgtContent ? params.tgtContent : false;
         this.choix = params.choix ? params.choix : false;
         this.oeuvre = params.oeuvre;
         this.appUrl = params.appUrl;
-		this.showErr = params.showErr ? params.showErr : false;
+		this.showErr = params.showErr ? params.showErr : true;
 		//this.sp = sp.sp;
 		//this.syncSearchClass = this.sp(me.oeuvre.searchClass);
         this.strct = []; 
@@ -21,7 +19,8 @@ class moteur {
             c:{type:'concepts',t:'gen_concepts',k:['lib','type']},
             d:{type:'déterminants',t:'gen_determinants',k:'num'},
             p:{type:'pronoms',t:'gen_pronoms',k:['num','type']},
-            t:{type:'teminaisons',t:'gen_terminaisons',k:['id_conj','num']}
+            t:{type:'teminaisons',t:'gen_terminaisons',k:['id_conj','num']},
+			s:{type:'syntagmes',t:'gen_syntagmes',k:'num'},
         }; 
 		this.segments = [];
 		this.coupures = [];
@@ -38,11 +37,12 @@ class moteur {
             //décompose le générateur
             me.ordre = 0
             for (var i = 0; i < g.length; i++) {
+				//initialisation de la structure
 				me.strct[me.ordre]={};
                 c = g.charAt(i);
-                if(c == "["){
-                    //c'est le début d'une classe on initialise les positions
-                    //$this->arrPosi = false;
+                if(c == "["){					
+                    //c'est le début d'une classe on initialise
+                    me.strct[me.ordre].vecteur={};
                     //on récupère la valeur de la classe et la position des caractères dans la chaine
 					i = setClass(g,i);
                 }else if(c == "F"){
@@ -54,11 +54,11 @@ class moteur {
                         i++;
                     }else{
                         //on ajoute le caractère
-                        me.strct[me.ordre].txt = c;
+                        me.strct[me.ordre].texte = c;
                     }
                 }else{
                     //on ajoute le caractère
-                    me.strct[me.ordre].txt = c;
+                    me.strct[me.ordre].texte = c;
                 }
                 me.ordre ++;            
 			} 
@@ -146,7 +146,7 @@ class moteur {
 							texte += strct.texte;
 						}
 					}
-				}else if(strct.ERREUR && me.showErr){
+				}else if(strct.error && me.showErr){
 					me.texte += '<ul><font color="#de1f1f" >ERREUR:'+JSON.stringify(strct)+'</font></ul>';	
 				}else{
 					if(txtCondi){
@@ -157,7 +157,9 @@ class moteur {
 						}
 						
 						if(strct.substantif){					
-							sub = genereSubstantif(strct);						
+							sub = strct.substantif.id_adj ? 
+								genereAdjectif(strct.substantif):
+								genereSubstantif(strct);													
 						}					
 						
 						if(strct.adjectifs){
@@ -256,13 +258,13 @@ class moteur {
 
 		let	txt = "", v = getVecteur("pluriel",-1), 
 		//calcule le nombre
-		n = v.pluriel ? "_s" : "_s",				
+		n = v.pluriel ? "_p" : "_s",				
 		//calcul le genre
 		g = "m";
 		v ? v : getVecteur("genre",-1);
 		if(v.genre==2)g='f'; 		
 		
-		return adj.prefix+adj[$g.$n]+" ";		
+		return adj.prefix+adj[g+n]+" ";		
 	}
 
 	function genereVerbe(strct){
@@ -514,7 +516,7 @@ class moteur {
 					//récupère le vecteur
 					let v = getVecteur("genre",-1,strct.determinant_verbe[7]),     	
 					//génère le pronom
-						m = new oMoteur.moteur({'api':me.api,'oeuvre':me.oeuvre});    						
+						m = new moteur({'api':me.api,'oeuvre':me.oeuvre});    						
 					m.genere(pr,false);
 					m.strct[0].vecteur.genre=v.genre;
 					m.strct[0].vecteur.pluriel=strct.pluriel;						
@@ -615,20 +617,18 @@ class moteur {
 	function genereDeterminant(strct){
 
 		let det = "", v = getVecteur("elision", 1);
-		if(v){			
-			//calcul le déterminant
-			if(v.elision==0 && v.genre==1){
-				det = strct.determinant[0].lib+" ";
-			}
-			if(v.elision==0 && v.genre==2){
-				det = strct.determinant[1].lib+" ";
-			}
-			if(v.elision==1 && v.genre==1){
-				det = strct.determinant[2].lib;
-			}
-			if(v.elision==1 && v.genre==2){
-				det = strct.determinant[3].lib;
-			}
+		//calcul le déterminant
+		if(v.elision==0 && v.genre==1){
+			det = strct.determinant[v.pluriel ? 4 : 0].lib+" ";
+		}
+		if(v.elision==0 && v.genre==2){
+			det = strct.determinant[v.pluriel ? 5 : 1].lib+" ";
+		}
+		if(v.elision==1 && v.genre==1){
+			det = strct.determinant[v.pluriel ? 6 : 1].lib;
+		}
+		if(v.elision==1 && v.genre==2){
+			det = strct.determinant[v.pluriel ? 7 : 3].lib;
 		}
 		
 		return det;
@@ -894,8 +894,8 @@ class moteur {
 		}else if(Array.isArray(c)){
 			return c;
 		}else{		
-			cls = getAleaClass(c);
-			if(is_string($cls)){
+			let cls = getAleaClass(c);
+			if(typeof cls == "string"){
 				me.strct[me.ordre]["texte"] = cls;			
 			}else if(typeof cls == "Gen_Moteur"){
 				getClassMoteur(cls);
@@ -930,6 +930,28 @@ class moteur {
 			me.strct[me.ordre].vecteur.elision = strct.elision;			
 			//ajoute le substantif
 			me.strct[me.ordre].substantif = strct;	
+		}
+	}
+
+
+	function getSyntagme(cls, direct=true){
+		
+		//vérifie si le syntagme direct #
+		if(direct){
+			//TODO:gestion du cache
+			let q = [me.tables.s.k+',eq,'+cls],
+			strct = me.oeuvre.searchClass(me.tables.s,q)[0];	        	        
+	        if(strct.lib.substring(0,1)== "["){
+	        	setClass(strct.lib);
+	        }else{
+				me.strct[me.ordre].syntagme = strct;	
+	        }
+		}else{
+			//récupération du substantif
+			let strct = getAleaClass(cls);				
+	        if(strct.lib){
+				me.strct[me.ordre].syntagme = strct;	
+	        }
 		}
 	}
 
@@ -976,6 +998,12 @@ class moteur {
 			cpt.dst.forEach(t=>{
 				if(t.data.length)choix=choix.concat(t.data);
 			});
+			//pas de choix : erreur
+			if(choix.length==0){
+				me.strct[me.ordre].class=c;
+				me.strct[me.ordre].error="Aucun choix";
+				return false;
+			} 
             alea = getRandomInt(choix.length-1);        	        
 	        aCpt = getClassGen(choix[alea],c);        
 
@@ -1008,9 +1036,9 @@ class moteur {
         //Vérifie si le concept est un générateur
         if(cpt.id_gen){
         	//générer l'expression
-			let m = new oMoteur.moteur({'api':me.api,'oeuvre':me.oeuvre});    						
+			let m = new moteur({'api':me.api,'oeuvre':me.oeuvre});    						
 			//génére la classe
-			m.genere(cpt.valeur);				
+			m.genere(cpt.valeur,false);				
 			/*
 			if($this->verif){
 				//vérifie si un déterminant est définie
@@ -1087,10 +1115,10 @@ class moteur {
         //TODO:gestion du cache
         //récupère les concepts correspondant à la class
         let def =c.split("_"),
-		q = [me.tables.c.k[1]+',eq,'+def[0],me.tables.c.k[0]+',eq,'+def[1]],
+		q = [me.tables.c.k[1]+',eq,'+def[0],me.tables.c.k[0]+',eq,'+encodeURIComponent(def[1])],
 		d = me.oeuvre.searchClass(me.tables.c,q),
 		//récupère les données liées pour chaque concept
-		cpt=new oConcept.concept({
+		cpt=new concept.concept({
 			'data':d,
 			'api':me.api,
 			'm':me,
@@ -1161,4 +1189,3 @@ class moteur {
     
     }
 }
-export default { moteur };

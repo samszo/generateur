@@ -5210,6 +5210,8 @@ namespace Tqdev\PhpCrudApi\Controller {
             }
         }
     }
+
+    
 }
 
 // file: src/Tqdev/PhpCrudApi/Controller/Responder.php
@@ -12367,6 +12369,8 @@ namespace Tqdev\PhpCrudApi {
     use Tqdev\PhpCrudApi\RequestFactory;
     use Tqdev\PhpCrudApi\ResponseUtils;
 
+    include 'apiStats.php';
+
     $config = new Config([
         // 'driver' => 'mysql',
         // 'address' => 'localhost',
@@ -12374,7 +12378,8 @@ namespace Tqdev\PhpCrudApi {
         'username' => 'samszo',
         'password' => 'samszo',
         'database' => 'generateur',
-        // 'debug' => false
+        'customControllers' => 'apiStats',
+        'debug' => true
     ]);
     $request = RequestFactory::fromGlobals();
     $api = new Api($config);
@@ -12384,3 +12389,4 @@ namespace Tqdev\PhpCrudApi {
     //file_put_contents('request.log',RequestUtils::toString($request)."===\n",FILE_APPEND);
     //file_put_contents('request.log',ResponseUtils::toString($response)."===\n",FILE_APPEND);
 }
+

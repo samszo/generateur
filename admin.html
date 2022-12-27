@@ -16,7 +16,7 @@
     <script src="asset/js/all.min.js"></script>
     <script src="asset/js/amazelogo.js"></script>
     <script src="asset/js/handsontable.full.min.js"></script>
-
+    
     <style>
         #logoMazePetit {
             height: 60px;
@@ -24,7 +24,7 @@
         }
 
         #contentDetails {
-            overflow-y: scroll;
+            overflow-y: hidden;
             overflow-x: hidden;
         }
 
@@ -67,6 +67,9 @@
         .tab-pane {
             height: 580px;
         }
+        .vscroll{
+            overflow-y: scroll;
+        }
 
     </style>
 </head>
@@ -92,7 +95,7 @@
                                 <span class="navbar-toggler-icon"></span>
                             </button>
                             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                                <ul class="navbar-nav me-auto mb-2 mb-lg-2 align-middle">
+                                <ul id="navbarMain" class="navbar-nav me-auto mb-2 mb-lg-2 align-middle">
 
                                     <li class="nav-item mx-2">
                                         <a class="nav-link" target="_blank"
@@ -108,24 +111,26 @@
                                             <img style="height: 40px;" src="asset/images/logos/logo-p8-white.svg"
                                                 alt="Université Paris 8" />
                                         </a>
-                                    </li>
+                                    </li>                                    
                                     <li class="nav-item ms-2 me-1">
                                         <div class="btn-group">
                                             <button type="button" class="btn btn-danger dropdown-toggle"
                                                 data-bs-toggle="dropdown" aria-expanded="false">
-                                                Oeuvres
+                                                <i class="fa-solid fa-person-digging"></i>
                                             </button>
                                             <ul id="menuOeuvres" class="dropdown-menu dropdown-menu-dark">
                                             </ul>
                                         </div>
                                     </li>
                                     <li>
+                                        <form autocomplete="off">
                                           <div class="input-group">
                                             <span class="input-group-text" id="url-addon">@</span>
                                             <input id="inptUrl" type="text" class="form-control" 
                                                 size="64" placeholder="" aria-label="" aria-describedby="url-addon">
                                           </div>
-                                    </li>                                    
+                                        </form>
+                                    </li>                                                                        
                                 </ul>
                             </div>
                         </div>
