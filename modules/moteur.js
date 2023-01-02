@@ -19,17 +19,23 @@ export class moteur {
             c:{type:'concepts',t:'gen_concepts',k:['lib','type']},
             d:{type:'déterminants',t:'gen_determinants',k:'num'},
             p:{type:'pronoms',t:'gen_pronoms',k:['num','type']},
-            t:{type:'teminaisons',t:'gen_terminaisons',k:['id_conj','num']},
+            t:{type:'terminaisons',t:'gen_terminaisons',k:['id_conj','num']},
 			s:{type:'syntagmes',t:'gen_syntagmes',k:'num'},
+			v:{type:'verbes',t:'gen_verbes',k:'id_verbe'},
+			a:{type:'adjectifs',t:'gen_adjectifs',k:'id_adj'},
+			m:{type:'substantifs',t:'gen_substantifs',k:'id_sub'},
+			n:{type:'négations',t:'gen_negations',k:'id_negation'},
+			conj:{type:'conjugaisons',t:'gen_conjugaisons',k:'id_conj'},
         }; 
 		this.segments = [];
 		this.coupures = [];
 		this.texte="";
 		this.finLigne="<br/>";
 		this.elisions = ["a", "e", "é", "ê", "i","o","u","y","h"];
+		this.start;
 
         this.init = function () {
-            console.log('init moteur');
+            me.start = Date.now();
         }
 
         this.genere = function(g, getTexte=true){
@@ -38,7 +44,7 @@ export class moteur {
             me.ordre = 0
             for (var i = 0; i < g.length; i++) {
 				//initialisation de la structure
-				me.strct[me.ordre]={};
+				me.strct[me.ordre]={'deb':Date.now(),'dur':''};
                 c = g.charAt(i);
                 if(c == "["){					
                     //c'est le début d'une classe on initialise
@@ -60,13 +66,13 @@ export class moteur {
                     //on ajoute le caractère
                     me.strct[me.ordre].texte = c;
                 }
+				me.strct[me.ordre].dur = Date.now() - me.strct[me.ordre].deb;
                 me.ordre ++;            
-			} 
-			console.log(me.strct);
-			if(getTexte)return genereTexte();
+			}			 
+			if(getTexte)return me.genereTexte();
         }
 
-	function genereTexte(){
+	this.genereTexte = function (){
 
 		me.texte = "";
 		let c, texte, strct, txtCondi = true, imbCondi= {}, alea, ordreDeb, ordreFin;
@@ -186,6 +192,7 @@ export class moteur {
 					me.texte += texte;
 				}
 			}
+			me.strct[i].durTxt = Date.now() - me.start;
 		}
 		
 		//gestion des espace en trop
@@ -211,6 +218,8 @@ export class moteur {
 
 		//mise en forme du texte
 		coupures();
+
+		return me.texte;
 				
 	}
 
@@ -315,7 +324,7 @@ export class moteur {
 			 */
 			if(strct.determinant_verbe[1]==9 || strct.determinant_verbe[1]==7){
 				verbe = centre;
-				if(strct.prodem!=""){
+				if(strct.prodem){
 					if(strct.prodem.num!=39 && strct.prodem.num!=40 && strct.prodem.num!=41){
 						if(!isEli(verbe) || strct.prodem.lib == strct.prodem.lib_eli){
 							verbe = strct.prodem.lib+" "+verbe; 
@@ -342,7 +351,7 @@ export class moteur {
 						verbe = strct.debneg+verbe+" "+strct.finneg;
 					}
 				}
-				if(strct.prodem!=""){
+				if(strct.prodem){
 					//le pronom complément se place en tête lorsqu’il a les valeurs 39, 40, 41
 	                if(strct.prodem.num==39 || strct.prodem.num==40 || strct.prodemnum==41){
 						if(!isEli(verbe) || strct.prodem.lib == strct.prodem.lib_eli){
@@ -380,7 +389,7 @@ export class moteur {
 		//gestion de l'ordre normal
 		if(verbe==""){
 			verbe = centre+" "+strct.finneg;
-			if(strct.prodem!=""){
+			if(strct.prodem){
 				//si le pronom eli = le pronom normal on met un espace
 				if(!isEli(verbe) || strct.prodem.lib == strct.prodem+lib_eli){
 					verbe = strct.prodem.lib+" "+verbe; 
@@ -389,10 +398,10 @@ export class moteur {
 					eli=0;
 				}
 			}	
-			if(strct.debneg!=""){
+			if(strct.debneg){
 				verbe = isEli(verbe) ? "n'"+verbe : strct.debneg+verbe; 
 			}	
-			if(strct.prosuj!=""){
+			if(strct.prosuj){
 				if(isEli(verbe)){
 					//vérification de l'apostrophe
 					if (strct.prosuj.lib_eli.indexOf("'") === false) { 
@@ -411,7 +420,7 @@ export class moteur {
 	function genereTerminaison(strct){
 		
 		//par défaut la terminaison est 3eme personne du présent
-		let num = 2, temps;
+		let num = 2, temps, txt;
 		
 		if(strct.determinant_verbe){
 			temps= strct.determinant_verbe[1]-1;
@@ -445,13 +454,13 @@ export class moteur {
 
 	function getTerminaison(id, n){
 
-
         //TODO:gestion du cache
         //récupère les concepts correspondant à la class
-        let q = [me.tables.t.k[0]+',eq,'+id,me.tables.t.k[1]+',eq,'+n],
-			t = me.oeuvre.searchClass(me.tables.t,q);
-
-		return t;
+        let f = {filter:[me.tables.t.k[0]+',eq,'+id,me.tables.t.k[1]+',eq,'+n]},
+			r = me.api.syncList(me.tables.t.t,f).records;
+		if(r && r.length)return r[0].lib;
+		else me.strct[me.ordre].error = "Terminaison introuvable :"+id+' '+n+"<br/>";
+		return "";
 
 	}
 
@@ -511,19 +520,18 @@ export class moteur {
 				strct.terminaison = numP;				
 			}
 			
-			if(strct.prosuj==""){
+			if(strct.prosuj==undefined){
 				if(numP>=6){	
 					//récupère le vecteur
 					let v = getVecteur("genre",-1,strct.determinant_verbe[7]),     	
 					//génère le pronom
-						m = new moteur({'api':me.api,'oeuvre':me.oeuvre});    						
+					m = new moteur({'api':me.api,'oeuvre':me.oeuvre});    						
 					m.genere(pr,false);
 					m.strct[0].vecteur.genre=v.genre;
 					m.strct[0].vecteur.pluriel=strct.pluriel;						
-					me.potentiel += $m.potentiel;
-					m.genereTexte();						
-					strct.prosuj.lib = m.texte.toLowerCase();
-					strct.prosuj.lib_eli = m.texte.toLowerCase();
+					me.potentiel += m.potentiel;
+					m.genereTexte();
+					strct.prosuj = {lib:m.texte.toLowerCase(),lib_eli:m.texte.toLowerCase()};
 				}else{
 					strct.prosuj = getPronom(numP,"sujet");
 				}
@@ -564,9 +572,10 @@ export class moteur {
         //TODO:gestion du cache
         //récupère les concepts correspondant à la class
         let q = [me.tables.p.k[0]+',eq,'+c,me.tables.p.k[1]+',eq,'+t],
-			p = me.oeuvre.searchClass(me.tables.p,q);
-
-		return p;
+			r = me.oeuvre.searchClass(me.tables.p,q);
+		if(r && r.length)return r[0];
+		else me.strct[me.ordre].error = "Pronom introuvable :"+c+' '+t+"<br/>";
+		return "";
 
 	}
 
@@ -618,14 +627,14 @@ export class moteur {
 
 		let det = "", v = getVecteur("elision", 1);
 		//calcul le déterminant
-		if(v.elision==0 && v.genre==1){
+		if(v.elision==0 && (v.genre==1 || v.genre==undefined)){
 			det = strct.determinant[v.pluriel ? 4 : 0].lib+" ";
 		}
 		if(v.elision==0 && v.genre==2){
 			det = strct.determinant[v.pluriel ? 5 : 1].lib+" ";
 		}
-		if(v.elision==1 && v.genre==1){
-			det = strct.determinant[v.pluriel ? 6 : 1].lib;
+		if(v.elision==1 && (v.genre==1 || v.genre==undefined)){
+			det = strct.determinant[v.pluriel ? 6 : 2].lib;
 		}
 		if(v.elision==1 && v.genre==2){
 			det = strct.determinant[v.pluriel ? 7 : 3].lib;
@@ -689,7 +698,7 @@ export class moteur {
 				let vAdj, vSub, vDet = me.strct[me.ordre].vecteur, ordreDet = me.ordre;
 				//change l'ordre pour que la class substantif soit placée après
 				me.ordre ++;
-				if(!me.strct[me.ordre])me.strct[me.ordre]={};
+				if(!me.strct[me.ordre])me.strct[me.ordre]={'deb':Date.now(),'dur':''};
 				me.strct[me.ordre].vecteur = vDet; 
 				//calcul le substantifs
 				getClass(me.posis[1]);
@@ -866,16 +875,10 @@ export class moteur {
 
 	function getAdjectifs(c){
 
-        let adjs, d = c.indexOf("∏");
-        if(d){        	
-        	//récupère les adjectifs
-	        adjs=c.split("∏");        
-	        //récupère la définition des adjectifs
-			me.strct[me.ordre].adjectifs = [];
-	        adjs.forEach(a=>me.strct[me.ordre].adjectifs.push(getAleaClass(a)));
-	    }else{
-	        me.strct[me.ordre].adjectifs.push(getAleaClass(c));        	
-        }               
+        let adjs =c.split("∏");        
+		//récupère la définition des adjectifs
+		me.strct[me.ordre].adjectifs = [];
+		adjs.forEach(a=>me.strct[me.ordre].adjectifs.push(getAleaClass(a)));
 
 	    //met à jour l'élision dans le cas d'un changement de position
 		if(me.posis.length>1){
@@ -960,6 +963,7 @@ export class moteur {
 		
         //cherche la définition de la class
         let choix, alea, aCpt, cpt = getClassDef(c);
+		me.strct[me.ordre].class=c;
         
         //cas des class caract
         if(c.substring(0,7)=="carac_t" || c.substring(0,5)=="carac"){
@@ -1000,7 +1004,6 @@ export class moteur {
 			});
 			//pas de choix : erreur
 			if(choix.length==0){
-				me.strct[me.ordre].class=c;
 				me.strct[me.ordre].error="Aucun choix";
 				return false;
 			} 
@@ -1074,7 +1077,7 @@ export class moteur {
 
 	function getClassMoteur(m){
 		//ajoute les classes générées
-		m.strct.forEach(c=>{
+		m.strct.forEach((c,i)=>{
 			//dans le cas d'un changement de position
 			if(me.posis.length>1){
 	        	//change l'ordre pour que la class soit placée après
@@ -1084,25 +1087,27 @@ export class moteur {
 	        	me.ordre --;
 			}
 			//ajoute les propriétés générées
-			if(me.strct[me.ordre]){
+			if(me.strct[i]){
 				for (const p in c) {
 					if(p=='concepts')
-						me.strct[me.ordre].concepts = me.strct[me.ordre].concepts.concat(c.concepts);
+						me.strct[i].concepts = me.strct[i].concepts.concat(c.concepts);
 					else if(p=='vecteur'){
 						for (const v in c.vecteur) {
-							me.strct[me.ordre].vecteur[v]=c.vecteur[v];
+							me.strct[i].vecteur[v]=c.vecteur[v];
 						}
-					}else me.strct[me.ordre][p]=c[p];
+					}else me.strct[i][p]=c[p];
 				}			
 				
-				if(me.strct[me.ordre].isCaract){
+				if(me.strct[i].isCaract){
 					//ajoute le pluriel le cas échéant
-					if(me.strct[me.ordre].vecteur.pluriel){       	
-						c.vecteur.pluriel=me.strct[me.ordre].vecteur.pluriel;
+					if(me.strct[i].vecteur.pluriel){       	
+						c.vecteur.pluriel=me.strct[i].vecteur.pluriel;
 					}
 				}			
-			}else me.strct[me.ordre]=c;
-			me.ordre ++;
+			}else{
+				me.ordre ++;								
+				me.strct[me.ordre]=c;
+			} 
 		});
 		//ajoute les caractères générées
 		m.caracts.forEach((c,i)=>me.caracts[i]=c);		
@@ -1114,17 +1119,25 @@ export class moteur {
 
         //TODO:gestion du cache
         //récupère les concepts correspondant à la class
-        let def =c.split("_"),
-		q = [me.tables.c.k[1]+',eq,'+def[0],me.tables.c.k[0]+',eq,'+encodeURIComponent(def[1])],
-		d = me.oeuvre.searchClass(me.tables.c,q),
-		//récupère les données liées pour chaque concept
-		cpt=new concept.concept({
-			'data':d,
-			'api':me.api,
-			'm':me,
-			'sync':true
-		});                
-        return {"src":d,"dst":cpt.linkData};
+        let q, d, cpt, dst, def = c.split("_");
+		if(def.length==3){
+			//traitement des class avec identifiant
+			d = me.api.syncRead(me.tables.c.t,def[1]);
+			dst = me.api.syncRead(me.tables[def[0]].t,def[2]);
+			return {"src":d,"dst":[{data:[dst]}]};
+		}else{
+			//traitement des class avec libellé
+			q = [me.tables.c.k[1]+',eq,'+def[0],me.tables.c.k[0]+',eq,'+encodeURIComponent(def[1])];
+			d = me.oeuvre.searchClass(me.tables.c,q);
+			//récupère les données liées pour chaque concept
+			cpt=new concept({
+				'data':d,
+				'api':me.api,
+				'm':me,
+				'sync':true
+			});                
+			return {"src":d,"dst":cpt.linkData};
+		}
 	}
     function getDeterminant(c){
         let cls = false, pluriel=false;
@@ -1135,7 +1148,8 @@ export class moteur {
 
         //vérifie si le déterminant est pour un verbe
         if(c.length > 6){
-        	if(c==0 && me.ordre > 0){
+        	cls = c;
+			if(me.ordre > 0){
         		//vérifie si le determinant n'est pas transmis
                 for (let i = me.ordre-1; i >= 0; i--){
                     if(me.strct[i].determinant_verbe!=0){

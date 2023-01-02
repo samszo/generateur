@@ -13,9 +13,6 @@ let
 auth = new a.auth({'navbar':d3.select('#navbarMain'),
         apiOmk:'http://localhost/omk_arcanes/api/',
         //
-        ident: '',
-        key: '',
-        mail:''
         //
     }),
 oe = new o.oeuvres({

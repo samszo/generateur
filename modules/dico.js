@@ -1,6 +1,7 @@
 import {concept} from '../modules/concept.js';
 import {modal} from '../modules/modal.js';
 import {modalAddDicoItem} from '../modules/modal.js';
+import {moteur} from '../modules/moteur.js';
 
 export class dico {
     constructor(params) {
@@ -9,12 +10,23 @@ export class dico {
         this.d = params.d ? params.d : false;
         this.api = params.api ? params.api : false;
         this.remove = params.remove ? params.remove : false;
+        this.onlyData = params.onlyData ? params.onlyData : false;
         this.tgtContent = params.tgtContent ? params.tgtContent : false;
         this.appUrl = params.appUrl; 
         this.hot;
         this.concepts;
-        var mainSlt, dicoHot, cptContent, mAddItem, mAddItemBody,mMessage=new modal();
+        var mainSlt, dicoHot, cptContent, mAddItem, mAddItemBody,mMessage=new modal(),
+        m=new moteur({
+            'api':me.api,
+            'appUrl':me.appUrl,
+            'oeuvre':me.oeuvre
+          }),table;
+
         this.init = function () {
+            //récupération de la table suivant le type
+            for (const p in m.tables) {
+                if(m.tables[p].type==me.d.type)table=m.tables[p];
+            }
             /*La mise à jour n'est pas nickel => on recré totalement la grid*/
             mainSlt = d3.select(me.tgtContent);
             mainSlt.selectAll('div').remove();
@@ -69,18 +81,21 @@ export class dico {
             //ajoute le tableur
             dicoHot = colL.append('div').attr('class','clearfix')
                 .attr('id','dicoHot');
-            me.api.list('gen_concepts',{filter:'id_dico,eq,'+me.d.id_dico}).then(
+            me.api.list(table.t,{filter:'id_dico,eq,'+me.d.id_dico}).then(
                 result=>{
-                    me.concepts = result.records
-                    //me.hot.loadData(me.concepts);
+                    me.data = result.records
+                    //me.hot.loadData(me.data);
                     //création de la table
+                    let headers = Object.keys(me.data[0]),
+                        rectFooter = d3.select('footer').select('h3').node().getBoundingClientRect(),
+                        rectHeader = d3.select('header').node().getBoundingClientRect();
+
                     me.hot = new Handsontable(dicoHot.node(), {
-                        rowHeaders: true,
                         colHeaders: true,
                         rowHeaders: true,
-                        data:me.concepts,
-                        colHeaders: ['id_concept','id_dico','lib','type'],                
-                        height: '100%',
+                        data:me.data,
+                        colHeaders: headers,
+                        height: rectFooter.top-rectFooter.height-rectHeader.bottom,
                         width: '300',
                         licenseKey: 'non-commercial-and-evaluation',
                         customBorders: true,
@@ -90,8 +105,9 @@ export class dico {
                         selectionMode:'single',
                         hiddenColumns: {
                             // specify columns hidden by default
-                            columns: [0, 1]
+                            columns: headers.map((h,i)=>h.substring(0,3)=='id_' ? i : null).filter(k=>k!=null)
                         },
+                        columns: getCellEditor(headers),
                         allowInsertColumn: false,
                         copyPaste: false,
                         contextMenu: {
@@ -119,6 +135,24 @@ export class dico {
                     me.hot.addHook('afterSelection', (r, c) => {
                         showConcept(me.hot.getDataAtRow(r));
                     });
+                    me.hot.addHook('afterChange', (changes,s) => {
+                        changes?.forEach(([r, p, oldValue, newValue]) => {
+                            //mise à jour de l'item
+                            let data = {};
+                            data[p]=newValue;
+                            me.api.update(table.t,me.data[r][0],data).then(
+                                rs=>{
+                                    console.log(rs);
+                                }   
+                            ).catch (
+                                error=>console.log(error)
+                            );            
+                        });    
+                    });
+        
+        
+
+
                     if(me.appUrl.params && me.appUrl.params.has('id_concept'))showConcept(null,me.appUrl.params.get('id_concept'));
                 }
             ).catch (
@@ -126,6 +160,18 @@ export class dico {
             );
             //me.getItems(me.d);
         }
+        function getCellEditor(headers){
+            let editors = [];
+            headers.forEach(h=>{
+                switch (h) {
+                  default:
+                    editors.push({data:h, type: 'text'})                  
+                    break;
+                }
+              })
+            return editors;
+        }
+  
         function addItems(){
             let lib = mAddItemBody.select("#inpItemLib").node().value,
                 type = mAddItemBody.select("#inpItemType").node().value;
@@ -141,7 +187,7 @@ export class dico {
                                 me.hot.setDataAtCell(row, i, item[p]);
                                 i++;
                             }
-                            me.concepts.push(item);
+                            me.data.push(item);
                             showConcept(null,id);
                             mAddItem.hide();
                         }
@@ -186,8 +232,8 @@ export class dico {
             //me.hot.updateData([]);
             me.api.list('gen_concepts',{filter:'id_dico,eq,'+me.d.id_dico}).then(
                 result=>{
-                    me.concepts = result.records
-                    me.hot.loadData(me.concepts);
+                    me.data = result.records
+                    me.hot.loadData(me.data);
                     if(me.appUrl.params && me.appUrl.params.has('id_concept'))showConcept(null,me.appUrl.params.get('id_concept'));
                 }
             ).catch (
@@ -198,7 +244,7 @@ export class dico {
         function showConcept(d,id){
             if(d === undefined && id===null) return;
             if(!id)id=d[0];//le grid ne renvoie pas des tableaux associatifs
-            d=me.concepts.filter(r=>r.id_concept==id)[0];
+            d=me.data.filter(r=>r.id_concept==id)[0];
             me.appUrl.change('id_concept',d.id_concept);
 
             let cpt=new concept({
@@ -229,8 +275,21 @@ export class dico {
             });
         }
 
+        this.getData = function(){
+            me.api.list('gen_concepts',{filter:'id_dico,eq,'+me.d.id_dico}).then(
+                result=>{
+                    me.data = result.records
+                    me.hot.loadData(me.data);
+                    if(me.appUrl.params && me.appUrl.params.has('id_concept'))showConcept(null,me.appUrl.params.get('id_concept'));
+                }
+            ).catch (
+                error=>console.log(error)
+            );
+        }
 
+        //gestion des initialisation de l'objet
         if(this.remove) this.delete();
+        if(this.onlyData) this.getData();
         else this.init();
     
     }

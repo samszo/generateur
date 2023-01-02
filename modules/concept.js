@@ -2,6 +2,7 @@ import { JSONEditor } from '../node_modules/vanilla-jsoneditor/index.js'
 import {getIn, parseFrom} from '../node_modules/immutable-json-patch/lib/esm/index.js'
 import {moteur} from '../modules/moteur.js';
 import {modal} from '../modules/modal.js';
+import {conjugaisons} from '../modules/conjugaisons.js';
 
 export class concept {
     constructor(params) {
@@ -15,55 +16,51 @@ export class concept {
         this.sync = params.sync ? params.sync : false;
         this.remove = params.remove ? params.remove : false;
         this.linkData;
+        this.conjData;
         this.jsEditor;
         this.jsPath;
         var m=new modal();
         this.init = function () {
             me.linkData=[
-                {n:'Adjectives',t:'gen_adjectifs',k:'id_adj',data:[]},
+                {n:'Adjectives',t:'gen_adjectifs',k:'id_adj',data:[],mAdd:true},
                 {n:'Generators',t:'gen_generateurs',k:'id_gen',data:[],mAdd:true},
-                {n:'Nouns',t:'gen_substantifs',k:'id_sub',data:[]},
-                {n:'Phrases',t:'gen_syntagmes',k:'id_syn',data:[]},
-                {n:'Verbs',t:'gen_verbes',k:'id_verbe',data:[]},
+                {n:'Nouns',t:'gen_substantifs',k:'id_sub',data:[],mAdd:true},
+                //uniqueemnt dans le dictionnaire général {n:'Syntagms',t:'gen_syntagmes',k:'id_syn',data:[],mAdd:true},
+                {n:'Verbs',t:'gen_verbes',k:'id_verbe',data:[],mAdd:true},
             ];
-            //construction des modals pour chaque type de lien
-            me.linkData.forEach(ld=>{
-              if(ld.mAdd){
-                ld.mAdd = m.add('modalAddConcept'+ld.n);
-                ld.mAdd.s.select('.modal-footer').data([ld]).append('button')
-                  .attr('type',"button")
-                  .attr('class',"btn btn-primary").html('Add new')
-                  .on('click',addItem);
-              }
-            })
-
             if(me.sync)getSyncLinkData();
-            else getLinkData();
+            else{
+              //construction des modals pour chaque type de lien
+              me.linkData.forEach(ld=>{
+                if(ld.mAdd){
+                  ld.mAdd = m.add('modalAddConcept'+ld.n);
+                  ld.mAdd.s.select('.modal-footer').selectAll('button').data([ld]).join(
+                    enter=>enter.append('button')
+                      .attr('type',"button")
+                      .attr('class',"btn btn-primary").html('Add new')
+                      .on('click',addItem)                    
+                  );
+                  if(ld.n=="Verbs"){
+                    //ajoute les options de conjugaison
+                    me.conjData = me.oeuvre.getConjugaisons();
+                    ld.mAdd.s.select('#verbConj').selectAll('option').data(
+                      [{'id_conj':-1,'modele':'choose a conjugation model'}].concat(me.conjData)
+                      ).join(
+                      enter=>enter.append('option')
+                        .attr('value',c=>c.id_conj)
+                        .html(c=>c.modele)                    
+                    );
+                  }
+                }
+              })
+              getLinkData();
+            } 
         }
         function getSyncLinkData(){
-          let rs, rsL;
           //ATTENTION il peut y avoir le même concept dans plusieurs dictionnaires
           me.data.forEach(cpt=>{
             me.linkData.forEach(d=>{
-              rs = me.api.syncList(d.t,{filter:'id_concept,eq,'+cpt.id_concept});
-              if(rs.records.length){
-                let idP=[],ids = rs.records.map(r=>r[d.k]);
-                //pagination tous les 50 
-                ids.forEach((id,j)=>{
-                    idP.push(id); 
-                    if(idP.length==50){
-                      rsL = me.api.syncRead(d.lt,idP);
-                      rsL = Array.isArray(rsL) ? rsL : [rsL];
-                      d.data=d.data.concat(rsL.map(obj => ({ ...obj, concept:cpt})));
-                      idP=[];
-                    }
-                });
-                if(idP.length){
-                  rsL = me.api.syncRead(d.lt,idP);
-                  rsL = Array.isArray(rsL) ? rsL : [rsL];
-                  d.data=d.data.concat(rsL.map(obj => ({ ...obj, concept:cpt})));
-                }
-              }
+              d.data = me.api.syncList(d.t,{filter:'id_concept,eq,'+cpt.id_concept}).records;
             });  
           })
           return me.linkData;
@@ -75,37 +72,13 @@ export class concept {
             Promise.all(p).then((values) => {
                 let pl=[];
                 values.forEach((v,i)=>{
-                    if(v.records.length){
-                        let idP=[],ids = v.records.map(r=>r[me.linkData[i].k]);
-                        //pagination tous les 50 
-                        ids.forEach((id,j)=>{
-                            idP.push(id); 
-                            if(idP.length==50){
-                                pl.push({'i':i, p:me.api.read(me.linkData[i].lt,idP)})
-                                idP=[];
-                            }
-                        });
-                        if(idP.length)pl.push({'i':i, p:me.api.read(me.linkData[i].lt,idP)});
-
-                        /*une requête par id    
-                        ids.forEach(id=>pl.push({'i':i, p:me.api.read(me.linkData[i].lt,id)}))
-                        */
-                        /*une seule requête pour tous les ids
-                        pl.push({'i':i, p:me.api.read(me.linkData[i].lt,ids)});
-                        */
-                    }
+                  if(me.linkData[i].n=='Verbs'){
+                    //ajout du nom du modèle
+                    v.records.forEach(r=>r.modele=me.conjData.filter(c=>c.id_conj==r.id_conj)[0].modele);
+                  }
+                  me.linkData[i].data=v.records;
                 });
-                Promise.all(pl.map(d=>d.p)).then((vals) => {
-                    vals.forEach((val,j)=>{
-                        //me.linkData[pl[j].i].data=Array.isArray(val) ? val : [val];
-                        //
-                        if(Array.isArray(val))
-                            val.forEach(v=>me.linkData[pl[j].i].data.push(v));
-                        else
-                            me.linkData[pl[j].i].data.push(val);
-                    });
-                    showLinkData();
-                });    
+                showLinkData();
             });
         }
         function showLinkData(){
@@ -113,11 +86,8 @@ export class concept {
             me.tgtContent.selectAll('nav').remove();
             me.tgtContent.selectAll('ul').remove();
             me.tgtContent.selectAll('div').remove();
-            let dataLink = me.linkData.filter(d=>{
-                return d.data.length
-            }),
             //ajoute les outils
-            tools = `<div class="container-fluid">
+            let tools = `<div class="container-fluid">
               <a class="navbar-brand" href="#">${me.data.type+' '+me.data.lib}</a>
               <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarConcept" aria-controls="navbarConcept" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -153,31 +123,43 @@ export class concept {
                 .attr('role',"tablist"),
             cont = me.tgtContent.append('div')
                 .attr('class',"tab-content");
-            navtabs.selectAll('li').data(dataLink).enter().append('li')
+            navtabs.selectAll('li').data(me.linkData).enter().append('li')
                 .attr('class',"nav-item")
                 .attr('role',"presentation")
-                .append('button').attr('class',(d,i)=>i==0 ? "nav-link active" : "nav-link")
+                .append('button').attr('class',(d,i)=>{
+                      let c = i==0 && d.data.length ? "nav-link active text-bg-danger" : 
+                        d.data.length ? 'nav-link text-bg-secondary' : 'nav-link text-bg-secondarydark';
+                      return c; 
+                    })
                     .attr('data-bs-toggle',"pill")
-                    .attr('data-bs-target',d=>"#tab-pane-"+d.lt)
+                    .attr('data-bs-target',d=>"#tab-pane-"+d.t)
                     .attr('type',d=>"button")
                     .attr('role',d=>"tab")
-                    .attr('aria-controls',d=>"tab-pane-"+d.lt)
-                    .attr('aria-selected',(d,i)=>i==0 ? "true":"false")
-                    .attr('id',d=>"tab-"+d.lt)
+                    .attr('aria-controls',d=>"tab-pane-"+d.t)
+                    .attr('aria-selected',(d,i)=>i==0 && d.data.length ? "true":"false")
+                    .attr('id',d=>"tab-"+d.t)
                     .html(d=>d.n)
-                    .on('click',changeTab);
+                    .on('click',changeTab)
+                    .each((d,i)=>d.tab = new bootstrap.Tab('#tab-'+d.t));
             //construction des contenus
-            cont.selectAll('div').data(dataLink).enter().append('div')
+            cont.selectAll('div').data(me.linkData).enter().append('div')
                 .attr('class',(d,i)=>i==0 ? "tab-pane fade show active" : "tab-pane fade")
-                .attr('id',d=>"tab-pane-"+d.lt)
+                .attr('id',d=>"tab-pane-"+d.t)
                 .attr('role',"tabpanel")
-                .attr('aria-labelledby',d=>"tab-"+d.lt)
+                .attr('aria-labelledby',d=>"tab-"+d.t)
                 .attr('tabindex',0)
-                //.html(d=>"tab-"+d.lt)
-                .each(showLinkDataContent)
+                //.each(showLinkDataContent)
                 ;
             //ajout des évenements
             d3.select('#btnGenere').on('click',e=>genere(e,me.data));
+            //vérification du passage de paramètre
+            if(me.appUrl.params && me.appUrl.params.has('linkDataTab')){
+              let dt = me.linkData.filter(ld=>ld.n==me.appUrl.params.get('linkDataTab'))[0];
+              changeTab(null,dt);
+            }else{
+              //affiche la première tab avec du contenu            
+              changeTab(null,me.linkData.filter(ld=>ld.data.length)[0]);                
+            }
         }
         function showAddItem(e,d){
           if(d.mAdd)d.mAdd.m.show();
@@ -185,44 +167,54 @@ export class concept {
         function addItem(e,d){          
           //récupère les valeurs
           let valeurs = {};
-          d3.selectAll('.inptValue').each(s=>{
-            valeurs[s.attr('keycol')]=s.node().value;
-          })
+          d.mAdd.s.selectAll('.inptValue').nodes().forEach(n=>{
+            if(n.hasAttribute("keycol"))
+              if(n.getAttribute('type')=="checkbox"){
+                  valeurs[n.getAttribute('keycol')]=n.checked ? 1 : 0;
+              }else if(n.getAttribute('keycol')=='genre'){
+                if(valeurs[n.getAttribute('keycol')]===undefined)
+                  valeurs[n.getAttribute('keycol')]=n.checked ? n.getAttribute('value') : undefined;
+              }else 
+                valeurs[n.getAttribute('keycol')]=n.value;
+          });
           valeurs.id_concept=me.data.id_concept;
           //création de l'item
-          me.api.create(d.lt,valeurs).then(
+          me.api.create(d.t,valeurs).then(
             id=>{
                 //récupère l'item
-                me.api.read('gen_concepts',id).then(
-                    item=>{                            
-                        //ajoute l'item au tableur
-                        let i=0, row = me.hot.countRows();
-                        me.hot.alter('insert_row', row, 1);
-                        for (const p in item) {
-                            me.hot.setDataAtCell(row, i, item[p]);
-                            i++;
-                        }
-                        me.concepts.push(item);
-                        showConcept(null,id);
-                        mAddItem.hide();
+                me.api.read(d.t,id).then(
+                    item=>{
+                      d.data.push(item);                            
+                      d.mAdd.m.hide();
+                      changeTab(null,d);
                     }
                 );   
             }    
-        ).catch (
-            error=>console.log(error)
-        );            
-
-
-
+          ).catch (
+              error=>console.log(error)
+          );            
         }
         function changeTab(e,d){
-            if(d.hot)
-              d.hot.refreshDimensions();
-            else
-              showLinkDataContent(d);
+          me.tgtContent.selectAll('.tab-pane').attr('class','tab-pane fade');
+          me.tgtContent.select('#tab-pane-'+d.t).attr('class','tab-pane fade active show');
+          d.tab.show();
+          me.tgtContent.selectAll('.nav-link')
+            .attr('class',(n,i)=>{
+                let c = n.t==d.t ? "nav-link text-bg-danger" : 
+                  n.data.length ? 'nav-link text-bg-secondary' : 'nav-link text-bg-secondarydark';
+                return c; 
+              });
+          if(d.hot){
+            d.hot.refreshDimensions();
+            d.hot.updateSettings({ data: d.data } )
+          }else
+            showLinkDataContent(d);            
+          //ajoute le paramètre à l'url
+          me.appUrl.change('linkDataTab',d.n);
         }
         function showLinkDataContent(d, i){
-            let pane = d3.select("#tab-pane-"+d.lt), cont = pane.append('div')
+            if(d.data.length==0)return;
+            let pane = d3.select("#tab-pane-"+d.t), cont = pane.append('div')
                 .attr('class',"container-fluid");
             //création de la table
             let headers = Object.keys(d.data[0]),
@@ -236,7 +228,7 @@ export class concept {
                     height: (rect.height/3),
                     //width: rect.width,
                     rowHeights: 40,
-                    selectionMode:'range',
+                    selectionMode:'single',
                     manualRowResize: true,
                     colWidths: headers.length == 3 ? rect.width-100 : undefined,
                     renderAllRows: true,
@@ -249,8 +241,10 @@ export class concept {
                     filters: true,
                     hiddenColumns: {
                         // specify columns hidden by default
-                        columns: [0, 1]
+                        columns: headers.map((h,i)=>h.substring(0,3)=='id_' ? i : null).filter(k=>k!=null)
                     },
+                    editor: 'text',
+                    columns: getCellEditor(headers),
                     allowInsertColumn: false,
                     copyPaste: false,
                     contextMenu: {
@@ -259,42 +253,16 @@ export class concept {
                           console.log(key, selection, clickEvent);
                         },
                         items: {
-                          row_below: {
-                            name(){
-                                return `<button type="button" class="btn btn-sm btn-danger">
-                                <i class="fa-regular fa-square-plus"></i>
-                                </button>`;    
-                            }
-                          },
                           remove_row: {
                             name(){
                                 return `<button type="button" class="btn btn-sm btn-danger">
                                 <i class="fa-regular fa-trash-can"></i>
                                 </button>`;    
-                            }
-                          },
-                          copy: {
-                            name(){
-                                return `<button type="button" class="btn btn-sm btn-danger">
-                                <i class="fa-regular fa-copy"></i>
-                                </button>`;    
-                            }                            
-                          },
-                          /*
-                          paste: {
-                            name: 'Coller'
-                          },
-                          importer: { // Own custom option
-                            name() { // `name` can be a string or a function
-                              return '<i>Importer</i>'; // Name can contain HTML
                             },
-                            callback(key, selection, clickEvent) { // Callback for specific option
-                              setTimeout(() => {
-                                alert('Hello world!'); // Fire alert after menu close (with timeout)
-                              }, 0);
+                            callback(key, s, e) { // Callback for specific option
+                                verifDeleteItem(this,s);
                             }
-                          }
-                          */
+                          },
                           generer: { // Own custom option
                             name() { // `name` can be a string or a function
                               return `<button type="button" id="btnGenereItem" class="btn btn-sm btn-danger">
@@ -308,16 +276,30 @@ export class concept {
                           }
                         }
                       },
-                    afterSelection : (r, c) => {
-                        let h = this.__data__.hot, d = h.getDataAtRow(r),
-                          cols = h.getColHeader();
-                        cols.forEach((col,i)=>{
-                          if(col.substring(0,2)=='id')me.appUrl.change(col,d[i]);
-                        })
-        
-                      },
                     search: true,    
                 });
+              d.hot.addHook('afterSelection', (r, c) => {
+                let dr = d.hot.getDataAtRow(r),
+                  cols = d.hot.getColHeader();
+                cols.forEach((col,i)=>{
+                  if(col.substring(0,2)=='id')me.appUrl.change(col,dr[i]);
+                })
+              });
+              d.hot.addHook('afterChange', (changes,s) => {
+                changes?.forEach(([r, p, oldValue, newValue]) => {
+                  //mise à jour de l'item
+                  let data = {};
+                  data[p]=newValue;
+                  me.api.update(d.t,d.data[r][d.k],data).then(
+                      rs=>{
+                        console.log(rs);
+                      }   
+                  ).catch (
+                      error=>console.log(error)
+                  );            
+                });    
+              });
+
               if(me.appUrl.params && me.appUrl.params.has('id_gen')){
                 const search = d.hot.getPlugin('search');
                 const queryResult = search.query(me.appUrl.params.get('id_gen'));
@@ -326,18 +308,18 @@ export class concept {
                 })
               }
             //ajoute les champs de résultats
-            if(d.lt=="gen_generateurs"){
+            if(d.t=="gen_generateurs"){
               let htmlResult = `<div class="row">
                     <div class="col">
                       <h4>Generated texts</h4>
-                      <div id="genText"></div>
+                      <div id="genText${d.n}"></div>
                     </div>
                     <div class="col">
                       <h4>Generation structure</h4>
                       <div id="genStrct"></div>
                     </div>
                   </div>`;
-              cont.append('div').html(htmlResult),
+              cont.append('div').html(htmlResult);
               me.jsEditor = new JSONEditor({
                 target: document.getElementById("genStrct"),
                 props: {
@@ -352,8 +334,48 @@ export class concept {
               })
               //écouteur pour les modifications
               cont.selectAll(".jse-value").on('onchange',changeJsonEditor);
+            }else{
+              let htmlResult = `<div class="row">
+                    <div class="col">
+                      <h4>Generated texts</h4>
+                      <div id="genText${d.n}"></div>
+                    </div>
+                  </div>`;
+              cont.append('div').html(htmlResult);
             }
         }
+        function getCellEditor(headers){
+          let editors = [];
+          headers.forEach(h=>{
+              switch (h) {
+                case 'elision':
+                  editors.push({data:h, type: 'checkbox',uncheckedTemplate: '0',checkedTemplate: '1'})                  
+                  break;              
+                default:
+                  editors.push({data:h, type: 'text'})                  
+                  break;
+              }
+            })
+          return editors;
+        }
+        function verifDeleteItem(h, s){
+            m.setBody('<h3>Are you sure you want to delete this item?</h3>');
+            m.setBoutons([{'name':"Close"},
+                {'name':"Delete",'class':'btn-danger','fct':f=>deleteItem(h, s)}
+                ])                
+            m.show();    
+        }
+        function deleteItem(h,s){
+            let r = h.getDataAtRow(s[0].start.row),
+              k = h.getColHeader()[0],
+              ld = me.linkData.filter(l=>l.k==k);
+            me.api.delete(ld[0].t,r[0]).then(e=>{
+                h.alter('remove_row', s[0].start.row, 1);
+                m.hide();    
+            });
+        }
+
+
         function changeJsonEditor(u,p,r){
           let allowChangeKey=['lib'], item, path = parseFrom(r.patchResult.redo[0].path),
             key = path[path.length-1];
@@ -368,10 +390,52 @@ export class concept {
               'api':me.api,
               'appUrl':me.appUrl,
               'oeuvre':me.oeuvre
-            });
-            m.genere(r.valeur);
-            me.jsEditor.set({json:m.strct});
-            d3.select("#genText").html(m.texte);
+            }),conj,a,v,formes,rs,div,hot;            
+            switch (d.n) {
+              case 'Generators':                
+                m.genere(r.valeur);
+                me.jsEditor.set({json:m.strct});
+                me.tgtContent.select("#genText"+d.n).html(m.texte);
+                break;            
+              case 'Verbs':
+                conj = new conjugaisons({'api':me.api,'cont':me.tgtContent.select("#genText"+d.n)
+                  ,'v':r, oeuvre:me.oeuvre, 'appUrl':me.appUrl});
+                break;            
+              case 'Adjectives':
+                //génère les différentes formes de l'adjectif
+                a = `a_${r.id_concept}_${r.id_adj}`; v=""; rs = []; formes = [{'dtm':12,'sub':'m_joie'},{'dtm':12,'sub':'m_bonheur'}];
+                formes.forEach(f=>{
+                  /*forme obsolète
+                  v = `[${f.dtm}|${a}@${f.sub}]`;                  
+                  rs.push({'gen':v,'text':m.genere(v,true)});
+                  v = `[${(f.dtm+50)}|${a}@${f.sub}]`;
+                  rs.push({'gen':v,'text':m.genere(v,true)});
+                  */
+                  v= `[${f.dtm}|${f.sub}][=1|${a}]`
+                  rs.push({'gen':v,'text':m.genere(v,true)});
+
+                  v= `[${(f.dtm+50)}|${f.sub}][=1|${a}]`
+                  rs.push({'gen':v,'text':m.genere(v,true)});
+                });
+                me.tgtContent.select("#genText"+d.n).selectAll('div').remove();
+                div = me.tgtContent.select("#genText"+d.n).append('div');
+                hot = new Handsontable(div.node(), {data:rs});                
+                break;            
+              case 'Nouns':
+                  //génère les différentes formes de l'adjectif
+                  a = `m_${r.id_concept}_${r.id_sub}`; v=""; rs = []; formes = [{'dtm':12}];
+                  formes.forEach(f=>{
+                    v= `[${f.dtm}|${a}]`
+                    rs.push({'gen':v,'text':m.genere(v,true)});
+  
+                    v= `[${(f.dtm+50)}|${a}]`
+                    rs.push({'gen':v,'text':m.genere(v,true)});
+                  });
+                  me.tgtContent.select("#genText"+d.n).selectAll('div').remove();
+                  div = me.tgtContent.select("#genText"+d.n).append('div');
+                  hot = new Handsontable(div.node(), {data:rs});                
+                  break;            
+              }
         }
 
         function deleteItems (){

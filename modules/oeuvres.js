@@ -38,7 +38,7 @@ class oeuvres {
             me.api.create('gen_oeuvres', {'lib':nom,'licence':licence}).then(
                 idOeu=>{
                     //ajoute le dictionnaire de l'oeuvre
-                    me.api.create('gen_dicos', {'nom':nom,'type':'concept','langue':lang,'general':0,'licence':licence}).then(
+                    me.api.create('gen_dicos', {'nom':nom,'type':'concepts','langue':lang,'general':0,'licence':licence}).then(
                         idDico=>{
                             //ajoute le lien entre l'oeuvre, le dico et l'utilisateur
                             me.api.create('gen_oeuvres_dicos_utis', {'id_oeu':idOeu,'id_dico':idDico,'uti_id':me.auth.user.id});
@@ -217,6 +217,7 @@ class oeuvres {
         }
         function showDico(e,d,id){
             if(id)d=me.dicos.filter(r=>r.id_dico==id)[0];
+            else me.appUrl.changes([{k:'id_oeu',v:me.curOeuvre.id_oeu}]);
             me.appUrl.change('id_dico',d.id_dico);
             me.curDico=new dico({
                     'oeuvre':me,
@@ -227,20 +228,28 @@ class oeuvres {
                 });                    
         }
 
-        this.searchClass = function(t,q){
+        this.searchClass = function(t,q,o){
             let rs=[], r, f;
             //création des requêtes pour chaque dictionnaire de concept
             me.dicos.forEach(d=>{
                 if(d.type==t.type){
-                    f = {filter:['id_dico,eq,'+d.id_dico]}
+                    f = {filter:['id_dico,eq,'+d.id_dico]};
+                    if(o)f.order=o;
                     q.forEach(i=>f.filter.push(i));
                     r = me.api.syncList(t.t,f);
                     r.records.forEach(d=>rs.push(d));
                 }
             }); 
-            return rs;
-           
+            return rs;           
         }
+
+        this.getConjugaisons = function(){
+            if(!me.conjugaisons){
+                me.conjugaisons = me.searchClass({'type':'conjugaisons','t':'gen_conjugaisons'},[],'modele,asc');
+            }
+            return me.conjugaisons;
+        }
+
         this.init();
     }
 }

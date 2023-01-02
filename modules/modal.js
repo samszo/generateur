@@ -161,8 +161,8 @@ export let modalAddDicoItem = `
         </div>
         <div class="modal-body">                    
             <div class="input-group mb-3">
-                <span class="input-group-text" id="itemLib">Wording</span>
-                <input id="inpItemLib" type="text" class="form-control" placeholder="Wording" aria-label="name" aria-describedby="itemLib">
+                <span class="input-group-text" id="itemLib">Label</span>
+                <input id="inpItemLib" type="text" class="form-control" placeholder="label" aria-label="name" aria-describedby="itemLib">
             </div>            
             <div class="input-group mb-3">
                 <span class="input-group-text" id="itemType">Type</span>
@@ -185,14 +185,170 @@ export let modalAddConceptGenerators = `
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            <input class="conceptType" name="conceptType" type="hidden" value="Generators">
             <div class="form-floating">
                 <textarea class="form-control inptValue" keycol='valeur' placeholder="Put the value of generator" id="genValue" style="height: 100px"></textarea>
                 <label for="genValue">Value for the generator</label>
             </div>        
         </div>                          
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+    </div>
+    </div>
+`;
+//modal pour l'ajout d'un adjectif dans un concept
+export let modalAddConceptAdjectives = `
+    <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title">Adding a new adjective</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="adjChoixElision">Elision</span>
+                <div aria-describedby="adjChoixElision" class="m-2">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input inptValue" keycol='elision' type="checkbox" name="adjElision" id="adjElisionY" >
+                    <label class="form-check-label" for="adjElisionY">Yes</label>
+                </div>                        
+            </div>
+
+
+            <div class="input-group my-3">
+                <span class="input-group-text" id="adjPrefix">Prefix</span>
+                <input type="text" class="form-control inptValue" keycol='prefix' placeholder="prefix" aria-label="name" aria-describedby="adjPrefix">
+            </div>            
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="adjf_s"><i class="fa-solid fa-venus"></i></span>
+                <input type="text" class="form-control inptValue" keycol='f_s' aria-label="name" aria-describedby="adjf_s">
+            </div>            
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="adjf_p"><i class="fa-solid fa-venus-double"></i></span>
+                <input type="text" class="form-control inptValue" keycol='f_p' aria-label="name" aria-describedby="adjf_p">
+            </div>            
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="adjm_s"><i class="fa-solid fa-mars"></i></span>
+                <input type="text" class="form-control inptValue" keycol='m_s' aria-label="name" aria-describedby="adjm_s">
+            </div>            
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="adjm_p"><i class="fa-solid fa-mars-double"></i></span>
+                <input type="text" class="form-control inptValue" keycol='m_p' aria-label="name" aria-describedby="adjm_p">
+            </div>            
+        </div>                          
+        <div class="modal-footer">
+        </div>
+    </div>
+    </div>
+`;
+//modal pour l'ajout d'un adjectif dans un concept
+export let modalAddConceptNouns = `
+    <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title">Adding a new noun</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="nounChoixElision">Elision</span>
+                <div aria-describedby="nounChoixElision" class="m-2">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input inptValue" keycol='elision' type="checkbox" name="nounElision" id="nounElisionY" >
+                    <label class="form-check-label" for="nounElisionY">Yes</label>
+                </div>                        
+            </div>
+
+
+            <div class="input-group my-3">
+                <span class="input-group-text" id="nounPrefix">Prefix</span>
+                <input type="text" class="form-control inptValue" keycol='prefix' placeholder="prefix" aria-label="name" aria-describedby="nounPrefix">
+            </div>
+            
+            
+            <div class="input-group my-3">
+                <span class="input-group-text" id="choixGenre">Gender</span>
+                <div aria-describedby="choixGenre" class="m-2">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input inptValue" keycol='genre' type="radio" name="nounGenre" id="nounGenreF" value="2">
+                        <label class="form-check-label" for="nounGenreF"><i class="fa-solid fa-venus"></i></label>
+                    </div>                        
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input inptValue" keycol='genre' type="radio" name="nounGenre" id="nounGenreH" value="1">
+                        <label class="form-check-label" for="nounGenreH"><i class="fa-solid fa-mars"></i></label>
+                    </div>                        
+                </div>
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="noun_s">Singular</span>
+                <input type="text" class="form-control inptValue" keycol='s' aria-label="name" aria-describedby="noun_s">
+            </div>            
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="noun_p">Plural</span>
+                <input type="text" class="form-control inptValue" keycol='p' aria-label="name" aria-describedby="noun_p">
+            </div>            
+        </div>                          
+        <div class="modal-footer">
+        </div>
+    </div>
+    </div>
+`;
+//modal pour l'ajout d'un adjectif dans un concept
+export let modalAddConceptSyntagms = `
+    <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title">Adding a new syntagm</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+
+
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="syntagmNum">Num</span>
+                <input type="text" class="form-control inptValue" keycol='num' placeholder="num" aria-label="num" aria-describedby="syntagmNum">
+            </div>
+            
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="syntagmLib">Label</span>
+                <input type="text" class="form-control inptValue" keycol='lib' placeholder="label" aria-label="lib" aria-describedby="syntagmLib">
+            </div>
+
+        </div>                          
+        <div class="modal-footer">
+        </div>
+    </div>
+    </div>
+`;
+//modal pour l'ajout d'un verbe dans un concept
+export let modalAddConceptVerbs = `
+    <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title">Adding a new verb</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="verbChoixElision">Elision</span>
+                <div aria-describedby="verbChoixElision" class="m-2">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input inptValue" keycol='elision' type="checkbox" name="verbElision" id="verbElisionY" >
+                    <label class="form-check-label" for="verbElisionY">Yes</label>
+                </div>                        
+            </div>
+
+
+            <div class="input-group my-3">
+                <span class="input-group-text" id="verbPrefix">Prefix</span>
+                <input type="text" class="form-control inptValue" keycol='prefix' placeholder="prefix" aria-label="name" aria-describedby="verbPrefix">
+            </div>
+            <div class="input-group mb-3">
+                <label class="input-group-text" for="verbConj">Conjugation</label>
+                <select class="form-select inptValue" keycol='id_conj' id="verbConj">
+                </select>
+            </div>
+        </div>                          
+        <div class="modal-footer">
         </div>
     </div>
     </div>
