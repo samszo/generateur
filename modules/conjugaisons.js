@@ -5,7 +5,7 @@ export class conjugaisons {
         var me = this;
         this.api = params.api;
         this.tgtContent = params.cont;
-        this.v = params.v;
+        this.v = params.v ? params.v : false;
         this.oeuvre = params.oeuvre;
         this.appUrl = params.appUrl ? params.appUrl : false;
         this.init = function () {
@@ -60,15 +60,23 @@ export class conjugaisons {
             changeTab(null,temps[0]);            
         }
         function genereConjugaisons(d){
-            let m = new moteur({'api':me.api,'oeuvre':me.oeuvre}),gen,
+            let m = new moteur({'api':me.api,'oeuvre':me.oeuvre}),gen, cpt, v,
             pronoms = d.num == 8 || d.num == 9 ? [0] : [1,2,3,4,5,7];
+            //récupère le premier verbe ayant le modèle
+            if(me.v.modele){
+                v = me.api.syncList('gen_verbes',{filter:'id_conj,eq,'+me.v.id_conj}).records[0];
+            }else v = me.v;
             //génére la conjugaison du verbe
             //me.oeuvre.rsProSuj.forEach(s=>{
             //    gen = `[0${d.num}${s.num}00000|v_${me.v.id_concept}_${me.v.id_verbe}]`;
             pronoms.forEach(s=>{
-                    gen = `[0${d.num}${s}00000|v_${me.v.id_concept}_${me.v.id_verbe}]`;
+                    gen = `[0${d.num}${s}00000|v_${v.id_concept}_${v.id_verbe}]`;
                 m.genere(gen);
-                d.data.push({'generator':gen,'conjugaison':m.texte});
+                d.data.push({
+                    'id_trm':m.strct[0].terminaison[0].id_trm
+                    ,'generator':gen,'conjugaison':m.texte                    
+                    , 'terminaison':m.strct[0].terminaison[0].lib
+                });
             })            
 
         }            
@@ -85,7 +93,7 @@ export class conjugaisons {
                     data: d.data,
                     rowHeaders: true,
                     colHeaders: headers,
-                    height: (rect.height/3),
+                    height: me.v.modele ? rect.height : (rect.height/3),
                     //width: rect.width,
                     rowHeights: 40,
                     selectionMode:'range',
@@ -98,8 +106,28 @@ export class conjugaisons {
                     filters: true,
                     allowInsertColumn: false,
                     copyPaste: false,
-                    search: true,    
+                    search: true,
+                    editor: 'text',
+                    hiddenColumns: {
+                        // specify columns hidden by default
+                        columns: headers.map((h,i)=>h.substring(0,3)=='id_' ? i : null).filter(k=>k!=null)
+                    },
                 });
+                d.hot.addHook('afterChange', (changes,s) => {
+                    changes?.forEach(([r, p, oldValue, newValue]) => {
+                        if(p=='terminaison'){
+                            //mise à jour de l'item
+                            me.api.update('gen_terminaisons',d.data[r]['id_trm'],{'lib':newValue}).then(
+                                rs=>{
+                                    console.log(rs);
+                                }   
+                            ).catch (
+                                error=>console.log(error)
+                            );            
+                        }
+                    });    
+                  });
+    
         }
         function changeTab(e,d){
             d.tab.show();

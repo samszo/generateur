@@ -16,16 +16,16 @@ export class moteur {
         this.ordre = 0; 
         this.potentiel = 0;
         this.tables = {
-            c:{type:'concepts',t:'gen_concepts',k:['lib','type']},
-            d:{type:'déterminants',t:'gen_determinants',k:'num'},
-            p:{type:'pronoms',t:'gen_pronoms',k:['num','type']},
-            t:{type:'terminaisons',t:'gen_terminaisons',k:['id_conj','num']},
-			s:{type:'syntagmes',t:'gen_syntagmes',k:'num'},
+            c:{type:'concepts',t:'gen_concepts',pk:'id_concept',k:['lib','type'],'content':true,mAdd:true},
+            d:{type:'déterminants',t:'gen_determinants',k:'num','content':false},
+            p:{type:'pronoms',t:'gen_pronoms',k:['num','type'],'content':false},
+            t:{type:'terminaisons',t:'gen_terminaisons',k:['id_conj','num'],'content':false},
+			s:{type:'syntagmes',t:'gen_syntagmes',pk:'id_syn',k:'num','content':false,mAdd:true},
 			v:{type:'verbes',t:'gen_verbes',k:'id_verbe'},
 			a:{type:'adjectifs',t:'gen_adjectifs',k:'id_adj'},
 			m:{type:'substantifs',t:'gen_substantifs',k:'id_sub'},
-			n:{type:'négations',t:'gen_negations',k:'id_negation'},
-			conj:{type:'conjugaisons',t:'gen_conjugaisons',k:'id_conj'},
+			n:{type:'négations',t:'gen_negations',k:'id_negation','content':false},
+			conj:{type:'conjugaisons',t:'gen_conjugaisons',pk:'id_conj',k:'id_conj','content':true},
         }; 
 		this.segments = [];
 		this.coupures = [];
@@ -40,6 +40,7 @@ export class moteur {
 
         this.genere = function(g, getTexte=true){
 			let c;
+			d3.select("body").style("cursor", "progress");
             //décompose le générateur
             me.ordre = 0
             for (var i = 0; i < g.length; i++) {
@@ -70,6 +71,7 @@ export class moteur {
                 me.ordre ++;            
 			}			 
 			if(getTexte)return me.genereTexte();
+			d3.select("body").style("cursor", "default");
         }
 
 	this.genereTexte = function (){
@@ -432,7 +434,7 @@ export class moteur {
 				temps= 0;
 			}
 			//formule de calcul de la terminaison temps + persones
-			num = (temps*6)+strct.terminaison-1;
+			num = (temps*6)+parseInt(strct.terminaison)-1;
 			 		
 			if(strct.determinant_verbe[1]==8){
 				num= 36;
@@ -444,7 +446,7 @@ export class moteur {
 		//correction terminaison négative
 		if(num == -1)num = 2;
 					
-		txt = getTerminaison(strct.verbe.id_conj,num);
+		txt = getTerminaison(strct,num);
 
 		//gestion des terminaisons ---
 		if(txt=="---")txt="";
@@ -452,14 +454,16 @@ export class moteur {
 		strct.verbe.term = txt;
 	}
 
-	function getTerminaison(id, n){
+	function getTerminaison(strct, n){
 
         //TODO:gestion du cache
         //récupère les concepts correspondant à la class
-        let f = {filter:[me.tables.t.k[0]+',eq,'+id,me.tables.t.k[1]+',eq,'+n]},
+        let f = {filter:[me.tables.t.k[0]+',eq,'+strct.verbe.id_conj,me.tables.t.k[1]+',eq,'+n]},
 			r = me.api.syncList(me.tables.t.t,f).records;
-		if(r && r.length)return r[0].lib;
-		else me.strct[me.ordre].error = "Terminaison introuvable :"+id+' '+n+"<br/>";
+		if(r && r.length){
+			strct.terminaison = r;
+			return r[0].lib;
+		}else me.strct[me.ordre].error = "Terminaison introuvable :"+strct.verbe.id_conj+' '+n+"<br/>";
 		return "";
 
 	}
@@ -749,6 +753,9 @@ export class moteur {
 				case "s":
 					getSyntagme(c,false);
 					break;
+				default:
+					getClassSpe(c);
+					break;	
 			}
 		}else if(c.substring(0,5)=="carac"){
 			//la class est un caractère
@@ -768,14 +775,7 @@ export class moteur {
 			}        
 			if(c.substring(0,1)=="=" && c.substring(1,2)=="x"){
 				getBlocage(c);	
-			}        
-			
-			//vérifie si la class est un type spécifique
-			p = c.indexOf("-");
-			if(p>0){
-				cSpe = c.substring(0,p)+"_"+c.substring(p+1);
-				getClassSpe(cSpe);
-			}			
+			}        			
 		}
     }
 

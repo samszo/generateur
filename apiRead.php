@@ -12379,9 +12379,8 @@ namespace Tqdev\PhpCrudApi {
         'password' => 'samszo',
         'database' => 'generateur',
         'customControllers' => 'apiStats',
-        "middlewares"=>'apiKeyDbAuth,authorization',
-        "apiKeyDbAuth.usersTable"=>'flux_uti',
-        "apiKeyDbAuth.apiKeyColumn"=>'flux_api_ident',
+        "middlewares"=>'cors',
+        "cors.allowMethods"=>'GET',
     ]);
     $request = RequestFactory::fromGlobals();
     $api = new Api($config);

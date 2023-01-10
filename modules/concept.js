@@ -19,27 +19,28 @@ export class concept {
         this.conjData;
         this.jsEditor;
         this.jsPath;
-        var m=new modal();
+        var m=new modal(), contResult, contHeight,userAllowed;
         this.init = function () {
             me.linkData=[
                 {n:'Adjectives',t:'gen_adjectifs',k:'id_adj',data:[],mAdd:true},
                 {n:'Generators',t:'gen_generateurs',k:'id_gen',data:[],mAdd:true},
                 {n:'Nouns',t:'gen_substantifs',k:'id_sub',data:[],mAdd:true},
-                //uniqueemnt dans le dictionnaire général {n:'Syntagms',t:'gen_syntagmes',k:'id_syn',data:[],mAdd:true},
+                //uniquement dans le dictionnaire général {n:'Syntagms',t:'gen_syntagmes',k:'id_syn',data:[],mAdd:true},
                 {n:'Verbs',t:'gen_verbes',k:'id_verbe',data:[],mAdd:true},
             ];
             if(me.sync)getSyncLinkData();
             else{
-              //construction des modals pour chaque type de lien
+              userAllowed = me.oeuvre.auth.userAdmin || me.oeuvre.auth.userAllowed(me.dico.id_dico,me.oeuvre.dicosUti);
+              getLinkData();
+              //construction des modals pour chaque type de lien              
               me.linkData.forEach(ld=>{
                 if(ld.mAdd){
-                  ld.mAdd = m.add('modalAddConcept'+ld.n);
-                  ld.mAdd.s.select('.modal-footer').selectAll('button').data([ld]).join(
-                    enter=>enter.append('button')
+                  ld.mAdd = m.add('modalAddConcept'+ld.n);                  
+                  ld.mAdd.s.select('.modal-footer').selectAll('button').remove();
+                  ld.mAdd.s.select('.modal-footer').selectAll('button').data([ld]).enter().append('button')
                       .attr('type',"button")
                       .attr('class',"btn btn-primary").html('Add new')
-                      .on('click',addItem)                    
-                  );
+                      .on('click',addItem);
                   if(ld.n=="Verbs"){
                     //ajoute les options de conjugaison
                     me.conjData = me.oeuvre.getConjugaisons();
@@ -53,7 +54,6 @@ export class concept {
                   }
                 }
               })
-              getLinkData();
             } 
         }
         function getSyncLinkData(){
@@ -88,7 +88,7 @@ export class concept {
             me.tgtContent.selectAll('div').remove();
             //ajoute les outils
             let tools = `<div class="container-fluid">
-              <a class="navbar-brand" href="#">${me.data.type+' '+me.data.lib}</a>
+              <a class="navbar-brand" href="#">[${me.data.type+'_'+me.data.lib}]</a>
               <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarConcept" aria-controls="navbarConcept" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
               </button>
@@ -98,31 +98,37 @@ export class concept {
                     <button type="button" id="btnGenere" class="btn btn-sm btn-danger">
                         <i class="fa-solid fa-shuffle"></i>
                     </button>
-                  </li>
-                  <li class="nav-item mx-2">
-                    <button type="button" class="btn btn-sm btn-danger">
-                        <i class="fa-regular fa-trash-can"></i>
-                    </button>
-                  </li>
-                  <li class="nav-item dropdown mx-2">
-                    <button type="button" class="btn btn-sm btn-danger dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fa-regular fa-square-plus"></i>
-                    </button>
-                    <ul class="dropdown-menu" id="ddmAddCptItem" >
-                    </ul>
-                  </li>
+                  </li>`
+            if(userAllowed){
+              tools += `<li class="nav-item mx-2">
+                  <button type="button" class="btn btn-sm btn-danger">
+                      <i class="fa-regular fa-trash-can"></i>
+                  </button>
+                </li>
+                <li class="nav-item dropdown mx-2">
+                  <button type="button" class="btn btn-sm btn-danger dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      <i class="fa-regular fa-square-plus"></i>
+                  </button>
+                  <ul class="dropdown-menu" id="ddmAddCptItem" >
+                  </ul>
+                </li>`;
+            }
+            tools += `      
                 </ul>
               </div>
-            </div>`,
-            toolsNav = me.tgtContent.append('nav').attr('class','navbar navbar-expand-lg bg-light').html(tools);
+            </div>`;
+            let toolsNav = me.tgtContent.append('nav').attr('class','navbar navbar-expand-lg bg-light').html(tools);
             toolsNav.select('#ddmAddCptItem').selectAll('li').data(me.linkData).enter().append('li')
               .append('a').attr('class',"dropdown-item").html(ld=>ld.n).on('click',showAddItem);
             //construction de la barre de nav
-            let navtabs = me.tgtContent.append('ul')
+            let cont, navtabs = me.tgtContent.append('ul')
                 .attr('class',"nav nav-pills mb-3")
                 .attr('role',"tablist"),
+            rectTN = toolsNav.node().getBoundingClientRect(),
+            rect = me.tgtContent.node().getBoundingClientRect();
+            contHeight=((rect.height/2)-rectTN.height);
             cont = me.tgtContent.append('div')
-                .attr('class',"tab-content");
+                .attr('class',"tab-content").style('height',(contHeight/1.5)+'px');
             navtabs.selectAll('li').data(me.linkData).enter().append('li')
                 .attr('class',"nav-item")
                 .attr('role',"presentation")
@@ -150,8 +156,10 @@ export class concept {
                 .attr('tabindex',0)
                 //.each(showLinkDataContent)
                 ;
+            //construction du div de résultat
+            contResult = me.tgtContent.append('div').style('height',contHeight+'px');            
             //ajout des évenements
-            d3.select('#btnGenere').on('click',e=>genere(e,me.data));
+            d3.select('#btnGenere').on('click',e=>genere(e,me.data,'concept'));
             //vérification du passage de paramètre
             if(me.appUrl.params && me.appUrl.params.has('linkDataTab')){
               let dt = me.linkData.filter(ld=>ld.n==me.appUrl.params.get('linkDataTab'))[0];
@@ -195,6 +203,7 @@ export class concept {
           );            
         }
         function changeTab(e,d){
+          contResult.selectAll('div').remove();
           me.tgtContent.selectAll('.tab-pane').attr('class','tab-pane fade');
           me.tgtContent.select('#tab-pane-'+d.t).attr('class','tab-pane fade active show');
           d.tab.show();
@@ -225,7 +234,7 @@ export class concept {
                     data: d.data,
                     rowHeaders: true,
                     colHeaders: headers,
-                    height: (rect.height/3),
+                    height: (rect.height),
                     //width: rect.width,
                     rowHeights: 40,
                     selectionMode:'single',
@@ -233,7 +242,7 @@ export class concept {
                     colWidths: headers.length == 3 ? rect.width-100 : undefined,
                     renderAllRows: true,
                     className:'htJustify',
-                    licenseKey: 'non-commercial-and-evaluation',                
+                    licenseKey: 'non-commercial-and-evaluation',
                     renderAllRows:true,
                     customBorders: true,
                     dropdownMenu: true,
@@ -307,42 +316,6 @@ export class concept {
                   if(r.col==0)d.hot.selectCell(r.row, r.col);
                 })
               }
-            //ajoute les champs de résultats
-            if(d.t=="gen_generateurs"){
-              let htmlResult = `<div class="row">
-                    <div class="col">
-                      <h4>Generated texts</h4>
-                      <div id="genText${d.n}"></div>
-                    </div>
-                    <div class="col">
-                      <h4>Generation structure</h4>
-                      <div id="genStrct"></div>
-                    </div>
-                  </div>`;
-              cont.append('div').html(htmlResult);
-              me.jsEditor = new JSONEditor({
-                target: document.getElementById("genStrct"),
-                props: {
-                  mode: 'tree',
-                  onChange:changeJsonEditor 
-                  /*(updatedContent, previousContent, { contentErrors, patchResult }) => {
-                    // content is an object { json: JSONValue } | { text: string }
-                    console.log('onChange', { updatedContent, previousContent, contentErrors, patchResult })
-                    content = updatedContent
-                  }*/
-                }
-              })
-              //écouteur pour les modifications
-              cont.selectAll(".jse-value").on('onchange',changeJsonEditor);
-            }else{
-              let htmlResult = `<div class="row">
-                    <div class="col">
-                      <h4>Generated texts</h4>
-                      <div id="genText${d.n}"></div>
-                    </div>
-                  </div>`;
-              cont.append('div').html(htmlResult);
-            }
         }
         function getCellEditor(headers){
           let editors = [];
@@ -359,11 +332,16 @@ export class concept {
           return editors;
         }
         function verifDeleteItem(h, s){
+          if(userAllowed){
             m.setBody('<h3>Are you sure you want to delete this item?</h3>');
             m.setBoutons([{'name':"Close"},
                 {'name':"Delete",'class':'btn-danger','fct':f=>deleteItem(h, s)}
-                ])                
-            m.show();    
+                ]);                
+          }else{
+            m.setBody('<h3>You are not authorized to delete this item</h3>');
+            m.setBoutons([{'name':"Close"}]);                
+          }
+          m.show();    
         }
         function deleteItem(h,s){
             let r = h.getDataAtRow(s[0].start.row),
@@ -383,59 +361,104 @@ export class concept {
             item = getIn(u.json,path.slice(0, -1));
           }          
         }
+        function addChampResult(d){
+            //ajoute les champs de résultats
+            contResult.selectAll('div').remove();
+            if(d=='concept' || d.t=="gen_generateurs"){
+              let htmlResult = `<div class="row h-100">
+                    <div class="col">
+                      <h4>Generated texts</h4>
+                      <div id="genText${d.n}"></div>
+                    </div>
+                    <div class="col">
+                      <h4>Generation structure</h4>
+                      <div id="genStrct"></div>
+                    </div>
+                  </div>`;
+              contResult.html(htmlResult);
+              me.jsEditor = new JSONEditor({
+                target: document.getElementById("genStrct"),
+                props: {
+                  mode: 'tree',
+                  onChange:changeJsonEditor 
+                  /*(updatedContent, previousContent, { contentErrors, patchResult }) => {
+                    // content is an object { json: JSONValue } | { text: string }
+                    console.log('onChange', { updatedContent, previousContent, contentErrors, patchResult })
+                    content = updatedContent
+                  }*/
+                }
+              })
+              //écouteur pour les modifications
+              contResult.selectAll(".jse-value").on('onchange',changeJsonEditor);
+            }else{
+              let htmlResult = `<div class="row">
+                    <div class="col">
+                      <h4>Generated texts</h4>
+                      <div id="genText${d.n}"></div>
+                    </div>
+                  </div>`;
+              contResult.html(htmlResult);
+            }
+
+        }
         function genere(e,r,d){
-            if(!r[d.k])r=d.data.filter(i=>i[d.k]==r[0])[0];
-            me.appUrl.change(d.k,r[d.k]);
-            let m = new moteur({
-              'api':me.api,
-              'appUrl':me.appUrl,
-              'oeuvre':me.oeuvre
-            }),conj,a,v,formes,rs,div,hot;            
-            switch (d.n) {
-              case 'Generators':                
-                m.genere(r.valeur);
-                me.jsEditor.set({json:m.strct});
-                me.tgtContent.select("#genText"+d.n).html(m.texte);
-                break;            
-              case 'Verbs':
-                conj = new conjugaisons({'api':me.api,'cont':me.tgtContent.select("#genText"+d.n)
-                  ,'v':r, oeuvre:me.oeuvre, 'appUrl':me.appUrl});
-                break;            
-              case 'Adjectives':
+          let conj,a,v,formes,rs,div,hot, m = new moteur({
+            'api':me.api,
+            'appUrl':me.appUrl,
+            'oeuvre':me.oeuvre
+            });
+          addChampResult(d);            
+          if(d=='concept'){
+            m.genere(`[${r.type}_${r.lib}]`);
+            me.jsEditor.set({json:m.strct});
+            me.tgtContent.select("#genText"+d.n).html(m.texte);
+            return;
+          }
+          if(!r[d.k])r=d.data.filter(i=>i[d.k]==r[0])[0];
+          me.appUrl.change(d.k,r[d.k]);
+          switch (d.n) {
+            case 'Generators':                
+              m.genere(r.valeur);
+              me.jsEditor.set({json:m.strct});
+              me.tgtContent.select("#genText"+d.n).html(m.texte);
+              break;            
+            case 'Verbs':
+              conj = new conjugaisons({'api':me.api,'cont':me.tgtContent.select("#genText"+d.n)
+                ,'v':r, oeuvre:me.oeuvre, 'appUrl':me.appUrl});
+              break;            
+            case 'Adjectives':
+              //génère les différentes formes de l'adjectif
+              a = `a_${r.id_concept}_${r.id_adj}`; v=""; rs = []; formes = [{'dtm':12,'sub':'m_joie'},{'dtm':12,'sub':'m_bonheur'}];
+              formes.forEach(f=>{
+                /*forme obsolète
+                v = `[${f.dtm}|${a}@${f.sub}]`;                  
+                rs.push({'gen':v,'text':m.genere(v,true)});
+                v = `[${(f.dtm+50)}|${a}@${f.sub}]`;
+                rs.push({'gen':v,'text':m.genere(v,true)});
+                */
+                v= `[${f.dtm}|${f.sub}][=1|${a}]`
+                rs.push({'gen':v,'text':m.genere(v,true)});
+
+                v= `[${(f.dtm+50)}|${f.sub}][=1|${a}]`
+                rs.push({'gen':v,'text':m.genere(v,true)});
+              });
+              div = me.tgtContent.select("#genText"+d.n);
+              hot = new Handsontable(div.node(), {data:rs,height:contHeight,licenseKey: 'non-commercial-and-evaluation'});                
+              break;            
+            case 'Nouns':
                 //génère les différentes formes de l'adjectif
-                a = `a_${r.id_concept}_${r.id_adj}`; v=""; rs = []; formes = [{'dtm':12,'sub':'m_joie'},{'dtm':12,'sub':'m_bonheur'}];
+                a = `m_${r.id_concept}_${r.id_sub}`; v=""; rs = []; formes = [{'dtm':12}];
                 formes.forEach(f=>{
-                  /*forme obsolète
-                  v = `[${f.dtm}|${a}@${f.sub}]`;                  
-                  rs.push({'gen':v,'text':m.genere(v,true)});
-                  v = `[${(f.dtm+50)}|${a}@${f.sub}]`;
-                  rs.push({'gen':v,'text':m.genere(v,true)});
-                  */
-                  v= `[${f.dtm}|${f.sub}][=1|${a}]`
+                  v= `[${f.dtm}|${a}]`
                   rs.push({'gen':v,'text':m.genere(v,true)});
 
-                  v= `[${(f.dtm+50)}|${f.sub}][=1|${a}]`
+                  v= `[${(f.dtm+50)}|${a}]`
                   rs.push({'gen':v,'text':m.genere(v,true)});
                 });
-                me.tgtContent.select("#genText"+d.n).selectAll('div').remove();
-                div = me.tgtContent.select("#genText"+d.n).append('div');
-                hot = new Handsontable(div.node(), {data:rs});                
-                break;            
-              case 'Nouns':
-                  //génère les différentes formes de l'adjectif
-                  a = `m_${r.id_concept}_${r.id_sub}`; v=""; rs = []; formes = [{'dtm':12}];
-                  formes.forEach(f=>{
-                    v= `[${f.dtm}|${a}]`
-                    rs.push({'gen':v,'text':m.genere(v,true)});
-  
-                    v= `[${(f.dtm+50)}|${a}]`
-                    rs.push({'gen':v,'text':m.genere(v,true)});
-                  });
-                  me.tgtContent.select("#genText"+d.n).selectAll('div').remove();
-                  div = me.tgtContent.select("#genText"+d.n).append('div');
-                  hot = new Handsontable(div.node(), {data:rs});                
-                  break;            
-              }
+                div = me.tgtContent.select("#genText"+d.n);
+                hot = new Handsontable(div.node(), {data:rs,height:contHeight,licenseKey: 'non-commercial-and-evaluation'});                
+              break;            
+          }
         }
 
         function deleteItems (){

@@ -12,17 +12,19 @@ let s = new sql();
 let
 auth = new a.auth({'navbar':d3.select('#navbarMain'),
         apiOmk:'http://localhost/omk_arcanes/api/',
-        //
-        //
-    }),
-oe = new o.oeuvres({
-    'auth':auth,
-    'tgtMenu':document.getElementById('menuOeuvres'),
-    'tgtList':document.getElementById('listDicos'),
-    'tgtContent':document.getElementById('contentDetails'),
-    'appUrl':new u.appUrl({
-        'tgtIn':d3.select("#inptUrl").node(),
-        'tgtBtn':d3.select("#url-addon"),
-        'url':new URL(document.location)
-    })
-});
+    });
+auth.getUser(initOeuvre);
+function initOeuvre(){
+    let oe = new o.oeuvres({
+        'auth':auth,
+        'tgtMenu':document.getElementById('menuOeuvres'),
+        'tgtList':document.getElementById('listDicos'),
+        'tgtContent':document.getElementById('contentDetails'),
+        'appUrl':new u.appUrl({
+            'tgtIn':d3.select("#inptUrl").node(),
+            'tgtBtn':d3.select("#url-addon"),
+            'url':new URL(document.location)
+        })
+    });
+}
+

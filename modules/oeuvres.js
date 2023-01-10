@@ -13,11 +13,12 @@ class oeuvres {
         this.apiUrl = params.apiUrl ? params.apiUrl : 'api.php'; 
         this.apiStatsUrl = this.apiUrl+'/apiStats/'; 
         this.auth = params.auth ? params.auth : false;
-        this.api = jscrudapi(this.apiUrl);
+        this.api = this.auth.api;
         this.curOeuvre;
         this.curDico;
         this.oeuvres;
         this.dicos=[];
+        this.dicosUti=[];
         var mAdd,mMessage=new modal(), mAddOeuvre, mAddOeuvreBody;
         this.init = function () {
             getOeuvres();
@@ -104,10 +105,14 @@ class oeuvres {
                 d3.select(me.tgtContent).selectAll('div').remove();
                 let list = d3.select(me.tgtList)
                 list.select('h1').remove();
+                let tools = me.auth.userAdmin || oeu.uti_id == me.auth.user.id ?
+                    '<button id="btnDeleteOeuvre" type="button" class="btn btn-danger btn-sm mx-2"><i class="fa-solid fa-trash-can"></i></button>'
+                    : "";
+
                 list.append('h1').html(
-                    oeu.lib+'<button id="btnDeleteOeuvre" type="button" class="btn btn-danger btn-sm mx-2"><i class="fa-solid fa-trash-can"></i></button>'
+                    oeu.lib+tools
                 );
-                list.select('#btnDeleteOeuvre').on('click',verifDeleteOeuvre)
+                if(tools)list.select('#btnDeleteOeuvre').on('click',verifDeleteOeuvre);
                 showDicos(oeu);
             }
         }
@@ -136,6 +141,9 @@ class oeuvres {
             p.push(me.api.delete('gen_oeuvres',me.curOeuvre.id_oeu));
 
             Promise.all(p).then((values) => {
+                d3.select('#listDicos').select('h1').remove();                
+                d3.select('#listDicos').selectAll('div').remove();                
+                this.init();
                 mMessage.hide();
             });
 
@@ -156,10 +164,11 @@ class oeuvres {
             //récupère les dicos de l'oeuvre
             me.api.list('gen_oeuvres_dicos_utis',{filter:'id_oeu,eq,'+oeu.id_oeu}).then(
                 result=>{
-                    let ids=[]; 
-                    result.records.forEach(d => {
+                    let ids=[];
+                    me.dicosUti = result.records; 
+                    me.dicosUti.forEach(d => {
                         if(!ids.includes(d.id_dico))ids.push(d.id_dico);
-                    });
+                    });                    
                     if(ids.length==0)return;
                     me.api.read('gen_dicos',ids).then(
                         result=>{

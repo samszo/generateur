@@ -7,14 +7,21 @@ class auth {
         this.navbar = params.navbar ? params.navbar : 'navbarMain';
         this.apiOmk = params.apiOmk;
         this.apiUrl = params.apiUrl ? params.apiUrl : 'api.php'; 
-        this.api = jscrudapi(this.apiUrl);
+        this.apiReadUrl = params.apiReadUrl ? params.apiReadUrl : 'apiRead.php'; 
+        this.api;
         this.mail = params.mail ? params.mail : false;
         this.ident = params.ident ? params.ident : false;
         this.key = params.key ? params.key : 'navbarMain';
+        this.userAdmin=false;
         this.user=false;
         var iconIn='<i class="fas fa-sign-in-alt"></i>', 
             iconOut='<i class="fa-solid fa-right-from-bracket"></i>',
-            btnLogin, nameLogin;
+            btnLogin, nameLogin, alertAuth, alertMail;
+        
+        this.userAllowed = function (idDico, dicosUti) {
+            return dicosUti.filter(d=>d.id_dico==idDico && d.uti_id == me.user.id).length;
+        }
+        
         this.init = function () {
             //création des éléments html
             let htmlNavBar = `<div class="btn-group">
@@ -77,7 +84,7 @@ class auth {
                 .attr('id','modalAuth').attr('class','modal').attr('tabindex',-1);
             me.m.html(htmlModal);
             me.modal = new bootstrap.Modal('#modalAuth');
-            let alertAuth = new bootstrap.Collapse('#alertAuth', {toggle: false}),
+            alertAuth = new bootstrap.Collapse('#alertAuth', {toggle: false});
             alertMail = new bootstrap.Collapse('#alertMail', {toggle: false});
             alertAuth.hide();
             alertMail.hide();
@@ -100,32 +107,43 @@ class auth {
                 }
             });                                                                                    
             me.m.select("#btnCheck").on('click',e=>{
-                getUser();
+                me.getUser(null);
             });                                                                                    
-            if(me.mail && me.ident && me.key)getUser();
         }
-        function getUser(){
+        this.getUser = function (cb){
+            if(!me.mail || !me.ident || me.key){
+                me.api = jscrudapi(me.apiReadUrl);
+                cb();                
+                return;
+            };
             //véririfie la connexion
-            d3.json(getUrlAuth())
-            .then((data) => {
+            d3.json(getUrlAuth()).then((data) => {
                 if(data.length==0)alertMail.show();
                 else {
-                    me.user = data[0]
+                    me.api = jscrudapi(me.apiUrl,{headers:{'X-API-Key':me.ident}})
+                    me.user = data[0];
+                    me.userAdmin = me.user["o:role"] == 'global_admin';            
                     nameLogin.html(me.user['o:name']);
                     btnLogin.attr('class','btn btn-danger').html(iconOut);                        
                     me.modal.hide();
                     //récupère l'utilisateur omeka dans la base generateur
                     me.api.list('flux_uti',{filter:['login,eq,'+me.user['o:name'],'flux,eq,'+me.user["@id"]]}).then(
                         rs=>{
-                            if(rs.length)me.user.id=rs[0].uti_id;
-                            else{
+                            if(rs.records.length){
+                                me.user.id=rs.records[0].uti_id;
+                                cb();
+                            }else{
                                 me.api.create('flux_uti', {
                                     'login':me.user['o:name'],
                                     'flux':me.user["@id"],
+                                    'flux_id':me.user["o:id"],
+                                    'flux_api_ident':me.ident,
                                     'email':me.user["o:email"],
                                     'role':me.user["o:role"]
-                                }).then(id=>me.user.id=id)
-                                .catch (error=>console.log(error));
+                                }).then(id=>{
+                                    me.user.id=id
+                                    cb();
+                                }).catch (error=>console.log(error));
                             }                         
                         }
                     )

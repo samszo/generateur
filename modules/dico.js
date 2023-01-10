@@ -1,7 +1,7 @@
 import {concept} from '../modules/concept.js';
 import {modal} from '../modules/modal.js';
-import {modalAddDicoItem} from '../modules/modal.js';
 import {moteur} from '../modules/moteur.js';
+import {conjugaisons} from '../modules/conjugaisons.js';
 
 export class dico {
     constructor(params) {
@@ -15,7 +15,7 @@ export class dico {
         this.appUrl = params.appUrl; 
         this.hot;
         this.concepts;
-        var mainSlt, dicoHot, cptContent, mAddItem, mAddItemBody,mMessage=new modal(),
+        var mainSlt, dicoHot, cptContent, mod = new modal(), userAllowed=false,
         m=new moteur({
             'api':me.api,
             'appUrl':me.appUrl,
@@ -23,6 +23,7 @@ export class dico {
           }),table;
 
         this.init = function () {
+            userAllowed = me.oeuvre.auth.userAdmin || me.oeuvre.auth.userAllowed(me.d.id_dico,me.oeuvre.dicosUti);
             //récupération de la table suivant le type
             for (const p in m.tables) {
                 if(m.tables[p].type==me.d.type)table=m.tables[p];
@@ -31,53 +32,47 @@ export class dico {
             mainSlt = d3.select(me.tgtContent);
             mainSlt.selectAll('div').remove();
             /*construction du layout 
-            let row = mainSlt.append('div').attr('class','container-fluid h-100')
-                .append('div').attr('class','row justify-content-md-center h-100');
-            dicoHot = row.append('div')
-                .attr('class','col float-start')
-                //.attr('class',"w-auto h-100 float-start")
-                .append('div')
-                .attr('id','dicoHot');
-            //cptContent = mainSlt.append('div').attr('class','w-auto h-100 float-end').attr('id','dicoCptContent');
-            cptContent = row.append('div').attr('class','col').attr('id','dicoCptContent');
             */
-            let row = mainSlt.append('div').attr('class','d-flex h-100'),
-            colL = row.append('div').attr('class','w-auto h-100'),
-            //ajoute les outils
-            tools = `<div class="container-fluid">
-              <a class="navbar-brand" href="#">${me.d.nom}</a>
-              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarDico" aria-controls="navbarDico" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-              </button>
-              <div class="collapse navbar-collapse" id="navbarDico">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                  <li class="nav-item mx-2">
-                    <button type="button" id="btnDicoAddItem" class="btn btn-sm btn-danger">
-                        <i class="fa-regular fa-square-plus"></i>
-                    </button>
-                  </li>
-                  <li class="nav-item mx-2">
-                    <button type="button" id="btnDicoDel" class="btn btn-sm btn-danger">
-                        <i class="fa-regular fa-trash-can"></i>
-                    </button>
-                  </li>
-                </ul>
-              </div>
-            </div>`,
-            toolsNav = colL.append('nav').attr('class','navbar navbar-expand-lg bg-light').html(tools);
-            mAddItemBody=d3.select('#modalDicoAddItem');
-            //ajoute les modals si inexistant
-            if(mAddItemBody.empty()){
-                mAddItemBody = d3.select('body').append('div')
-                    .attr('id','modalDicoAddItem').attr('class','modal').attr('tabindex',-1);
-                mAddItemBody.html(modalAddDicoItem);
+            let row = mainSlt.append('div').attr('class','d-flex h-100 '+(table.content ? '':'w-100')),
+            colL = row.append('div').attr('class','h-100 '+(table.content ? 'w-auto':'w-100'));
+            if(userAllowed){
+                //ajoute les outils
+                let tools = `<div class="container-fluid">
+                <a class="navbar-brand" href="#">${me.d.nom}</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarDico" aria-controls="navbarDico" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarDico">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item mx-2">
+                        <button type="button" id="btnDicoAddItem" class="btn btn-sm btn-danger">
+                            <i class="fa-regular fa-square-plus"></i>
+                        </button>
+                    </li>
+                    <li class="nav-item mx-2">
+                        <button type="button" id="btnDicoDel" class="btn btn-sm btn-danger">
+                            <i class="fa-regular fa-trash-can"></i>
+                        </button>
+                    </li>
+                    </ul>
+                </div>
+                </div>`,
+                toolsNav = colL.append('nav').attr('class','navbar navbar-expand-lg bg-light').html(tools);
             }
-            mAddItem = new bootstrap.Modal('#modalDicoAddItem');
-            mainSlt.select("#btnDicoAddItem").on('click',e=>mAddItem.show());
-            mAddItemBody.select("#btnAddNewItem").on('click',addItems);
+            //création de la modal spécifique à la table
+            if(table.mAdd){
+                table.mAdd = mod.add('modalAddDico'+table.type);
+                table.mAdd.s.select('.modal-footer').selectAll('button').data([table]).join(
+                  enter=>enter.append('button')
+                    .attr('type',"button")
+                    .attr('class',"btn btn-primary").html('Add new')
+                    .on('click',addItem)                    
+                );
+                mainSlt.select("#btnDicoAddItem").on('click',showAddItem);
+            }
             mainSlt.select("#btnDicoDel").on('click',verifDeleteDico);
             //ajout la colone de résultat
-            cptContent = row.append('div').attr('class','flex-fill h-100 vscroll').attr('id','dicoCptContent');            
+            if(table.content)cptContent = row.append('div').attr('class','flex-fill h-100 vscroll').attr('id','dicoCptContent');            
             //ajoute le tableur
             dicoHot = colL.append('div').attr('class','clearfix')
                 .attr('id','dicoHot');
@@ -96,7 +91,7 @@ export class dico {
                         data:me.data,
                         colHeaders: headers,
                         height: rectFooter.top-rectFooter.height-rectHeader.bottom,
-                        width: '300',
+                        width: table.content ? '300' : '100%',
                         licenseKey: 'non-commercial-and-evaluation',
                         customBorders: true,
                         dropdownMenu: true,
@@ -110,7 +105,7 @@ export class dico {
                         columns: getCellEditor(headers),
                         allowInsertColumn: false,
                         copyPaste: false,
-                        contextMenu: {
+                        contextMenu: !userAllowed ? false : {
                             callback(key, selection, clickEvent) {
                               // Common callback for all options
                               console.log(key, selection, clickEvent);
@@ -132,15 +127,15 @@ export class dico {
     
 
                     });
-                    me.hot.addHook('afterSelection', (r, c) => {
-                        showConcept(me.hot.getDataAtRow(r));
+                    me.hot.addHook('afterSelectionEnd', (r, c) => {
+                        showContent(me.hot.getDataAtRow(r));
                     });
                     me.hot.addHook('afterChange', (changes,s) => {
                         changes?.forEach(([r, p, oldValue, newValue]) => {
                             //mise à jour de l'item
                             let data = {};
                             data[p]=newValue;
-                            me.api.update(table.t,me.data[r][0],data).then(
+                            me.api.update(table.t,me.data[r][table.pk],data).then(
                                 rs=>{
                                     console.log(rs);
                                 }   
@@ -150,16 +145,26 @@ export class dico {
                         });    
                     });
         
-        
-
-
                     if(me.appUrl.params && me.appUrl.params.has('id_concept'))showConcept(null,me.appUrl.params.get('id_concept'));
+                    if(me.appUrl.params && me.appUrl.params.has('id_conj'))showConjugaison(null,me.appUrl.params.get('id_conj'));
                 }
             ).catch (
                 error=>console.log(error)
             );
-            //me.getItems(me.d);
         }
+        function showContent(d){
+            if(table.content){
+                switch (table.type) {
+                    case 'concepts':
+                        showConcept(d);                                
+                        break;
+                    case 'conjugaisons':
+                        showConjugaison(d);                                
+                        break;
+                    }    
+            }
+        }
+
         function getCellEditor(headers){
             let editors = [];
             headers.forEach(h=>{
@@ -171,14 +176,22 @@ export class dico {
               })
             return editors;
         }
+        function showAddItem(e,d){
+            if(table.mAdd)table.mAdd.m.show();
+        }
   
-        function addItems(){
-            let lib = mAddItemBody.select("#inpItemLib").node().value,
-                type = mAddItemBody.select("#inpItemType").node().value;
-            me.api.create('gen_concepts', {'lib':lib,'type':type,'id_dico':me.d.id_dico}).then(
+        function addItem(){
+            //récupère les valeurs
+            let valeurs = {};
+            table.mAdd.s.selectAll('.inptValue').nodes().forEach(n=>{
+                if(n.hasAttribute("keycol"))
+                    valeurs[n.getAttribute('keycol')]=n.value;
+            });
+            valeurs.id_dico=me.d.id_dico;
+            me.api.create(table.t, valeurs).then(
                 id=>{
                     //récupère l'item
-                    me.api.read('gen_concepts',id).then(
+                    me.api.read(table.t,id).then(
                         item=>{                            
                             //ajoute l'item au tableur
                             let i=0, row = me.hot.countRows();
@@ -188,8 +201,8 @@ export class dico {
                                 i++;
                             }
                             me.data.push(item);
-                            showConcept(null,id);
-                            mAddItem.hide();
+                            showContent(item);
+                            table.mAdd.m.hide();
                         }
                     );   
                 }    
@@ -201,46 +214,32 @@ export class dico {
             //vérifie le nombre de dico d'oeuvre
             let dicoOeuvre = me.oeuvre.dicos.filter(d=>d.general==0);
             if(dicoOeuvre.length >= 1){
-                mMessage.setBody('<h3>You cannot delete this dictionary : it is the only one for this work</h3>');
-                mMessage.setBoutons([{'name':"Close"}]);                
-                mMessage.show();        
+                mod.setBody('<h3>You cannot delete this dictionary : it is the only one for this work</h3>');
+                mod.setBoutons([{'name':"Close"}]);                
+                mod.show();        
             }else{
-                mMessage.setBody('<h3>Are you sure you want to delete this dictionary ?</h3>');
-                mMessage.setBoutons([{'name':"Close"},
+                mod.setBody('<h3>Are you sure you want to delete this dictionary ?</h3>');
+                mod.setBoutons([{'name':"Close"},
                     {'name':"Delete",'class':'btn-danger','fct':f=>me.delete(me.d)}
                     ])                
-                mMessage.show();        
+                mod.show();        
             }
         }
         
         function verifDeleteItem(s,d){
-            mMessage.setBody('<h3>Are you sure you want to delete this item?</h3>');
-            mMessage.setBoutons([{'name':"Close"},
+            mod.setBody('<h3>Are you sure you want to delete this item?</h3>');
+            mod.setBoutons([{'name':"Close"},
                 {'name':"Delete",'class':'btn-danger','fct':f=>deleteItem(s,d)}
                 ])                
-            mMessage.show();    
+                mod.show();    
         }
         function deleteItem(s,d){
-            me.api.delete('gen_concepts',d[0]).then(e=>{
+            me.api.delete(table.t,d[0]).then(e=>{
                 me.hot.alter('remove_row', s[0].start.row, 1);
-                mMessage.hide();    
+                mod.hide();    
             });
         }
 
-        this.getItems = function (d){
-            me.d=d;
-            //me.hot.updateData([]);
-            me.api.list('gen_concepts',{filter:'id_dico,eq,'+me.d.id_dico}).then(
-                result=>{
-                    me.data = result.records
-                    me.hot.loadData(me.data);
-                    if(me.appUrl.params && me.appUrl.params.has('id_concept'))showConcept(null,me.appUrl.params.get('id_concept'));
-                }
-            ).catch (
-                error=>console.log(error)
-            );
-
-        }
         function showConcept(d,id){
             if(d === undefined && id===null) return;
             if(!id)id=d[0];//le grid ne renvoie pas des tableaux associatifs
@@ -254,6 +253,14 @@ export class dico {
                     'tgtContent':cptContent,
                     'appUrl':me.appUrl
                 });                
+        }
+        function showConjugaison(d,id){
+            if(d === undefined && id===null) return;
+            if(!id)id=d[0];//le grid ne renvoie pas des tableaux associatifs
+            d=me.data.filter(r=>r.id_conj==id)[0];
+            me.appUrl.change('id_conj',d.id_conj);
+            let conj = new conjugaisons({'api':me.api,'cont':cptContent
+                ,'v':d, oeuvre:me.oeuvre, 'appUrl':me.appUrl});
         }
 
         function deleteItems (){
@@ -271,7 +278,7 @@ export class dico {
             //plus nécessaire car base de donnée avec DELETE CASCADE
             //deleteItems() 
             me.api.delete('gen_dicos',me.d.id_dico).then(e=>{
-                me.oeuvre.showOeuvre(null,me.oeuvre.curOeuvre);
+                console.log('dico delete',d);
             });
         }
 

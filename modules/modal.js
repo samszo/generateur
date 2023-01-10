@@ -151,31 +151,53 @@ export let modalAddOeuvre = `
     </div>
     </div>
 `;
-//ajoute la modal pour l'ajout d'item dans un dico
-export let modalAddDicoItem = `
+//ajoute la modal pour l'ajout d'un concept dans un dico
+export let modalAddDicoconcepts = `
     <div class="modal-dialog">
     <div class="modal-content">
         <div class="modal-header">
-        <h5 class="modal-title">Adding a new item</h5>
+        <h5 class="modal-title">Adding a new concept</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">                    
             <div class="input-group mb-3">
                 <span class="input-group-text" id="itemLib">Label</span>
-                <input id="inpItemLib" type="text" class="form-control" placeholder="label" aria-label="name" aria-describedby="itemLib">
+                <input keycol="lib" type="text" class="form-control inptValue" placeholder="label" aria-label="name" aria-describedby="itemLib">
             </div>            
             <div class="input-group mb-3">
                 <span class="input-group-text" id="itemType">Type</span>
-                <input id="inpItemType" type="text" class="form-control" placeholder="Type" aria-label="name" aria-describedby="itemType">
+                <input keycol="type" type="text" class="form-control inptValue" placeholder="Type" aria-label="name" aria-describedby="itemType">
             </div>            
         </div>                          
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button id='btnAddNewItem' type="button" class="btn btn-primary">Add new</button>
         </div>
     </div>
     </div>
 `;
+//ajoute la modal pour l'ajout d'un syntagme dans un dico
+export let modalAddDicosyntagmes = `
+    <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title">Adding a new syntagme</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">                    
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="synNum">Num</span>
+                <input keycol="num" type="text" class="form-control inptValue" placeholder="Num" aria-label="name" aria-describedby="synNum">
+            </div>            
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="synLib">Type</span>
+                <input keycol="lib" type="text" class="form-control inptValue" placeholder="Type" aria-label="name" aria-describedby="synLib">
+            </div>            
+        </div>                          
+        <div class="modal-footer">
+        </div>
+    </div>
+    </div>
+`;
+
 //modal pour l'ajout d'un generateur dans un concept
 export let modalAddConceptGenerators = `
     <div class="modal-dialog">
