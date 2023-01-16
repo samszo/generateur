@@ -12379,8 +12379,11 @@ namespace Tqdev\PhpCrudApi {
         'password' => 'samszo',
         'database' => 'generateur',
         'customControllers' => 'apiStats',
-        "middlewares"=>'cors',
+        "middlewares"=>'cors,authorization',
         "cors.allowMethods"=>'GET',
+        'authorization.tableHandler' => function ($operation, $tableName) {
+            return $tableName != 'flux_uti';
+        },        
     ]);
     $request = RequestFactory::fromGlobals();
     $api = new Api($config);

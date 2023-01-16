@@ -5,6 +5,7 @@ export class conjugaisons {
         var me = this;
         this.api = params.api;
         this.tgtContent = params.cont;
+        this.progress = params.progress;
         this.v = params.v ? params.v : false;
         this.oeuvre = params.oeuvre;
         this.appUrl = params.appUrl ? params.appUrl : false;
@@ -60,7 +61,7 @@ export class conjugaisons {
             changeTab(null,temps[0]);            
         }
         function genereConjugaisons(d){
-            let m = new moteur({'api':me.api,'oeuvre':me.oeuvre}),gen, cpt, v,
+            let m = new moteur({'api':me.api,'oeuvre':me.oeuvre}),gen=[], v,
             pronoms = d.num == 8 || d.num == 9 ? [0] : [1,2,3,4,5,7];
             //récupère le premier verbe ayant le modèle
             if(me.v.modele){
@@ -70,18 +71,34 @@ export class conjugaisons {
             //me.oeuvre.rsProSuj.forEach(s=>{
             //    gen = `[0${d.num}${s.num}00000|v_${me.v.id_concept}_${me.v.id_verbe}]`;
             pronoms.forEach(s=>{
-                    gen = `[0${d.num}${s}00000|v_${v.id_concept}_${v.id_verbe}]`;
-                m.genere(gen);
-                d.data.push({
-                    'id_trm':m.strct[0].terminaison[0].id_trm
-                    ,'generator':gen,'conjugaison':m.texte                    
-                    , 'terminaison':m.strct[0].terminaison[0].lib
-                });
-            })            
+                gen.push(`[0${d.num}${s}00000|v_${v.id_concept}_${v.id_verbe}]`);
+            });
+            me.oeuvre.wGen.postMessage({
+                'g':gen,
+                'dicos':me.oeuvre.dicos,
+                'id_dico':me.oeuvre.curDico.d.id_dico,
+                'apiUrl':me.oeuvre.auth.apiReadUrl
+              });
+            me.oeuvre.wGen.onmessage = function(event) {
+                event.data.forEach(g=>{
+                    d.data.push({
+                        'id_trm':g.strct[0].terminaison[0].id_trm
+                        ,'generator':g.gen,'conjugaison':g.texte                    
+                        , 'terminaison':g.strct[0].terminaison[0].lib
+                    });    
+                }) 
+                showConjugaisons(d);
+                me.progress.destroy();
+                tgtContent.select('#progressGenConcept').remove();
+              };            
+    
 
         }            
         function showConjugaisons(d, i){            
-                if(d.data.length==0)genereConjugaisons(d);
+                if(d.data.length==0){
+                    genereConjugaisons(d);
+                    return;
+                }
                 let pane = d3.select("#tab-pane-temps"+d.num), 
                     cont = pane.append('div')
                         .attr('class',"container-fluid"),

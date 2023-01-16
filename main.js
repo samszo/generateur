@@ -1,6 +1,6 @@
-import o from './modules/oeuvres.js';
-import u from './modules/appUrl.js';
-import a from './modules/auth.js';
+import {oeuvres} from './modules/oeuvres.js';
+import {appUrl} from './modules/appUrl.js';
+import {auth} from './modules/auth.js';
 /*pour un fonctionnement avec sqlite
 TODO : gérer le chargement d'un fichier sqlite
 TODO : gérer l'enregistremnet de la base dans un fichier cf. https://github.com/sql-js/sql.js/blob/master/examples/GUI/gui.js#L122
@@ -10,21 +10,25 @@ import {sql} from './modules/sql.js';
 let s = new sql();
 */
 let
-auth = new a.auth({'navbar':d3.select('#navbarMain'),
-        apiOmk:'http://localhost/omk_arcanes/api/',
+worker = new Worker('wGenerateur.js',{ type: "module" });
+worker.onerror = function(error) {
+    console.error('Worker error: ' + error.message + '\n');
+    throw error;
+  };
+let a = new auth({'navbar':d3.select('#navbarMain'),
     });
-auth.getUser(initOeuvre);
+a.getUser(initOeuvre);
 function initOeuvre(){
-    let oe = new o.oeuvres({
-        'auth':auth,
+    let oe = new oeuvres({
+        'auth':a,
+        'wGen':worker,
         'tgtMenu':document.getElementById('menuOeuvres'),
         'tgtList':document.getElementById('listDicos'),
         'tgtContent':document.getElementById('contentDetails'),
-        'appUrl':new u.appUrl({
+        'appUrl':new appUrl({
             'tgtIn':d3.select("#inptUrl").node(),
             'tgtBtn':d3.select("#url-addon"),
             'url':new URL(document.location)
         })
     });
 }
-

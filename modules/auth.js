@@ -1,5 +1,5 @@
 import jscrudapi from '../node_modules/js-crud-api/index.js';
-class auth {
+export class auth {
     constructor(params) {
         var me = this;
         this.modal;
@@ -111,7 +111,7 @@ class auth {
             });                                                                                    
         }
         this.getUser = function (cb){
-            if(!me.mail || !me.ident || me.key){
+            if(!me.mail || !me.ident || !me.key){
                 me.api = jscrudapi(me.apiReadUrl);
                 cb();                
                 return;
@@ -164,4 +164,3 @@ class auth {
         this.init();
     }
 }
-export default { auth };

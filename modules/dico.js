@@ -2,6 +2,7 @@ import {concept} from '../modules/concept.js';
 import {modal} from '../modules/modal.js';
 import {moteur} from '../modules/moteur.js';
 import {conjugaisons} from '../modules/conjugaisons.js';
+import {parse} from '../node_modules/csv-parse/dist/esm/sync.js';
 
 export class dico {
     constructor(params) {
@@ -54,6 +55,11 @@ export class dico {
                             <i class="fa-regular fa-trash-can"></i>
                         </button>
                     </li>
+                    <li class="nav-item mx-2">
+                        <button type="button" id="btnDicoImport" class="btn btn-sm btn-danger">
+                            <i class="fa-solid fa-upload"></i>
+                        </button>
+                    </li>                    
                     </ul>
                 </div>
                 </div>`,
@@ -71,6 +77,18 @@ export class dico {
                 mainSlt.select("#btnDicoAddItem").on('click',showAddItem);
             }
             mainSlt.select("#btnDicoDel").on('click',verifDeleteDico);
+            //création de la modal pour l'import
+            if(table.mImp){
+                table.mImp = mod.add('modalImportDico'+table.type);
+                table.mImp.s.select('.modal-footer').selectAll('button').data([table]).join(
+                  enter=>enter.append('button')
+                    .attr('type',"button")
+                    .attr('class',"btn btn-primary").html('Import')
+                    .on('click',importDico)                    
+                );
+                mainSlt.select("#btnDicoImport").on('click',showImportDico);            
+            }
+
             //ajout la colone de résultat
             if(table.content)cptContent = row.append('div').attr('class','flex-fill h-100 vscroll').attr('id','dicoCptContent');            
             //ajoute le tableur
@@ -176,10 +194,39 @@ export class dico {
               })
             return editors;
         }
+        function showImportDico(e,d){
+            if(table.mImp)table.mImp.m.show();
+        }
+        function importDico(){
+            const csvFile = document.getElementById("importDicoconceptsFile");
+            const input = csvFile.files[0];
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                //récupère le texte
+                const text = e.target.result;
+                //transforme le csv en tableau
+                const records = parse(text, {
+                    columns: true,
+                    skip_empty_lines: true,
+                    trim: true
+                  });
+                //ajoute les données dans le dico
+                me.api.create(table.t, {'nom':nom,'type':'concepts','langue':lang,'general':0,'licence':licence}).then(
+                    idDico=>{
+                        //ajoute le lien entre l'oeuvre, le dico et l'utilisateur
+                        me.api.create('gen_oeuvres_dicos_utis', {'id_oeu':idOeu,'id_dico':idDico,'uti_id':me.auth.user.id});
+                    }
+                );   
+
+                console.log('import OK');                  
+            };
+            reader.readAsText(input);
+        }
+
         function showAddItem(e,d){
             if(table.mAdd)table.mAdd.m.show();
         }
-  
+         
         function addItem(){
             //récupère les valeurs
             let valeurs = {};

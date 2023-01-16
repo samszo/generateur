@@ -1,4 +1,4 @@
-import { JSONEditor } from '../node_modules/vanilla-jsoneditor/index.js'
+import {JSONEditor} from '../node_modules/vanilla-jsoneditor/index.js'
 import {getIn, parseFrom} from '../node_modules/immutable-json-patch/lib/esm/index.js'
 import {moteur} from '../modules/moteur.js';
 import {modal} from '../modules/modal.js';
@@ -19,7 +19,7 @@ export class concept {
         this.conjData;
         this.jsEditor;
         this.jsPath;
-        var m=new modal(), contResult, contHeight,userAllowed;
+        var m=new modal(), contResult, contHeight, userAllowed, progress;
         this.init = function () {
             me.linkData=[
                 {n:'Adjectives',t:'gen_adjectifs',k:'id_adj',data:[],mAdd:true},
@@ -113,13 +113,14 @@ export class concept {
                   </ul>
                 </li>`;
             }
-            tools += `      
+            tools += `           
                 </ul>
               </div>
             </div>`;
             let toolsNav = me.tgtContent.append('nav').attr('class','navbar navbar-expand-lg bg-light').html(tools);
             toolsNav.select('#ddmAddCptItem').selectAll('li').data(me.linkData).enter().append('li')
-              .append('a').attr('class',"dropdown-item").html(ld=>ld.n).on('click',showAddItem);
+              .append('a').attr('class',"dropdown-item").html(ld=>ld.n).on('click',showAddItem);         
+
             //construction de la barre de nav
             let cont, navtabs = me.tgtContent.append('ul')
                 .attr('class',"nav nav-pills mb-3")
@@ -364,13 +365,16 @@ export class concept {
         function addChampResult(d){
             //ajoute les champs de résultats
             contResult.selectAll('div').remove();
+            let htmlResult = `<div class="row h-100">
+            <div class="col">
+              <h4>Generated texts</h4>
+              <div class="progress" id="progressGenConcept">
+              </div>
+              <div id="genText${d.n}"></div>
+            </div>`;
+
             if(d=='concept' || d.t=="gen_generateurs"){
-              let htmlResult = `<div class="row h-100">
-                    <div class="col">
-                      <h4>Generated texts</h4>
-                      <div id="genText${d.n}"></div>
-                    </div>
-                    <div class="col">
+              htmlResult += `<div class="col">
                       <h4>Generation structure</h4>
                       <div id="genStrct"></div>
                     </div>
@@ -391,72 +395,133 @@ export class concept {
               //écouteur pour les modifications
               contResult.selectAll(".jse-value").on('onchange',changeJsonEditor);
             }else{
-              let htmlResult = `<div class="row">
-                    <div class="col">
-                      <h4>Generated texts</h4>
-                      <div id="genText${d.n}"></div>
-                    </div>
-                  </div>`;
+              htmlResult += `</div>`;
               contResult.html(htmlResult);
             }
 
-        }
-        function genere(e,r,d){
-          let conj,a,v,formes,rs,div,hot, m = new moteur({
-            'api':me.api,
-            'appUrl':me.appUrl,
-            'oeuvre':me.oeuvre
+            //ajoute le progresse bar
+            progress = new ProgressBar.Circle(contResult.select('#progressGenConcept').node(), {
+              color: '#aaa',
+              // This has to be the same size as the maximum width to
+              // prevent clipping
+              strokeWidth: 4,
+              easing: 'easeInOut',
+              text: {
+                autoStyleContainer: false,
+                value:'0',
+                style: {
+                  // Text color.
+                  position: 'absolute',
+                  left: '50%',
+                  top: '50%',
+                  fontSize: '2rem',
+                  padding: 0,
+                  margin: 0,
+                  // You can specify styles which will be browser prefixed
+                  transform: {
+                      prefix: true,
+                      value: 'translate(-50%, -50%)'
+                  }                
+                },
+              }
             });
-          addChampResult(d);            
+            //progress.text.style.fontFamily = '"Raleway", Helvetica, sans-serif';
+            //progress.text.style.fontSize = '2rem';
+            progressLoop(1,0);
+        }
+        function progressLoop(num,val){
+          let dur = 3;
+          progress.set(0);
+          progress.animate(1, {
+            duration: dur*1000,
+            from: { color: 'rgb(0,255,0)', width: 4+num },
+            to: { color: 'rgb(255,0,0)', width: 4+num },
+            step: function(state, circle) {
+              circle.path.setAttribute('stroke', state.color);
+              circle.path.setAttribute('stroke-width', state.width);
+              circle.setText(toHoursMinutesSeconds((circle.value()*1000*dur)+val));
+            }
+        }, function() {
+            //console.log('progressLoop'+num);
+            if(progress.svg){
+              progressLoop(num+1,dur*1000+val);  
+            }
+          });
+        }
+
+        function toHoursMinutesSeconds(milliSeconds) {
+          const totalSeconds = Math.floor(milliSeconds / 1000);
+          const totalMinutes = Math.floor(totalSeconds / 60);
+
+          const seconds = totalSeconds % 60;
+          const millis = Math.floor(milliSeconds - seconds*1000);
+          const hours = Math.floor(totalMinutes / 60);
+          const minutes = totalMinutes % 60;
+ 
+          return hours+":"+minutes+":"+seconds+":"+millis;
+        }
+
+        function showGen(d,g,view){
+          me.oeuvre.wGen.postMessage({
+            'g':g,
+            'dicos':me.oeuvre.dicos,
+            'id_dico':me.oeuvre.curDico.d.id_dico,
+            'apiUrl':me.oeuvre.auth.apiReadUrl
+          });
+          me.oeuvre.wGen.onmessage = function(event) {
+            me.tgtContent.select("#genText"+d.n).html(event.data.texte);    
+            switch (view) {
+              case 'jsEditor':
+                me.jsEditor.set({json:event.data.strct});                
+                break;            
+              case 'Handsontable':
+                let div = me.tgtContent.select("#genText"+d.n),
+                  hot = new Handsontable(div.node(), {data:event.data,height:contHeight,licenseKey: 'non-commercial-and-evaluation'});                
+                break;            
+              }
+            progress.destroy();
+            contResult.select('#progressGenConcept').remove();
+          };            
+
+        }
+
+
+        function genere(e,r,d){
+          let conj,a,formes,rs;
+          addChampResult(d);
           if(d=='concept'){
-            m.genere(`[${r.type}_${r.lib}]`);
-            me.jsEditor.set({json:m.strct});
-            me.tgtContent.select("#genText"+d.n).html(m.texte);
+            showGen(d,`[${r.type}_${r.lib}]`,'jsEditor');           
             return;
           }
           if(!r[d.k])r=d.data.filter(i=>i[d.k]==r[0])[0];
           me.appUrl.change(d.k,r[d.k]);
           switch (d.n) {
-            case 'Generators':                
-              m.genere(r.valeur);
-              me.jsEditor.set({json:m.strct});
-              me.tgtContent.select("#genText"+d.n).html(m.texte);
+            case 'Generators':
+              showGen(d,r.valeur,'jsEditor');           
               break;            
             case 'Verbs':
               conj = new conjugaisons({'api':me.api,'cont':me.tgtContent.select("#genText"+d.n)
-                ,'v':r, oeuvre:me.oeuvre, 'appUrl':me.appUrl});
+                ,'v':r, oeuvre:me.oeuvre, 'appUrl':me.appUrl, 'progress':progress});
               break;            
             case 'Adjectives':
               //génère les différentes formes de l'adjectif
-              a = `a_${r.id_concept}_${r.id_adj}`; v=""; rs = []; formes = [{'dtm':12,'sub':'m_joie'},{'dtm':12,'sub':'m_bonheur'}];
+              a = `a_${r.id_concept}_${r.id_adj}`; rs = []; formes = [{'dtm':12,'sub':'m_joie'},{'dtm':12,'sub':'m_bonheur'}];
               formes.forEach(f=>{
-                /*forme obsolète
-                v = `[${f.dtm}|${a}@${f.sub}]`;                  
-                rs.push({'gen':v,'text':m.genere(v,true)});
-                v = `[${(f.dtm+50)}|${a}@${f.sub}]`;
-                rs.push({'gen':v,'text':m.genere(v,true)});
-                */
-                v= `[${f.dtm}|${f.sub}][=1|${a}]`
-                rs.push({'gen':v,'text':m.genere(v,true)});
-
-                v= `[${(f.dtm+50)}|${f.sub}][=1|${a}]`
-                rs.push({'gen':v,'text':m.genere(v,true)});
+                rs.push(`[${f.dtm}|${a}@${f.sub}]`);                  
+                rs.push(`[${(f.dtm+50)}|${a}@${f.sub}]`);
+                rs.push(`[${f.dtm}|${f.sub}][=1|${a}]`);
+                rs.push(`[${(f.dtm+50)}|${f.sub}][=1|${a}]`);
               });
-              div = me.tgtContent.select("#genText"+d.n);
-              hot = new Handsontable(div.node(), {data:rs,height:contHeight,licenseKey: 'non-commercial-and-evaluation'});                
+              showGen(d,rs,'Handsontable');           
               break;            
             case 'Nouns':
-                //génère les différentes formes de l'adjectif
-                a = `m_${r.id_concept}_${r.id_sub}`; v=""; rs = []; formes = [{'dtm':12}];
-                formes.forEach(f=>{
-                  v= `[${f.dtm}|${a}]`
-                  rs.push({'gen':v,'text':m.genere(v,true)});
-
-                  v= `[${(f.dtm+50)}|${a}]`
-                  rs.push({'gen':v,'text':m.genere(v,true)});
-                });
-                div = me.tgtContent.select("#genText"+d.n);
-                hot = new Handsontable(div.node(), {data:rs,height:contHeight,licenseKey: 'non-commercial-and-evaluation'});                
+              //génère les différentes formes du substantif
+              a = `m_${r.id_concept}_${r.id_sub}`; rs = []; formes = [{'dtm':12}];
+              formes.forEach(f=>{
+                rs.push(`[${f.dtm}|${a}]`);
+                rs.push(`[${(f.dtm+50)}|${a}]`);
+              });
+              showGen(d,rs,'Handsontable');           
               break;            
           }
         }

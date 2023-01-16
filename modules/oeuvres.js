@@ -3,7 +3,7 @@ import {modal} from '../modules/modal.js';
 import {modalAddOeuvre} from '../modules/modal.js';
 import jscrudapi from '../node_modules/js-crud-api/index.js';
 
-class oeuvres {
+export class oeuvres {
     constructor(params) {
         var me = this;
         this.tgtMenu = params.tgtMenu
@@ -13,6 +13,7 @@ class oeuvres {
         this.apiUrl = params.apiUrl ? params.apiUrl : 'api.php'; 
         this.apiStatsUrl = this.apiUrl+'/apiStats/'; 
         this.auth = params.auth ? params.auth : false;
+        this.wGen = params.wGen ? params.wGen : false;
         this.api = this.auth.api;
         this.curOeuvre;
         this.curDico;
@@ -29,7 +30,7 @@ class oeuvres {
             mAddOeuvreBody = m.select('.modal-body');
             mAddOeuvre = new bootstrap.Modal('#modalOeuvreAdd');
             //gestion des événements
-            d3.select('#btnaddNewOeuvre').on('click',addNewOeuvre)            
+            d3.select('#btnaddNewOeuvre').on('click',addNewOeuvre)        
 
         }
         function addNewOeuvre(){
@@ -238,16 +239,15 @@ class oeuvres {
         }
 
         this.searchClass = function(t,q,o){
-            let rs=[], r, f;
-            //création des requêtes pour chaque dictionnaire de concept
-            me.dicos.forEach(d=>{
-                if(d.type==t.type){
-                    f = {filter:['id_dico,eq,'+d.id_dico]};
-                    if(o)f.order=o;
-                    q.forEach(i=>f.filter.push(i));
-                    r = me.api.syncList(t.t,f);
-                    r.records.forEach(d=>rs.push(d));
-                }
+            let rs=[], r, f, 
+            //création des requêtes pour chaque dictionnaire général du même type
+            dicosFiltre = me.dicos.filter(d=>(d.type==t.type && d.general) || (d.id_dico ==  me.curDico.d.id_dico));            
+            dicosFiltre.forEach(d=>{
+                f = {filter:['id_dico,eq,'+d.id_dico]};
+                if(o)f.order=o;
+                q.forEach(i=>f.filter.push(i));
+                r = me.api.syncList(t.t,f);
+                r.records.forEach(d=>rs.push(d));
             }); 
             return rs;           
         }
@@ -262,4 +262,3 @@ class oeuvres {
         this.init();
     }
 }
-export default { oeuvres };

@@ -375,3 +375,24 @@ export let modalAddConceptVerbs = `
     </div>
     </div>
 `;
+//modal pour l'ajout d'un verbe dans un concept
+export let modalImportDicoconcepts = `
+    <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title">Import concepts</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form id="frmImportDicoconcepts">
+                <div class="mb-3">
+                    <label for="formFile" class="form-label">Select CSV file</label>
+                    <input class="form-control" type="file" id="importDicoconceptsFile" accept=".csv">
+                </div>
+            </form>
+        </div>                          
+        <div class="modal-footer">
+        </div>
+    </div>
+    </div>
+`;

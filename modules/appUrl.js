@@ -1,4 +1,4 @@
-class appUrl {
+export class appUrl {
     constructor(params) {
         var me = this;
         this.tgtIn = params.tgtIn ? params.tgtIn : false;
@@ -31,4 +31,3 @@ class appUrl {
     
     }
 }
-export default { appUrl };
