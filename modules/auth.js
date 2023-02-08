@@ -11,7 +11,7 @@ export class auth {
         this.api;
         this.mail = params.mail ? params.mail : false;
         this.ident = params.ident ? params.ident : false;
-        this.key = params.key ? params.key : 'navbarMain';
+        this.key = params.key ? params.key : false;
         this.userAdmin=false;
         this.user=false;
         var iconIn='<i class="fas fa-sign-in-alt"></i>', 
@@ -107,6 +107,7 @@ export class auth {
                 }
             });                                                                                    
             me.m.select("#btnCheck").on('click',e=>{
+                getUrlAuth();
                 me.getUser(null);
             });                                                                                    
         }

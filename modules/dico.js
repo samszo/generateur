@@ -210,14 +210,23 @@ export class dico {
                     skip_empty_lines: true,
                     trim: true
                   });
-                //ajoute les données dans le dico
-                me.api.create(table.t, {'nom':nom,'type':'concepts','langue':lang,'general':0,'licence':licence}).then(
-                    idDico=>{
-                        //ajoute le lien entre l'oeuvre, le dico et l'utilisateur
-                        me.api.create('gen_oeuvres_dicos_utis', {'id_oeu':idOeu,'id_dico':idDico,'uti_id':me.auth.user.id});
-                    }
-                );   
+                records.forEach(r=>{
+                    //importation du générateur
+                    if(r.type && r.concept && r.valeur){
+                        //vérifie l'existence du concept
+                        let idGen, idConcept, rs = me.oeuvre.searchClass(table,[table.k[0]+',eq,'+r.concept,table.k[1]+',eq,'+r.type]);
+                        if(rs.length==0){
+                            idConcept = me.api.syncCreate(table.t, {'id_dico':me.d.id_dico,'type':r.type,'lib':r.concept});
+                            me.data.push({'id_concept':idConcept,'id_dico':me.d.id_dico,'type':r.type,'lib':r.concept});                            
 
+                        }else 
+                            idConcept = rs[0].id_concept;
+                        //ajoute le générateur   
+                        idGen = me.api.syncCreate('generateurs', {'id_concept':idConcept,'valeur':r.valeur});
+                    }
+                })    
+                d.hot.refreshDimensions();
+                d.hot.updateSettings({ data: me.data } )
                 console.log('import OK');                  
             };
             reader.readAsText(input);

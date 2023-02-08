@@ -6,6 +6,7 @@ export class moteur {
         this.dicos = params.dicos ? params.dicos : false;
         this.id_dico = params.id_dico ? params.id_dico : false;
 		this.showErr = params.showErr ? params.showErr : true;
+        this.niv = params.niv ? params.niv : 0;
         this.strct = []; 
         this.posis = [];
         this.caracts = []; 
@@ -102,7 +103,7 @@ export class moteur {
             me.ordre = 0
             for (var i = 0; i < g.length; i++) {
 				//initialisation de la structure
-				me.strct[me.ordre]={'deb':Date.now(),'dur':''};
+				me.strct[me.ordre]={'deb':Date.now(),'dur':'','niv':me.niv};
                 c = g.charAt(i);
                 if(c == "["){					
                     //c'est le début d'une classe on initialise
@@ -423,7 +424,7 @@ export class moteur {
 						if(!isEli(verbe) || strct.prodem.lib == strct.prodem.lib_eli){
 							verbe = strct.prodem.lib+" "+verbe; 
 						}else{
-							verbe = strct.prodem+lib_eli+verbe; 
+							verbe = strct.prodem.lib_eli+verbe; 
 							eli=0;
 						}
 					}
@@ -436,7 +437,7 @@ export class moteur {
 					if(!isEli(verbe)){
 						verbe = strct.prodem.lib+" "+verbe; 
 					}else{
-						verbe = strct.prodem+lib_eli+verbe; 
+						verbe = strct.prodem.lib_eli+verbe; 
 					}
 				}	
 				let c = centre.substring(centre.length-1);
@@ -593,7 +594,7 @@ export class moteur {
 					//récupère le vecteur
 					let v = getVecteur("genre",-1,strct.determinant_verbe[7]),     	
 					//génère le pronom
-					m = new moteur({'apiUrl':me.apiUrl,'dicos':me.dicos,'id_dico':me.id_dico});
+					m = new moteur({'apiUrl':me.apiUrl,'dicos':me.dicos,'id_dico':me.id_dico,'niv':me.niv+1});
 					m.genere(pr,false);
 					m.strct[0].vecteur.genre=v.genre;
 					m.strct[0].vecteur.pluriel=strct.pluriel;						
@@ -622,11 +623,11 @@ export class moteur {
 						genre = v.genre;     	
 					}
 					//génère le pronom
-					let m = new moteur({'apiUrl':me.apiUrl,'dicos':me.dicos,'id_dico':me.id_dico});
+					let m = new moteur({'apiUrl':me.apiUrl,'dicos':me.dicos,'id_dico':me.id_dico,'niv':me.niv+1});
 					m.genere(strct.prodem.lib,false);
 					m.strct[0].vecteur.genre=genre;
 					m.strct[0].vecteur.pluriel=strct.pluriel;						
-					me.potentiel += $m.potentiel;
+					me.potentiel += m.potentiel;
 					m.genereTexte();						
 					strct.prodem.lib = m.texte.toLowerCase();
 		        }
@@ -1103,7 +1104,7 @@ export class moteur {
         //Vérifie si le concept est un générateur
         if(cpt.id_gen){
         	//générer l'expression
-			let m = new moteur({'apiUrl':me.apiUrl,'dicos':me.dicos,'id_dico':me.id_dico});   						
+			let m = new moteur({'apiUrl':me.apiUrl,'dicos':me.dicos,'id_dico':me.id_dico,'niv':me.niv+1});   						
 			//génére la classe
 			m.genere(cpt.valeur,false);				
 			/*

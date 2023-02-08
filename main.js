@@ -11,11 +11,18 @@ let s = new sql();
 */
 let
 worker = new Worker('wGenerateur.js',{ type: "module" });
-worker.onerror = function(error) {
-    console.error('Worker error: ' + error.message + '\n');
-    throw error;
-  };
 let a = new auth({'navbar':d3.select('#navbarMain'),
+        apiOmk:'http://localhost/omk_arcanes/api/',
+        ident: 'ZOCgyR2932SMs81hokqlQ8a8wLQvrDgt',
+        key: 'tS4EcOmUEQaW0cQFzND7Gtk60wkW0RRc',
+        mail:'samuel.szoniecky@univ-paris8.fr'
+        /*
+        genstory
+        apiOmk:'https://genstory.jardindesconnaissances.fr/api/',
+        key_identity: tvKOUDlEJZ5x8kMzMmxyvCQ5IliEDuBI
+        key_credential: KjcFiTN4NST6jo0iE45uJUF3OlWQwMl1        
+        mail:'samuel.szoniecky@univ-paris8.fr'
+        */
     });
 a.getUser(initOeuvre);
 function initOeuvre(){

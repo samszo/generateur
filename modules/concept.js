@@ -405,7 +405,7 @@ export class concept {
               // This has to be the same size as the maximum width to
               // prevent clipping
               strokeWidth: 4,
-              easing: 'easeInOut',
+              easing: false,
               text: {
                 autoStyleContainer: false,
                 value:'0',
@@ -481,7 +481,13 @@ export class concept {
               }
             progress.destroy();
             contResult.select('#progressGenConcept').remove();
-          };            
+          };
+          me.oeuvre.wGen.onerror = function(error) {
+            progress.destroy();
+            contResult.select('#progressGenConcept').remove();
+            me.tgtContent.select("#genText"+d.n).html('Generateur error: ' + error.message);    
+          };
+        
 
         }
 
