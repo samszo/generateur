@@ -216,17 +216,29 @@ export class dico {
                         //vérifie l'existence du concept
                         let idGen, idConcept, rs = me.oeuvre.searchClass(table,[table.k[0]+',eq,'+r.concept,table.k[1]+',eq,'+r.type]);
                         if(rs.length==0){
+                            /*
+                            me.api.create(table.t, {'id_dico':me.d.id_dico,'type':r.type,'lib':r.concept}).then(
+                                idConcept=>{
+                                    me.api.create('generateurs', {'id_concept':idConcept,'valeur':r.valeur})
+                                }).catch (
+                                error=>console.log(error)
+                            );
+                            */
+                            //
                             idConcept = me.api.syncCreate(table.t, {'id_dico':me.d.id_dico,'type':r.type,'lib':r.concept});
-                            me.data.push({'id_concept':idConcept,'id_dico':me.d.id_dico,'type':r.type,'lib':r.concept});                            
-
-                        }else 
+                            me.data.push({'id_concept':idConcept,'id_dico':me.d.id_dico,'type':r.type,'lib':r.concept});
+                            //
+                        }else{
                             idConcept = rs[0].id_concept;
-                        //ajoute le générateur   
-                        idGen = me.api.syncCreate('generateurs', {'id_concept':idConcept,'valeur':r.valeur});
+                            //ajoute le générateur   
+                            idGen = me.api.syncCreate('gen_generateurs', {'id_concept':idConcept,'valeur':r.valeur});
+                        } 
                     }
-                })    
+                })
+                /*    
                 d.hot.refreshDimensions();
                 d.hot.updateSettings({ data: me.data } )
+                */
                 console.log('import OK');                  
             };
             reader.readAsText(input);

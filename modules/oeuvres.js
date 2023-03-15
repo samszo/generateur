@@ -37,7 +37,7 @@ export class oeuvres {
             let nom = mAddOeuvreBody.select("#inpOeuNom").node().value,
             licence = mAddOeuvreBody.node().querySelector('input[name="oeuLicence"]:checked').value,
             lang = mAddOeuvreBody.node().querySelector('input[name="oeuLangue"]:checked').value;
-            me.api.create('gen_oeuvres', {'lib':nom,'licence':licence}).then(
+            me.api.create('gen_oeuvres', {'lib':nom,'licence':licence, 'uti_id':me.auth.user.id}).then(
                 idOeu=>{
                     //ajoute le dictionnaire de l'oeuvre
                     me.api.create('gen_dicos', {'nom':nom,'type':'concepts','langue':lang,'general':0,'licence':licence}).then(

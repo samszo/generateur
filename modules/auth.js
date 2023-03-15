@@ -148,7 +148,7 @@ export class auth {
                             }                         
                         }
                     )
-                    .catch((e) => {
+                    .catch((e) => {                        
                         alertAuth.show();
                     }); 
                 }
