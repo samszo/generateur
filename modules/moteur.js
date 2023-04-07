@@ -3,6 +3,7 @@ export class moteur {
         var me = this;
         this.apiUrl = params.apiUrl ? params.apiUrl : false;
 		this.choix = params.choix ? params.choix : false;
+        this.id_oeu = params.id_oeu ? params.id_oeu : false;
         this.dicos = params.dicos ? params.dicos : false;
         this.id_dico = params.id_dico ? params.id_dico : false;
 		this.showErr = params.showErr ? params.showErr : true;
@@ -23,6 +24,7 @@ export class moteur {
 			m:{type:'substantifs',t:'gen_substantifs',k:'id_sub',dataLink:true},
 			g:{type:'generateurs',t:'gen_generateurs',k:'id_gen',dataLink:true},
 			n:{type:'négations',t:'gen_negations',pk:'id_negation',k:'num','content':false},
+			u:{type:'uris',t:'gen_uris',k:'id_uri',dataLink:true},
 			conj:{type:'conjugaisons',t:'gen_conjugaisons',pk:'id_conj',k:'id_conj','content':true},
         }; 
 
@@ -35,7 +37,22 @@ export class moteur {
 
         this.init = function () {
             me.start = Date.now();
+			if(!me.dicos && me.id_oeu){
+				getDicos();				
+			}
         }
+
+		function getDicos(){
+			//récupère les dicos de l'oeuvre
+			let result = syncList('gen_oeuvres_dicos_utis',{filter:'id_oeu,eq,'+me.id_oeu}),
+				ids=[]; 
+			result.records.forEach(d => {
+				if(!ids.includes(d.id_dico))ids.push(d.id_dico);
+			});                    
+			if(ids.length==0)return;
+			result = syncRead('gen_dicos',ids);
+			me.dicos=result.filter(d=>d);
+		}
 
 		this.genereAsync = function (g,t,o) {
 			return new Promise(
@@ -219,6 +236,10 @@ export class moteur {
 				}else{
 					if(txtCondi){
 						let det = "", sub = "", adjs = "", verbe = "";
+
+						if(strct.uri){
+							texte += " "+strct.uri.lib;
+						}
 
 						
 						if(strct.determinant){
@@ -989,8 +1010,12 @@ export class moteur {
 		if(cls.id_verbe){
 		    getVerbe("",cls);
 		}
-	}
+		if(cls.id_uri){
+		    me.strct[me.ordre].uri = cls;
+		}
 
+	}
+	
 	function getSubstantif(c, strct=false){
 
         //récupération du substantif

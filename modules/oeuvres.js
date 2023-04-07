@@ -11,7 +11,6 @@ export class oeuvres {
         this.tgtContent = params.tgtContent
         this.appUrl = params.appUrl ? params.appUrl : false; 
         this.apiUrl = params.apiUrl ? params.apiUrl : 'api.php'; 
-        this.apiStatsUrl = this.apiUrl+'/apiStats/'; 
         this.auth = params.auth ? params.auth : false;
         this.wGen = params.wGen ? params.wGen : false;
         this.api = this.auth.api;
@@ -120,15 +119,23 @@ export class oeuvres {
         function verifDeleteOeuvre(){
             let b = '<h3>Attention the deletion of the work leads to the deletion of : </h3>';
             //vérifie les usages de l'oeuvre
-            d3.json(me.apiStatsUrl+'uses/oeuvre/'+me.curOeuvre.id_oeu).then(data=>{
-                b+='<h4>'+data[0].nbDico+' dictionaries</h4>';
-                b+='<h4>'+data[0].nbConcept+' concept'+(data[0].nbConcept > 0 ? 's' : '')+'</h4>';
-                mMessage.setBody(b);
-                mMessage.setBoutons([{'name':"Close"},
-                    {'name':"Delete All",'class':'btn-danger','fct':me.delete}
-                    ])                
-                mMessage.show();    
-            });
+            me.api.stats('uses','oeuvre',me.curOeuvre.id_oeu).then(
+                data=>{
+                    b+='<h4>'+data[0].nbDico+' dictionaries</h4>';
+                    b+='<h4>'+data[0].nbConcept+' concept'+(data[0].nbConcept > 0 ? 's' : '')+'</h4>';
+                    mMessage.setBody(b);
+                    mMessage.setBoutons([{'name':"Close"},
+                        {'name':"Delete All",'class':'btn-danger','fct':me.delete}
+                        ])                
+                    mMessage.show();    
+                }
+            ).catch (
+                error=>{
+                    mMessage.setBody('<h3>Impossible to know the uses of the work</h3><p>'+error+'</p>');
+                    mMessage.setBoutons([{'name':"Close"}])                
+                    mMessage.show();
+                }
+            );                    
         }
         this.delete = function(){
             console.log('removeOeuvreVerif');
@@ -144,7 +151,7 @@ export class oeuvres {
             Promise.all(p).then((values) => {
                 d3.select('#listDicos').select('h1').remove();                
                 d3.select('#listDicos').selectAll('div').remove();                
-                this.init();
+                me.init();
                 mMessage.hide();
             });
 
@@ -173,7 +180,7 @@ export class oeuvres {
                     if(ids.length==0)return;
                     me.api.read('gen_dicos',ids).then(
                         result=>{
-                            me.dicos=result;
+                            me.dicos=result.filter(d=>d);
                             d3.select(me.tgtList).selectAll('.gDicos').remove();
                             let gDicos = d3.group(me.dicos, d => d.general);
                             d3.select(me.tgtList).selectAll('.gDicos')

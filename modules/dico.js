@@ -57,7 +57,7 @@ export class dico {
                     </li>
                     <li class="nav-item mx-2">
                         <button type="button" id="btnDicoImport" class="btn btn-sm btn-danger">
-                            <i class="fa-solid fa-upload"></i>
+                            <i class="fa-solid fa-download"></i>
                         </button>
                     </li>                    
                     </ul>
@@ -211,28 +211,41 @@ export class dico {
                     trim: true
                   });
                 records.forEach(r=>{
-                    //importation du générateur
+                    //récupération du concept
+                    //pour minimiser les appels à la base
+                    if(!r.type){
+                        let cpt = r.concept.split('_');
+                        r.type = cpt[0];
+                        r.concept = cpt[1];
+                    }
+                    let rs, dt, idItem, idConcept, cpt = me.data.filter(c=>c.type==r.type && c.lib == r.concept);
+                    if(cpt.length==0){
+                        idConcept = me.api.syncCreate(table.t, {'id_dico':me.d.id_dico,'type':r.type,'lib':r.concept});
+                        me.data.push({'id_concept':idConcept,'id_dico':me.d.id_dico,'type':r.type,'lib':r.concept});
+                    }else{
+                        idConcept = cpt[0].id_concept;
+                    } 
+                    //ajoute l'item suivant le type
                     if(r.type && r.concept && r.valeur){
-                        //vérifie l'existence du concept
-                        let idGen, idConcept, rs = me.oeuvre.searchClass(table,[table.k[0]+',eq,'+r.concept,table.k[1]+',eq,'+r.type]);
-                        if(rs.length==0){
-                            /*
-                            me.api.create(table.t, {'id_dico':me.d.id_dico,'type':r.type,'lib':r.concept}).then(
-                                idConcept=>{
-                                    me.api.create('generateurs', {'id_concept':idConcept,'valeur':r.valeur})
-                                }).catch (
-                                error=>console.log(error)
-                            );
-                            */
-                            //
-                            idConcept = me.api.syncCreate(table.t, {'id_dico':me.d.id_dico,'type':r.type,'lib':r.concept});
-                            me.data.push({'id_concept':idConcept,'id_dico':me.d.id_dico,'type':r.type,'lib':r.concept});
-                            //
-                        }else{
-                            idConcept = rs[0].id_concept;
-                            //ajoute le générateur   
-                            idGen = me.api.syncCreate('gen_generateurs', {'id_concept':idConcept,'valeur':r.valeur});
-                        } 
+                        //vérifie l'existence
+                        rs = me.api.syncList('gen_generateurs',['id_concept,eq,'+idConcept,'valeur,eq,'+r.valeur]);
+                        dt = {'id_concept':idConcept,'valeur':r.valeur};
+                        //ajoute ou update                           
+                        if(rs.records.length==0)
+                            idItem = me.api.syncCreate('gen_generateurs', dt);
+                        else
+                            idItem = me.api.syncUpdate('gen_generateurs', dt, rs.records[0].id_gen);
+                    }
+                    if(r.uri && r.concept && r.lib && r.format){
+                        //vérifie l'existence
+                        //{filter:['field1,modifier1,value1','field2,modifier2,value2']}); // AND
+                        rs = me.api.syncList('gen_uris',{filter:['id_concept,eq,'+idConcept,'uri,eq,'+encodeURIComponent(r.uri)]});
+                        dt = {'id_concept':idConcept,'uri':r.uri,'lib':r.lib,'format':r.format};
+                        //ajoute ou update                           
+                        if(rs.records.length==0)
+                            idItem = me.api.syncCreate('gen_uris', dt);
+                        else
+                            idItem = me.api.syncUpdate('gen_uris', dt, rs.records[0].id_uri);
                     }
                 })
                 /*    
@@ -243,7 +256,6 @@ export class dico {
             };
             reader.readAsText(input);
         }
-
         function showAddItem(e,d){
             if(table.mAdd)table.mAdd.m.show();
         }
@@ -304,7 +316,10 @@ export class dico {
         function deleteItem(s,d){
             me.api.delete(table.t,d[0]).then(e=>{
                 me.hot.alter('remove_row', s[0].start.row, 1);
-                mod.hide();    
+                mod.hide();
+                cptContent.selectAll('nav').remove();
+                cptContent.selectAll('ul').remove();
+                cptContent.selectAll('div').remove();
             });
         }
 

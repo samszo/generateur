@@ -1,8 +1,9 @@
 import {JSONEditor} from '../node_modules/vanilla-jsoneditor/index.js'
 import {getIn, parseFrom} from '../node_modules/immutable-json-patch/lib/esm/index.js'
-import {moteur} from '../modules/moteur.js';
 import {modal} from '../modules/modal.js';
 import {conjugaisons} from '../modules/conjugaisons.js';
+import { WBK } from '../node_modules/wikibase-sdk/dist/index.js';
+
 
 export class concept {
     constructor(params) {
@@ -19,19 +20,28 @@ export class concept {
         this.conjData;
         this.jsEditor;
         this.jsPath;
+        this.wdk;
         var m=new modal(), contResult, contHeight, userAllowed, progress;
         this.init = function () {
-            me.linkData=[
-                {n:'Adjectives',t:'gen_adjectifs',k:'id_adj',data:[],mAdd:true},
-                {n:'Generators',t:'gen_generateurs',k:'id_gen',data:[],mAdd:true},
-                {n:'Nouns',t:'gen_substantifs',k:'id_sub',data:[],mAdd:true},
-                //uniquement dans le dictionnaire général {n:'Syntagms',t:'gen_syntagmes',k:'id_syn',data:[],mAdd:true},
-                {n:'Verbs',t:'gen_verbes',k:'id_verbe',data:[],mAdd:true},
+
+          me.wdk = WBK({
+            instance: 'https://www.wikidata.org',
+            sparqlEndpoint: 'https://query.wikidata.org/sparql'
+          });
+
+          me.linkData=[
+              {n:'Adjectives',t:'gen_adjectifs',k:'id_adj',data:[],mAdd:true},
+              {n:'Generators',t:'gen_generateurs',k:'id_gen',data:[],mAdd:true},
+              {n:'Nouns',t:'gen_substantifs',k:'id_sub',data:[],mAdd:true},
+              //uniquement dans le dictionnaire général {n:'Syntagms',t:'gen_syntagmes',k:'id_syn',data:[],mAdd:true},
+              {n:'Verbs',t:'gen_verbes',k:'id_verbe',data:[],mAdd:true},
+              {n:'Uris',t:'gen_uris',k:'id_uri',data:[],mAdd:true},
+              {n:'Sparqls',t:'gen_sparqls',k:'id_sparql',data:[],mAdd:true},
+
             ];
             if(me.sync)getSyncLinkData();
             else{
               userAllowed = me.oeuvre.auth.userAdmin || me.oeuvre.auth.userAllowed(me.dico.id_dico,me.oeuvre.dicosUti);
-              getLinkData();
               //construction des modals pour chaque type de lien              
               me.linkData.forEach(ld=>{
                 if(ld.mAdd){
@@ -54,8 +64,36 @@ export class concept {
                   }
                 }
               })
+              getLinkData();
+
             } 
         }
+        async function getSparql(d){
+          let SPARQL = `SELECT ?item ?itemLabel WHERE {
+            SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE]". }
+            {
+              SELECT ?item (MD5(CONCAT(str(?item),str(RAND()))) as ?random) WHERE {
+                ?item p:P106 ?statement0.
+                ?statement0 (ps:P106/(wdt:P279*)) wd:Q1028181.
+                ?item p:P734 ?statement1.
+                ?statement1 (ps:P734/(wdt:P279*)) _:anyValueP734.
+              }
+              ORDER BY ?random
+          LIMIT 1
+            }
+          }`;
+
+          const url = me.wdk.sparqlQuery(SPARQL)
+          const results = await fetch(url)
+            .then(res => res.text())
+            .catch(function(error) {
+              progress.destroy();
+              contResult.select('#progressGenConcept').remove();
+              me.tgtContent.select("#genText"+d.n).html('Sparql error: ' + error.message);      
+            });
+          return results;
+        }
+
         function getSyncLinkData(){
           //ATTENTION il peut y avoir le même concept dans plusieurs dictionnaires
           me.data.forEach(cpt=>{
@@ -66,8 +104,8 @@ export class concept {
           return me.linkData;
         }
 
-        function getLinkData(){
-            let p = [];
+        function getLinkData(){            
+            let p = [];            
             me.linkData.forEach(d=>p.push(me.api.list(d.t,{filter:'id_concept,eq,'+me.data.id_concept})));
             Promise.all(p).then((values) => {
                 let pl=[];
@@ -79,7 +117,7 @@ export class concept {
                   me.linkData[i].data=v.records;
                 });
                 showLinkData();
-            });
+            });            
         }
         function showLinkData(){
             //construction des tab
@@ -100,11 +138,7 @@ export class concept {
                     </button>
                   </li>`
             if(userAllowed){
-              tools += `<li class="nav-item mx-2">
-                  <button type="button" class="btn btn-sm btn-danger">
-                      <i class="fa-regular fa-trash-can"></i>
-                  </button>
-                </li>
+              tools += `
                 <li class="nav-item dropdown mx-2">
                   <button type="button" class="btn btn-sm btn-danger dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                       <i class="fa-regular fa-square-plus"></i>
@@ -373,7 +407,7 @@ export class concept {
               <div id="genText${d.n}"></div>
             </div>`;
 
-            if(d=='concept' || d.t=="gen_generateurs"){
+            if(d=='concept' || d.t=="gen_generateurs" || d.t=="gen_uris"){
               htmlResult += `<div class="col">
                       <h4>Generation structure</h4>
                       <div id="genStrct"></div>
@@ -465,6 +499,7 @@ export class concept {
           me.oeuvre.wGen.postMessage({
             'g':g,
             'dicos':me.oeuvre.dicos,
+            //'id_oeu':me.oeuvre.curOeuvre.id_oeu,
             'id_dico':me.oeuvre.curDico.d.id_dico,
             'apiUrl':me.oeuvre.auth.apiReadUrl
           });
@@ -487,8 +522,22 @@ export class concept {
             contResult.select('#progressGenConcept').remove();
             me.tgtContent.select("#genText"+d.n).html('Generateur error: ' + error.message);    
           };
-        
+        }
 
+        function showSparql(d,g){
+          getSparql(d).then(r=>{
+            me.jsEditor.set({json:r});                
+            progress.destroy();
+            contResult.select('#progressGenConcept').remove();
+            me.tgtContent.select("#genText"+d.n).html(r);    
+          });
+        }
+
+        function showUri(d,r){
+            me.jsEditor.set({json:r});                
+            progress.destroy();
+            contResult.select('#progressGenConcept').remove();
+            me.tgtContent.select("#genText"+d.n).html(r.lib);    
         }
 
 
@@ -502,6 +551,13 @@ export class concept {
           if(!r[d.k])r=d.data.filter(i=>i[d.k]==r[0])[0];
           me.appUrl.change(d.k,r[d.k]);
           switch (d.n) {
+            case 'Uris':
+              showUri(d,r);           
+              break;            
+            case 'Sparqls':
+              getSparql()
+              showGen(d,r.valeur,'jsEditor');           
+              break;            
             case 'Generators':
               showGen(d,r.valeur,'jsEditor');           
               break;            

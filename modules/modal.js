@@ -314,7 +314,7 @@ export let modalAddConceptNouns = `
     </div>
     </div>
 `;
-//modal pour l'ajout d'un adjectif dans un concept
+//modal pour l'ajout d'un syntagme dans un concept
 export let modalAddConceptSyntagms = `
     <div class="modal-dialog">
     <div class="modal-content">
@@ -390,6 +390,78 @@ export let modalImportDicoconcepts = `
                     <input class="form-control" type="file" id="importDicoconceptsFile" accept=".csv">
                 </div>
             </form>
+        </div>                          
+        <div class="modal-footer">
+        </div>
+    </div>
+    </div>
+`;
+
+//modal pour l'ajout d'une uri dans un concept
+export let modalAddConceptUris = `
+    <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title">Adding a new uri</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+
+
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="uriLib">Lib</span>
+                <input type="text" class="form-control inptValue" keycol='lib' placeholder="lib" aria-label="lib" aria-describedby="uriLib">
+            </div>
+            
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="uriUri">Uri</span>
+                <input type="text" class="form-control inptValue" keycol='uri' placeholder="uri" aria-label="uri" aria-describedby="uriUri">
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="uriFormat">Format</span>
+                <input type="text" class="form-control inptValue" keycol='format' placeholder="format" aria-label="format" aria-describedby="uriFormat">
+            </div>
+
+        </div>                          
+        <div class="modal-footer">
+        </div>
+    </div>
+    </div>
+`;
+
+//modal pour l'ajout d'une requête sparql uri dans un concept
+export let modalAddConceptSparqls = `
+    <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title">Adding a new uri</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+
+
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="sparqlLib">Lib</span>
+                <input type="text" class="form-control inptValue" keycol='lib' placeholder="lib" aria-label="lib" aria-describedby="uriLib">
+            </div>
+            
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="sparqlQuery">Query</span>
+                <textarea rows="10" cols="40" class="form-control inptValue" keycol='query' placeholder="query" aria-label="query" aria-describedby="sparqlQuery">
+                </textarea>
+            </div>
+            
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="sparqlEndpoint">Endpoint</span>
+                <input type="text" class="form-control inptValue" keycol='endpoint' placeholder="endpoint" aria-label="endpoint" aria-describedby="sparqlEndpoint">
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="sparqlFormat">Format</span>
+                <input type="text" class="form-control inptValue" keycol='format' placeholder="format" aria-label="format" aria-describedby="sparqlFormat">
+            </div>
+
         </div>                          
         <div class="modal-footer">
         </div>

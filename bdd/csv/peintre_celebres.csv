@@ -1,0 +1,301 @@
+concept,uri,lib,format
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q762,Leonardo da Vinci,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q5592,Michelangelo,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q5582,Vincent van Gogh,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q5593,Pablo Picasso,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q5577,Salvador Dalí,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q5598,Rembrandt,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q5597,Raphael,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q4724,Le Corbusier,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q7241,Rabindranath Tagore,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q5580,Albrecht Dürer,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q5432,Francisco de Goya,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q5588,Frida Kahlo,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q5586,Katsushika Hokusai,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q297,Diego Velázquez,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q5589,Henri Matisse,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q5599,Peter Paul Rubens,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q5603,Andy Warhol,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q296,Claude Monet,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q23380,Jean Auguste Dominique Ingres,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q37693,Paul Gauguin,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q35548,Paul Cézanne,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q41264,Johannes Vermeer,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q301,El Greco,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q41406,Edvard Munch,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q5669,Sandro Botticelli,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q41513,William Blake,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q40599,Édouard Manet,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q42207,Caravaggio,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q37571,Jackson Pollock,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q134958,Taras Shevchenko,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q39931,Pierre-Auguste Renoir,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q33477,Eugène Delacroix,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q75698,Samuel Finley Breese Morse,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q46373,Edgar Degas,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q34661,Gustav Klimt,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q47551,Titian,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q47842,Empress Dowager Cixi,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q7814,Giotto,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q152384,Joan Miró,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q83155,Jacques-Louis David,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q43270,Pieter Brueghel the Elder,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q61064,Wassily Kandinsky,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q7724,August Strindberg,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q82445,Henri de Toulouse-Lautrec,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q93284,Marc Chagall,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q130531,Hieronymus Bosch,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q41554,Nicolas Poussin,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q209615,Francisco de Zurbarán,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q102272,Jan van Eyck,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q7836,René Magritte,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q120993,Amedeo Modigliani,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q128027,Giorgio Vasari,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q131405,Louis Daguerre,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q5912,Marcel Duchamp,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q150679,Anthony van Dyck,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q104884,Caspar David Friedrich,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q172911,Ilya Repin,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q192062,Bartolomé Esteban Murillo,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q9319,Jacopo Tintoretto,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q159758,J. M. W. Turner,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q46408,Georgia O'Keeffe,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q160538,Gian Lorenzo Bernini,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q173223,Mary Cassatt,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q44007,Paul Klee,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q5811,Masaccio,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q151803,Piet Mondrian,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q34618,Gustave Courbet,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q130777,Kazimir Malevich,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q134741,Camille Pissarro,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q171344,William Hogarth,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q6682,Gustave Doré,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q5664,Fra Angelico,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q9440,Paolo Veronese,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q212657,Artemisia Gentileschi,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q5681,Andrea Mantegna,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q153793,Georges Braque,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q48319,Hans Holbein the Younger,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q297838,Jusepe de Ribera,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q175130,Alfred Sisley,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q179126,John Ruskin,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q191423,Domenico Ghirlandaio,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q184212,Théodore Géricault,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q182664,Canaletto,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q200798,Utagawa Hiroshige,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q44032,Egon Schiele,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q34013,Georges Seurat,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q167654,Frans Hals,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q170076,Jean Dubuffet,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q156386,Henri Rousseau,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q182882,John James Audubon,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q5822,Piero della Francesca,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q214565,Beatrix Potter,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q148475,Jean-Baptiste Camille Corot,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q181568,Ivan Ayvazovsky,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q17169,Giovanni Bellini,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q146691,Alphonse Mucha,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q154842,Max Ernst,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q186748,Dante Gabriel Rossetti,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q183221,Jean-Antoine Watteau,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q193064,Ivan Shishkin,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q8459,Giorgione,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q152245,"Albert, Prince Consort",wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q183458,Andrea del Verrocchio,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q192720,Thomas Gainsborough,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q15792,Duccio di Buoninsegna,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q68631,Rogier van der Weyden,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q46139,Man Ray,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q7751,Giuseppe Arcimboldo,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q192496,Robert Fulton,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q5827,Pietro Perugino,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q133600,Banksy,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q151759,Karl Friedrich Schinkel,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q159297,John Constable,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q160149,Mark Rothko,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q105320,Berthe Morisot,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q194402,Joshua Reynolds,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q44054,Franz Marc,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q154340,Francis Bacon,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q186202,Giovanni Battista Tiepolo,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q213163,Élisabeth Louise Vigée Le Brun,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q148458,Jean-François Millet,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q204138,Viktor Mikhailovich Vasnetsov,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q15790,Cimabue,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q208993,Nicholas Roerich,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q483992,William-Adolphe Bouguereau,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q229272,Ernst Ludwig Kirchner,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q187506,Honoré Daumier,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q189117,Jan Matejko,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q192488,Paolo Uccello,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q191748,Lucas Cranach the Elder,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q5571,Andrea del Sarto,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q207758,Ivan Kramskoi,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q151573,Paul Signac,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q187310,Carl Larsson,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q5594,Antonello da Messina,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q212499,Jean-Léon Gérôme,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q151097,Henry Moore,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q154448,Victor Vasarely,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q155626,John Singer Sargent,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q180932,François Boucher,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q7803,Bronzino,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q236038,Sofonisba Anguissola,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q151152,Juan Gris,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q151679,Roy Lichtenstein,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q157194,Alberto Giacometti,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q203643,James McNeill Whistler,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q4768,Karl Bryullov,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q127171,Jean-Honoré Fragonard,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q333453,Raja Ravi Varma,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q207298,Frédéric Bazille,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q8457,Antonio da Correggio,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q127017,Vasily Vereshchagin,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q150312,Amrita Sher-Gil,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q485635,Keith Haring,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q156622,Giorgio de Chirico,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q217128,Valentin Serov,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q211356,Isaac Levitan,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q152788,Emil Nolde,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q310924,Alan Bean,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q153746,Albrecht Altdorfer,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q159606,John Everett Millais,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q109061,Guido Reni,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q205148,Filippo Lippi,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q214074,Claude Lorrain,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q271676,Charles Le Brun,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q153739,Jean Arp,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q154260,Oskar Kokoschka,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q221043,Simone Martini,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q217434,Grant Wood,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q110228,Vasily Surikov,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q315237,Vasily Perov,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q203371,Georges de La Tour,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q205863,Jan Steen,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q203401,Edward Hopper,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q206820,Anders Zorn,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q272045,Kitagawa Utamaro,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q295144,Gustave Caillebotte,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q123071,Arnold Böcklin,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q153104,Otto Dix,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q153965,Joseph Beuys,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q170068,Akseli Gallen-Kallela,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q155407,Jean-Michel Basquiat,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q157183,Fernand Léger,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q106851,Hans Memling,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q229351,Tamara de Lempicka,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q203828,Gustave Moreau,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q33978,Robert Delaunay,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q33981,August Macke,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q207929,Pontormo,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q208125,Lorenzo Ghiberti,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q211763,William Holman Hunt,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q212600,Eugène Louis Boudin,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q309759,Edward Lear,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q152233,El Lissitzky,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q154338,Matthias Grünewald,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q154349,Odilon Redon,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q156272,André Derain,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q107194,George Grosz,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q109540,Wilhelm Busch,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q207447,Jean-Baptiste-Siméon Chardin,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q7031,Luca Signorelli,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q271884,Norman Rockwell,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q132305,Willem de Kooning,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q290407,Gentile Bellini,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q298703,E. E. Cummings,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q151580,Alexander Calder,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q152797,Umberto Boccioni,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q160422,Theo van Doesburg,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q108301,Maurice Utrillo,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q311398,Jean Fouquet,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q212754,John William Waterhouse,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q214564,Ferdinand Hodler,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q240526,Lawrence Alma-Tadema,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q116728,"Victoria, Princess Royal",wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q164683,Max Beckmann,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q151836,Friedensreich Hundertwasser,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q310025,Théodore Rousseau,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q154083,Henry van de Velde,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q255828,Pieter Breughel the Younger,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q157321,Francis Picabia,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q158062,Max Liebermann,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q264193,Émile Bernard,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q223725,Francesco Hayez,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q26408,Pierre Bonnard,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q76718,Anton Raphael Mengs,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q211562,Ambrogio Lorenzetti,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q214905,Thomas Eakins,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q7824,Annibale Carracci,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q9348,Parmigianino,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q296265,Filippino Lippi,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q123098,Angelica Kauffmann,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q168704,Niki de Saint Phalle,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q209050,Jan Brueghel the Elder,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q272877,Fernando Botero,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q164979,Carl Spitzweg,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q154335,Yves Klein,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q159409,Louise Bourgeois,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q160141,Chaïm Soutine,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q45205,Raoul Dufy,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q80442,Robert Campin,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q213612,Jacob van Ruisdael,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q214666,Léon Bakst,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q241098,Maurice de Vlaminck,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q353628,Arkhip Kuindzhi,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q310715,Henri Fantin-Latour,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q252357,Charles-François Daubigny,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q5581,Vittore Carpaccio,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q5591,Pinturicchio,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q214043,John Bauer,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q232391,Natalia Goncharova,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q7780,Fra Bartolomeo,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q215100,Mikhail Vrubel,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q440369,Maurice Denis,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q344838,Winslow Homer,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q310437,Alexandre Cabanel,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q123740,Félix Vallotton,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q170071,Josef Albers,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q311082,Pisanello,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q154594,Lucian Freud,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q155057,Jasper Johns,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q156889,Suzanne Valadon,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q158840,James Ensor,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q160448,László Moholy-Nagy,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q215305,Giulio Romano,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q231121,Yayoi Kusama,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q312631,Alexander Rodchenko,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q315647,David Alfaro Siqueiros,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q334001,Thomas Cole,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q76829,Alexander Ivanov,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q48514,Sesshū Tōyō,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q214062,Joseph Wright of Derby,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q215251,Hugo van der Goes,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q270658,Jacob Jordaens,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q236050,Lavinia Fontana,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q164696,Hans Baldung Grien,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q351746,Joaquín Sorolla,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q122382,Henry Fuseli,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q157610,Lovis Corinth,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q160252,Frederic Leighton,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q381248,James Tissot,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q314548,Gerard van Honthorst,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q558522,M. F. Husain,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q316325,Andrew Wyeth,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q332041,Jose Clemente Orozco,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q333323,Pietro da Cortona,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q77132,Albert Bierstadt,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q31523,Yosa Buson,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q207755,Émile Friant,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q236985,Helene Schjerfbeck,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q318427,Mikhail Nesterov,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q241732,Rosa Bonheur,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q319854,Nicolai Abildgaard,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q320118,Domenichino,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q164358,Robert Rauschenberg,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q170339,Lucas Cranach the Younger,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q153920,Aristide Maillol,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q280851,Piero di Cosimo,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q469439,Shitao,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q216406,Edward Burne-Jones,wikidata
+actant_painter,https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q313275,Boris Kustodiev,wikidata

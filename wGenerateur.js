@@ -2,7 +2,8 @@ import {moteur} from './modules/moteur.js';
 
 onmessage = function(event) {
   let rs=[], 
-  m = new moteur({'apiUrl':event.data.apiUrl,'dicos':event.data.dicos,'id_dico':event.data.id_dico});
+  m = new moteur({'apiUrl':event.data.apiUrl,'dicos':event.data.dicos,'id_dico':event.data.id_dico,'id_oeu':event.data.id_oeu});
+  //m = new moteur({'apiUrl':event.data.apiUrl,'dicos':event.data.dicos,'id_dico':event.data.id_dico});
 
   if(Array.isArray(event.data.g)){
     event.data.g.forEach(v=>{

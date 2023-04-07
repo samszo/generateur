@@ -5,27 +5,16 @@ import {auth} from './modules/auth.js';
 TODO : gérer le chargement d'un fichier sqlite
 TODO : gérer l'enregistremnet de la base dans un fichier cf. https://github.com/sql-js/sql.js/blob/master/examples/GUI/gui.js#L122
 TODO : gérer la synchronisation avec une base centralisée
-TODO : développer le CRUD
 import {sql} from './modules/sql.js';
 let s = new sql();
 */
+fetch('api.html').then(r=>{
+    console.log(r);
+})
+
 let
 worker = new Worker('wGenerateur.js',{ type: "module" });
 let a = new auth({'navbar':d3.select('#navbarMain'),
-        apiOmk:'http://localhost/omk_arcanes/api/',
-        ident: 'RuWr1mLFchAEvxCRoAy1j8afnDkXm0Ck',
-        key: 'tXTT0yE4GfGOAcCTr7qC8sOv4qoyGA6Q',        
-        mail:'samuel.szoniecky@univ-paris8.fr'
-        /*
-        ident: 'ZOCgyR2932SMs81hokqlQ8a8wLQvrDgt',
-        key: 'tS4EcOmUEQaW0cQFzND7Gtk60wkW0RRc',
-
-        genstory
-        apiOmk:'https://genstory.jardindesconnaissances.fr/api/',
-        key_identity: tvKOUDlEJZ5x8kMzMmxyvCQ5IliEDuBI
-        key_credential: KjcFiTN4NST6jo0iE45uJUF3OlWQwMl1        
-        mail:'samuel.szoniecky@univ-paris8.fr'
-        */
     });
 a.getUser(initOeuvre);
 function initOeuvre(){

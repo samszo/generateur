@@ -3,6 +3,7 @@
     "csv-parse": "^5.3.3",
     "immutable-json-patch": "^5.1.1",
     "js-crud-api": "^0.3.0",
-    "vanilla-jsoneditor": "^0.11.4"
+    "vanilla-jsoneditor": "^0.11.4",
+    "wikibase-sdk": "^9.0.5"
   }
 }
