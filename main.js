@@ -15,6 +15,28 @@ fetch('api.html').then(r=>{
 let
 worker = new Worker('wGenerateur.js',{ type: "module" });
 let a = new auth({'navbar':d3.select('#navbarMain'),
+        apiOmk:'http://localhost/omk_arcanes/api/',
+        mail:'samuel.szoniecky@univ-paris8.fr',
+        ident: 'TIpNmbSRpPyX2rXBUj7rnzhQwBFPMpuN',
+        key:'EodhEiP1XYkWskV0DIonO0V5Dznim9TQ',
+        /*
+        generateur.art GenStory
+        apiOmk:'https://generateur.art/api/',0
+        key_identity: qB9zEYfurIiiXgXlSTeCzMk5EtQnnND3
+        key_credential: SjFh3QoxhTyDdHD8cqnYKu8lzsNa7NC1        
+
+        genstory
+        apiOmk:'https://genstory.jardindesconnaissances.fr/api/',
+        key_identity: tvKOUDlEJZ5x8kMzMmxyvCQ5IliEDuBI
+        key_credential: KjcFiTN4NST6jo0iE45uJUF3OlWQwMl1        
+        mail:'samuel.szoniecky@univ-paris8.fr'
+
+        omk_cine
+        apiOmk:'http://localhost/omk_cine/api/',
+        key_identity: FA4y7y53uuGwwQXwPeIOmjfi352RuVFb
+        key_credential: vHo3Y9SmUDqrWyC3sfM4XVQ9GEChVUPs        
+        mail:'samuel.szoniecky@univ-paris8.fr'
+        */
     });
 a.getUser(initOeuvre);
 function initOeuvre(){
