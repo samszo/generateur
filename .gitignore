@@ -9,3 +9,7 @@ bdd/generateurDev.zip
 bdd/omk_generateur.sql.zip
 apiJDC.php
 apiReadJDC.php
+asset/.DS_Store
+.gitignore
+.DS_Store
+.gitignore

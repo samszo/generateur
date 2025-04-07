@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Import To OMK</title>
+    <script src="asset/js/d3.min.js"></script>
+    <style>
+    .btnAddToOmk {
+        cursor: pointer;
+    }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Importation des données dans OMK</h1>        
+    </header>
+    <nav>
+        <ul>
+            <li><a href="#section1">Importer les déterminants</a></li>
+        </ul>
+    </nav>
+    <main>
+        <section id="section1">
+            <h2>Importer les déterminants</h2>
+            <div>
+                <label for="urlInputDeterminant">Entrez l'URL de la liste des déterminants</label>
+                <input type="url" id="urlInputDeterminant" name="urlInputDeterminant" required value="http://localhost/omk_generateur/modules/generateur/data/imports/gen_determinants.csv">
+                <button id="btnImportDeterminant" type="button">Soumettre</button>
+            </div>
+        </section>
+        <section id="section2">
+            <h2>Importer les conjugaisons</h2>
+            <div>
+                <label for="urlInputConjugaison">Entrez l'URL de la liste des conjugaisons</label>
+                <input type="url" id="urlInputConjugaison" name="urlInputConjugaison" required value="http://localhost/omk_generateur/modules/generateur/data/imports/gen_conjugaisons.csv">
+                <button id="btnImportConjugaison" type="button">Soumettre</button>
+            </div>
+        </section>
+        <section id="section2">
+            <h2>Importer les concepts et les termes</h2>
+            <div>
+                <label for="urlInputConcet">Entrez l'URL de la liste des concepts</label>
+                <input type="url" id="urlInputConcept" name="urlInputConcept" required value="http://localhost/omk_generateur/files/bulk_export/generateur_old-20250406-072411.json">
+                <button id="btnImportConcept" type="button">Soumettre</button>
+            </div>
+        </section>
+        <div id="resultSave"></div>
+    </main>
+    <footer>
+        <p>&copy; 2025 Samuel Szoniecky</p>
+    </footer>
+    <script type="module">
+        import {auth} from './modules/auth.js';
+
+        let a = new auth({
+            mail:'samuel.szoniecky@univ-paris8.fr',
+            apiOmk:'http://localhost/omk_generateur/api/',
+            ident: 'rqzo8WXIejwWj3CtfPraTDOOzKaIgnPj',
+            key:'OOCK0VvxeaE2BFdI8ZVsCC9nhy2hU3Yp',
+        }),
+        divResult = d3.select("#resultSave"),
+        oDicos = [],
+        oConjs = [];
+        
+        d3.select("#btnImportDeterminant").on("click",()=>{
+            let url = document.getElementById('urlInputDeterminant').value;
+            d3.csv(url).then(function(data) {
+                console.log(data);
+                importDeterminants(data)
+            }).catch(function(error) {
+                console.error('Error fetching the csv:', error);
+            });
+        });        
+        
+        d3.select("#btnImportConjugaison").on("click",()=>{
+            let url = document.getElementById('urlInputConjugaison').value;
+            d3.csv(url).then(function(data) {
+                console.log(data);
+                importConjugaisons(data)
+            }).catch(function(error) {
+                console.error('Error fetching the csv:', error);
+            });
+        });        
+
+        d3.select("#btnImportConcept").on("click",()=>{
+            let url = document.getElementById('urlInputConcept').value;
+            d3.json(url).then(function(data) {
+                console.log(data);
+                importConcepts(data[0])
+            }).catch(function(error) {
+                console.error('Error fetching the csv:', error);
+            });
+        });        
+
+        async function importConcepts(data){
+
+            //regroupement par type
+            let types = d3.group(data, d=>d.cpt.split('_')[0]);
+            console.log(types);
+            //regroupement par nombre d'usage
+            let uses = d3.group(data, d=>d.uses);
+            console.log(uses);
+            //calcul l'extension des utilisations
+            let usesExtent = d3.extent(data, d=>d.uses);
+            console.log(usesExtent);
+            //récupération des dico pour avoir les langues
+            oDicos = a.omk.getAllItems("resource_class_id[]="+a.omk.getClassByTerm('genex:Dictionnaire')['o:id']);
+            console.log(oDicos);
+            //récupération des conjugaison pour faire le lien dan sles verbes
+            oConjs = a.omk.getAllItems("resource_class_id[]="+a.omk.getClassByTerm('genex:Conjugaison')['o:id']);
+            console.log(oConjs);
+            /*TODO:vérifie si on ajoute le concept au dictionnaire général == les concept sont de la même langue et les links sont équivalent
+            */
+            /*TODO:vérifie si les traduction sont faites == les links sont équivalent mais pas les langues
+            */
+            //ajoute les concepts et les termes
+            createAllConcepts(data,0);
+            //
+        }
+
+        async function createAllConcepts(data,i){
+            if(i>=data.length){
+                return;
+            }
+            let d = data[i],
+                dicos = d.idsDicos.split(',').map(di=>{
+                    return oDicos.filter(odi=>odi["dcterms:identifier"][0]["@value"]==di)[0]
+                }), 
+                cpts = d.idsCpt.split(',').map((c,i)=>{ return {'idCpt':c,'idDico':dicos[i]['o:id'],'langue':dicos[i]["dcterms:language"][0]["@value"]};});
+            //vérifie la cohérence des datas
+            if(cpts.length!=dicos.length){
+                console.log("Erreur de cohérence entre les concepts et les dicos : "+i+" = "+d.cpt);
+            }else{
+                //ajoute les concepts                
+                console.log("Traitement du concept : "+i+" = "+d.cpt);
+                createConcept(data, cpts, i, 0);          
+            }
+
+        }
+
+        async function createConcept(data, cpts, i, j){
+            if(j>=cpts.length){
+                createAllConcepts(data,i+1)
+                return;
+            }
+
+            //création des concepts
+            let d = data[i],
+                cpt = cpts[j],
+                dt = {
+                    'dcterms:title':d.cpt,
+                    'dcterms:identifier':cpt.idCpt,
+                    'genex:hasDico':{'rid':cpt.idDico},
+                    'genex:isCaract':d.cpt.split('_')[0] == 'carac' ? '1':'0',
+                    'genex:hasType':d.cpt.split('_')[0],
+                    'dcterms:language':cpt.langue
+                },
+                dtO = {'rt':'genex_Concept','c':'genex:Concept','dt':{}};
+                dtO.dt = dt;
+                dtO.verif={'dcterms:identifier':cpt.idCpt};
+                dtO['index'] = 'cpt_'+cpt.idCpt;
+                //on crée le terme si il n'existe pas
+                let oCpt = await a.omk.getsetResource(dtO);
+                //oCpt = await a.omk.createItem(dt);
+            divResult.append('div').text("Concept crée "+oCpt["o:id"]+" : "+oCpt["o:title"]);
+
+            //création des termes
+            await createTerm(oCpt, d.links.adjectifs, 'adjectif', 0);
+            await createTerm(oCpt, d.links.substantifs, 'substantif', 0);
+            await createTerm(oCpt, d.links.verbes, 'verbe', 0);
+            await createTerm(oCpt, d.links.generateurs, 'generateur', 0);
+
+            createConcept(data, cpts, i, j+1);
+        }
+
+        async function createTerm(oCpt, links, type, i){
+            if(i>=links.length){
+                return;
+            }
+
+            //création du terme
+            let dtO = {'rt':'genex_Term','c':'genex:Term','dt':{}},
+                dt = {
+                    'dcterms:language':oCpt['dcterms:language'][0]['@value'],
+                    'genex:hasType':type,
+                };
+            let l = links[i],dtAc = {}, elision = l.elision ? '' : 'no';
+            if(l.idsCpt.split(',').includes(oCpt['dcterms:identifier'][0]['@value'])){                
+                switch (type) {
+                    case 'adjectif':
+                        dtAc[elision+'EliFemPlu'] = l.f_p;
+                        dtAc[elision+'EliFemSing'] = l.f_s;
+                        dtAc[elision+'EliMasPlu'] = l.m_p;
+                        dtAc[elision+'EliMasSing'] = l.m_s;
+                        dt['genex:hasAccord']= annoAccord(dtAc,l.elision ? '' : 'no');
+                        dt['genex:hasPrefix'] = l.prefix;
+                        dt['dcterms:title'] = dt['genex:hasType']+':'+l.prefix+' '+l.f_s+' '+l.f_p+' '+l.m_s+' '+l.m_p;                                
+                        dt['genex:hasElision'] = l.elision;                       
+                        break;                
+                    case 'substantif':
+                        dtAc[elision+'EliFemPlu'] = l.genre == '1' ? '':l.p;
+                        dtAc[elision+'EliFemSing'] = l.genre == '1' ? '':l.s;
+                        dtAc[elision+'EliMasPlu'] = l.genre == '1' ? l.p:'';
+                        dtAc[elision+'EliMasSing'] = l.genre == '1' ? l.s:'';
+                        dt['genex:hasAccord']= annoAccord(dtAc,l.elision ? '' : 'no');
+                        dt['genex:hasPrefix'] = l.prefix;
+                        dt['lexinfo:gender'] = l.genre == '1' ? 'masculin':'féminin';
+                        dt['dcterms:title'] = dt['genex:hasType']+':'+l.prefix+' '+l.s+' '+l.p+' '+dt['lexinfo:gender'];                                
+                        dt['genex:hasElision'] = l.elision;
+                        break;
+                    case 'verbe':
+                        let conj = oConjs.filter(oc=>oc['dcterms:identifier'][0]['@value']==l.id_conj)[0];
+                        dt['genex:hasPrefix'] = l.prefix;
+                        dt['genex:hasConjugaison'] = {'rid':conj['o:id']};
+                        dt['dcterms:title'] = dt['genex:hasType']+':'+l.prefix+' ('+conj['o:title']+')';
+                        dt['genex:hasElision'] = l.elision;
+                        break;
+                    case 'generateur':
+                        dt['genex:hasGenerateur'] = l.valeur;
+                        dt['dcterms:title'] = dt['genex:hasType']+':'+l.valeur;
+                        break;
+                }
+                dtO.dt = dt;
+                dtO.verif={'dcterms:title':dt['dcterms:title']};
+                dtO['index'] = dt['dcterms:title'];
+                //on crée le terme si il n'existe pas
+                let o = await a.omk.getsetResource(dtO);
+                //on ajoute le lien vers le concept si ce n'est pas déjà fait
+                if(!o['genex:hasConcept'] || o['genex:hasConcept'].filter(hc=>hc.value_resource_id==oCpt['o:id']).length==0){
+                    o = await a.omk.updateRessource(o['o:id'], {'genex:hasConcept':{'rid':oCpt['o:id']}}, 'items', null, 'PUT',false, o);
+                }
+                divResult.append('div').text(dt['genex:hasType']+" ajouté "+o["o:id"]+" : "+o["o:title"]);
+            }
+            await createTerm(oCpt, links, type, i+1);
+        }
+
+
+
+        async function importConjugaisons(data){
+
+            data.forEach((d,i)=>{
+                let dt = {
+                    'o:resource_class':'genex:Conjugaison',
+                    'o:resource_template':'genex_Conjugaison',
+                    'dcterms:title':'Modèle de conjugaison : '+d['modele'],
+                    'genex:hasTempsTerms':annoTerminaison(d),
+                    'dcterms:identifier':d['id_conj'],
+                    'genex:hasDico':{'rid':d['genex:hasDico']},
+                };
+                a.omk.createItem(dt, i=>{
+                    divResult.append('div').text("Objet crée "+i["o:id"]+" : "+i["o:title"]);
+                });
+            });
+
+        }
+
+        async function importDeterminants(data){
+
+            data.forEach((d,i)=>{
+                let dt = {
+                    'o:resource_class':'genex:Determinant',
+                    'o:resource_template':'genex_determinant',
+                    'dcterms:title':d['dcterms:title'],
+                    'genex:hasAccord':[
+                        annoAccord(d,'no'),
+                        annoAccord(d,'')
+                    ],
+                    'dcterms:identifier':d['dcterms:identifier'],
+                    'genex:hasDico':{'rid':d['genex:hasDico']},
+                };
+                a.omk.createItem(dt, i=>{
+                    divResult.append('div').text("Objet crée "+i["o:id"]+" : "+i["o:title"]);
+                });
+            });
+
+        }
+
+        function annoTerminaison(d){
+            let terms = [], mood = [
+                {'c':'present','l':"indicatif présent"},
+                {'c':'imparfait','l':"indicatif imparfait"},
+                {'c':'passeSimple','l':"passé simple"},
+                {'c':'futurSimple','l':"futur simple"},
+                {'c':'conditionnel','l':"conditionnel présent"},
+                {'c':'subjonctif','l':"subjonctif présent"},
+                {'c':'participe','l':"participe présent"},
+                {'c':'infinitif','l':"infinitif"}
+            ]
+            mood.forEach(m=>{
+                let anno = {};
+                if(m.c=='participe' || m.c=='infinitif'){
+                    anno = {
+                        'lexinfo:thirdPersonForm':[{
+                            "@value": d[m.c],
+                            "type": "literal",
+                            "property_id": a.omk.getPropId('lexinfo:thirdPersonForm'),
+                        }],    
+                        'lexinfo:mood':[{
+                            "@value": m.c,
+                            "type": "literal",
+                            "property_id": a.omk.getPropId('lexinfo:mood'),
+                        }]
+                    };
+                }else{
+                    anno = {
+                        'lexinfo:firstPersonForm':[{
+                            "@value": d[m.c+'1'],
+                            "type": "literal",
+                            "property_id": a.omk.getPropId('lexinfo:firstPersonForm'),
+                            },
+                            {
+                                "@value": d[m.c+'4'],
+                                "type": "literal",
+                                "property_id": a.omk.getPropId('lexinfo:firstPersonForm'),
+                            }
+                        ],    
+                        'lexinfo:secondPersonForm':[{
+                            "@value": d[m.c+'2'],
+                            "type": "literal",
+                            "property_id": a.omk.getPropId('lexinfo:secondPersonForm'),
+                            },
+                            {
+                                "@value": d[m.c+'5'],
+                                "type": "literal",
+                                "property_id": a.omk.getPropId('lexinfo:secondPersonForm'),
+                            }
+                        ],    
+                        'lexinfo:thirdPersonForm':[{
+                            "@value": d[m.c+'3'],
+                            "type": "literal",
+                            "property_id": a.omk.getPropId('lexinfo:thirdPersonForm'),
+                            },
+                            {
+                                "@value": d[m.c+'6'],
+                                "type": "literal",
+                                "property_id": a.omk.getPropId('lexinfo:thirdPersonForm'),
+                            }
+                        ],    
+                        'lexinfo:mood':[{
+                            "@value": m.l,
+                            "type": "literal",
+                            "property_id": a.omk.getPropId('lexinfo:mood'),
+                        }]
+                    };
+                }
+                terms.push({'a':anno,'v':m.l});
+            })
+            return terms;
+        }
+
+        function annoAccord(d,elision){
+            let anno = {
+                'genex:hasElision':[{
+                    "@value": elision=="no" ? "0":"1",
+                    "type": "literal",
+                    "property_id": a.omk.getPropId('genex:hasElision'),
+                }],    
+                'genex:accordFemSing':[{
+                    "@value": d[elision+'EliFemSing'],
+                    "type": "literal",
+                    "property_id": a.omk.getPropId('genex:accordFemSing'),
+                }],
+                'genex:accordMasSing':[{
+                    "@value": d[elision+'EliMasSing'],
+                    "type": "literal",
+                    "property_id": a.omk.getPropId('genex:accordMasSing'),
+                }],
+                'genex:accordFemPlu':[{
+                    "@value": d[elision+'EliFemPlu'],
+                    "type": "literal",
+                    "property_id": a.omk.getPropId('genex:accordFemPlu'),
+                }],
+                'genex:accordMasPlu':[{
+                    "@value": d[elision+'EliMasPlu'],
+                    "type": "literal",
+                    "property_id": a.omk.getPropId('genex:accordMasPlu'),
+                }],
+            }, 
+            accord = {};
+            accord.v = elision=="no" ? 'Accord sans élision':'Accord avec élision';
+            accord.a=anno;
+            return accord;
+        }
+
+    </script>
+</body>
+</html>
