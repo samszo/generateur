@@ -41,7 +41,7 @@
             <h2>Importer les concepts et les termes</h2>
             <div>
                 <label for="urlInputConcet">Entrez l'URL de la liste des concepts</label>
-                <input type="url" id="urlInputConcept" name="urlInputConcept" required value="http://localhost/omk_generateur/files/bulk_export/generateur_old-20250406-072411.json">
+                <input type="url" id="urlInputConcept" name="urlInputConcept" required value="http://localhost/omk_generateur/files/bulk_export/generateur_old-20250419-055327.json">
                 <button id="btnImportConcept" type="button">Soumettre</button>
             </div>
         </section>
@@ -115,13 +115,14 @@
             /*TODO:vérifie si les traduction sont faites == les links sont équivalent mais pas les langues
             */
             //ajoute les concepts et les termes
-            createAllConcepts(data,0);
+            createAllConcepts(data,899);
             //
         }
 
         async function createAllConcepts(data,i){
-            if(i>=data.length){
-                return;
+            //if(i>=data.length){
+            if(i>=923){
+                    return;
             }
             let d = data[i],
                 dicos = d.idsDicos.split(',').map(di=>{
@@ -163,7 +164,7 @@
                 //on crée le terme si il n'existe pas
                 let oCpt = await a.omk.getsetResource(dtO);
                 //oCpt = await a.omk.createItem(dt);
-            divResult.append('div').text("Concept crée "+oCpt["o:id"]+" : "+oCpt["o:title"]);
+            divResult.append('div').text("Concept crée "+i+" - "+oCpt["o:id"]+" : "+oCpt["o:title"]);
 
             //création des termes
             await createTerm(oCpt, d.links.adjectifs, 'adjectif', 0);
