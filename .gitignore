@@ -14,3 +14,5 @@ asset/.DS_Store
 .DS_Store
 .gitignore
 asset/data/generateur_old-20250419-055327.json
+bdd/generateurInfomaniak.sql
+tmp/*

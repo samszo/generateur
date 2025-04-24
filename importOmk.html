@@ -115,15 +115,14 @@
             /*TODO:vérifie si les traduction sont faites == les links sont équivalent mais pas les langues
             */
             //ajoute les concepts et les termes
-            createAllConcepts(data,899);
+            createAllConcepts(data,2463);
             //
         }
 
         async function createAllConcepts(data,i){
-            //if(i>=data.length){
-            if(i>=923){
-                    return;
-            }
+            if(i>=data.length)return;
+            if(i>2463)return;
+
             let d = data[i],
                 dicos = d.idsDicos.split(',').map(di=>{
                     return oDicos.filter(odi=>odi["dcterms:identifier"][0]["@value"]==di)[0]
@@ -170,15 +169,13 @@
             await createTerm(oCpt, d.links.adjectifs, 'adjectif', 0);
             await createTerm(oCpt, d.links.substantifs, 'substantif', 0);
             await createTerm(oCpt, d.links.verbes, 'verbe', 0);
-            await createTerm(oCpt, d.links.generateurs, 'generateur', 0);
+            await createTerm(oCpt, d.links.generateurs, 'generateur', 1721);
 
             createConcept(data, cpts, i, j+1);
         }
 
         async function createTerm(oCpt, links, type, i){
-            if(i>=links.length){
-                return;
-            }
+            if(i>=links.length)return;
 
             //création du terme
             let dtO = {'rt':'genex_Term','c':'genex:Term','dt':{}},
@@ -231,7 +228,7 @@
                 if(!o['genex:hasConcept'] || o['genex:hasConcept'].filter(hc=>hc.value_resource_id==oCpt['o:id']).length==0){
                     o = await a.omk.updateRessource(o['o:id'], {'genex:hasConcept':{'rid':oCpt['o:id']}}, 'items', null, 'PUT',false, o);
                 }
-                divResult.append('div').text(dt['genex:hasType']+" ajouté "+o["o:id"]+" : "+o["o:title"]);
+                divResult.append('div').text(dt['genex:hasType']+" "+i+" ajouté "+o["o:id"]+" : "+o["o:title"]);
             }
             await createTerm(oCpt, links, type, i+1);
         }

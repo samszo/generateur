@@ -1,0 +1,6266 @@
+{
+    "0": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 0,
+        "conditionnel": 0,
+        "value": "",
+        "niv": 1
+    },
+    "1": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 1,
+        "conditionnel": 0,
+        "value": "thl-R\u00e9citChasse-01",
+        "cpt1_id": 140275,
+        "niv": 1,
+        "fluxCpt1": [
+            {
+                "concept_id": 140275,
+                "term_id": 140333,
+                "ordre": 0,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140333,
+                "ordre": 1,
+                "conditionnel": 0,
+                "value": "113#",
+                "determinant": "113",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140333,
+                "ordre": 6,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140333,
+                "ordre": 7,
+                "conditionnel": 0,
+                "value": "v_importer",
+                "cpt1_id": 154107,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 154107,
+                        "term_id": 154108,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140333,
+                "ordre": 18,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140333,
+                "ordre": 20,
+                "conditionnel": 0,
+                "value": "12|m_animal",
+                "determinant": "12",
+                "cpt1": "m_animal",
+                "determinant_id": 240,
+                "cpt1_id": 49930,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 49930,
+                        "term_id": 49932,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140333,
+                "ordre": 32,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140333,
+                "ordre": 34,
+                "conditionnel": 0,
+                "value": "=1|a_chass\u00e9",
+                "determinant": "=1",
+                "cpt1": "a_chass\u00e9",
+                "cpt1_id": 160378,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 160378,
+                        "term_id": 160380,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140333,
+                "ordre": 47,
+                "conditionnel": 0,
+                "value": ",",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140333,
+                "ordre": 50,
+                "conditionnel": 0,
+                "value": "28#",
+                "determinant": "28",
+                "determinant_id": 299,
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140333,
+                "ordre": 54,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140333,
+                "ordre": 56,
+                "conditionnel": 0,
+                "value": "122#",
+                "determinant": "122",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140333,
+                "ordre": 61,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140333,
+                "ordre": 63,
+                "conditionnel": 0,
+                "value": "v_compter",
+                "cpt1_id": 151011,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 151011,
+                        "term_id": 151012,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140333,
+                "ordre": 73,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140333,
+                "ordre": 75,
+                "conditionnel": 0,
+                "value": "199#",
+                "determinant": "199",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140333,
+                "ordre": 80,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140333,
+                "ordre": 82,
+                "conditionnel": 0,
+                "value": "12|m_traque",
+                "determinant": "12",
+                "cpt1": "m_traque",
+                "determinant_id": 240,
+                "cpt1_id": 190663,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 190663,
+                        "term_id": 190665,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140333,
+                "ordre": 94,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140333,
+                "ordre": 96,
+                "conditionnel": 1,
+                "value": "61#",
+                "determinant": "61",
+                "determinant_id": 246,
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140333,
+                "ordre": 100,
+                "conditionnel": 1,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140333,
+                "ordre": 102,
+                "conditionnel": 1,
+                "value": "12|m_affrontement",
+                "determinant": "12",
+                "cpt1": "m_affrontement",
+                "determinant_id": 240,
+                "cpt1_id": 49068,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 49068,
+                        "term_id": 49066,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140333,
+                "ordre": 120,
+                "conditionnel": 1,
+                "value": "",
+                "niv": 2
+            }
+        ]
+    },
+    "2": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 21,
+        "conditionnel": 0,
+        "value": "",
+        "niv": 1
+    },
+    "3": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 22,
+        "conditionnel": 0,
+        "value": "s_ponctuer",
+        "cpt1_id": 83988,
+        "niv": 1,
+        "fluxCpt1": [
+            {
+                "concept_id": 83988,
+                "term_id": 8492,
+                "ordre": 0,
+                "conditionnel": 0,
+                "value": "; ",
+                "niv": 2
+            }
+        ]
+    },
+    "4": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 33,
+        "conditionnel": 0,
+        "value": "",
+        "niv": 1
+    },
+    "5": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 35,
+        "conditionnel": 0,
+        "value": "thl-R\u00e9citChasse-01",
+        "cpt1_id": 140275,
+        "niv": 1,
+        "fluxCpt1": [
+            {
+                "concept_id": 140275,
+                "term_id": 140344,
+                "ordre": 0,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140344,
+                "ordre": 1,
+                "conditionnel": 0,
+                "value": "12|m_chasse",
+                "determinant": "12",
+                "cpt1": "m_chasse",
+                "determinant_id": 240,
+                "cpt1_id": 54764,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 54764,
+                        "term_id": 54766,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140344,
+                "ordre": 13,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140344,
+                "ordre": 15,
+                "conditionnel": 0,
+                "value": "v_entretenir",
+                "cpt1_id": 152897,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 152897,
+                        "term_id": 152898,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140344,
+                "ordre": 28,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140344,
+                "ordre": 30,
+                "conditionnel": 0,
+                "value": "12|m_d\u00e9sir 1",
+                "determinant": "12",
+                "cpt1": "m_d\u00e9sir 1",
+                "determinant_id": 240,
+                "cpt1_id": 58030,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 58030,
+                        "term_id": 58034,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140344,
+                "ordre": 44,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140344,
+                "ordre": 46,
+                "conditionnel": 0,
+                "value": "10|m_sang",
+                "determinant": "10",
+                "cpt1": "m_sang",
+                "determinant_id": 248,
+                "cpt1_id": 75266,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 75266,
+                        "term_id": 75264,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140344,
+                "ordre": 56,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140344,
+                "ordre": 58,
+                "conditionnel": 0,
+                "value": "61|m_guerrier",
+                "determinant": "61",
+                "cpt1": "m_guerrier",
+                "determinant_id": 246,
+                "cpt1_id": 63143,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 63143,
+                        "term_id": 63141,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140344,
+                "ordre": 72,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            }
+        ]
+    },
+    "6": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 55,
+        "conditionnel": 0,
+        "value": "",
+        "niv": 1
+    },
+    "7": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 56,
+        "conditionnel": 0,
+        "value": "s_ponctuer",
+        "cpt1_id": 83988,
+        "niv": 1,
+        "fluxCpt1": [
+            {
+                "concept_id": 83988,
+                "term_id": 8492,
+                "ordre": 0,
+                "conditionnel": 0,
+                "value": "; ",
+                "niv": 2
+            }
+        ]
+    },
+    "8": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 67,
+        "conditionnel": 0,
+        "value": "",
+        "niv": 1
+    },
+    "9": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 69,
+        "conditionnel": 0,
+        "value": "thl-R\u00e9citChasse-01",
+        "cpt1_id": 140275,
+        "niv": 1,
+        "fluxCpt1": [
+            {
+                "concept_id": 140275,
+                "term_id": 140334,
+                "ordre": 0,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140334,
+                "ordre": 1,
+                "conditionnel": 0,
+                "value": "114#",
+                "determinant": "114",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140334,
+                "ordre": 6,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140334,
+                "ordre": 8,
+                "conditionnel": 0,
+                "value": "113000000|v_\u00eatre",
+                "determinant": "113000000",
+                "cpt1": "v_\u00eatre",
+                "cpt1_id": 153111,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 153111,
+                        "term_id": 153112,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140334,
+                "ordre": 26,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140334,
+                "ordre": 28,
+                "conditionnel": 0,
+                "value": "4|m_guerre",
+                "determinant": "4",
+                "cpt1": "m_guerre",
+                "determinant_id": 229,
+                "cpt1_id": 63134,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 63134,
+                        "term_id": 63136,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140334,
+                "ordre": 39,
+                "conditionnel": 0,
+                "value": ",",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140334,
+                "ordre": 42,
+                "conditionnel": 0,
+                "value": "0|caract1",
+                "cpt1": "caract1",
+                "cpt1_id": 42013,
+                "niv": 2,
+                "fluxCpt1": {
+                    "error": "Pas de flux trouv\u00e9 pour le concept : 42013"
+                }
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140334,
+                "ordre": 52,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140334,
+                "ordre": 54,
+                "conditionnel": 0,
+                "value": "010000000|v_chasser",
+                "determinant": "010000000",
+                "cpt1": "v_chasser",
+                "cpt1_id": 150767,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 150767,
+                        "term_id": 150768,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140334,
+                "ordre": 74,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            }
+        ]
+    },
+    "10": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 89,
+        "conditionnel": 0,
+        "value": "",
+        "niv": 1
+    },
+    "11": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 90,
+        "conditionnel": 0,
+        "value": "s_ponctuer",
+        "cpt1_id": 83988,
+        "niv": 1,
+        "fluxCpt1": [
+            {
+                "concept_id": 83988,
+                "term_id": 83989,
+                "ordre": 0,
+                "conditionnel": 0,
+                "value": " \u2014",
+                "niv": 2
+            }
+        ]
+    },
+    "12": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 101,
+        "conditionnel": 0,
+        "value": "",
+        "niv": 1
+    },
+    "13": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 103,
+        "conditionnel": 0,
+        "value": "thl-R\u00e9citChasse-01",
+        "cpt1_id": 140275,
+        "niv": 1,
+        "fluxCpt1": [
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 0,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 1,
+                "conditionnel": 0,
+                "value": "20|m_cheval",
+                "determinant": "20",
+                "cpt1": "m_cheval",
+                "determinant_id": 272,
+                "cpt1_id": 54921,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 54921,
+                        "term_id": 54919,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 13,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 15,
+                "conditionnel": 0,
+                "value": "v_galoper",
+                "cpt1_id": 153734,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 153734,
+                        "term_id": 153735,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 25,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 27,
+                "conditionnel": 0,
+                "value": "38#",
+                "determinant": "38",
+                "determinant_id": 326,
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 31,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 33,
+                "conditionnel": 0,
+                "value": "12|m_for\u00eat",
+                "determinant": "12",
+                "cpt1": "m_for\u00eat",
+                "determinant_id": 240,
+                "cpt1_id": 61833,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 61833,
+                        "term_id": 61835,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 45,
+                "conditionnel": 0,
+                "value": ",",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 48,
+                "conditionnel": 0,
+                "value": "0|caract1",
+                "cpt1": "caract1",
+                "cpt1_id": 42013,
+                "niv": 2,
+                "fluxCpt1": {
+                    "error": "Pas de flux trouv\u00e9 pour le concept : 42013"
+                }
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 58,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 60,
+                "conditionnel": 0,
+                "value": "v_devoir",
+                "cpt1_id": 151991,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 151991,
+                        "term_id": 151992,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 69,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 71,
+                "conditionnel": 0,
+                "value": "090030000|v_baisser",
+                "determinant": "090030000",
+                "cpt1": "v_baisser",
+                "cpt1_id": 150412,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 150412,
+                        "term_id": 150413,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 91,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 93,
+                "conditionnel": 0,
+                "value": "090410000|v_\u00e9viter",
+                "determinant": "090410000",
+                "cpt1": "v_\u00e9viter",
+                "cpt1_id": 153158,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 153158,
+                        "term_id": 153159,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 113,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 115,
+                "conditionnel": 0,
+                "value": "62|m_branche",
+                "determinant": "62",
+                "cpt1": "m_branche",
+                "determinant_id": 240,
+                "cpt1_id": 53237,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 53237,
+                        "term_id": 53239,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 128,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 130,
+                "conditionnel": 0,
+                "value": "=1|a_bas",
+                "determinant": "=1",
+                "cpt1": "a_bas",
+                "cpt1_id": 10451,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 10451,
+                        "term_id": 10449,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 139,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            }
+        ]
+    },
+    "14": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 123,
+        "conditionnel": 0,
+        "value": "",
+        "niv": 1
+    },
+    "15": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 124,
+        "conditionnel": 0,
+        "value": "s_ponctuer",
+        "cpt1_id": 83988,
+        "niv": 1,
+        "fluxCpt1": [
+            {
+                "concept_id": 83988,
+                "term_id": 83990,
+                "ordre": 0,
+                "conditionnel": 0,
+                "value": "; ",
+                "niv": 2
+            }
+        ]
+    },
+    "16": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 135,
+        "conditionnel": 0,
+        "value": "",
+        "niv": 1
+    },
+    "17": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 137,
+        "conditionnel": 0,
+        "value": "thl-R\u00e9citChasse-01",
+        "cpt1_id": 140275,
+        "niv": 1,
+        "fluxCpt1": [
+            {
+                "concept_id": 140275,
+                "term_id": 140388,
+                "ordre": 0,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140388,
+                "ordre": 1,
+                "conditionnel": 0,
+                "value": "62|m_cheval",
+                "determinant": "62",
+                "cpt1": "m_cheval",
+                "determinant_id": 240,
+                "cpt1_id": 54921,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 54921,
+                        "term_id": 54919,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140388,
+                "ordre": 13,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140388,
+                "ordre": 15,
+                "conditionnel": 0,
+                "value": "0190000000|v_galoper",
+                "determinant": "0190000000",
+                "cpt1": "v_galoper",
+                "cpt1_id": 153734,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 153734,
+                        "term_id": 153735,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140388,
+                "ordre": 36,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140388,
+                "ordre": 38,
+                "conditionnel": 0,
+                "value": "38#",
+                "determinant": "38",
+                "determinant_id": 326,
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140388,
+                "ordre": 42,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140388,
+                "ordre": 44,
+                "conditionnel": 0,
+                "value": "62|m_buisson 1",
+                "determinant": "62",
+                "cpt1": "m_buisson 1",
+                "determinant_id": 240,
+                "cpt1_id": 53502,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 53502,
+                        "term_id": 53507,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140388,
+                "ordre": 59,
+                "conditionnel": 0,
+                "value": ",",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140388,
+                "ordre": 62,
+                "conditionnel": 0,
+                "value": "019000000|v_sauter",
+                "determinant": "019000000",
+                "cpt1": "v_sauter",
+                "cpt1_id": 156979,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 156979,
+                        "term_id": 156980,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140388,
+                "ordre": 81,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140388,
+                "ordre": 83,
+                "conditionnel": 0,
+                "value": "50|m_obstacle",
+                "determinant": "50",
+                "cpt1": "m_obstacle",
+                "determinant_id": 490,
+                "cpt1_id": 69230,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 69230,
+                        "term_id": 69228,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140388,
+                "ordre": 97,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140388,
+                "ordre": 99,
+                "conditionnel": 0,
+                "value": "61#",
+                "determinant": "61",
+                "determinant_id": 246,
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140388,
+                "ordre": 103,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140388,
+                "ordre": 105,
+                "conditionnel": 0,
+                "value": "50|m_ruisseau",
+                "determinant": "50",
+                "cpt1": "m_ruisseau",
+                "determinant_id": 490,
+                "cpt1_id": 74842,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 74842,
+                        "term_id": 74844,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140388,
+                "ordre": 119,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            }
+        ]
+    },
+    "18": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 157,
+        "conditionnel": 0,
+        "value": "",
+        "niv": 1
+    },
+    "19": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 158,
+        "conditionnel": 0,
+        "value": "s_ponctuer",
+        "cpt1_id": 83988,
+        "niv": 1,
+        "fluxCpt1": [
+            {
+                "concept_id": 83988,
+                "term_id": 83989,
+                "ordre": 0,
+                "conditionnel": 0,
+                "value": " \u2014",
+                "niv": 2
+            }
+        ]
+    },
+    "20": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 169,
+        "conditionnel": 0,
+        "value": "",
+        "niv": 1
+    },
+    "21": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 171,
+        "conditionnel": 0,
+        "value": "thl-R\u00e9citChasse-01",
+        "cpt1_id": 140275,
+        "niv": 1,
+        "fluxCpt1": [
+            {
+                "concept_id": 140275,
+                "term_id": 140299,
+                "ordre": 0,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140299,
+                "ordre": 1,
+                "conditionnel": 0,
+                "value": "0|caract1",
+                "cpt1": "caract1",
+                "cpt1_id": 42013,
+                "niv": 2,
+                "fluxCpt1": {
+                    "error": "Pas de flux trouv\u00e9 pour le concept : 42013"
+                }
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140299,
+                "ordre": 11,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140299,
+                "ordre": 13,
+                "conditionnel": 0,
+                "value": "v_avoir",
+                "cpt1_id": 150376,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 150376,
+                        "term_id": 150377,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140299,
+                "ordre": 21,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140299,
+                "ordre": 23,
+                "conditionnel": 0,
+                "value": "0|m_besoin",
+                "determinant": "",
+                "cpt1": "m_besoin",
+                "cpt1_id": 52506,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 52506,
+                        "term_id": 52508,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140299,
+                "ordre": 34,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140299,
+                "ordre": 36,
+                "conditionnel": 0,
+                "value": "090400000|v_\u00e9prouver",
+                "determinant": "090400000",
+                "cpt1": "v_\u00e9prouver",
+                "cpt1_id": 152999,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 152999,
+                        "term_id": 153000,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140299,
+                "ordre": 58,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140299,
+                "ordre": 60,
+                "conditionnel": 0,
+                "value": "20|m_force",
+                "determinant": "20",
+                "cpt1": "m_force",
+                "determinant_id": 272,
+                "cpt1_id": 61811,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 61811,
+                        "term_id": 61813,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140299,
+                "ordre": 71,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            }
+        ]
+    },
+    "22": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 191,
+        "conditionnel": 0,
+        "value": "",
+        "niv": 1
+    },
+    "23": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 192,
+        "conditionnel": 0,
+        "value": "s_ponctuer",
+        "cpt1_id": 83988,
+        "niv": 1,
+        "fluxCpt1": [
+            {
+                "concept_id": 83988,
+                "term_id": 44341,
+                "ordre": 0,
+                "conditionnel": 0,
+                "value": " \u2014",
+                "niv": 2
+            }
+        ]
+    },
+    "24": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 203,
+        "conditionnel": 0,
+        "value": "",
+        "niv": 1
+    },
+    "25": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 205,
+        "conditionnel": 0,
+        "value": "thl-R\u00e9citChasse-01",
+        "cpt1_id": 140275,
+        "niv": 1,
+        "fluxCpt1": [
+            {
+                "concept_id": 140275,
+                "term_id": 140282,
+                "ordre": 0,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140282,
+                "ordre": 1,
+                "conditionnel": 0,
+                "value": "0|carac1",
+                "determinant": "",
+                "cpt1": "carac1",
+                "cpt1_id": 30511,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 30511,
+                        "term_id": 30570,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140282,
+                "ordre": 10,
+                "conditionnel": 0,
+                "value": ",",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140282,
+                "ordre": 13,
+                "conditionnel": 1,
+                "value": "=1|a_dit",
+                "determinant": "=1",
+                "cpt1": "a_dit",
+                "cpt1_id": 15523,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 15523,
+                        "term_id": 15525,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140282,
+                "ordre": 22,
+                "conditionnel": 1,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140282,
+                "ordre": 24,
+                "conditionnel": 1,
+                "value": "12|a_surnoms@m_nm",
+                "determinant": "12",
+                "cpt1": "a_surnoms",
+                "cpt2": "m_nm",
+                "determinant_id": 240,
+                "cpt1_id": 27104,
+                "cpt2_id": 68934,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 27104,
+                        "term_id": 27124,
+                        "niv": 3
+                    }
+                ],
+                "fluxCpt2": [
+                    {
+                        "concept_id": 68934,
+                        "term_id": 68932,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140282,
+                "ordre": 42,
+                "conditionnel": 1,
+                "value": ",",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140282,
+                "ordre": 45,
+                "conditionnel": 0,
+                "value": "v_\u00eatre",
+                "cpt1_id": 153111,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 153111,
+                        "term_id": 153112,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140282,
+                "ordre": 53,
+                "conditionnel": 0,
+                "value": " gri\u00e8vement ",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140282,
+                "ordre": 67,
+                "conditionnel": 0,
+                "value": "=1|a_bless\u00e9",
+                "determinant": "=1",
+                "cpt1": "a_bless\u00e9",
+                "cpt1_id": 10737,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 10737,
+                        "term_id": 10735,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140282,
+                "ordre": 80,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140282,
+                "ordre": 82,
+                "conditionnel": 0,
+                "value": "93#",
+                "determinant": "93",
+                "determinant_id": 347,
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140282,
+                "ordre": 86,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140282,
+                "ordre": 88,
+                "conditionnel": 0,
+                "value": "32|m_cerf",
+                "determinant": "32",
+                "cpt1": "m_cerf",
+                "determinant_id": 308,
+                "cpt1_id": 54330,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 54330,
+                        "term_id": 54332,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140282,
+                "ordre": 98,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140282,
+                "ordre": 100,
+                "conditionnel": 0,
+                "value": "54#",
+                "determinant": "54",
+                "determinant_id": 229,
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140282,
+                "ordre": 104,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140282,
+                "ordre": 106,
+                "conditionnel": 0,
+                "value": "0|m_rut",
+                "determinant": "",
+                "cpt1": "m_rut",
+                "cpt1_id": 188512,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 188512,
+                        "term_id": 188514,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140282,
+                "ordre": 114,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140282,
+                "ordre": 116,
+                "conditionnel": 0,
+                "value": "113#",
+                "determinant": "113",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140282,
+                "ordre": 121,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140282,
+                "ordre": 122,
+                "conditionnel": 0,
+                "value": "=3|a_il",
+                "determinant": "=3",
+                "cpt1": "a_il",
+                "cpt1_id": 19355,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 19355,
+                        "term_id": 19357,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140282,
+                "ordre": 130,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140282,
+                "ordre": 132,
+                "conditionnel": 0,
+                "value": "020000000|v_vouloir",
+                "determinant": "020000000",
+                "cpt1": "v_vouloir",
+                "cpt1_id": 158038,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 158038,
+                        "term_id": 158039,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140282,
+                "ordre": 152,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140282,
+                "ordre": 154,
+                "conditionnel": 0,
+                "value": "090000000|v_percer",
+                "determinant": "090000000",
+                "cpt1": "v_percer",
+                "cpt1_id": 155436,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 155436,
+                        "term_id": 155437,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140282,
+                "ordre": 173,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140282,
+                "ordre": 175,
+                "conditionnel": 0,
+                "value": "40#",
+                "determinant": "40",
+                "determinant_id": 335,
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140282,
+                "ordre": 179,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140282,
+                "ordre": 181,
+                "conditionnel": 0,
+                "value": "70|m_trait",
+                "determinant": "70",
+                "cpt1": "m_trait",
+                "determinant_id": 272,
+                "cpt1_id": 78219,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 78219,
+                        "term_id": 78217,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140282,
+                "ordre": 192,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            }
+        ]
+    },
+    "26": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 225,
+        "conditionnel": 0,
+        "value": "",
+        "niv": 1
+    },
+    "27": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 226,
+        "conditionnel": 0,
+        "value": "s_ponctuer",
+        "cpt1_id": 83988,
+        "niv": 1,
+        "fluxCpt1": [
+            {
+                "concept_id": 83988,
+                "term_id": 83992,
+                "ordre": 0,
+                "conditionnel": 0,
+                "value": "...",
+                "niv": 2
+            }
+        ]
+    },
+    "28": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 237,
+        "conditionnel": 0,
+        "value": "",
+        "niv": 1
+    },
+    "29": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 239,
+        "conditionnel": 0,
+        "value": "thl-R\u00e9citChasse-01",
+        "cpt1_id": 140275,
+        "niv": 1,
+        "fluxCpt1": [
+            {
+                "concept_id": 140275,
+                "term_id": 140317,
+                "ordre": 0,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140317,
+                "ordre": 1,
+                "conditionnel": 0,
+                "value": "0|caract1",
+                "cpt1": "caract1",
+                "cpt1_id": 42013,
+                "niv": 2,
+                "fluxCpt1": {
+                    "error": "Pas de flux trouv\u00e9 pour le concept : 42013"
+                }
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140317,
+                "ordre": 11,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140317,
+                "ordre": 13,
+                "conditionnel": 0,
+                "value": "v_voir 2",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140317,
+                "ordre": 22,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140317,
+                "ordre": 24,
+                "conditionnel": 0,
+                "value": "0|m_entre",
+                "determinant": "",
+                "cpt1": "m_entre",
+                "cpt1_id": 59770,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 59770,
+                        "term_id": 59768,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140317,
+                "ordre": 34,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140317,
+                "ordre": 36,
+                "conditionnel": 0,
+                "value": "62|m_branche",
+                "determinant": "62",
+                "cpt1": "m_branche",
+                "determinant_id": 240,
+                "cpt1_id": 53237,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 53237,
+                        "term_id": 53239,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140317,
+                "ordre": 49,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140317,
+                "ordre": 51,
+                "conditionnel": 0,
+                "value": "12|m_silhouette",
+                "determinant": "12",
+                "cpt1": "m_silhouette",
+                "determinant_id": 240,
+                "cpt1_id": 75920,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 75920,
+                        "term_id": 75918,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140317,
+                "ordre": 67,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140317,
+                "ordre": 69,
+                "conditionnel": 0,
+                "value": "9|caract5",
+                "determinant": "9",
+                "cpt1": "caract5",
+                "determinant_id": 242,
+                "cpt1_id": 42123,
+                "niv": 2,
+                "fluxCpt1": {
+                    "error": "Pas de flux trouv\u00e9 pour le concept : 42123"
+                }
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140317,
+                "ordre": 79,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            }
+        ]
+    },
+    "30": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 259,
+        "conditionnel": 0,
+        "value": "",
+        "niv": 1
+    },
+    "31": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 260,
+        "conditionnel": 0,
+        "value": "s_ponctuer",
+        "cpt1_id": 83988,
+        "niv": 1,
+        "fluxCpt1": [
+            {
+                "concept_id": 83988,
+                "term_id": 8492,
+                "ordre": 0,
+                "conditionnel": 0,
+                "value": "; ",
+                "niv": 2
+            }
+        ]
+    },
+    "32": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 271,
+        "conditionnel": 0,
+        "value": "",
+        "niv": 1
+    },
+    "33": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 273,
+        "conditionnel": 0,
+        "value": "thl-R\u00e9citChasse-01",
+        "cpt1_id": 140275,
+        "niv": 1,
+        "fluxCpt1": [
+            {
+                "concept_id": 140275,
+                "term_id": 140367,
+                "ordre": 0,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140367,
+                "ordre": 1,
+                "conditionnel": 0,
+                "value": "199#",
+                "determinant": "199",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140367,
+                "ordre": 6,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140367,
+                "ordre": 8,
+                "conditionnel": 0,
+                "value": "32|a_beau@m_temps",
+                "determinant": "32",
+                "cpt1": "a_beau",
+                "cpt2": "m_temps",
+                "determinant_id": 308,
+                "cpt1_id": 10501,
+                "cpt2_id": 77349,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 10501,
+                        "term_id": 10503,
+                        "niv": 3
+                    }
+                ],
+                "fluxCpt2": [
+                    {
+                        "concept_id": 77349,
+                        "term_id": 77351,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140367,
+                "ordre": 26,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140367,
+                "ordre": 28,
+                "conditionnel": 0,
+                "value": "106#",
+                "determinant": "106",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140367,
+                "ordre": 33,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140367,
+                "ordre": 35,
+                "conditionnel": 0,
+                "value": "12|m_chasse",
+                "determinant": "12",
+                "cpt1": "m_chasse",
+                "determinant_id": 240,
+                "cpt1_id": 54764,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 54764,
+                        "term_id": 54766,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140367,
+                "ordre": 47,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            }
+        ]
+    },
+    "34": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 293,
+        "conditionnel": 0,
+        "value": "",
+        "niv": 1
+    },
+    "35": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 294,
+        "conditionnel": 0,
+        "value": "s_ponctuer",
+        "cpt1_id": 83988,
+        "niv": 1,
+        "fluxCpt1": [
+            {
+                "concept_id": 83988,
+                "term_id": 8493,
+                "ordre": 0,
+                "conditionnel": 0,
+                "value": ".",
+                "niv": 2
+            }
+        ]
+    },
+    "36": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 305,
+        "conditionnel": 0,
+        "value": "",
+        "niv": 1
+    },
+    "37": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 307,
+        "conditionnel": 0,
+        "value": "thl-R\u00e9citChasse-01",
+        "cpt1_id": 140275,
+        "niv": 1,
+        "fluxCpt1": [
+            {
+                "concept_id": 140275,
+                "term_id": 140335,
+                "ordre": 0,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140335,
+                "ordre": 1,
+                "conditionnel": 0,
+                "value": "114000000|v_chasser",
+                "determinant": "114000000",
+                "cpt1": "v_chasser",
+                "cpt1_id": 150767,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 150767,
+                        "term_id": 150768,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140335,
+                "ordre": 21,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140335,
+                "ordre": 23,
+                "conditionnel": 0,
+                "value": "106#",
+                "determinant": "106",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140335,
+                "ordre": 28,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140335,
+                "ordre": 30,
+                "conditionnel": 0,
+                "value": "12|m_viande",
+                "determinant": "12",
+                "cpt1": "m_viande",
+                "determinant_id": 240,
+                "cpt1_id": 79207,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 79207,
+                        "term_id": 79209,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140335,
+                "ordre": 42,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140335,
+                "ordre": 44,
+                "conditionnel": 0,
+                "value": "76#",
+                "determinant": "76",
+                "determinant_id": 290,
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140335,
+                "ordre": 48,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140335,
+                "ordre": 50,
+                "conditionnel": 0,
+                "value": "090410000|v_montrer",
+                "determinant": "090410000",
+                "cpt1": "v_montrer",
+                "cpt1_id": 154869,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 154869,
+                        "term_id": 154870,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140335,
+                "ordre": 70,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140335,
+                "ordre": 72,
+                "conditionnel": 0,
+                "value": "16|m_habilet\u00e9",
+                "determinant": "16",
+                "cpt1": "m_habilet\u00e9",
+                "determinant_id": 263,
+                "cpt1_id": 175898,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 175898,
+                        "term_id": 175900,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140335,
+                "ordre": 87,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140335,
+                "ordre": 89,
+                "conditionnel": 0,
+                "value": "61#",
+                "determinant": "61",
+                "determinant_id": 246,
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140335,
+                "ordre": 93,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140335,
+                "ordre": 95,
+                "conditionnel": 0,
+                "value": "16|m_force",
+                "determinant": "16",
+                "cpt1": "m_force",
+                "determinant_id": 263,
+                "cpt1_id": 61811,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 61811,
+                        "term_id": 61813,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140335,
+                "ordre": 106,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            }
+        ]
+    },
+    "38": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 327,
+        "conditionnel": 0,
+        "value": "",
+        "niv": 1
+    },
+    "39": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 328,
+        "conditionnel": 0,
+        "value": "s_ponctuer",
+        "cpt1_id": 83988,
+        "niv": 1,
+        "fluxCpt1": [
+            {
+                "concept_id": 83988,
+                "term_id": 8493,
+                "ordre": 0,
+                "conditionnel": 0,
+                "value": ".",
+                "niv": 2
+            }
+        ]
+    },
+    "40": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 339,
+        "conditionnel": 0,
+        "value": "",
+        "niv": 1
+    },
+    "41": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 341,
+        "conditionnel": 0,
+        "value": "thl-R\u00e9citChasse-01",
+        "cpt1_id": 140275,
+        "niv": 1,
+        "fluxCpt1": [
+            {
+                "concept_id": 140275,
+                "term_id": 140278,
+                "ordre": 0,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140278,
+                "ordre": 1,
+                "conditionnel": 0,
+                "value": "0|carac1",
+                "determinant": "",
+                "cpt1": "carac1",
+                "cpt1_id": 30511,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 30511,
+                        "term_id": 30705,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140278,
+                "ordre": 10,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140278,
+                "ordre": 12,
+                "conditionnel": 0,
+                "value": "080000000|v_vouloir",
+                "determinant": "080000000",
+                "cpt1": "v_vouloir",
+                "cpt1_id": 158038,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 158038,
+                        "term_id": 158039,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140278,
+                "ordre": 32,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140278,
+                "ordre": 34,
+                "conditionnel": 0,
+                "value": "090000000|v_frapper",
+                "determinant": "090000000",
+                "cpt1": "v_frapper",
+                "cpt1_id": 153668,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 153668,
+                        "term_id": 153669,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140278,
+                "ordre": 54,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140278,
+                "ordre": 56,
+                "conditionnel": 0,
+                "value": "32|m_gibier 1",
+                "determinant": "32",
+                "cpt1": "m_gibier 1",
+                "determinant_id": 308,
+                "cpt1_id": 175750,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 175750,
+                        "term_id": 175752,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140278,
+                "ordre": 70,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140278,
+                "ordre": 72,
+                "conditionnel": 0,
+                "value": "010000000|v_tomber",
+                "determinant": "010000000",
+                "cpt1": "v_tomber",
+                "cpt1_id": 157555,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 157555,
+                        "term_id": 157556,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140278,
+                "ordre": 91,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140278,
+                "ordre": 93,
+                "conditionnel": 0,
+                "value": "10|m_cheval",
+                "determinant": "10",
+                "cpt1": "m_cheval",
+                "determinant_id": 248,
+                "cpt1_id": 54921,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 54921,
+                        "term_id": 54919,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140278,
+                "ordre": 105,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140278,
+                "ordre": 107,
+                "conditionnel": 0,
+                "value": "61#",
+                "determinant": "61",
+                "determinant_id": 246,
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140278,
+                "ordre": 111,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140278,
+                "ordre": 113,
+                "conditionnel": 0,
+                "value": "010030000|v_blesser",
+                "determinant": "010030000",
+                "cpt1": "v_blesser",
+                "cpt1_id": 150490,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 150490,
+                        "term_id": 150491,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140278,
+                "ordre": 133,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            }
+        ]
+    },
+    "42": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 361,
+        "conditionnel": 0,
+        "value": "",
+        "niv": 1
+    },
+    "43": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 362,
+        "conditionnel": 0,
+        "value": "s_ponctuer",
+        "cpt1_id": 83988,
+        "niv": 1,
+        "fluxCpt1": [
+            {
+                "concept_id": 83988,
+                "term_id": 8494,
+                "ordre": 0,
+                "conditionnel": 0,
+                "value": "\u2026",
+                "niv": 2
+            }
+        ]
+    },
+    "44": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 373,
+        "conditionnel": 0,
+        "value": "",
+        "niv": 1
+    },
+    "45": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 375,
+        "conditionnel": 0,
+        "value": "thl-R\u00e9citChasse-01",
+        "cpt1_id": 140275,
+        "niv": 1,
+        "fluxCpt1": [
+            {
+                "concept_id": 140275,
+                "term_id": 140377,
+                "ordre": 0,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140377,
+                "ordre": 1,
+                "conditionnel": 0,
+                "value": "4|m_chasse",
+                "determinant": "4",
+                "cpt1": "m_chasse",
+                "determinant_id": 229,
+                "cpt1_id": 54764,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 54764,
+                        "term_id": 54766,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140377,
+                "ordre": 12,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140377,
+                "ordre": 14,
+                "conditionnel": 0,
+                "value": "34#",
+                "determinant": "34",
+                "determinant_id": 318,
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140377,
+                "ordre": 18,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140377,
+                "ordre": 20,
+                "conditionnel": 0,
+                "value": "4|m_guerre",
+                "determinant": "4",
+                "cpt1": "m_guerre",
+                "determinant_id": 229,
+                "cpt1_id": 63134,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 63134,
+                        "term_id": 63136,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140377,
+                "ordre": 31,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140377,
+                "ordre": 33,
+                "conditionnel": 1,
+                "value": "89#",
+                "determinant": "89",
+                "determinant_id": 329,
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140377,
+                "ordre": 37,
+                "conditionnel": 1,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140377,
+                "ordre": 39,
+                "conditionnel": 1,
+                "value": "38#",
+                "determinant": "38",
+                "determinant_id": 326,
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140377,
+                "ordre": 43,
+                "conditionnel": 1,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140377,
+                "ordre": 45,
+                "conditionnel": 1,
+                "value": "62|m_jeu",
+                "determinant": "62",
+                "cpt1": "m_jeu",
+                "determinant_id": 240,
+                "cpt1_id": 65263,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 65263,
+                        "term_id": 65265,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140377,
+                "ordre": 54,
+                "conditionnel": 1,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140377,
+                "ordre": 56,
+                "conditionnel": 1,
+                "value": "10|m_combat",
+                "determinant": "10",
+                "cpt1": "m_combat",
+                "determinant_id": 248,
+                "cpt1_id": 55629,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 55629,
+                        "term_id": 55627,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140377,
+                "ordre": 68,
+                "conditionnel": 1,
+                "value": ",",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140377,
+                "ordre": 71,
+                "conditionnel": 0,
+                "value": "0|caract1",
+                "cpt1": "caract1",
+                "cpt1_id": 42013,
+                "niv": 2,
+                "fluxCpt1": {
+                    "error": "Pas de flux trouv\u00e9 pour le concept : 42013"
+                }
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140377,
+                "ordre": 81,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140377,
+                "ordre": 83,
+                "conditionnel": 0,
+                "value": "v_devoir",
+                "cpt1_id": 151991,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 151991,
+                        "term_id": 151992,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140377,
+                "ordre": 92,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140377,
+                "ordre": 94,
+                "conditionnel": 0,
+                "value": "s_sans-fin 1",
+                "cpt1_id": 84011,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 84011,
+                        "term_id": 84013,
+                        "ordre": 0,
+                        "conditionnel": 0,
+                        "value": "",
+                        "niv": 3
+                    },
+                    {
+                        "concept_id": 84011,
+                        "term_id": 84013,
+                        "ordre": 1,
+                        "conditionnel": 0,
+                        "value": "128#",
+                        "determinant": "128",
+                        "niv": 3
+                    },
+                    {
+                        "concept_id": 84011,
+                        "term_id": 84013,
+                        "ordre": 6,
+                        "conditionnel": 0,
+                        "value": "",
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140377,
+                "ordre": 107,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140377,
+                "ordre": 109,
+                "conditionnel": 0,
+                "value": "090000000|v_d\u00e9montrer",
+                "determinant": "090000000",
+                "cpt1": "v_d\u00e9montrer",
+                "cpt1_id": 151725,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 151725,
+                        "term_id": 151726,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140377,
+                "ordre": 132,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140377,
+                "ordre": 134,
+                "conditionnel": 0,
+                "value": "20|m_valeur",
+                "determinant": "20",
+                "cpt1": "m_valeur",
+                "determinant_id": 272,
+                "cpt1_id": 78741,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 78741,
+                        "term_id": 78743,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140377,
+                "ordre": 146,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140377,
+                "ordre": 148,
+                "conditionnel": 0,
+                "value": "10|m_guerrier",
+                "determinant": "10",
+                "cpt1": "m_guerrier",
+                "determinant_id": 248,
+                "cpt1_id": 63143,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 63143,
+                        "term_id": 63141,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140377,
+                "ordre": 162,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            }
+        ]
+    },
+    "46": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 395,
+        "conditionnel": 0,
+        "value": "",
+        "niv": 1
+    },
+    "47": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 396,
+        "conditionnel": 0,
+        "value": "s_ponctuer",
+        "cpt1_id": 83988,
+        "niv": 1,
+        "fluxCpt1": [
+            {
+                "concept_id": 83988,
+                "term_id": 83989,
+                "ordre": 0,
+                "conditionnel": 0,
+                "value": " \u2014",
+                "niv": 2
+            }
+        ]
+    },
+    "48": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 407,
+        "conditionnel": 0,
+        "value": "",
+        "niv": 1
+    },
+    "49": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 409,
+        "conditionnel": 0,
+        "value": "thl-R\u00e9citChasse-01",
+        "cpt1_id": 140275,
+        "niv": 1,
+        "fluxCpt1": [
+            {
+                "concept_id": 140275,
+                "term_id": 140341,
+                "ordre": 0,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140341,
+                "ordre": 1,
+                "conditionnel": 0,
+                "value": "12|caract5",
+                "determinant": "12",
+                "cpt1": "caract5",
+                "determinant_id": 240,
+                "cpt1_id": 42123,
+                "niv": 2,
+                "fluxCpt1": {
+                    "error": "Pas de flux trouv\u00e9 pour le concept : 42123"
+                }
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140341,
+                "ordre": 12,
+                "conditionnel": 0,
+                "value": ",",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140341,
+                "ordre": 15,
+                "conditionnel": 0,
+                "value": "=1|a_agile",
+                "determinant": "=1",
+                "cpt1": "a_agile",
+                "cpt1_id": 9003,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 9003,
+                        "term_id": 9005,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140341,
+                "ordre": 26,
+                "conditionnel": 0,
+                "value": ",",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140341,
+                "ordre": 29,
+                "conditionnel": 0,
+                "value": "=1|a_rapide",
+                "determinant": "=1",
+                "cpt1": "a_rapide",
+                "cpt1_id": 25011,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 25011,
+                        "term_id": 25013,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140341,
+                "ordre": 41,
+                "conditionnel": 0,
+                "value": ",",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140341,
+                "ordre": 44,
+                "conditionnel": 1,
+                "value": "=1|a_fort 3",
+                "determinant": "=1",
+                "cpt1": "a_fort 3",
+                "cpt1_id": 18108,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 18108,
+                        "term_id": 18113,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140341,
+                "ordre": 56,
+                "conditionnel": 1,
+                "value": ",",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140341,
+                "ordre": 59,
+                "conditionnel": 0,
+                "value": "v_\u00eatre",
+                "cpt1_id": 153111,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 153111,
+                        "term_id": 153112,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140341,
+                "ordre": 67,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140341,
+                "ordre": 69,
+                "conditionnel": 0,
+                "value": "32|m_gibier",
+                "determinant": "32",
+                "cpt1": "m_gibier",
+                "determinant_id": 308,
+                "cpt1_id": 62674,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 62674,
+                        "term_id": 62672,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140341,
+                "ordre": 81,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140341,
+                "ordre": 83,
+                "conditionnel": 0,
+                "value": "10|m_choix",
+                "determinant": "10",
+                "cpt1": "m_choix",
+                "determinant_id": 248,
+                "cpt1_id": 55135,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 55135,
+                        "term_id": 55133,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140341,
+                "ordre": 94,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            }
+        ]
+    },
+    "50": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 429,
+        "conditionnel": 0,
+        "value": "",
+        "niv": 1
+    },
+    "51": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 430,
+        "conditionnel": 0,
+        "value": "s_ponctuer",
+        "cpt1_id": 83988,
+        "niv": 1,
+        "fluxCpt1": [
+            {
+                "concept_id": 83988,
+                "term_id": 83989,
+                "ordre": 0,
+                "conditionnel": 0,
+                "value": " \u2014",
+                "niv": 2
+            }
+        ]
+    },
+    "52": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 441,
+        "conditionnel": 0,
+        "value": "",
+        "niv": 1
+    },
+    "53": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 443,
+        "conditionnel": 0,
+        "value": "thl-R\u00e9citChasse-01",
+        "cpt1_id": 140275,
+        "niv": 1,
+        "fluxCpt1": [
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 0,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 1,
+                "conditionnel": 0,
+                "value": "12|m_roi 1",
+                "determinant": "12",
+                "cpt1": "m_roi 1",
+                "determinant_id": 240,
+                "cpt1_id": 188477,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 188477,
+                        "term_id": 72699,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 12,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 14,
+                "conditionnel": 0,
+                "value": "v_avoir",
+                "cpt1_id": 150376,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 150376,
+                        "term_id": 150377,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 22,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 24,
+                "conditionnel": 0,
+                "value": "=x|a_d\u00e9cid\u00e9",
+                "determinant": "=x",
+                "cpt1": "a_d\u00e9cid\u00e9",
+                "cpt1_id": 14767,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 14767,
+                        "term_id": 14765,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 38,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 40,
+                "conditionnel": 0,
+                "value": "40#",
+                "determinant": "40",
+                "determinant_id": 335,
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 44,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 46,
+                "conditionnel": 0,
+                "value": "090030000|v_arr\u00eater",
+                "determinant": "090030000",
+                "cpt1": "v_arr\u00eater",
+                "cpt1_id": 150142,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 150142,
+                        "term_id": 150143,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 67,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 69,
+                "conditionnel": 0,
+                "value": "4|m_abbaye",
+                "determinant": "4",
+                "cpt1": "m_abbaye",
+                "determinant_id": 229,
+                "cpt1_id": 166724,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 166724,
+                        "term_id": 166726,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 80,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 82,
+                "conditionnel": 0,
+                "value": "10|m_Abbayes-01",
+                "determinant": "10",
+                "cpt1": "m_Abbayes-01",
+                "determinant_id": 248,
+                "cpt1_id": 48192,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 48192,
+                        "term_id": 48347,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 98,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 100,
+                "conditionnel": 1,
+                "value": "61#",
+                "determinant": "61",
+                "determinant_id": 246,
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 104,
+                "conditionnel": 1,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 106,
+                "conditionnel": 1,
+                "value": "1#",
+                "determinant": "1",
+                "determinant_id": 215,
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 109,
+                "conditionnel": 1,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 111,
+                "conditionnel": 1,
+                "value": "20|m_ferme 1",
+                "determinant": "20",
+                "cpt1": "m_ferme 1",
+                "determinant_id": 272,
+                "cpt1_id": 175354,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 175354,
+                        "term_id": 175356,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 124,
+                "conditionnel": 1,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 126,
+                "conditionnel": 1,
+                "value": "10|m_palais-01",
+                "determinant": "10",
+                "cpt1": "m_palais-01",
+                "determinant_id": 248,
+                "cpt1_id": 69966,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 69966,
+                        "term_id": 70073,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 141,
+                "conditionnel": 1,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 143,
+                "conditionnel": 0,
+                "value": "090410000|v_chasser",
+                "determinant": "090410000",
+                "cpt1": "v_chasser",
+                "cpt1_id": 150767,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 150767,
+                        "term_id": 150768,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 163,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 165,
+                "conditionnel": 0,
+                "value": "54|m_environ",
+                "determinant": "54",
+                "cpt1": "m_environ",
+                "determinant_id": 229,
+                "cpt1_id": 59831,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 59831,
+                        "term_id": 59829,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 178,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            }
+        ]
+    },
+    "54": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 463,
+        "conditionnel": 0,
+        "value": "",
+        "niv": 1
+    },
+    "55": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 464,
+        "conditionnel": 0,
+        "value": "s_ponctuer",
+        "cpt1_id": 83988,
+        "niv": 1,
+        "fluxCpt1": [
+            {
+                "concept_id": 83988,
+                "term_id": 83992,
+                "ordre": 0,
+                "conditionnel": 0,
+                "value": "...",
+                "niv": 2
+            }
+        ]
+    },
+    "56": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 475,
+        "conditionnel": 0,
+        "value": "",
+        "niv": 1
+    },
+    "57": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 477,
+        "conditionnel": 0,
+        "value": "thl-R\u00e9citChasse-01",
+        "cpt1_id": 140275,
+        "niv": 1,
+        "fluxCpt1": [
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 0,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 1,
+                "conditionnel": 0,
+                "value": "20|m_cheval",
+                "determinant": "20",
+                "cpt1": "m_cheval",
+                "determinant_id": 272,
+                "cpt1_id": 54921,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 54921,
+                        "term_id": 54919,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 13,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 15,
+                "conditionnel": 0,
+                "value": "v_galoper",
+                "cpt1_id": 153734,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 153734,
+                        "term_id": 153735,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 25,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 27,
+                "conditionnel": 0,
+                "value": "38#",
+                "determinant": "38",
+                "determinant_id": 326,
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 31,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 33,
+                "conditionnel": 0,
+                "value": "12|m_for\u00eat",
+                "determinant": "12",
+                "cpt1": "m_for\u00eat",
+                "determinant_id": 240,
+                "cpt1_id": 61833,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 61833,
+                        "term_id": 61835,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 45,
+                "conditionnel": 0,
+                "value": ",",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 48,
+                "conditionnel": 0,
+                "value": "0|caract1",
+                "cpt1": "caract1",
+                "cpt1_id": 42013,
+                "niv": 2,
+                "fluxCpt1": {
+                    "error": "Pas de flux trouv\u00e9 pour le concept : 42013"
+                }
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 58,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 60,
+                "conditionnel": 0,
+                "value": "v_devoir",
+                "cpt1_id": 151991,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 151991,
+                        "term_id": 151992,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 69,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 71,
+                "conditionnel": 0,
+                "value": "090030000|v_baisser",
+                "determinant": "090030000",
+                "cpt1": "v_baisser",
+                "cpt1_id": 150412,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 150412,
+                        "term_id": 150413,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 91,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 93,
+                "conditionnel": 0,
+                "value": "090410000|v_\u00e9viter",
+                "determinant": "090410000",
+                "cpt1": "v_\u00e9viter",
+                "cpt1_id": 153158,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 153158,
+                        "term_id": 153159,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 113,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 115,
+                "conditionnel": 0,
+                "value": "62|m_branche",
+                "determinant": "62",
+                "cpt1": "m_branche",
+                "determinant_id": 240,
+                "cpt1_id": 53237,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 53237,
+                        "term_id": 53235,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 128,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 130,
+                "conditionnel": 0,
+                "value": "=1|a_bas",
+                "determinant": "=1",
+                "cpt1": "a_bas",
+                "cpt1_id": 10451,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 10451,
+                        "term_id": 10449,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140368,
+                "ordre": 139,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            }
+        ]
+    },
+    "58": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 497,
+        "conditionnel": 0,
+        "value": "",
+        "niv": 1
+    },
+    "59": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 498,
+        "conditionnel": 0,
+        "value": "s_ponctuer",
+        "cpt1_id": 83988,
+        "niv": 1,
+        "fluxCpt1": [
+            {
+                "concept_id": 83988,
+                "term_id": 8492,
+                "ordre": 0,
+                "conditionnel": 0,
+                "value": "; ",
+                "niv": 2
+            }
+        ]
+    },
+    "60": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 509,
+        "conditionnel": 0,
+        "value": "",
+        "niv": 1
+    },
+    "61": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 511,
+        "conditionnel": 0,
+        "value": "thl-R\u00e9citChasse-01",
+        "cpt1_id": 140275,
+        "niv": 1,
+        "fluxCpt1": [
+            {
+                "concept_id": 140275,
+                "term_id": 140355,
+                "ordre": 0,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140355,
+                "ordre": 1,
+                "conditionnel": 0,
+                "value": "12|m_cheval",
+                "determinant": "12",
+                "cpt1": "m_cheval",
+                "determinant_id": 240,
+                "cpt1_id": 54921,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 54921,
+                        "term_id": 54919,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140355,
+                "ordre": 13,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140355,
+                "ordre": 15,
+                "conditionnel": 0,
+                "value": "11|a_titre 1@carac1",
+                "determinant": "11",
+                "cpt1": "a_titre 1",
+                "cpt2": "carac1",
+                "determinant_id": 246,
+                "cpt1_id": 165837,
+                "cpt2_id": 30511,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 165837,
+                        "term_id": 161148,
+                        "niv": 3
+                    }
+                ],
+                "fluxCpt2": [
+                    {
+                        "concept_id": 30511,
+                        "term_id": 30702,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140355,
+                "ordre": 35,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140355,
+                "ordre": 37,
+                "conditionnel": 0,
+                "value": "v_avoir",
+                "cpt1_id": 150376,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 150376,
+                        "term_id": 150377,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140355,
+                "ordre": 45,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140355,
+                "ordre": 47,
+                "conditionnel": 0,
+                "value": "=x|a_jet\u00e9",
+                "determinant": "=x",
+                "cpt1": "a_jet\u00e9",
+                "cpt1_id": 20884,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 20884,
+                        "term_id": 20886,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140355,
+                "ordre": 58,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140355,
+                "ordre": 60,
+                "conditionnel": 0,
+                "value": "20|m_cavalier",
+                "determinant": "20",
+                "cpt1": "m_cavalier",
+                "determinant_id": 272,
+                "cpt1_id": 168802,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 168802,
+                        "term_id": 67884,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140355,
+                "ordre": 74,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140355,
+                "ordre": 76,
+                "conditionnel": 0,
+                "value": "1#",
+                "determinant": "1",
+                "determinant_id": 215,
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140355,
+                "ordre": 79,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140355,
+                "ordre": 81,
+                "conditionnel": 0,
+                "value": "0|m_terre",
+                "determinant": "",
+                "cpt1": "m_terre",
+                "cpt1_id": 77476,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 77476,
+                        "term_id": 77478,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140355,
+                "ordre": 91,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            }
+        ]
+    },
+    "62": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 531,
+        "conditionnel": 0,
+        "value": "",
+        "niv": 1
+    },
+    "63": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 532,
+        "conditionnel": 0,
+        "value": "s_ponctuer",
+        "cpt1_id": 83988,
+        "niv": 1,
+        "fluxCpt1": [
+            {
+                "concept_id": 83988,
+                "term_id": 8492,
+                "ordre": 0,
+                "conditionnel": 0,
+                "value": "; ",
+                "niv": 2
+            }
+        ]
+    },
+    "64": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 543,
+        "conditionnel": 0,
+        "value": "",
+        "niv": 1
+    },
+    "65": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 545,
+        "conditionnel": 0,
+        "value": "thl-R\u00e9citChasse-01",
+        "cpt1_id": 140275,
+        "niv": 1,
+        "fluxCpt1": [
+            {
+                "concept_id": 140275,
+                "term_id": 140356,
+                "ordre": 0,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140356,
+                "ordre": 1,
+                "conditionnel": 0,
+                "value": "12|m_coeur",
+                "determinant": "12",
+                "cpt1": "m_coeur",
+                "determinant_id": 240,
+                "cpt1_id": 55457,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 55457,
+                        "term_id": 55459,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140356,
+                "ordre": 12,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140356,
+                "ordre": 14,
+                "conditionnel": 0,
+                "value": "10|caract1",
+                "determinant": "10",
+                "cpt1": "caract1",
+                "determinant_id": 248,
+                "cpt1_id": 42013,
+                "niv": 2,
+                "fluxCpt1": {
+                    "error": "Pas de flux trouv\u00e9 pour le concept : 42013"
+                }
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140356,
+                "ordre": 25,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140356,
+                "ordre": 27,
+                "conditionnel": 0,
+                "value": "v_battre",
+                "cpt1_id": 150460,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 150460,
+                        "term_id": 150461,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140356,
+                "ordre": 36,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140356,
+                "ordre": 38,
+                "conditionnel": 0,
+                "value": "151#",
+                "determinant": "151",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140356,
+                "ordre": 43,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140356,
+                "ordre": 45,
+                "conditionnel": 0,
+                "value": "s_vite",
+                "cpt1_id": 84109,
+                "niv": 2,
+                "fluxCpt1": {
+                    "error": "Pas de flux trouv\u00e9 pour le concept : 84109"
+                }
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140356,
+                "ordre": 52,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            }
+        ]
+    },
+    "66": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 565,
+        "conditionnel": 0,
+        "value": "",
+        "niv": 1
+    },
+    "67": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 566,
+        "conditionnel": 0,
+        "value": "s_ponctuer",
+        "cpt1_id": 83988,
+        "niv": 1,
+        "fluxCpt1": [
+            {
+                "concept_id": 83988,
+                "term_id": 83991,
+                "ordre": 0,
+                "conditionnel": 0,
+                "value": ".",
+                "niv": 2
+            }
+        ]
+    },
+    "68": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 577,
+        "conditionnel": 0,
+        "value": "",
+        "niv": 1
+    },
+    "69": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 579,
+        "conditionnel": 0,
+        "value": "thl-R\u00e9citChasse-01",
+        "cpt1_id": 140275,
+        "niv": 1,
+        "fluxCpt1": [
+            {
+                "concept_id": 140275,
+                "term_id": 140292,
+                "ordre": 0,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140292,
+                "ordre": 1,
+                "conditionnel": 0,
+                "value": "0|caract1",
+                "cpt1": "caract1",
+                "cpt1_id": 42013,
+                "niv": 2,
+                "fluxCpt1": {
+                    "error": "Pas de flux trouv\u00e9 pour le concept : 42013"
+                }
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140292,
+                "ordre": 11,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140292,
+                "ordre": 13,
+                "conditionnel": 0,
+                "value": "v_aimer",
+                "cpt1_id": 149881,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 149881,
+                        "term_id": 149882,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140292,
+                "ordre": 21,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140292,
+                "ordre": 23,
+                "conditionnel": 0,
+                "value": "114#",
+                "determinant": "114",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140292,
+                "ordre": 28,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140292,
+                "ordre": 30,
+                "conditionnel": 0,
+                "value": "12|m_animal",
+                "determinant": "12",
+                "cpt1": "m_animal",
+                "determinant_id": 240,
+                "cpt1_id": 49930,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 49930,
+                        "term_id": 49935,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140292,
+                "ordre": 42,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140292,
+                "ordre": 44,
+                "conditionnel": 1,
+                "value": "v_r\u00e9sister",
+                "cpt1_id": 156635,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 156635,
+                        "term_id": 156636,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140292,
+                "ordre": 56,
+                "conditionnel": 1,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140292,
+                "ordre": 58,
+                "conditionnel": 1,
+                "value": "61#",
+                "determinant": "61",
+                "determinant_id": 246,
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140292,
+                "ordre": 62,
+                "conditionnel": 1,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140292,
+                "ordre": 64,
+                "conditionnel": 0,
+                "value": "010030000|v_battre",
+                "determinant": "010030000",
+                "cpt1": "v_battre",
+                "cpt1_id": 150460,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 150460,
+                        "term_id": 150461,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140292,
+                "ordre": 83,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            }
+        ]
+    },
+    "70": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 599,
+        "conditionnel": 0,
+        "value": "",
+        "niv": 1
+    },
+    "71": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 600,
+        "conditionnel": 0,
+        "value": "s_ponctuer",
+        "cpt1_id": 83988,
+        "niv": 1,
+        "fluxCpt1": [
+            {
+                "concept_id": 83988,
+                "term_id": 8493,
+                "ordre": 0,
+                "conditionnel": 0,
+                "value": ".",
+                "niv": 2
+            }
+        ]
+    },
+    "72": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 611,
+        "conditionnel": 0,
+        "value": "",
+        "niv": 1
+    },
+    "73": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 613,
+        "conditionnel": 0,
+        "value": "thl-R\u00e9citChasse-01",
+        "cpt1_id": 140275,
+        "niv": 1,
+        "fluxCpt1": [
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 0,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 1,
+                "conditionnel": 0,
+                "value": "12|m_roi 1",
+                "determinant": "12",
+                "cpt1": "m_roi 1",
+                "determinant_id": 240,
+                "cpt1_id": 188477,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 188477,
+                        "term_id": 188479,
+                        "ordre": 0,
+                        "conditionnel": 0,
+                        "value": "",
+                        "niv": 3
+                    },
+                    {
+                        "concept_id": 188477,
+                        "term_id": 188479,
+                        "ordre": 1,
+                        "conditionnel": 0,
+                        "value": "m_empereur",
+                        "cpt1_id": 173121,
+                        "niv": 3,
+                        "fluxCpt1": [
+                            {
+                                "concept_id": 173121,
+                                "term_id": 173123,
+                                "niv": 4
+                            }
+                        ]
+                    },
+                    {
+                        "concept_id": 188477,
+                        "term_id": 188479,
+                        "ordre": 12,
+                        "conditionnel": 0,
+                        "value": "",
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 12,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 14,
+                "conditionnel": 0,
+                "value": "v_avoir",
+                "cpt1_id": 150376,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 150376,
+                        "term_id": 150377,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 22,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 24,
+                "conditionnel": 0,
+                "value": "=x|a_d\u00e9cid\u00e9",
+                "determinant": "=x",
+                "cpt1": "a_d\u00e9cid\u00e9",
+                "cpt1_id": 14767,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 14767,
+                        "term_id": 14765,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 38,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 40,
+                "conditionnel": 0,
+                "value": "40#",
+                "determinant": "40",
+                "determinant_id": 335,
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 44,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 46,
+                "conditionnel": 0,
+                "value": "090030000|v_arr\u00eater",
+                "determinant": "090030000",
+                "cpt1": "v_arr\u00eater",
+                "cpt1_id": 150142,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 150142,
+                        "term_id": 150143,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 67,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 69,
+                "conditionnel": 0,
+                "value": "4|m_abbaye",
+                "determinant": "4",
+                "cpt1": "m_abbaye",
+                "determinant_id": 229,
+                "cpt1_id": 166724,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 166724,
+                        "term_id": 166726,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 80,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 82,
+                "conditionnel": 0,
+                "value": "10|m_Abbayes-01",
+                "determinant": "10",
+                "cpt1": "m_Abbayes-01",
+                "determinant_id": 248,
+                "cpt1_id": 48192,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 48192,
+                        "term_id": 48308,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 98,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 100,
+                "conditionnel": 1,
+                "value": "61#",
+                "determinant": "61",
+                "determinant_id": 246,
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 104,
+                "conditionnel": 1,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 106,
+                "conditionnel": 1,
+                "value": "1#",
+                "determinant": "1",
+                "determinant_id": 215,
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 109,
+                "conditionnel": 1,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 111,
+                "conditionnel": 1,
+                "value": "20|m_ferme 1",
+                "determinant": "20",
+                "cpt1": "m_ferme 1",
+                "determinant_id": 272,
+                "cpt1_id": 175354,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 175354,
+                        "term_id": 175356,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 124,
+                "conditionnel": 1,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 126,
+                "conditionnel": 1,
+                "value": "10|m_palais-01",
+                "determinant": "10",
+                "cpt1": "m_palais-01",
+                "determinant_id": 248,
+                "cpt1_id": 69966,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 69966,
+                        "term_id": 70013,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 141,
+                "conditionnel": 1,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 143,
+                "conditionnel": 0,
+                "value": "090410000|v_chasser",
+                "determinant": "090410000",
+                "cpt1": "v_chasser",
+                "cpt1_id": 150767,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 150767,
+                        "term_id": 150768,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 163,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 165,
+                "conditionnel": 0,
+                "value": "54|m_environ",
+                "determinant": "54",
+                "cpt1": "m_environ",
+                "determinant_id": 229,
+                "cpt1_id": 59831,
+                "niv": 2,
+                "fluxCpt1": [
+                    {
+                        "concept_id": 59831,
+                        "term_id": 59829,
+                        "niv": 3
+                    }
+                ]
+            },
+            {
+                "concept_id": 140275,
+                "term_id": 140360,
+                "ordre": 178,
+                "conditionnel": 0,
+                "value": "",
+                "niv": 2
+            }
+        ]
+    },
+    "74": {
+        "concept_id": 83701,
+        "term_id": 83738,
+        "ordre": 633,
+        "conditionnel": 0,
+        "value": ".",
+        "niv": 1
+    },
+    "accords": {
+        "83738": [
+            {
+                "id": 83738,
+                "class": 107,
+                "type": "generateur"
+            }
+        ],
+        "140333": [
+            {
+                "id": 140333,
+                "class": 107,
+                "type": "generateur"
+            }
+        ],
+        "154108": [
+            {
+                "id": 154108,
+                "class": 107,
+                "type": "verbe",
+                "prefix": "import",
+                "idConj": 7119
+            }
+        ],
+        "240": [
+            {
+                "id": 240,
+                "class": 113,
+                "idAnno": 237,
+                "vals": "0,la ,le ,les ,les ",
+                "props": "195,502,503,504,505"
+            },
+            {
+                "id": 240,
+                "class": 113,
+                "idAnno": 238,
+                "vals": "1,l\u0027,l\u0027,les ,les ",
+                "props": "195,502,503,504,505"
+            }
+        ],
+        "49932": [
+            {
+                "id": 49932,
+                "class": 107,
+                "type": "adjectif",
+                "prefix": "anima",
+                "idAnno": 49933,
+                "vals": "1,l,1,ux",
+                "props": "195,502,503,505"
+            }
+        ],
+        "160380": [
+            {
+                "id": 160380,
+                "class": 107,
+                "type": "adjectif",
+                "prefix": "chass\u00e9",
+                "idAnno": 160381,
+                "vals": "0,e,es,s",
+                "props": "195,502,504,505"
+            }
+        ],
+        "299": [
+            {
+                "id": 299,
+                "class": 113,
+                "idAnno": 296,
+                "vals": "0,toute notre ,tout notre ,toutes nos ,tous nos ",
+                "props": "195,502,503,504,505"
+            },
+            {
+                "id": 299,
+                "class": 113,
+                "idAnno": 298,
+                "vals": "1,toute notre ,tout notre ,toutes nos ,tous nos ",
+                "props": "195,502,503,504,505"
+            }
+        ],
+        "151012": [
+            {
+                "id": 151012,
+                "class": 107,
+                "type": "verbe",
+                "prefix": "compt",
+                "idConj": 7119
+            }
+        ],
+        "190665": [
+            {
+                "id": 190665,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "traque",
+                "idAnno": 190666,
+                "vals": "0,s",
+                "props": "195,504"
+            }
+        ],
+        "246": [
+            {
+                "id": 246,
+                "class": 113,
+                "idAnno": 243,
+                "vals": "0,de la ,du ,des ,des ",
+                "props": "195,502,503,504,505"
+            },
+            {
+                "id": 246,
+                "class": 113,
+                "idAnno": 244,
+                "vals": "1,de l\u0027,de l\u0027,des ,des ",
+                "props": "195,502,503,504,505"
+            }
+        ],
+        "49066": [
+            {
+                "id": 49066,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "affrontement",
+                "idAnno": 49067,
+                "vals": "1,s",
+                "props": "195,505"
+            }
+        ],
+        "8492": [
+            {
+                "id": 8492,
+                "class": 107,
+                "type": "generateur"
+            }
+        ],
+        "140344": [
+            {
+                "id": 140344,
+                "class": 107,
+                "type": "generateur"
+            }
+        ],
+        "54766": [
+            {
+                "id": 54766,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "chasse",
+                "idAnno": 169259,
+                "vals": "0,s",
+                "props": "195,504"
+            }
+        ],
+        "152898": [
+            {
+                "id": 152898,
+                "class": 107,
+                "type": "verbe",
+                "prefix": "entret",
+                "idConj": 7193
+            }
+        ],
+        "58034": [
+            {
+                "id": 58034,
+                "class": 107,
+                "type": "generateur"
+            }
+        ],
+        "248": [
+            {
+                "id": 248,
+                "class": 113,
+                "idAnno": 245,
+                "vals": "0,de ,de ,de ,de ",
+                "props": "195,502,503,504,505"
+            },
+            {
+                "id": 248,
+                "class": 113,
+                "idAnno": 247,
+                "vals": "1,d\u0027,d\u0027,d\u0027,d\u0027",
+                "props": "195,502,503,504,505"
+            }
+        ],
+        "75264": [
+            {
+                "id": 75264,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "sang",
+                "idAnno": 75265,
+                "vals": "0,s",
+                "props": "195,505"
+            }
+        ],
+        "63141": [
+            {
+                "id": 63141,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "guerrier",
+                "idAnno": 63142,
+                "vals": "0,s",
+                "props": "195,505"
+            }
+        ],
+        "140334": [
+            {
+                "id": 140334,
+                "class": 107,
+                "type": "generateur"
+            }
+        ],
+        "153112": [
+            {
+                "id": 153112,
+                "class": 107,
+                "type": "verbe",
+                "idConj": 7120
+            }
+        ],
+        "229": [
+            {
+                "id": 229,
+                "class": 113,
+                "idAnno": 223,
+                "vals": "0,\u00e0 la ,au ,aux ,aux ",
+                "props": "195,502,503,504,505"
+            },
+            {
+                "id": 229,
+                "class": 113,
+                "idAnno": 225,
+                "vals": "1,\u00e0 l\u0027,\u00e0 l\u0027,aux ,aux ",
+                "props": "195,502,503,504,505"
+            }
+        ],
+        "63136": [
+            {
+                "id": 63136,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "guerre",
+                "idAnno": 63137,
+                "vals": "0,s",
+                "props": "195,504"
+            }
+        ],
+        "150768": [
+            {
+                "id": 150768,
+                "class": 107,
+                "type": "verbe",
+                "prefix": "chass",
+                "idConj": 7119
+            }
+        ],
+        "83989": [
+            {
+                "id": 83989,
+                "class": 107,
+                "type": "generateur"
+            }
+        ],
+        "140368": [
+            {
+                "id": 140368,
+                "class": 107,
+                "type": "generateur"
+            }
+        ],
+        "272": [
+            {
+                "id": 272,
+                "class": 113,
+                "idAnno": 267,
+                "vals": "0,sa ,son ,ses ,ses ",
+                "props": "195,502,503,504,505"
+            },
+            {
+                "id": 272,
+                "class": 113,
+                "idAnno": 270,
+                "vals": "1,son ,son ,ses ,ses ",
+                "props": "195,502,503,504,505"
+            }
+        ],
+        "54919": [
+            {
+                "id": 54919,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "cheva",
+                "idAnno": 54920,
+                "vals": "0,l,ux",
+                "props": "195,503,505"
+            }
+        ],
+        "153735": [
+            {
+                "id": 153735,
+                "class": 107,
+                "type": "verbe",
+                "prefix": "galop",
+                "idConj": 7119
+            }
+        ],
+        "326": [
+            {
+                "id": 326,
+                "class": 113,
+                "idAnno": 321,
+                "vals": "0,- ,- ,une de vos ,un de vos ",
+                "props": "195,502,503,504,505"
+            },
+            {
+                "id": 326,
+                "class": 113,
+                "idAnno": 323,
+                "vals": "1,- ,- ,une de vos ,un de vos ",
+                "props": "195,502,503,504,505"
+            }
+        ],
+        "61835": [
+            {
+                "id": 61835,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "for\u00eat",
+                "idAnno": 61836,
+                "vals": "0,s",
+                "props": "195,504"
+            }
+        ],
+        "151992": [
+            {
+                "id": 151992,
+                "class": 107,
+                "type": "verbe",
+                "idConj": 7388
+            }
+        ],
+        "150413": [
+            {
+                "id": 150413,
+                "class": 107,
+                "type": "verbe",
+                "prefix": "baiss",
+                "idConj": 7119
+            }
+        ],
+        "153159": [
+            {
+                "id": 153159,
+                "class": 107,
+                "type": "verbe",
+                "prefix": "\u00e9vit",
+                "idConj": 7119
+            }
+        ],
+        "53239": [
+            {
+                "id": 53239,
+                "class": 107,
+                "type": "adjectif",
+                "prefix": "branche",
+                "idAnno": 53240,
+                "vals": "0,2,s",
+                "props": "195,503,505"
+            }
+        ],
+        "10449": [
+            {
+                "id": 10449,
+                "class": 107,
+                "type": "adjectif",
+                "prefix": "ba",
+                "idAnno": 10450,
+                "vals": "0,sse,s,sses,s",
+                "props": "195,502,503,504,505"
+            }
+        ],
+        "83990": [
+            {
+                "id": 83990,
+                "class": 107,
+                "type": "generateur"
+            }
+        ],
+        "140388": [
+            {
+                "id": 140388,
+                "class": 107,
+                "type": "generateur"
+            }
+        ],
+        "53507": [
+            {
+                "id": 53507,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "taillis",
+                "idAnno": 188971,
+                "vals": "0",
+                "props": "195"
+            }
+        ],
+        "156980": [
+            {
+                "id": 156980,
+                "class": 107,
+                "type": "verbe",
+                "prefix": "saut",
+                "idConj": 7119
+            }
+        ],
+        "490": [
+            {
+                "id": 490,
+                "class": 113,
+                "idAnno": 484,
+                "vals": "0,une de ce,un de ce,une de ces,un de ces",
+                "props": "195,502,503,504,505"
+            },
+            {
+                "id": 490,
+                "class": 113,
+                "idAnno": 487,
+                "vals": "1,une de ce,un de ce,une de ces,un de ces",
+                "props": "195,502,503,504,505"
+            }
+        ],
+        "69228": [
+            {
+                "id": 69228,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "obstacle",
+                "idAnno": 69229,
+                "vals": "1,s",
+                "props": "195,505"
+            }
+        ],
+        "74844": [
+            {
+                "id": 74844,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "ruisseau",
+                "idAnno": 74845,
+                "vals": "0,x",
+                "props": "195,505"
+            }
+        ],
+        "140299": [
+            {
+                "id": 140299,
+                "class": 107,
+                "type": "generateur"
+            }
+        ],
+        "150377": [
+            {
+                "id": 150377,
+                "class": 107,
+                "type": "verbe",
+                "idConj": 7121
+            }
+        ],
+        "52508": [
+            {
+                "id": 52508,
+                "class": 107,
+                "type": "adjectif",
+                "prefix": "besoin",
+                "idAnno": 52509,
+                "vals": "0,1,s",
+                "props": "195,503,505"
+            }
+        ],
+        "153000": [
+            {
+                "id": 153000,
+                "class": 107,
+                "type": "verbe",
+                "prefix": "\u00e9prouv",
+                "idConj": 7119
+            }
+        ],
+        "61813": [
+            {
+                "id": 61813,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "force",
+                "idAnno": 61814,
+                "vals": "0,s",
+                "props": "195,504"
+            }
+        ],
+        "44341": [
+            {
+                "id": 44341,
+                "class": 107,
+                "type": "generateur"
+            }
+        ],
+        "140282": [
+            {
+                "id": 140282,
+                "class": 107,
+                "type": "generateur"
+            }
+        ],
+        "30570": [
+            {
+                "id": 30570,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "Cunithard",
+                "idAnno": 185279,
+                "vals": "0",
+                "props": "195"
+            }
+        ],
+        "15525": [
+            {
+                "id": 15525,
+                "class": 107,
+                "type": "adjectif",
+                "prefix": "di",
+                "idAnno": 15526,
+                "vals": "0,te,t,tes,ts",
+                "props": "195,502,503,504,505"
+            }
+        ],
+        "27124": [
+            {
+                "id": 27124,
+                "class": 107,
+                "type": "generateur"
+            }
+        ],
+        "68932": [
+            {
+                "id": 68932,
+                "class": 107,
+                "type": "substantif",
+                "idAnno": 68933,
+                "vals": "0",
+                "props": "195"
+            }
+        ],
+        "10735": [
+            {
+                "id": 10735,
+                "class": 107,
+                "type": "adjectif",
+                "prefix": "bless",
+                "idAnno": 10736,
+                "vals": "0,\u00e9e,\u00e9,\u00e9es,\u00e9s",
+                "props": "195,502,503,504,505"
+            }
+        ],
+        "347": [
+            {
+                "id": 347,
+                "class": 113,
+                "idAnno": 340,
+                "vals": "0,- ,- ,une de ses ,un de ses ",
+                "props": "195,502,503,504,505"
+            },
+            {
+                "id": 347,
+                "class": 113,
+                "idAnno": 342,
+                "vals": "1,- ,- ,une de ses ,un de ses ",
+                "props": "195,502,503,504,505"
+            }
+        ],
+        "308": [
+            {
+                "id": 308,
+                "class": 113,
+                "idAnno": 304,
+                "vals": "0,une ,un ,des ,des ",
+                "props": "195,502,503,504,505"
+            },
+            {
+                "id": 308,
+                "class": 113,
+                "idAnno": 306,
+                "vals": "1,une ,un ,des ,des ",
+                "props": "195,502,503,504,505"
+            }
+        ],
+        "54332": [
+            {
+                "id": 54332,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "cerf",
+                "idAnno": 54333,
+                "vals": "0,s",
+                "props": "195,505"
+            }
+        ],
+        "188514": [
+            {
+                "id": 188514,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "rut",
+                "idAnno": 188515,
+                "vals": "0,s",
+                "props": "195,505"
+            }
+        ],
+        "19357": [
+            {
+                "id": 19357,
+                "class": 107,
+                "type": "adjectif",
+                "idAnno": 19358,
+                "vals": "0,elle,il,elles,ils",
+                "props": "195,502,503,504,505"
+            }
+        ],
+        "158039": [
+            {
+                "id": 158039,
+                "class": 107,
+                "type": "verbe",
+                "prefix": "v",
+                "idConj": 7423
+            }
+        ],
+        "155437": [
+            {
+                "id": 155437,
+                "class": 107,
+                "type": "verbe",
+                "prefix": "per",
+                "idConj": 7147
+            }
+        ],
+        "335": [
+            {
+                "id": 335,
+                "class": 113,
+                "idAnno": 332,
+                "vals": "0,- ,- ,une de mes ,un de mes ",
+                "props": "195,502,503,504,505"
+            },
+            {
+                "id": 335,
+                "class": 113,
+                "idAnno": 334,
+                "vals": "1,- ,- ,une de mes ,un de mes ",
+                "props": "195,502,503,504,505"
+            }
+        ],
+        "78217": [
+            {
+                "id": 78217,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "trait",
+                "idAnno": 78218,
+                "vals": "0,s",
+                "props": "195,505"
+            }
+        ],
+        "83992": [
+            {
+                "id": 83992,
+                "class": 107,
+                "type": "generateur"
+            }
+        ],
+        "140317": [
+            {
+                "id": 140317,
+                "class": 107,
+                "type": "generateur"
+            }
+        ],
+        "59768": [
+            {
+                "id": 59768,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "entre",
+                "idAnno": 59769,
+                "vals": "1",
+                "props": "195"
+            }
+        ],
+        "75918": [
+            {
+                "id": 75918,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "silhouette",
+                "idAnno": 75919,
+                "vals": "0,s",
+                "props": "195,504"
+            }
+        ],
+        "242": [
+            {
+                "id": 242,
+                "class": 113,
+                "idAnno": 239,
+                "vals": "0,d\u0027une ,d\u0027un ,de ,de ",
+                "props": "195,502,503,504,505"
+            },
+            {
+                "id": 242,
+                "class": 113,
+                "idAnno": 241,
+                "vals": "1,d\u0027une ,d\u0027un ,d\u0027,d\u0027",
+                "props": "195,502,503,504,505"
+            }
+        ],
+        "140367": [
+            {
+                "id": 140367,
+                "class": 107,
+                "type": "generateur"
+            }
+        ],
+        "10503": [
+            {
+                "id": 10503,
+                "class": 107,
+                "type": "adjectif",
+                "prefix": "be",
+                "idAnno": 10504,
+                "vals": "0,lle,au,lles,aux",
+                "props": "195,502,503,504,505"
+            }
+        ],
+        "77351": [
+            {
+                "id": 77351,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "temps",
+                "idAnno": 77352,
+                "vals": "0",
+                "props": "195"
+            }
+        ],
+        "8493": [
+            {
+                "id": 8493,
+                "class": 107,
+                "type": "generateur"
+            }
+        ],
+        "140335": [
+            {
+                "id": 140335,
+                "class": 107,
+                "type": "generateur"
+            }
+        ],
+        "79209": [
+            {
+                "id": 79209,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "viande",
+                "idAnno": 79210,
+                "vals": "0,s",
+                "props": "195,504"
+            }
+        ],
+        "290": [
+            {
+                "id": 290,
+                "class": 113,
+                "idAnno": 288,
+                "vals": "0,toute leur ,tout leur ,toutes leurs ,tous leurs ",
+                "props": "195,502,503,504,505"
+            },
+            {
+                "id": 290,
+                "class": 113,
+                "idAnno": 289,
+                "vals": "1,toute leur ,tout leur ,toutes leurs ,tous leurs ",
+                "props": "195,502,503,504,505"
+            }
+        ],
+        "154870": [
+            {
+                "id": 154870,
+                "class": 107,
+                "type": "verbe",
+                "prefix": "montr",
+                "idConj": 7119
+            }
+        ],
+        "263": [
+            {
+                "id": 263,
+                "class": 113,
+                "idAnno": 260,
+                "vals": "0,notre ,notre ,nos ,nos ",
+                "props": "195,502,503,504,505"
+            },
+            {
+                "id": 263,
+                "class": 113,
+                "idAnno": 262,
+                "vals": "1,notre ,notre ,nos ,nos ",
+                "props": "195,502,503,504,505"
+            }
+        ],
+        "175900": [
+            {
+                "id": 175900,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "habilet\u00e9",
+                "idAnno": 175901,
+                "vals": "1,s",
+                "props": "195,504"
+            }
+        ],
+        "140278": [
+            {
+                "id": 140278,
+                "class": 107,
+                "type": "generateur"
+            }
+        ],
+        "30705": [
+            {
+                "id": 30705,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "Hatton",
+                "idAnno": 185301,
+                "vals": "0",
+                "props": "195"
+            }
+        ],
+        "153669": [
+            {
+                "id": 153669,
+                "class": 107,
+                "type": "verbe",
+                "prefix": "frapp",
+                "idConj": 7119
+            }
+        ],
+        "175752": [
+            {
+                "id": 175752,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "bison",
+                "idAnno": 175753,
+                "vals": "0,s",
+                "props": "195,505"
+            }
+        ],
+        "157556": [
+            {
+                "id": 157556,
+                "class": 107,
+                "type": "verbe",
+                "prefix": "tomb",
+                "idConj": 7119
+            }
+        ],
+        "150491": [
+            {
+                "id": 150491,
+                "class": 107,
+                "type": "verbe",
+                "prefix": "bless",
+                "idConj": 7119
+            }
+        ],
+        "8494": [
+            {
+                "id": 8494,
+                "class": 107,
+                "type": "generateur"
+            }
+        ],
+        "140377": [
+            {
+                "id": 140377,
+                "class": 107,
+                "type": "generateur"
+            }
+        ],
+        "318": [
+            {
+                "id": 318,
+                "class": 113,
+                "idAnno": 312,
+                "vals": "0,votre ,votre ,vos ,vos ",
+                "props": "195,502,503,504,505"
+            },
+            {
+                "id": 318,
+                "class": 113,
+                "idAnno": 315,
+                "vals": "1,votre ,votre ,vos ,vos ",
+                "props": "195,502,503,504,505"
+            }
+        ],
+        "329": [
+            {
+                "id": 329,
+                "class": 113,
+                "idAnno": 327,
+                "vals": "0,- ,- ,une de tes ,un de tes ",
+                "props": "195,502,503,504,505"
+            },
+            {
+                "id": 329,
+                "class": 113,
+                "idAnno": 328,
+                "vals": "1,- ,- ,une de tes ,un de tes ",
+                "props": "195,502,503,504,505"
+            }
+        ],
+        "65265": [
+            {
+                "id": 65265,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "jeu",
+                "idAnno": 65266,
+                "vals": "0,x",
+                "props": "195,505"
+            }
+        ],
+        "55627": [
+            {
+                "id": 55627,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "combat",
+                "idAnno": 55628,
+                "vals": "0,s",
+                "props": "195,505"
+            }
+        ],
+        "84013": [
+            {
+                "id": 84013,
+                "class": 107,
+                "type": "generateur"
+            }
+        ],
+        "151726": [
+            {
+                "id": 151726,
+                "class": 107,
+                "type": "verbe",
+                "prefix": "d\u00e9montr",
+                "idConj": 7119
+            }
+        ],
+        "78743": [
+            {
+                "id": 78743,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "valeur",
+                "idAnno": 78744,
+                "vals": "0,s",
+                "props": "195,504"
+            }
+        ],
+        "140341": [
+            {
+                "id": 140341,
+                "class": 107,
+                "type": "generateur"
+            }
+        ],
+        "9005": [
+            {
+                "id": 9005,
+                "class": 107,
+                "type": "adjectif",
+                "prefix": "agil",
+                "idAnno": 9006,
+                "vals": "1,e,e,es,es",
+                "props": "195,502,503,504,505"
+            }
+        ],
+        "25013": [
+            {
+                "id": 25013,
+                "class": 107,
+                "type": "adjectif",
+                "prefix": "rapid",
+                "idAnno": 25014,
+                "vals": "0,e,e,es,es",
+                "props": "195,502,503,504,505"
+            }
+        ],
+        "18113": [
+            {
+                "id": 18113,
+                "class": 107,
+                "type": "adjectif",
+                "prefix": "irr\u00e9pressible",
+                "idAnno": 18114,
+                "vals": "1,s,s",
+                "props": "195,504,505"
+            }
+        ],
+        "62672": [
+            {
+                "id": 62672,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "gibier",
+                "idAnno": 62673,
+                "vals": "0,s",
+                "props": "195,505"
+            }
+        ],
+        "55133": [
+            {
+                "id": 55133,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "choix",
+                "idAnno": 55134,
+                "vals": "0",
+                "props": "195"
+            }
+        ],
+        "140360": [
+            {
+                "id": 140360,
+                "class": 107,
+                "type": "generateur"
+            }
+        ],
+        "72699": [
+            {
+                "id": 72699,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "roi",
+                "idAnno": 188478,
+                "vals": "0,s",
+                "props": "195,505"
+            }
+        ],
+        "14765": [
+            {
+                "id": 14765,
+                "class": 107,
+                "type": "adjectif",
+                "prefix": "d\u00e9cid",
+                "idAnno": 14766,
+                "vals": "0,\u00e9e,\u00e9,\u00e9es,\u00e9s",
+                "props": "195,502,503,504,505"
+            }
+        ],
+        "150143": [
+            {
+                "id": 150143,
+                "class": 107,
+                "type": "verbe",
+                "prefix": "arr\u00eat",
+                "idConj": 7119
+            }
+        ],
+        "166726": [
+            {
+                "id": 166726,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "abbaye",
+                "idAnno": 166727,
+                "vals": "1,s",
+                "props": "195,504"
+            }
+        ],
+        "48347": [
+            {
+                "id": 48347,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "Saint-Maurice",
+                "idAnno": 48348,
+                "vals": "0",
+                "props": "195"
+            }
+        ],
+        "215": [
+            {
+                "id": 215,
+                "class": 113,
+                "idAnno": 213,
+                "vals": "0,d\u0027une des ,d\u0027un des ",
+                "props": "195,504,505"
+            },
+            {
+                "id": 215,
+                "class": 113,
+                "idAnno": 214,
+                "vals": "1,d\u0027une des ,d\u0027un des ",
+                "props": "195,504,505"
+            }
+        ],
+        "175356": [
+            {
+                "id": 175356,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "m\u00e9tairie",
+                "idAnno": 175357,
+                "vals": "0,s",
+                "props": "195,504"
+            }
+        ],
+        "70073": [
+            {
+                "id": 70073,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "Verberie",
+                "idAnno": 70074,
+                "vals": "0",
+                "props": "195"
+            }
+        ],
+        "59829": [
+            {
+                "id": 59829,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "environ",
+                "idAnno": 59830,
+                "vals": "1,s",
+                "props": "195,505"
+            }
+        ],
+        "53235": [
+            {
+                "id": 53235,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "branche",
+                "idAnno": 53236,
+                "vals": "0,s",
+                "props": "195,504"
+            }
+        ],
+        "140355": [
+            {
+                "id": 140355,
+                "class": 107,
+                "type": "generateur"
+            }
+        ],
+        "161148": [
+            {
+                "id": 161148,
+                "class": 107,
+                "type": "adjectif",
+                "prefix": "\u00e9cuy",
+                "idAnno": 161149,
+                "vals": "1,\u00e8re,er,\u00e8res,ers",
+                "props": "195,502,503,504,505"
+            }
+        ],
+        "30702": [
+            {
+                "id": 30702,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "Hariulf",
+                "idAnno": 30703,
+                "vals": "0",
+                "props": "195"
+            }
+        ],
+        "20886": [
+            {
+                "id": 20886,
+                "class": 107,
+                "type": "adjectif",
+                "prefix": "jet",
+                "idAnno": 20887,
+                "vals": "0,\u00e9e,\u00e9,\u00e9es,\u00e9s",
+                "props": "195,502,503,504,505"
+            }
+        ],
+        "67884": [
+            {
+                "id": 67884,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "cavalier",
+                "idAnno": 168803,
+                "vals": "0,s",
+                "props": "195,505"
+            }
+        ],
+        "77478": [
+            {
+                "id": 77478,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "terre",
+                "idAnno": 77479,
+                "vals": "0,s",
+                "props": "195,504"
+            }
+        ],
+        "140356": [
+            {
+                "id": 140356,
+                "class": 107,
+                "type": "generateur"
+            }
+        ],
+        "55459": [
+            {
+                "id": 55459,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "c\u0153ur",
+                "idAnno": 55460,
+                "vals": "0,s",
+                "props": "195,505"
+            }
+        ],
+        "150461": [
+            {
+                "id": 150461,
+                "class": 107,
+                "type": "verbe",
+                "idConj": 7403
+            }
+        ],
+        "83991": [
+            {
+                "id": 83991,
+                "class": 107,
+                "type": "generateur"
+            }
+        ],
+        "140292": [
+            {
+                "id": 140292,
+                "class": 107,
+                "type": "generateur"
+            }
+        ],
+        "149882": [
+            {
+                "id": 149882,
+                "class": 107,
+                "type": "verbe",
+                "prefix": "aim",
+                "idConj": 7119
+            }
+        ],
+        "49935": [
+            {
+                "id": 49935,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "anima",
+                "idAnno": 49936,
+                "vals": "1,l,ux",
+                "props": "195,503,505"
+            }
+        ],
+        "156636": [
+            {
+                "id": 156636,
+                "class": 107,
+                "type": "verbe",
+                "prefix": "r\u00e9sist",
+                "idConj": 7119
+            }
+        ],
+        "188479": [
+            {
+                "id": 188479,
+                "class": 107,
+                "type": "generateur"
+            }
+        ],
+        "173123": [
+            {
+                "id": 173123,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "empereur",
+                "idAnno": 173124,
+                "vals": "1,s",
+                "props": "195,505"
+            }
+        ],
+        "48308": [
+            {
+                "id": 48308,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "Saint-Genest",
+                "idAnno": 48309,
+                "vals": "0",
+                "props": "195"
+            }
+        ],
+        "70013": [
+            {
+                "id": 70013,
+                "class": 107,
+                "type": "substantif",
+                "prefix": "Mantaille",
+                "idAnno": 70014,
+                "vals": "0",
+                "props": "195"
+            }
+        ]
+    },
+    "deb": 1745391493.460442,
+    "fin": 1745391538.206076,
+    "elapsed_time": "0 minutes and 44.00 seconds"
+}

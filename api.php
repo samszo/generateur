@@ -10,7 +10,6 @@
  * - vendor/nyholm/*: Tobias Nyholm
  *   https://github.com/Nyholm
  **/
-
 // file: vendor/psr/http-factory/src/RequestFactoryInterface.php
 namespace Psr\Http\Message {
 
@@ -12363,6 +12362,7 @@ namespace Tqdev\PhpCrudApi {
 
 // file: src/index.php
 namespace Tqdev\PhpCrudApi {
+    error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
     use Tqdev\PhpCrudApi\Api;
     use Tqdev\PhpCrudApi\Config\Config;
@@ -12376,12 +12376,14 @@ namespace Tqdev\PhpCrudApi {
         // 'address' => 'localhost',
         // 'port' => '3306',
         'username' => 'samszo',
-        'password' => 'samszo',
+        'password' => 'ZappaEst1Chien',
         'database' => 'generateur',
         'customControllers' => 'apiStats',
         "middlewares"=>'apiKeyDbAuth,authorization',
         "apiKeyDbAuth.usersTable"=>'flux_uti',
         "apiKeyDbAuth.apiKeyColumn"=>'flux_api_ident',
+        "cachePath"=>'/Users/samszo/Sites/generateur/tmp',
+        //"cacheType"=>'Memcache',
     ]);
     $request = RequestFactory::fromGlobals();
     $api = new Api($config);

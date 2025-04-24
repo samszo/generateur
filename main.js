@@ -15,10 +15,10 @@ fetch('api.html').then(r=>{
 let
 worker = new Worker('wGenerateur.js',{ type: "module" });
 let a = new auth({'navbar':d3.select('#navbarMain'),
-        apiOmk:'http://localhost/omk_arcanes/api/',
         mail:'samuel.szoniecky@univ-paris8.fr',
-        ident: 'TIpNmbSRpPyX2rXBUj7rnzhQwBFPMpuN',
-        key:'EodhEiP1XYkWskV0DIonO0V5Dznim9TQ',
+        apiOmk:'http://localhost/omk_generateur/api/',
+        ident: 'rqzo8WXIejwWj3CtfPraTDOOzKaIgnPj',
+        key:'OOCK0VvxeaE2BFdI8ZVsCC9nhy2hU3Yp',
         /*
         generateur.art GenStory
         apiOmk:'https://generateur.art/api/',0

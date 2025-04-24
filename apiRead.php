@@ -12363,6 +12363,7 @@ namespace Tqdev\PhpCrudApi {
 
 // file: src/index.php
 namespace Tqdev\PhpCrudApi {
+    error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
     use Tqdev\PhpCrudApi\Api;
     use Tqdev\PhpCrudApi\Config\Config;
@@ -12376,11 +12377,12 @@ namespace Tqdev\PhpCrudApi {
         // 'address' => 'localhost',
         // 'port' => '3306',
         'username' => 'samszo',
-        'password' => 'samszo',
+        'password' => 'ZappaEst1Chien',
         'database' => 'generateur',
         'customControllers' => 'apiStats',
         "middlewares"=>'cors,authorization',
         "cors.allowMethods"=>'GET',
+        "cachePath"=>'/Users/samszo/Sites/generateur/tmp',
         'authorization.tableHandler' => function ($operation, $tableName) {
             return $tableName != 'flux_uti';
         },        
