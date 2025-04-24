@@ -22,6 +22,17 @@ export class auth {
             btnLogin, nameLogin, alertAuth, alertMail, alertServer, alertUnknown, alertGitHub;
                 
         this.init = function () {
+
+            if(me.navbar.empty())return;
+            if(me.apiOmk){
+                me.apiOmk += me.apiOmk.slice(-1)=='/' ? "" : "/";
+                me.omk = new omk({'api':me.apiOmk});
+                if(me.navbar)createNavBar();
+                me.getUser();
+            }
+                                                                                              
+        }
+        function createNavBar(){
             //création des éléments html
             let htmlNavBar = `<div class="btn-group">
                     <div class="mt-2">User : <span id="userLogin">Anonymous</span></div>                                        
@@ -168,7 +179,7 @@ export class auth {
             });                                                                                    
             me.m.select("#btnCheck").on('click',e=>{
                 me.getUser(null);
-            });                                                                                    
+            });  
         }
         async function getGitHubAuth(){
             // Compare: https://docs.github.com/en/rest/reference/users#get-the-authenticated-user
