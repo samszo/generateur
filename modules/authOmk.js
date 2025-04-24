@@ -23,11 +23,10 @@ export class auth {
                 
         this.init = function () {
 
-            if(me.navbar.empty())return;
             if(me.apiOmk){
                 me.apiOmk += me.apiOmk.slice(-1)=='/' ? "" : "/";
                 me.omk = new omk({'api':me.apiOmk});
-                if(me.navbar)createNavBar();
+                if(!me.navbar.empty())createNavBar();
                 me.getUser();
             }
                                                                                               
@@ -207,16 +206,18 @@ export class auth {
                         me.omk = false;                                                                     
                     }else {
                         me.user = u;
-                        me.userAdmin = me.user["o:role"] == 'global_admin';            
-                        nameLogin.html(me.user['o:name']);
-                        btnLogin.attr('class','btn btn-danger').html(iconOut);                        
+                        me.userAdmin = me.user["o:role"] == 'global_admin';
                         me.user.id=me.user['o:id'];
-                        me.modal.hide();
+                        if(nameLogin){
+                            nameLogin.html(me.user['o:name']);
+                            btnLogin.attr('class','btn btn-danger').html(iconOut);                        
+                            me.modal.hide();    
+                            authGitHub(uGitHub=>{
+                                me.user.loginGitHub=uGitHub;
+                                if(cb)cb(me.user);
+                            })
+                        }            
                     }
-                    authGitHub(uGitHub=>{
-                        me.user.loginGitHub=uGitHub;
-                        if(cb)cb(me.user);
-                    })
                 })    
             };
         }
