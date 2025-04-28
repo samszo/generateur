@@ -176,6 +176,30 @@ export class omk {
             return me.api.replace("/api","")+file;
         }
 
+        this.getPropsHeader = function (item){
+            let header = [];
+            if(item["o:resource_class"]){
+                me.getRtById(item['o:resource_class']['o:id'])["o:resource_template_property"].forEach(p=>{
+                    header.push(me.getPropId(p["o:property"]["o:id"]));
+                })   
+            }
+            return header;
+        }            
+
+        this.getDataForGrid = function (data,headers){
+            let gridData = [];
+            data.forEach(item=>{
+                let row = {};
+                headers.forEach(h=>{
+                    if(item[h['o:term']]){
+                        row[h['o:label']] = item[h['o:term']].map(d=>d.display_title ? d.display_title : d["@value"]).join(' - ');
+                    }else row[h['o:label']] = '';
+                })
+                gridData.push(row);
+            })   
+            return gridData;
+        }            
+
         //merci à https://stackoverflow.com/questions/33780271/export-a-json-object-to-a-text-file/52297652#52297652
         this.saveJson=function(data){
             const filename = 'data.json';
@@ -192,18 +216,20 @@ export class omk {
         }
 
         this.getAllItems = function (query, cb){
-            let url = me.api+'items?per_page='+perPage+'&'+query+'&page=', fin=false, rs=[], data, page=1;
-            //pause pour gérer l'affichage du loader
-            //setTimeout(function(){
-                while (!fin) {
-                    data = syncRequest(url+page);
-                    //console.log(url+page,data);
-                    fin = data.length ? false : true;
-                    rs = rs.concat(data);
-                    page++;
-                }                
-                return cb ? cb(rs) : rs;                    
-            //}, 100);
+            me.loader.show().then(()=>{
+                let url = me.api+'items?per_page='+perPage+'&'+query+'&page=', fin=false, rs=[], data, page=1;
+                //pause pour gérer l'affichage du loader
+                //setTimeout(function(){
+                    while (!fin) {
+                        data = syncRequest(url+page);
+                        //console.log(url+page,data);
+                        fin = data.length ? false : true;
+                        rs = rs.concat(data);
+                        page++;
+                    }
+                    me.loader.hide();                
+                    return cb ? cb(rs) : rs;                    
+            })
         }
 
         this.getAllMedias = function (query, cb=false){

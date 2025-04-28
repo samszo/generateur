@@ -10,6 +10,7 @@ export class dico {
         this.oeuvre = params.oeuvre ? params.oeuvre : false;
         this.d = params.d ? params.d : false;
         this.api = params.api ? params.api : false;
+        this.omk = params.omk ? params.omk : false;
         this.remove = params.remove ? params.remove : false;
         this.onlyData = params.onlyData ? params.onlyData : false;
         this.tgtContent = params.tgtContent ? params.tgtContent : false;
@@ -27,7 +28,7 @@ export class dico {
             userAllowed = me.oeuvre.auth.userAdmin || me.oeuvre.auth.userAllowed(me.d.id_dico,me.oeuvre.dicosUti);
             //récupération de la table suivant le type
             for (const p in m.tables) {
-                if(m.tables[p].type==me.d.type)table=m.tables[p];
+                if(m.tables[p].type==(me.omk ? me.d["dcterms:type"][0]["@value"] : me.d.type))table=m.tables[p];
             }
             /*La mise à jour n'est pas nickel => on recré totalement la grid*/
             mainSlt = d3.select(me.tgtContent);
@@ -94,82 +95,99 @@ export class dico {
             //ajoute le tableur
             dicoHot = colL.append('div').attr('class','clearfix')
                 .attr('id','dicoHot');
+            
+            if(me.omk){
+                let query = 'resource_class_id='+table.class+
+                    "property[0][joiner]=and&property[0][property]=501&property[0][type]=res&property[0][text]="+me.d['o:id'];
+                me.omk.loader.show();
+                me.omk.getAllItems(query,function(data){
+                    me.data = data;                                
+                    showData();
+                });                
+                return;
+            }
+
             me.api.list(table.t,{filter:'id_dico,eq,'+me.d.id_dico}).then(
                 result=>{
-                    me.data = result.records
-                    //me.hot.loadData(me.data);
-                    //création de la table
-                    let headers = Object.keys(me.data[0]),
-                        rectFooter = d3.select('footer').select('h3').node().getBoundingClientRect(),
-                        rectHeader = d3.select('header').node().getBoundingClientRect();
-
-                    me.hot = new Handsontable(dicoHot.node(), {
-                        colHeaders: true,
-                        rowHeaders: true,
-                        data:me.data,
-                        colHeaders: headers,
-                        height: rectFooter.top-rectFooter.height-rectHeader.bottom,
-                        width: table.content ? '300' : '100%',
-                        licenseKey: 'non-commercial-and-evaluation',
-                        customBorders: true,
-                        dropdownMenu: true,
-                        multiColumnSorting: true,
-                        filters: true,
-                        selectionMode:'single',
-                        hiddenColumns: {
-                            // specify columns hidden by default
-                            columns: headers.map((h,i)=>h.substring(0,3)=='id_' ? i : null).filter(k=>k!=null)
-                        },
-                        columns: getCellEditor(headers),
-                        allowInsertColumn: false,
-                        copyPaste: false,
-                        contextMenu: !userAllowed ? false : {
-                            callback(key, selection, clickEvent) {
-                              // Common callback for all options
-                              console.log(key, selection, clickEvent);
-                            },
-                            items: {
-                              remove_row: {
-                                name(){
-                                    return `<button type="button" class="btn btn-sm btn-danger">
-                                    <i class="fa-regular fa-trash-can"></i>
-                                    </button>`;    
-                                },
-                                callback(key, s, e) { // Callback for specific option
-                                    let r = this.getDataAtRow(s[0].start.row);
-                                    verifDeleteItem(s,r);
-                                }
-                              },
-                            }
-                          },
-    
-
-                    });
-                    me.hot.addHook('afterSelectionEnd', (r, c) => {
-                        showContent(me.hot.getDataAtRow(r));
-                    });
-                    me.hot.addHook('afterChange', (changes,s) => {
-                        changes?.forEach(([r, p, oldValue, newValue]) => {
-                            //mise à jour de l'item
-                            let data = {};
-                            data[p]=newValue;
-                            me.api.update(table.t,me.data[r][table.pk],data).then(
-                                rs=>{
-                                    console.log(rs);
-                                }   
-                            ).catch (
-                                error=>console.log(error)
-                            );            
-                        });    
-                    });
-        
-                    if(me.appUrl.params && me.appUrl.params.has('id_concept'))showConcept(null,me.appUrl.params.get('id_concept'));
-                    if(me.appUrl.params && me.appUrl.params.has('id_conj'))showConjugaison(null,me.appUrl.params.get('id_conj'));
+                    me.data = result.records                                
+                    showData();
                 }
             ).catch (
                 error=>console.log(error)
             );
         }
+
+        function showData(){
+            //me.hot.loadData(me.data);
+            //création de la table
+            let headers = me.omk ? me.omk.getPropsHeader(me.data[0]) : Object.keys(me.data[0]),
+                rectFooter = d3.select('footer').select('h3').node().getBoundingClientRect(),
+                rectHeader = d3.select('header').node().getBoundingClientRect();
+
+            me.hot = new Handsontable(dicoHot.node(), {
+                colHeaders: true,
+                rowHeaders: true,
+                data: me.omk ? me.omk.getDataForGrid(me.data,headers): me.data,
+                colHeaders: me.omk ? headers.map(h=>h["o:label"]): headers,
+                height: rectFooter.top-rectFooter.height-rectHeader.bottom,
+                width: table.content ? '300' : '100%',
+                licenseKey: 'non-commercial-and-evaluation',
+                customBorders: true,
+                dropdownMenu: true,
+                multiColumnSorting: true,
+                filters: true,
+                selectionMode:'single',
+                hiddenColumns: {
+                    // specify columns hidden by default
+                    columns: headers.map((h,i)=>h.substring(0,3)=='id_' ? i : null).filter(k=>k!=null)
+                },
+                columns: getCellEditor(headers),
+                allowInsertColumn: false,
+                copyPaste: false,
+                contextMenu: !userAllowed ? false : {
+                    callback(key, selection, clickEvent) {
+                      // Common callback for all options
+                      console.log(key, selection, clickEvent);
+                    },
+                    items: {
+                      remove_row: {
+                        name(){
+                            return `<button type="button" class="btn btn-sm btn-danger">
+                            <i class="fa-regular fa-trash-can"></i>
+                            </button>`;    
+                        },
+                        callback(key, s, e) { // Callback for specific option
+                            let r = this.getDataAtRow(s[0].start.row);
+                            verifDeleteItem(s,r);
+                        }
+                      },
+                    }
+                  },
+
+
+            });
+            me.hot.addHook('afterSelectionEnd', (r, c) => {
+                showContent(me.hot.getDataAtRow(r));
+            });
+            me.hot.addHook('afterChange', (changes,s) => {
+                changes?.forEach(([r, p, oldValue, newValue]) => {
+                    //mise à jour de l'item
+                    let data = {};
+                    data[p]=newValue;
+                    me.api.update(table.t,me.data[r][table.pk],data).then(
+                        rs=>{
+                            console.log(rs);
+                        }   
+                    ).catch (
+                        error=>console.log(error)
+                    );            
+                });    
+            });
+
+            if(me.appUrl.params && me.appUrl.params.has('id_concept'))showConcept(null,me.appUrl.params.get('id_concept'));
+            if(me.appUrl.params && me.appUrl.params.has('id_conj'))showConjugaison(null,me.appUrl.params.get('id_conj'));            
+        }
+
         function showContent(d){
             if(table.content){
                 switch (table.type) {
@@ -188,7 +206,10 @@ export class dico {
             headers.forEach(h=>{
                 switch (h) {
                   default:
-                    editors.push({data:h, type: 'text'})                  
+                    if(me.omk)
+                        editors.push({data:h['o:label'], type: 'text', editor: 'textEditor'})
+                    else
+                        editors.push({data:h, type: 'text'})                  
                     break;
                 }
               })

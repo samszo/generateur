@@ -14,16 +14,16 @@ export class moteur {
         this.ordre = 0; 
         this.potentiel = 0;
         this.tables = {
-            c:{type:'concepts',t:'gen_concepts',pk:'id_concept',k:['lib','type'],'content':true,mAdd:true,mImp:true},
-            d:{type:'déterminants',t:'gen_determinants',k:'num','content':false},
-            p:{type:'pronoms',t:'gen_pronoms',k:['num','type'],'content':false},
+            c:{type:'concepts',class:106,t:'gen_concepts',pk:'id_concept',k:['lib','type'],'content':true,mAdd:true,mImp:true},
+            d:{type:'déterminants',class:113,t:'gen_determinants',k:'num','content':false},
+            p:{type:'pronoms',class:112,t:'gen_pronoms',k:['num','type'],'content':false},
             t:{type:'terminaisons',t:'gen_terminaisons',k:['id_conj','num'],'content':false},
-			s:{type:'syntagmes',t:'gen_syntagmes',pk:'id_syn',k:'num','content':false,mAdd:true},
+			s:{type:'syntagmes',class:114,t:'gen_syntagmes',pk:'id_syn',k:'num','content':false,mAdd:true},
 			v:{type:'verbes',t:'gen_verbes',k:'id_verbe',dataLink:true},
 			a:{type:'adjectifs',t:'gen_adjectifs',k:'id_adj',dataLink:true},
 			m:{type:'substantifs',t:'gen_substantifs',k:'id_sub',dataLink:true},
 			g:{type:'generateurs',t:'gen_generateurs',k:'id_gen',dataLink:true},
-			n:{type:'négations',t:'gen_negations',pk:'id_negation',k:'num','content':false},
+			n:{type:'négations',class:115,t:'gen_negations',pk:'id_negation',k:'num','content':false},
 			u:{type:'uris',t:'gen_uris',k:'id_uri',dataLink:true},
 			conj:{type:'conjugaisons',t:'gen_conjugaisons',pk:'id_conj',k:'id_conj','content':true},
         }; 

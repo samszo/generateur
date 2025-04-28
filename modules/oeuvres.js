@@ -69,6 +69,25 @@ export class oeuvres {
             );
         }
         function getOeuvres(){
+            //gestion avec omk
+            if(me.auth.omk){
+                me.auth.omk.getAllItems('resource_class_id=409',function(data){
+                    me.oeuvres = data;
+                    me.oeuvres.unshift(
+                        {'o:id_oeu':-1,'o:title':'New work'}, 
+                        {'o:id_oeu':-2,'o:title':'<hr class="dropdown-divider">'}
+                    );
+                    d3.select(me.tgtMenu).selectAll('li').data(me.oeuvres).enter().append('li')
+                        .append('button')
+                        .attr('type', "button")
+                        .attr('class',"dropdown-item")
+                        .attr('id',d=>d["o:id_oeu"])
+                        .on('click',me.showOeuvre)
+                        .html(d=>d["o:title"]);
+                    if(me.appUrl.params && me.appUrl.params.has('id_oeu'))me.showOeuvre(null,null,me.appUrl.params.get('id_oeu'));
+                });
+                return
+            }
             me.api.list('gen_oeuvres').then(
                 result=>{
                     me.oeuvres = result.records;
@@ -95,13 +114,13 @@ export class oeuvres {
             );        
         }
         this.showOeuvre = function (e,oeu,id){
-            if(id)oeu=me.oeuvres.filter(r=>r.id_oeu==id)[0];
+            if(id)oeu=me.oeuvres.filter(r=>(me.auth.omk ? r['o:id'] : r.id_oeu)==id)[0];
             else me.appUrl.params=false;
             if(oeu.id_oeu==-1)addOeuvre();
             else if(oeu.id_oeu==-2)return;
             else{
                 me.curOeuvre=oeu;
-                me.appUrl.change('id_oeu',oeu.id_oeu);
+                me.appUrl.change('id_oeu',me.auth.omk ? oeu['o:id'] : oeu.id_oeu);
                 d3.select(me.tgtContent).selectAll('div').remove();
                 let list = d3.select(me.tgtList)
                 list.select('h1').remove();
@@ -110,7 +129,7 @@ export class oeuvres {
                     : "";
 
                 list.append('h1').html(
-                    oeu.lib+tools
+                    (me.auth.omk ? oeu['o:title'] : oeu.lib)+tools
                 );
                 if(tools)list.select('#btnDeleteOeuvre').on('click',verifDeleteOeuvre);
                 showDicos(oeu);
@@ -170,6 +189,30 @@ export class oeuvres {
         }
         function showDicos(oeu){
             //récupère les dicos de l'oeuvre
+            //gestion avec omk
+            if(me.auth.omk){
+                me.auth.omk.getAllItems('filter[0][join]=and&filter[0][field][]=genex:hasDico&filter[0][type]=lres&filter[0][val]='+oeu["o:id"],function(data){
+                    me.dicos = data;
+                    d3.select(me.tgtList).selectAll('.gDicos').remove();
+                    let gDicos = d3.group(me.dicos, d => typeof d["genex:hasType"] !== 'undefined');
+                    d3.select(me.tgtList).selectAll('.gDicos')
+                        .data(Array.from(gDicos))
+                        .join(
+                            enter => {
+                                let div = enter.append('div')
+                                .attr('id',d=>{
+                                    return 'dicos'+d[0] ? 'Gen':'Oeu'
+                                }).attr('class','gDicos')
+                                div.append('h3').html(d=>d[0] ? 'general dictionaries' : 'work dictionaries')
+                                div.append('ul').attr('class','list-group').call(showListedico)
+                            },
+                            //update => update.selectAll('ul').call(showListedico)
+                        );
+                });
+                return
+            }
+
+
             me.api.list('gen_oeuvres_dicos_utis',{filter:'id_oeu,eq,'+oeu.id_oeu}).then(
                 result=>{
                     let ids=[];
@@ -215,17 +258,17 @@ export class oeuvres {
                         li.append('input').attr('class','form-check-input me-1')
                             .attr('type','radio')
                             .attr('name','listeDicos')
-                            .attr('id',d=>'dico'+d.id_dico);
+                            .attr('id',d=>'dico'+me.auth.omk ? d['o:id'] : d.id_dico);
                         li.append('label').attr('class','form-check-label')
-                            .attr('for',d=>'dico'+d.id_dico)
-                            .html(d=>d.nom/*+' ('+d.id_dico+')'*/);
+                            .attr('for',d=>'dico'+me.auth.omk ? d['o:id'] : d.id_dico)
+                            .html(d=>me.auth.omk ? d['o:title'] : d.nom/*+' ('+d.id_dico+')'*/);
                     },
                     update => {
                         let li = update.selectAll('li')
-                        li.selectAll('input').attr('id',d=>'dico'+d.id_dico);
+                        li.selectAll('input').attr('id',d=>'dico'+me.auth.omk ? d['o:id'] : d.id_dico);
                         li.selectAll('label')                        
-                            .attr('for',d=>'dico'+d.id_dico)
-                            .html(d=>d.nom/*+' ('+d.id_dico+')'*/);
+                            .attr('for',d=>'dico'+me.auth.omk ? d['o:id'] : d.id_dico)
+                            .html(d=>me.auth.omk ? d['o:title'] : d.nom/*+' ('+d.id_dico+')'*/);
                     },
                     exit => exit.remove()
                 );
@@ -240,6 +283,7 @@ export class oeuvres {
                     'oeuvre':me,
                     'd':d,
                     'api':me.api,
+                    'omk':me.auth.omk,
                     'tgtContent':me.tgtContent,
                     'appUrl':me.appUrl
                 });                    

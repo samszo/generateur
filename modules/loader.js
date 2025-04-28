@@ -26,9 +26,9 @@ export class loader {
             me.hide(true);
         }
                 
-        this.show = function(){
+        this.show = async function(){
             loading.style("display", "inline-block");
-            setTimeout(function(){
+            await setTimeout(function(){
                 curwait ++;
             }, 1000);
         }
