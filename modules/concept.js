@@ -12,6 +12,7 @@ export class concept {
         this.dico = params.dico ? params.dico : false;
         this.api = params.api ? params.api : false;
         this.data = params.data ? params.data : false;
+        this.omk = params.omk ? params.omk : false;
         this.tgtContent = params.tgtContent ? params.tgtContent : false;
         this.appUrl = params.appUrl ? params.appUrl : false;
         this.sync = params.sync ? params.sync : false;
@@ -29,7 +30,31 @@ export class concept {
             sparqlEndpoint: 'https://query.wikidata.org/sparql'
           });
 
-          me.linkData=[
+          if(me.omk) {
+            me.omk.getAllItems("property[0][joiner]=and&property[0][property]="+me.omk.getPropId("genex:hasConcept")+"&property[0][type]=res&property[0][text]="+me.data["o:id"],data=>{
+              userAllowed = true;
+              let grpData = d3.group(data,d=>d["o:resource_class"]["o:id"]);
+              me.linkData=[];
+              //construction des modals pour chaque type d'item              
+              grpData.forEach((ld,id)=>{
+                let d = {
+                  'class':me.omk.getClassById(id),
+                  't':id,                  
+                  'data':ld
+                };
+                d.n = d.class["o:local_name"];
+                d.mAdd = m.add('modalAddConcept'+d.class["o:local_name"]);                  
+                d.mAdd.s.select('.modal-footer').selectAll('button').remove();
+                d.mAdd.s.select('.modal-footer').selectAll('button').data([ld]).enter().append('button')
+                    .attr('type',"button")
+                    .attr('class',"btn btn-primary").html('Add new')
+                    .on('click',addItem);
+                me.linkData.push(d);
+              });
+              showLinkData();
+            }); 
+          }else{  
+            me.linkData=[
               {n:'Adjectives',t:'gen_adjectifs',k:'id_adj',data:[],mAdd:true},
               {n:'Generators',t:'gen_generateurs',k:'id_gen',data:[],mAdd:true},
               {n:'Nouns',t:'gen_substantifs',k:'id_sub',data:[],mAdd:true},
@@ -37,7 +62,6 @@ export class concept {
               {n:'Verbs',t:'gen_verbes',k:'id_verbe',data:[],mAdd:true},
               {n:'Uris',t:'gen_uris',k:'id_uri',data:[],mAdd:true},
               {n:'Sparqls',t:'gen_sparqls',k:'id_sparql',data:[],mAdd:true},
-
             ];
             if(me.sync)getSyncLinkData();
             else{
@@ -65,8 +89,8 @@ export class concept {
                 }
               })
               getLinkData();
-
             } 
+          }
         }
         async function getSparql(d){
           let SPARQL = `SELECT ?item ?itemLabel WHERE {
@@ -126,12 +150,12 @@ export class concept {
             me.tgtContent.selectAll('div').remove();
             //ajoute les outils
             let tools = `<div class="container-fluid">
-              <a class="navbar-brand" href="#">[${me.data.type+'_'+me.data.lib}]</a>
+              <a class="navbar-brand" href="#">[${me.omk ? me.data['o:title'] : me.data.type+'_'+me.data.lib}]</a>
               <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarConcept" aria-controls="navbarConcept" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
               </button>
               <div class="collapse navbar-collapse" id="navbarConcept">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <ul id="listBtnCpt" class="navbar-nav me-auto mb-2 mb-lg-0">
                   <li class="nav-item mx-2">
                     <button type="button" id="btnGenere" class="btn btn-sm btn-danger">
                         <i class="fa-solid fa-shuffle"></i>
@@ -153,7 +177,16 @@ export class concept {
             </div>`;
             let toolsNav = me.tgtContent.append('nav').attr('class','navbar navbar-expand-lg bg-light').html(tools);
             toolsNav.select('#ddmAddCptItem').selectAll('li').data(me.linkData).enter().append('li')
-              .append('a').attr('class',"dropdown-item").html(ld=>ld.n).on('click',showAddItem);         
+              .append('a').attr('class',"dropdown-item").html(ld=>me.omk ? ld.class["o:local_name"] : ld.n).on('click',showAddItem);
+            if(me.omk){
+              //ajoute le lien vers OmekaS
+              toolsNav.select("#listBtnCpt").append('li').attr('class',"nav-item mx-2").append('a')
+                  .attr('href',me.omk.getAdminLink(me.data))
+                  .attr('target',"_blank")
+                  .append('img').attr('src','asset/images/logos/OmekaS.png')
+                      .style("margin-top","-4px")
+                      .style("height","20px");
+          }         
 
             //construction de la barre de nav
             let cont, navtabs = me.tgtContent.append('ul')
@@ -259,16 +292,21 @@ export class concept {
         function showLinkDataContent(d, i){
             if(d.data.length==0)return;
             let pane = d3.select("#tab-pane-"+d.t), cont = pane.append('div')
-                .attr('class',"container-fluid");
-            //création de la table
-            let headers = Object.keys(d.data[0]),
+                .attr('class',"container-fluid"),
+                headers = me.omk ? me.omk.getPropsHeader(me.data) : Object.keys(me.data[0]),
+                showProps = ["o:id","dcterms:title","genex:hasType","genex:hasPrefix","genex:hasAccord","lexinfo:gender"],
+                hCol = {columns: headers.map((h,i)=>{
+                        if(me.omk) return showProps.includes(h['o:term']) ? null : i
+                        else return h.substring(0,3)=='id_' ? i : null
+                    }).filter(k=>k!=null)
+                },
                 rect = me.tgtContent.select('.tab-content').node().getBoundingClientRect(),
                 div = cont.append('div').attr('class',"row").append('div').attr('class',"col-12")
                     .append('div').attr('class',"clearfix");   
                 d.hot = new Handsontable(div.node(), {
-                    data: d.data,
+                    data: me.omk ? me.omk.getDataForGrid(d.data,headers): d.data,
                     rowHeaders: true,
-                    colHeaders: headers,
+                    colHeaders: me.omk ? headers.map(h=>h["o:label"]): headers,
                     height: (rect.height),
                     //width: rect.width,
                     rowHeights: 40,
@@ -283,10 +321,7 @@ export class concept {
                     dropdownMenu: true,
                     multiColumnSorting: true,
                     filters: true,
-                    hiddenColumns: {
-                        // specify columns hidden by default
-                        columns: headers.map((h,i)=>h.substring(0,3)=='id_' ? i : null).filter(k=>k!=null)
-                    },
+                    hiddenColumns: hCol,
                     editor: 'text',
                     columns: getCellEditor(headers),
                     allowInsertColumn: false,
@@ -316,6 +351,16 @@ export class concept {
                             callback(key, s, e) { // Callback for specific option
                                 let r = this.getDataAtRow(s[0].start.row);
                                 genere(e,r,d);
+                            }
+                          },
+                          omkAdmin: { // Own custom option
+                            name() { // `name` can be a string or a function
+                              return `<img src="asset/images/logos/OmekaS.png" style="margin-top:-4px;height:20px"</img>`;
+                            },
+                            callback(key, s, e) { // Callback for specific option
+                              if(!me.omk)return;
+                              let r = this.getDataAtRow(s[0].start.row);
+                              window.open(me.omk.getAdminLink(null,r[0],"o:Item"), '_blank');
                             }
                           }
                         }
@@ -360,7 +405,10 @@ export class concept {
                   editors.push({data:h, type: 'checkbox',uncheckedTemplate: '0',checkedTemplate: '1'})                  
                   break;              
                 default:
-                  editors.push({data:h, type: 'text'})                  
+                  if(me.omk)
+                    editors.push({data:h['o:label'], type: 'text'})
+                  else
+                    editors.push({data:h, type: 'text'})                  
                   break;
               }
             })

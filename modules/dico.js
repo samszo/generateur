@@ -40,31 +40,45 @@ export class dico {
             if(userAllowed){
                 //ajoute les outils
                 let tools = `<div class="container-fluid">
-                <a class="navbar-brand" href="#">${me.d.nom}</a>
+                <a class="navbar-brand" href="#">${me.omk ? me.d['o:title'] : me.d.nom}</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarDico" aria-controls="navbarDico" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarDico">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item mx-2">
-                        <button type="button" id="btnDicoAddItem" class="btn btn-sm btn-danger">
-                            <i class="fa-regular fa-square-plus"></i>
-                        </button>
-                    </li>
-                    <li class="nav-item mx-2">
-                        <button type="button" id="btnDicoDel" class="btn btn-sm btn-danger">
-                            <i class="fa-regular fa-trash-can"></i>
-                        </button>
-                    </li>
-                    <li class="nav-item mx-2">
-                        <button type="button" id="btnDicoImport" class="btn btn-sm btn-danger">
-                            <i class="fa-solid fa-download"></i>
-                        </button>
-                    </li>                    
+                    <ul id="listBtnDico" class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item mx-1">
+                            <button type="button" id="btnDicoAddItem" class="btn btn-sm btn-danger">
+                                <i class="fa-regular fa-square-plus"></i>
+                            </button>
+                        </li>
+                        <li class="nav-item mx-1">
+                            <button type="button" id="btnDicoDel" class="btn btn-sm btn-danger">
+                                <i class="fa-regular fa-trash-can"></i>
+                            </button>
+                        </li>
+                        <li class="nav-item mx-1">
+                            <button type="button" id="btnDicoImport" class="btn btn-sm btn-danger">
+                                <i class="fa-solid fa-download"></i>
+                            </button>
+                        </li>                    
+                        <li class="nav-item mx-1">
+                            <button type="button" id="btnDicoExport" class="btn btn-sm btn-danger">
+                                <i class="fa-solid fa-file-export"></i>
+                            </button>
+                        </li>                    
                     </ul>
                 </div>
                 </div>`,
                 toolsNav = colL.append('nav').attr('class','navbar navbar-expand-lg bg-light').html(tools);
+                if(me.omk){
+                    //ajoute le lien vers OmekaS
+                    toolsNav.select("#listBtnDico").append('li').attr('class',"nav-item mx-2").append('a')
+                        .attr('href',me.omk.getAdminLink(me.d))
+                        .attr('target',"_blank")
+                        .append('img').attr('src','asset/images/logos/OmekaS.png')
+                            .style("margin-top","-4px")
+                            .style("height","20px");
+                }
             }
             //création de la modal spécifique à la table
             if(table.mAdd){
@@ -98,7 +112,7 @@ export class dico {
             
             if(me.omk){
                 let query = 'resource_class_id='+table.class+
-                    "property[0][joiner]=and&property[0][property]=501&property[0][type]=res&property[0][text]="+me.d['o:id'];
+                    "&property[0][joiner]=and&property[0][property]="+me.omk.getPropId("genex:hasDico")+"&property[0][type]=res&property[0][text]="+me.d['o:id'];
                 me.omk.loader.show();
                 me.omk.getAllItems(query,function(data){
                     me.data = data;                                
@@ -122,25 +136,27 @@ export class dico {
             //création de la table
             let headers = me.omk ? me.omk.getPropsHeader(me.data[0]) : Object.keys(me.data[0]),
                 rectFooter = d3.select('footer').select('h3').node().getBoundingClientRect(),
-                rectHeader = d3.select('header').node().getBoundingClientRect();
+                rectHeader = d3.select('header').node().getBoundingClientRect(),
+                showProps = ["o:id","dcterms:title","genex:hasType"],
+                hCol = {columns: headers.map((h,i)=>{
+                        if(me.omk) return showProps.includes(h['o:term']) ? null : i
+                        else return h.substring(0,3)=='id_' ? i : null
+                    }).filter(k=>k!=null)
+                };
 
             me.hot = new Handsontable(dicoHot.node(), {
-                colHeaders: true,
                 rowHeaders: true,
                 data: me.omk ? me.omk.getDataForGrid(me.data,headers): me.data,
                 colHeaders: me.omk ? headers.map(h=>h["o:label"]): headers,
                 height: rectFooter.top-rectFooter.height-rectHeader.bottom,
-                width: table.content ? '300' : '100%',
+                width: 375,//table.content ? '300' : '100%',
                 licenseKey: 'non-commercial-and-evaluation',
                 customBorders: true,
                 dropdownMenu: true,
                 multiColumnSorting: true,
                 filters: true,
                 selectionMode:'single',
-                hiddenColumns: {
-                    // specify columns hidden by default
-                    columns: headers.map((h,i)=>h.substring(0,3)=='id_' ? i : null).filter(k=>k!=null)
-                },
+                hiddenColumns: hCol,
                 columns: getCellEditor(headers),
                 allowInsertColumn: false,
                 copyPaste: false,
@@ -207,7 +223,7 @@ export class dico {
                 switch (h) {
                   default:
                     if(me.omk)
-                        editors.push({data:h['o:label'], type: 'text', editor: 'textEditor'})
+                        editors.push({data:h['o:label'], type: 'text'})
                     else
                         editors.push({data:h, type: 'text'})                  
                     break;
@@ -347,11 +363,13 @@ export class dico {
         function showConcept(d,id){
             if(d === undefined && id===null) return;
             if(!id)id=d[0];//le grid ne renvoie pas des tableaux associatifs
-            d=me.data.filter(r=>r.id_concept==id)[0];
-            me.appUrl.change('id_concept',d.id_concept);
+            d=me.data.filter(r=>(me.omk ? r['o:id'] : r.id_concept)==id)[0];
+            me.appUrl.change('id_concept',me.omk ? d['o:id'] : d.id_concept);
 
             let cpt=new concept({
                     'data':d,
+                    'dico':d,
+                    'omk':me.omk,
                     'oeuvre':me.oeuvre,
                     'api':me.api,
                     'tgtContent':cptContent,

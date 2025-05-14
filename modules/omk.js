@@ -48,6 +48,9 @@ export class omk {
             data.forEach(p=>me.props.push(p));
             if(cb)cb(me.props);
         }
+        this.getPropById = function (id){
+            return me.props.filter(prp=>prp['o:id']==id)[0];                        
+        }
         this.getPropId = function (t){
             return me.props.filter(prp=>prp['o:term']==t)[0]['o:id'];                        
         }
@@ -59,6 +62,11 @@ export class omk {
                 data = syncRequest(url);
             data.forEach(c=>me.class.push(c));
             if(cb)cb(data);
+        }
+
+        this.getClassById = function (id){
+            let c = me.class.filter(c=>c['o:id']==id);
+            return c[0];
         }
 
         this.getClassByName = function (cl){
@@ -178,9 +186,10 @@ export class omk {
 
         this.getPropsHeader = function (item){
             let header = [];
-            if(item["o:resource_class"]){
-                me.getRtById(item['o:resource_class']['o:id'])["o:resource_template_property"].forEach(p=>{
-                    header.push(me.getPropId(p["o:property"]["o:id"]));
+            header.push({'o:label':'id','o:term':'o:id'});
+            if(item["o:resource_template"]){
+                me.getRtById(item['o:resource_template']['o:id'])["o:resource_template_property"].forEach(p=>{
+                    header.push(me.getPropById(p["o:property"]["o:id"]));
                 })   
             }
             return header;
@@ -189,12 +198,16 @@ export class omk {
         this.getDataForGrid = function (data,headers){
             let gridData = [];
             data.forEach(item=>{
-                let row = {};
+                let row = {'id':item['o:id']};
                 headers.forEach(h=>{
                     if(item[h['o:term']]){
-                        row[h['o:label']] = item[h['o:term']].map(d=>d.display_title ? d.display_title : d["@value"]).join(' - ');
+                        if(h['o:term']=='o:id'){
+                            row[h['o:label']] = item[h['o:term']];
+                        }else{
+                            row[h['o:label']] = item[h['o:term']].map(d=>d.display_title ? d.display_title : d["@value"]).join(' - ');
+                        }
                     }else row[h['o:label']] = '';
-                })
+                })                
                 gridData.push(row);
             })   
             return gridData;
