@@ -276,9 +276,9 @@ export class oeuvres {
           
         }
         function showDico(e,d,id){
-            if(id)d=me.dicos.filter(r=>r.id_dico==id)[0];
-            else me.appUrl.changes([{k:'id_oeu',v:me.curOeuvre.id_oeu}]);
-            me.appUrl.change('id_dico',d.id_dico);
+            if(id)d=me.dicos.filter(r=>(me.auth.omk ? r['o:id'] : r.id_dico)==id)[0];
+            else me.appUrl.changes([{k:'id_oeu',v:me.auth.omk ? me.curOeuvre['o:id'] : me.curOeuvre.id_oeu}]);
+            me.appUrl.change('id_dico',me.auth.omk ? d['o:id'] : d.id_dico);
             me.curDico=new dico({
                     'oeuvre':me,
                     'd':d,
