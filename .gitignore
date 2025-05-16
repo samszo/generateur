@@ -16,3 +16,9 @@ asset/.DS_Store
 asset/data/generateur_old-20250419-055327.json
 bdd/generateurInfomaniak.sql
 tmp/*
+node_modules/*
+node_modules/csv-parse/*
+*.log
+*.zip
+bdd/omk_generateur.sql
+asset/data/generateur_old-20250406-072411.json
