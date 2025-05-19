@@ -31,7 +31,8 @@ export class concept {
           });
 
           if(me.omk) {
-            me.omk.getAllItems("property[0][joiner]=and&property[0][property]="+me.omk.getPropId("genex:hasConcept")+"&property[0][type]=res&property[0][text]="+me.data["o:id"],data=>{
+            d3.json("http://localhost/omk_generateur/s/balpien/page/ajax?json=1&helper=sql&action=getDicoItems&idDico="+me.data["o:id"]).then(data=>{
+              //me.omk.getAllItems("property[0][joiner]=and&property[0][property]="+me.omk.getPropId("genex:hasConcept")+"&property[0][type]=res&property[0][text]="+me.data["o:id"],data=>{
               userAllowed = true;
               let grpData = d3.group(data,d=>d["o:resource_class"]["o:id"]);
               me.linkData=[];
@@ -293,18 +294,19 @@ export class concept {
             if(d.data.length==0)return;
             let pane = d3.select("#tab-pane-"+d.t), cont = pane.append('div')
                 .attr('class',"container-fluid"),
-                headers = me.omk ? me.omk.getPropsHeader(me.data) : Object.keys(me.data[0]),
-                showProps = ["o:id","dcterms:title","genex:hasType","genex:hasPrefix","genex:hasAccord","lexinfo:gender"],
+                headers = me.omk ? me.omk.getPropsHeader(d.data[0]) : Object.keys(d.data[0]),
+                showProps = ["o:id","dcterms:title","genex:hasType","genex:hasElision","genex:hasPrefix","genex:hasAccord","lexinfo:gender","genex:hasConjugaison"],
                 hCol = {columns: headers.map((h,i)=>{
                         if(me.omk) return showProps.includes(h['o:term']) ? null : i
                         else return h.substring(0,3)=='id_' ? i : null
                     }).filter(k=>k!=null)
                 },
+                gridData = me.omk ? me.omk.getDataForGrid(d.data,headers): d.data,
                 rect = me.tgtContent.select('.tab-content').node().getBoundingClientRect(),
                 div = cont.append('div').attr('class',"row").append('div').attr('class',"col-12")
                     .append('div').attr('class',"clearfix");   
                 d.hot = new Handsontable(div.node(), {
-                    data: me.omk ? me.omk.getDataForGrid(d.data,headers): d.data,
+                    data: gridData,
                     rowHeaders: true,
                     colHeaders: me.omk ? headers.map(h=>h["o:label"]): headers,
                     height: (rect.height),

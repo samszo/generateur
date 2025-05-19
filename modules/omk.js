@@ -229,21 +229,18 @@ export class omk {
         }
 
         this.getAllItems = function (query, cb){
-            me.loader.show().then(()=>{
-                let url = me.api+'items?per_page='+perPage+'&'+query+'&page=', fin=false, rs=[], data, page=1;
-                //pause pour gérer l'affichage du loader
-                //setTimeout(function(){
-                    while (!fin) {
-                        data = syncRequest(url+page);
-                        //console.log(url+page,data);
-                        fin = data.length ? false : true;
-                        rs = rs.concat(data);
-                        page++;
-                    }
-                    me.loader.hide();                
-                    return cb ? cb(rs) : rs;                    
-            })
-        }
+            let url = me.api+'items?per_page='+perPage+'&'+query+'&page=', fin=false, rs=[], data, page=1;
+            //pause pour gérer l'affichage du loader
+            //setTimeout(function(){
+            while (!fin) {
+                data = syncRequest(url+page);
+                //console.log(url+page,data);
+                fin = data.length ? false : true;
+                rs = rs.concat(data);
+                page++;
+            }
+            return cb ? cb(rs) : rs;                    
+    }
 
         this.getAllMedias = function (query, cb=false){
             let url = me.api+'media?per_page='+perPage+'&'+query+'&page=', fin=false, rs=[], data, page=1;

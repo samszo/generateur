@@ -3,6 +3,7 @@ import {modal} from '../modules/modal.js';
 import {moteur} from '../modules/moteur.js';
 import {conjugaisons} from '../modules/conjugaisons.js';
 import {parse} from '../node_modules/csv-parse/dist/esm/sync.js';
+import {loader} from './loader.js';
 
 export class dico {
     constructor(params) {
@@ -15,6 +16,7 @@ export class dico {
         this.onlyData = params.onlyData ? params.onlyData : false;
         this.tgtContent = params.tgtContent ? params.tgtContent : false;
         this.appUrl = params.appUrl; 
+        this.loader = new loader();
         this.hot;
         this.concepts;
         var mainSlt, dicoHot, cptContent, mod = new modal(), userAllowed=false,
@@ -25,6 +27,7 @@ export class dico {
           }),table;
 
         this.init = function () {
+            me.loader.show();
             userAllowed = me.oeuvre.auth.userAdmin || me.oeuvre.auth.userAllowed(me.d.id_dico,me.oeuvre.dicosUti);
             //récupération de la table suivant le type
             for (const p in m.tables) {
@@ -201,7 +204,8 @@ export class dico {
             });
 
             if(me.appUrl.params && me.appUrl.params.has('id_concept'))showConcept(null,me.appUrl.params.get('id_concept'));
-            if(me.appUrl.params && me.appUrl.params.has('id_conj'))showConjugaison(null,me.appUrl.params.get('id_conj'));            
+            if(me.appUrl.params && me.appUrl.params.has('id_conj'))showConjugaison(null,me.appUrl.params.get('id_conj'));   
+            me.loader.hide();         
         }
 
         function showContent(d){
