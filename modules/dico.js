@@ -117,7 +117,10 @@ export class dico {
                 let query = 'resource_class_id='+table.class+
                     "&property[0][joiner]=and&property[0][property]="+me.omk.getPropId("genex:hasDico")+"&property[0][type]=res&property[0][text]="+me.d['o:id'];
                 me.omk.loader.show();
-                me.omk.getAllItems(query,function(data){
+                d3.json(me.omk.api.replace("api/","s/balpien/page/ajax")
+                    +"?json=1&helper=sql&action=getDicoItems&idDico="
+                    +me.d["o:id"]).then(data=>{
+                    userAllowed = true;
                     me.data = data;                                
                     showData();
                 });                
@@ -137,20 +140,19 @@ export class dico {
         function showData(){
             //me.hot.loadData(me.data);
             //création de la table
-            let headers = me.omk ? me.omk.getPropsHeader(me.data[0]) : Object.keys(me.data[0]),
+            let headers = Object.keys(me.data[0]),
                 rectFooter = d3.select('footer').select('h3').node().getBoundingClientRect(),
                 rectHeader = d3.select('header').node().getBoundingClientRect(),
-                showProps = ["o:id","dcterms:title","genex:hasType"],
                 hCol = {columns: headers.map((h,i)=>{
-                        if(me.omk) return showProps.includes(h['o:term']) ? null : i
+                        if(me.omk) return h.indexOf('_') > 0 ? i : null
                         else return h.substring(0,3)=='id_' ? i : null
                     }).filter(k=>k!=null)
                 };
 
             me.hot = new Handsontable(dicoHot.node(), {
                 rowHeaders: true,
-                data: me.omk ? me.omk.getDataForGrid(me.data,headers): me.data,
-                colHeaders: me.omk ? headers.map(h=>h["o:label"]): headers,
+                data: me.data,
+                colHeaders: headers,
                 height: rectFooter.top-rectFooter.height-rectHeader.bottom,
                 width: 375,//table.content ? '300' : '100%',
                 licenseKey: 'non-commercial-and-evaluation',
@@ -226,10 +228,7 @@ export class dico {
             headers.forEach(h=>{
                 switch (h) {
                   default:
-                    if(me.omk)
-                        editors.push({data:h['o:label'], type: 'text'})
-                    else
-                        editors.push({data:h, type: 'text'})                  
+                    editors.push({data:h, type: 'text'})                  
                     break;
                 }
               })
@@ -367,8 +366,8 @@ export class dico {
         function showConcept(d,id){
             if(d === undefined && id===null) return;
             if(!id)id=d[0];//le grid ne renvoie pas des tableaux associatifs
-            d=me.data.filter(r=>(me.omk ? r['o:id'] : r.id_concept)==id)[0];
-            me.appUrl.change('id_concept',me.omk ? d['o:id'] : d.id_concept);
+            d=me.data.filter(r=>(me.omk ? r.id : r.id_concept)==id)[0];
+            me.appUrl.change('id_concept',me.omk ? d.id : d.id_concept);
 
             let cpt=new concept({
                     'data':d,

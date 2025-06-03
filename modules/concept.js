@@ -31,10 +31,9 @@ export class concept {
           });
 
           if(me.omk) {
-            d3.json("http://localhost/omk_generateur/s/balpien/page/ajax?json=1&helper=sql&action=getDicoItems&idDico="+me.data["o:id"]).then(data=>{
-              //me.omk.getAllItems("property[0][joiner]=and&property[0][property]="+me.omk.getPropId("genex:hasConcept")+"&property[0][type]=res&property[0][text]="+me.data["o:id"],data=>{
+            d3.json(me.omk.api.replace("api","s/balpien/page/ajax")+"?json=1&helper=sql&action=getConceptTerms&idCpt="+me.data.id).then(data=>{
               userAllowed = true;
-              let grpData = d3.group(data,d=>d["o:resource_class"]["o:id"]);
+              let grpData = d3.group(data,d=>d["resource_class_id"]);
               me.linkData=[];
               //construction des modals pour chaque type d'item              
               grpData.forEach((ld,id)=>{
@@ -151,7 +150,7 @@ export class concept {
             me.tgtContent.selectAll('div').remove();
             //ajoute les outils
             let tools = `<div class="container-fluid">
-              <a class="navbar-brand" href="#">[${me.omk ? me.data['o:title'] : me.data.type+'_'+me.data.lib}]</a>
+              <a class="navbar-brand" href="#">[${me.data.type+'_'+me.data.title}]</a>
               <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarConcept" aria-controls="navbarConcept" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
               </button>
@@ -182,7 +181,7 @@ export class concept {
             if(me.omk){
               //ajoute le lien vers OmekaS
               toolsNav.select("#listBtnCpt").append('li').attr('class',"nav-item mx-2").append('a')
-                  .attr('href',me.omk.getAdminLink(me.data))
+                  .attr('href',me.omk.getAdminLink(false,me.data.id,"o:Item"))
                   .attr('target',"_blank")
                   .append('img').attr('src','asset/images/logos/OmekaS.png')
                       .style("margin-top","-4px")
@@ -273,6 +272,7 @@ export class concept {
         }
         function changeTab(e,d){
           contResult.selectAll('div').remove();
+          if(!d)return false;
           me.tgtContent.selectAll('.tab-pane').attr('class','tab-pane fade');
           me.tgtContent.select('#tab-pane-'+d.t).attr('class','tab-pane fade active show');
           d.tab.show();
@@ -294,6 +294,7 @@ export class concept {
             if(d.data.length==0)return;
             let pane = d3.select("#tab-pane-"+d.t), cont = pane.append('div')
                 .attr('class',"container-fluid"),
+                /*
                 headers = me.omk ? me.omk.getPropsHeader(d.data[0]) : Object.keys(d.data[0]),
                 showProps = ["o:id","dcterms:title","genex:hasType","genex:hasElision","genex:hasPrefix","genex:hasAccord","lexinfo:gender","genex:hasConjugaison"],
                 hCol = {columns: headers.map((h,i)=>{
@@ -302,13 +303,21 @@ export class concept {
                     }).filter(k=>k!=null)
                 },
                 gridData = me.omk ? me.omk.getDataForGrid(d.data,headers): d.data,
+                */
+                headers = Object.keys(d.data[0]),
+                hCol = {columns: headers.map((h,i)=>{
+                        if(me.omk) return h.indexOf('_') > 0 ? i : null
+                        else return h.substring(0,3)=='id_' ? i : null
+                    }).filter(k=>k!=null)
+                },
+                gridData = d.data,
                 rect = me.tgtContent.select('.tab-content').node().getBoundingClientRect(),
                 div = cont.append('div').attr('class',"row").append('div').attr('class',"col-12")
                     .append('div').attr('class',"clearfix");   
                 d.hot = new Handsontable(div.node(), {
                     data: gridData,
                     rowHeaders: true,
-                    colHeaders: me.omk ? headers.map(h=>h["o:label"]): headers,
+                    colHeaders: headers,//me.omk ? headers.map(h=>h["o:label"]): headers,
                     height: (rect.height),
                     //width: rect.width,
                     rowHeights: 40,
@@ -407,9 +416,9 @@ export class concept {
                   editors.push({data:h, type: 'checkbox',uncheckedTemplate: '0',checkedTemplate: '1'})                  
                   break;              
                 default:
-                  if(me.omk)
+                  /*if(me.omk)
                     editors.push({data:h['o:label'], type: 'text'})
-                  else
+                  else*/
                     editors.push({data:h, type: 'text'})                  
                   break;
               }
@@ -546,32 +555,43 @@ export class concept {
         }
 
         function showGen(d,g,view){
-          me.oeuvre.wGen.postMessage({
-            'g':g,
-            'dicos':me.oeuvre.dicos,
-            //'id_oeu':me.oeuvre.curOeuvre.id_oeu,
-            'id_dico':me.oeuvre.curDico.d.id_dico,
-            'apiUrl':me.oeuvre.auth.apiReadUrl
-          });
-          me.oeuvre.wGen.onmessage = function(event) {
-            me.tgtContent.select("#genText"+d.n).html(event.data.texte);    
+          if(me.omk){
+              d3.json(me.omk.api.replace("api","s/balpien/page/ajax")+"?json=1&helper=generate&structure=1&idConcept="+g.id).then(data=>{
+                console.log(data);
+                showResultGen(d,data,view);
+              });
+          }else{
+            me.oeuvre.wGen.postMessage({
+              'g':g,
+              'dicos':me.oeuvre.dicos,
+              //'id_oeu':me.oeuvre.curOeuvre.id_oeu,
+              'id_dico':me.oeuvre.curDico.d.id_dico,
+              'apiUrl':me.oeuvre.auth.apiReadUrl
+            });
+            me.oeuvre.wGen.onmessage = function(event) {
+              showResultGen(d,event.data,view);
+            };
+            me.oeuvre.wGen.onerror = function(error) {
+              progress.destroy();
+              contResult.select('#progressGenConcept').remove();
+              me.tgtContent.select("#genText"+d.n).html('Generateur error: ' + error.message);    
+            };
+          }
+        }
+
+        function showResultGen(d,data,view){
+            me.tgtContent.select("#genText"+d.n).html(data.texte);    
             switch (view) {
               case 'jsEditor':
-                me.jsEditor.set({json:event.data.strct});                
+                me.jsEditor.set({json:data.strct});                
                 break;            
               case 'Handsontable':
                 let div = me.tgtContent.select("#genText"+d.n),
-                  hot = new Handsontable(div.node(), {data:event.data,height:contHeight,licenseKey: 'non-commercial-and-evaluation'});                
+                  hot = new Handsontable(div.node(), {data:data,height:contHeight,licenseKey: 'non-commercial-and-evaluation'});                
                 break;            
               }
             progress.destroy();
-            contResult.select('#progressGenConcept').remove();
-          };
-          me.oeuvre.wGen.onerror = function(error) {
-            progress.destroy();
-            contResult.select('#progressGenConcept').remove();
-            me.tgtContent.select("#genText"+d.n).html('Generateur error: ' + error.message);    
-          };
+            contResult.select('#progressGenConcept').remove();          
         }
 
         function showSparql(d,g){
@@ -587,7 +607,7 @@ export class concept {
             me.jsEditor.set({json:r});                
             progress.destroy();
             contResult.select('#progressGenConcept').remove();
-            me.tgtContent.select("#genText"+d.n).html(r.lib);    
+            me.tgtContent.select("#genText"+d.n).html(r.title);    
         }
 
 
@@ -595,7 +615,7 @@ export class concept {
           let conj,a,formes,rs;
           addChampResult(d);
           if(d=='concept'){
-            showGen(d,`[${r.type}_${r.lib}]`,'jsEditor');           
+            showGen(d,me.omk ? r : `[${r.type}_${r.title}]`,'jsEditor');           
             return;
           }
           if(!r[d.k])r=d.data.filter(i=>i[d.k]==r[0])[0];
