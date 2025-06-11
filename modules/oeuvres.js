@@ -1,6 +1,7 @@
-import {dico} from '../modules/dico.js';
-import {modal} from '../modules/modal.js';
-import {modalAddOeuvre} from '../modules/modal.js';
+// import { add } from 'immutable-json-patch/lib/esm/immutableJSONPatch.js';
+import {dico} from './dico.js';
+import {modal} from './modal.js';
+import {modalAddOeuvre} from './modal.js';
 import jscrudapi from '../node_modules/js-crud-api/index.js';
 
 export class oeuvres {
@@ -19,7 +20,8 @@ export class oeuvres {
         this.oeuvres;
         this.dicos=[];
         this.dicosUti=[];
-        var mAdd,mMessage=new modal(), mAddOeuvre, mAddOeuvreBody;
+        this.conjugaisons = false;
+        var mAdd=new modal(),mMessage=new modal(), mAddOeuvre, mAddOeuvreBody;
         this.init = function () {
             getOeuvres();
             //ajoute la modal pour l'ajout d'oeuvre'
@@ -30,7 +32,6 @@ export class oeuvres {
             mAddOeuvre = new bootstrap.Modal('#modalOeuvreAdd');
             //gestion des événements
             d3.select('#btnaddNewOeuvre').on('click',addNewOeuvre)        
-
         }
         function addNewOeuvre(){
             let nom = mAddOeuvreBody.select("#inpOeuNom").node().value,
@@ -71,7 +72,7 @@ export class oeuvres {
         function getOeuvres(){
             //gestion avec omk
             if(me.auth.omk){
-                me.auth.omk.getAllItems('resource_class_id=409',function(data){
+                me.auth.omk.getAllItems('resource_class_id='+me.auth.omk.getClassByTerm('genex:Oeuvre')["o:id"],function(data){
                     me.oeuvres = data;
                     me.oeuvres.unshift(
                         {'o:id_oeu':-1,'o:title':'New work'}, 
@@ -120,6 +121,7 @@ export class oeuvres {
             else if(oeu.id_oeu==-2)return;
             else{
                 me.curOeuvre=oeu;
+                me.getConjugaisons();
                 me.appUrl.change('id_oeu',me.auth.omk ? oeu['o:id'] : oeu.id_oeu);
                 d3.select(me.tgtContent).selectAll('div').remove();
                 let list = d3.select(me.tgtList)
@@ -132,7 +134,7 @@ export class oeuvres {
                     (me.auth.omk ? oeu['o:title'] : oeu.lib)+tools
                 );
                 if(tools)list.select('#btnDeleteOeuvre').on('click',verifDeleteOeuvre);
-                showDicos(oeu);
+                me.showDicos(oeu);
             }
         }
         function verifDeleteOeuvre(){
@@ -187,7 +189,8 @@ export class oeuvres {
                 mAddOeuvre.show();
             }
         }
-        function showDicos(oeu){
+        this.showDicos = function (oeu){
+            d3.select(me.tgtList).selectAll('.gDicos').remove();
             //récupère les dicos de l'oeuvre
             //gestion avec omk
             if(me.auth.omk){
@@ -200,19 +203,21 @@ export class oeuvres {
                         .join(
                             enter => {
                                 let div = enter.append('div')
-                                .attr('id',d=>{
-                                    return 'dicos'+d[0] ? 'Gen':'Oeu'
-                                }).attr('class','gDicos')
-                                div.append('h3').html(d=>d[0] ? 'general dictionaries' : 'work dictionaries')
-                                div.append('ul').attr('class','list-group').call(showListedico)
+                                    .attr('id',d=>{
+                                        return 'dicos'+d[0] ? 'Gen':'Oeu'
+                                    }).attr('class','gDicos'),
+                                    btn = `<button type="button" id="btnDicoAdd" class="btn btn-sm btn-danger ms-2">
+                                            <i class="fa-regular fa-square-plus"></i>
+                                        </button>`;
+                                div.append('h3').html(d=>d[0] ? 'general dictionaries' : 'work dictionaries'+btn);
+                                div.append('ul').attr('class','list-group').call(showListedico);
+                                div.select('#btnDicoAdd').on('click',addNewDico);
                             },
                             //update => update.selectAll('ul').call(showListedico)
                         );
                 });
                 return
             }
-
-
             me.api.list('gen_oeuvres_dicos_utis',{filter:'id_oeu,eq,'+oeu.id_oeu}).then(
                 result=>{
                     let ids=[];
@@ -247,6 +252,34 @@ export class oeuvres {
                 error=>console.log(error)
             );        
         }
+
+        function addNewDico(){
+            let m = mAdd.add('modalAddDico');                  
+            m.s.select('.modal-footer').selectAll('button').remove();
+            m.s.select('.modal-footer').append('button')
+                    .attr('type',"button")
+                    .attr('class',"btn btn-primary").html('Add new')
+                    .on('click',function(){
+                        let name = m.s.select('#inptDicoLib').node().value,
+                            dt = {
+                                'o:resource_class':'genex:Dictionnaire',
+                                'o:resource_template':'genex_dictionnaire',
+                                'dcterms:title':name,
+                                'dcterms:type':'concepts',
+                            };
+                        me.auth.omk.createItem(dt, i=>{
+                            console.log('Dico créé',i);
+                            //ajoute le lien entre l'oeuvre, le dico et l'utilisateur
+                            me.auth.omk.updateRessource(me.curOeuvre["o:id"],{'genex:hasDico':{'rid':i["o:id"]}},'items', null, 'PUT',rs=>{
+                                me.showDicos(me.curOeuvre);
+                                showDico(null,null,i["o:id"]);
+                                m.m.hide();
+                            }, me.curOeuvre);                                               
+                    });
+                });
+            m.m.show();
+        }
+
         function showListedico(slct){
             slct.selectAll('li')
                 .data(d=>d[1])
@@ -305,10 +338,24 @@ export class oeuvres {
 
         this.getConjugaisons = function(){
             if(!me.conjugaisons){
-                me.conjugaisons = me.searchClass({'type':'conjugaisons','t':'gen_conjugaisons'},[],'modele,asc');
+                if(me.auth.omk){
+                    d3.json(me.auth.omk.api.replace("api","s/balpien/page/ajax")+"?json=1&helper=sql&action=getConjModels&idOeu="+me.curOeuvre["o:id"]).then(data=>{
+                        me.conjugaisons = data
+                    })
+                }else{
+                    me.conjugaisons = me.searchClass({'type':'conjugaisons','t':'gen_conjugaisons'},[],'modele,asc');
+                }
             }
             return me.conjugaisons;
         }
+
+        this.explodeConcept = async function(cpt){
+            //explose les concepts
+            return await d3.json(me.auth.omk.api.replace("api/","s/balpien/page/ajax")
+                    +"?json=1&helper=sql&action=explodeConcept&idConcept="
+                    +(cpt["o:id"] ? cpt["o:id"] : cpt));
+        }
+
 
         this.init();
     }

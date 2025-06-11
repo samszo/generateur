@@ -48,13 +48,12 @@ export class modal {
             })
         }
         this.add = function(p){
-            let s=d3.select('#'+p);
+            //suprime la modal si elle existe pour éviter les objets en mémoire
+            d3.select('#'+p).remove();
             //ajoute la modal si inexistant
-            if(s.empty()){
-                s = d3.select('body').append('div')
-                    .attr('id',p).attr('class','modal').attr('tabindex',-1);
-                s.html(eval(p));
-            }
+            let s = d3.select('body').append('div')
+                .attr('id',p).attr('class','modal').attr('tabindex',-1);
+            s.html(eval(p));
             return {'m':new bootstrap.Modal('#'+p),'s':s};
         }
         this.setBody = function(html){
@@ -151,6 +150,28 @@ export let modalAddOeuvre = `
     </div>
     </div>
 `;
+
+//modal pour l'ajout d'un dictionnaire
+export let modalAddDico = `
+    <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title">Adding a new dictionnary</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="dicoLib">Label</span>
+                <input id="inptDicoLib" keycol="lib" type="text" class="form-control inptValue" placeholder="label" aria-label="name" aria-describedby="dicoLib">
+            </div>            
+        </div>                          
+        <div class="modal-footer">
+        </div>
+    </div>
+    </div>
+`;
+
+
 //ajoute la modal pour l'ajout d'un concept dans un dico
 export let modalAddDicoconcepts = `
     <div class="modal-dialog">
@@ -191,6 +212,80 @@ export let modalAddDicosyntagmes = `
                 <span class="input-group-text" id="synLib">Type</span>
                 <input keycol="lib" type="text" class="form-control inptValue" placeholder="Type" aria-label="name" aria-describedby="synLib">
             </div>            
+        </div>                          
+        <div class="modal-footer">
+        </div>
+    </div>
+    </div>
+`;
+
+//modal pour l'ajout d'un term dans un concept
+export let modalAddConceptTerms = `
+    <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title">Adding a new term</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+
+            <div class="input-group my-3">
+                <span class="input-group-text" id="lblTitle">Title</span>
+                <input type="text" class="form-control inptValue" keycol='title' placeholder="title" aria-label="name" aria-describedby="lblTitle">
+            </div>            
+            <div class="input-group my-3">
+                <span class="input-group-text" id="lblDesc">Description</span>
+                <input type="text" class="form-control inptValue" keycol='description' placeholder="description" aria-label="name" aria-describedby="lblDesc">
+            </div>            
+            <div class="input-group my-3">
+                <span class="input-group-text" id="lblType">Type</span>
+                <input type="text" class="form-control inptValue" keycol='type' placeholder="type" aria-label="name" aria-describedby="lblType">
+            </div>            
+            <div class="input-group my-3">
+                <span class="input-group-text" id="lblhasPrefix">Prefix</span>
+                <input type="text" class="form-control inptValue" keycol='prefix' placeholder="prefix" aria-label="name" aria-describedby="lblhasPrefix">
+            </div>            
+            <div class="input-group my-3">
+                <span class="input-group-text" id="lblGen">Generator</span>
+                <textarea class="form-control inptValue" keycol='valeur' placeholder="Put the value of generator" id="genValue" style="height: 100px"></textarea>
+            </div>            
+            <div class="input-group my-3">
+                <label class="input-group-text" for="verbConj">Conjugation model</label>
+                <select class="form-select" id="verbConj">
+                    <option selected>Choose...</option>
+                </select>
+            </div>
+            <div class="border border-black p-1">
+                <h5 class="modal-title">Agreement</h5>
+                <div class="input-group my-3">
+                    <label class="input-group-text" >Elision</label>
+                    <div class="form-check form-check-inline mx-2 my-1">
+                        <input class="form-check-input" type="radio" name="rElision" id="rElision1" value="1">
+                        <label class="form-check-label text-dark bg-white" for="rElision1">Yes</label>
+                    </div>
+                    <div class="form-check form-check-inline my-1">
+                        <input class="form-check-input" type="radio" name="rElision" id="rElision0" value="0">
+                        <label class="form-check-label text-dark bg-white" for="rElision0">No</label>
+                    </div>                
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="adjf_s"><i class="fa-solid fa-venus"></i></span>
+                    <input type="text" class="form-control inptValue" keycol='f_s' aria-label="name" aria-describedby="adjf_s">
+                </div>            
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="adjf_p"><i class="fa-solid fa-venus-double"></i></span>
+                    <input type="text" class="form-control inptValue" keycol='f_p' aria-label="name" aria-describedby="adjf_p">
+                </div>            
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="adjm_s"><i class="fa-solid fa-mars"></i></span>
+                    <input type="text" class="form-control inptValue" keycol='m_s' aria-label="name" aria-describedby="adjm_s">
+                </div>            
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="adjm_p"><i class="fa-solid fa-mars-double"></i></span>
+                    <input type="text" class="form-control inptValue" keycol='m_p' aria-label="name" aria-describedby="adjm_p">
+                </div>            
+            </div>
+
         </div>                          
         <div class="modal-footer">
         </div>
@@ -390,6 +485,8 @@ export let modalImportDicoconcepts = `
                     <input class="form-control" type="file" id="importDicoconceptsFile" accept=".csv">
                 </div>
             </form>
+            <div id="resultImport" class="container-fluid" style="height: 300px;overflow-y: scroll;">
+            </div>  
         </div>                          
         <div class="modal-footer">
         </div>

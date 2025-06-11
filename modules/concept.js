@@ -1,7 +1,7 @@
 import {JSONEditor} from '../node_modules/vanilla-jsoneditor/index.js'
 import {getIn, parseFrom} from '../node_modules/immutable-json-patch/lib/esm/index.js'
-import {modal} from '../modules/modal.js';
-import {conjugaisons} from '../modules/conjugaisons.js';
+import {modal} from './modal.js';
+import {conjugaisons} from './conjugaisons.js';
 import { WBK } from '../node_modules/wikibase-sdk/dist/index.js';
 
 
@@ -33,23 +33,42 @@ export class concept {
           if(me.omk) {
             d3.json(me.omk.api.replace("api","s/balpien/page/ajax")+"?json=1&helper=sql&action=getConceptTerms&idCpt="+me.data.id).then(data=>{
               userAllowed = true;
-              let grpData = d3.group(data,d=>d["resource_class_id"]);
-              me.linkData=[];
+              me.linkData=[
+                {'class':me.omk.getClassByTerm('genex:Term'),data:[],mAdd:true},
+                //uniquement dans le dictionnaire général {n:'Syntagms',t:'gen_syntagmes',k:'id_syn',data:[],mAdd:true},
+                //{n:'Verbs',t:'gen_verbes',k:'id_verbe',data:[],mAdd:true},
+                {n:'Uris',t:'gen_uris',k:'id_uri',data:[],mAdd:true},
+                {n:'Sparqls',t:'gen_sparqls',k:'id_sparql',data:[],mAdd:true},
+              ];
               //construction des modals pour chaque type d'item              
-              grpData.forEach((ld,id)=>{
-                let d = {
-                  'class':me.omk.getClassById(id),
-                  't':id,                  
-                  'data':ld
-                };
-                d.n = d.class["o:local_name"];
-                d.mAdd = m.add('modalAddConcept'+d.class["o:local_name"]);                  
-                d.mAdd.s.select('.modal-footer').selectAll('button').remove();
-                d.mAdd.s.select('.modal-footer').selectAll('button').data([ld]).enter().append('button')
-                    .attr('type',"button")
-                    .attr('class',"btn btn-primary").html('Add new')
-                    .on('click',addItem);
-                me.linkData.push(d);
+              let grpData = d3.group(data,d=>d["resource_class_id"]);
+              me.linkData.forEach(ld=>{
+                if(ld.class){
+                  ld.t = ld.class["o:id"];
+                  ld.n = ld.class["o:local_name"];
+                  ld.mAdd = m.add('modalAddConcept'+ld.class["o:local_name"]+"s");                  
+                  ld.mAdd.s.select('.modal-footer').selectAll('button').remove();
+                  ld.mAdd.s.select('.modal-footer').selectAll('button').data([ld]).enter().append('button')
+                      .attr('type',"button")
+                      .attr('class',"btn btn-primary").html('Add new')
+                      .on('click',addItem);
+                  //ajoute les options de conjugaison
+                  if(ld.n=="Term"){
+                    me.conjData = me.oeuvre.getConjugaisons();
+                    ld.mAdd.s.select('#verbConj').selectAll('option').data(
+                      [{'id_conj':-1,'modele':'choose a conjugation model'}].concat(me.conjData)
+                      ).join(
+                      enter=>enter.append('option')
+                        .attr('value',c=>c.id)
+                        .html(c=>c.title.replace("Modèle de conjugaison : ",""))                    
+                    );
+                  }
+                  if(grpData.has(ld.t)){
+                    ld.data = grpData.get(ld.t);
+                  }else{
+                    ld.data = [];
+                  }
+                }
               });
               showLinkData();
             }); 
@@ -150,17 +169,22 @@ export class concept {
             me.tgtContent.selectAll('div').remove();
             //ajoute les outils
             let tools = `<div class="container-fluid">
-              <a class="navbar-brand" href="#">[${me.data.type+'_'+me.data.title}]</a>
+              <a class="navbar-brand" href="#">[${me.data.title}]</a>
               <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarConcept" aria-controls="navbarConcept" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
               </button>
               <div class="collapse navbar-collapse" id="navbarConcept">
                 <ul id="listBtnCpt" class="navbar-nav me-auto mb-2 mb-lg-0">
-                  <li class="nav-item mx-2">
-                    <button type="button" id="btnGenere" class="btn btn-sm btn-danger">
-                        <i class="fa-solid fa-shuffle"></i>
-                    </button>
-                  </li>`
+                <li class="nav-item dropdown mx-2">
+                  <button type="button" class="btn btn-sm btn-danger dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      <i class="fa-solid fa-shuffle"></i>
+                  </button>
+                  <ul class="dropdown-menu" id="ddmGenereItem" >
+                    <li><a class="dropdown-item" id="btnGenere">Generate</a></li>
+                    <li><a class="dropdown-item" id="btnGenereOld">Generate Old version</a></li>
+                    <li><a class="dropdown-item" id="btnGenereTest">Generate tests</a></li>
+                  </ul>
+                </li>`;
             if(userAllowed){
               tools += `
                 <li class="nav-item dropdown mx-2">
@@ -177,7 +201,7 @@ export class concept {
             </div>`;
             let toolsNav = me.tgtContent.append('nav').attr('class','navbar navbar-expand-lg bg-light').html(tools);
             toolsNav.select('#ddmAddCptItem').selectAll('li').data(me.linkData).enter().append('li')
-              .append('a').attr('class',"dropdown-item").html(ld=>me.omk ? ld.class["o:local_name"] : ld.n).on('click',showAddItem);
+              .append('a').attr('class',"dropdown-item").html(ld=>ld.n).on('click',showAddItem);
             if(me.omk){
               //ajoute le lien vers OmekaS
               toolsNav.select("#listBtnCpt").append('li').attr('class',"nav-item mx-2").append('a')
@@ -186,7 +210,7 @@ export class concept {
                   .append('img').attr('src','asset/images/logos/OmekaS.png')
                       .style("margin-top","-4px")
                       .style("height","20px");
-          }         
+            }         
 
             //construction de la barre de nav
             let cont, navtabs = me.tgtContent.append('ul')
@@ -228,6 +252,8 @@ export class concept {
             contResult = me.tgtContent.append('div').style('height',contHeight+'px');            
             //ajout des évenements
             d3.select('#btnGenere').on('click',e=>genere(e,me.data,'concept'));
+            d3.select('#btnGenereOld').on('click',e=>genereOld(e,me.data,'concept'));
+            d3.select('#btnGenereTest').on('click',genereTest);
             //vérification du passage de paramètre
             if(me.appUrl.params && me.appUrl.params.has('linkDataTab')){
               let dt = me.linkData.filter(ld=>ld.n==me.appUrl.params.get('linkDataTab'))[0];
@@ -361,7 +387,8 @@ export class concept {
                             },
                             callback(key, s, e) { // Callback for specific option
                                 let r = this.getDataAtRow(s[0].start.row);
-                                genere(e,r,d);
+                                if(!me.omk)genere(e,r[0],'term');
+                                else genere(e,r,d);
                             }
                           },
                           omkAdmin: { // Own custom option
@@ -427,12 +454,12 @@ export class concept {
         }
         function verifDeleteItem(h, s){
           if(userAllowed){
-            m.setBody('<h3>Are you sure you want to delete this item?</h3>');
+            m.setBody('<h3  class="bg-danger">Are you sure you want to delete this item?</h3>');
             m.setBoutons([{'name':"Close"},
                 {'name':"Delete",'class':'btn-danger','fct':f=>deleteItem(h, s)}
                 ]);                
           }else{
-            m.setBody('<h3>You are not authorized to delete this item</h3>');
+            m.setBody('<h3  class="bg-danger">You are not authorized to delete this item</h3>');
             m.setBoutons([{'name':"Close"}]);                
           }
           m.show();    
@@ -441,20 +468,41 @@ export class concept {
             let r = h.getDataAtRow(s[0].start.row),
               k = h.getColHeader()[0],
               ld = me.linkData.filter(l=>l.k==k);
-            me.api.delete(ld[0].t,r[0]).then(e=>{
-                h.alter('remove_row', s[0].start.row, 1);
-                m.hide();    
-            });
+            if(me.omk){
+                d3.json(me.omk.api.replace("api/","s/balpien/page/ajax")
+                    +"?json=1&helper=sql&action=deleteConcept&id="
+                    +r[0]).then(e=>{
+                    if(e.status=='ok'){
+                      h.alter('remove_row', s[0].start.row, 1);
+                      m.hide();    
+                    }else{
+                        console.log('error delete item',e);
+                    }
+                }).catch(e=>{
+                    console.log('error delete item',e);
+                });
+            }else{
+              me.api.delete(ld[0].t,r[0]).then(e=>{
+                  h.alter('remove_row', s[0].start.row, 1);
+                  m.hide();    
+              });
+            }
         }
 
 
         function changeJsonEditor(u,p,r){
-          let allowChangeKey=['lib'], item, path = parseFrom(r.patchResult.redo[0].path),
-            key = path[path.length-1];
+          let allowChangeKey=['lib','term_id','cpt_id'], item, path = parseFrom(r.patchResult.redo[0].path),
+            key = path[path.length-1], link;
           if(allowChangeKey.includes(key)){
             item = getIn(u.json,path.slice(0, -1));
+            console.log('changeJsonEditor',item);
+            if(me.omk){
+              link = me.omk.getAdminLink(false,item[u.json,path[u.json,path.length-1]],"o:Item")
+              window.open(link, '_blank');
+            }
           }          
         }
+
         function addChampResult(d){
             //ajoute les champs de résultats
             contResult.selectAll('div').remove();
@@ -466,7 +514,7 @@ export class concept {
               <div id="genText${d.n}"></div>
             </div>`;
 
-            if(d=='concept' || d.t=="gen_generateurs" || d.t=="gen_uris"){
+            if(d=='concept' || d.n=="Term"  || d.t=="gen_generateurs" || d.t=="gen_uris"){
               htmlResult += `<div class="col">
                       <h4>Generation structure</h4>
                       <div id="genStrct"></div>
@@ -477,7 +525,7 @@ export class concept {
                 target: document.getElementById("genStrct"),
                 props: {
                   mode: 'tree',
-                  onChange:changeJsonEditor 
+                  onChange:changeJsonEditor, 
                   /*(updatedContent, previousContent, { contentErrors, patchResult }) => {
                     // content is an object { json: JSONValue } | { text: string }
                     console.log('onChange', { updatedContent, previousContent, contentErrors, patchResult })
@@ -486,7 +534,6 @@ export class concept {
                 }
               })
               //écouteur pour les modifications
-              contResult.selectAll(".jse-value").on('onchange',changeJsonEditor);
             }else{
               htmlResult += `</div>`;
               contResult.html(htmlResult);
@@ -556,10 +603,14 @@ export class concept {
 
         function showGen(d,g,view){
           if(me.omk){
-              d3.json(me.omk.api.replace("api","s/balpien/page/ajax")+"?json=1&helper=generate&structure=1&idConcept="+g.id).then(data=>{
-                console.log(data);
-                showResultGen(d,data,view);
-              });
+            let url = me.omk.api.replace("api","s/balpien/page/ajax")+"?json=1&helper=generate&structure=1&"
+              +(g.term ? "idTerm="+g.term+"&idConcept="+g.concept : "idConcept="+g.id);
+            d3.json(url).then(data=>{
+              console.log(data);
+              showResultGen(d,data,view);
+            }).catch(function(error) {
+              showResultGen(d,{'strct':error},view);
+            });
           }else{
             me.oeuvre.wGen.postMessage({
               'g':g,
@@ -610,12 +661,50 @@ export class concept {
             me.tgtContent.select("#genText"+d.n).html(r.title);    
         }
 
+        function genereOld(e,r,d){
+          addChampResult(d);
+          if(d=='concept'){
+            if(!r.omk)r.omk = me.omk.getItem(r.id);
+            if(me.oeuvre.curOeuvre["dcterms:identifier"] && r.omk["dcterms:identifier"]){
+              let oeu = me.oeuvre.curOeuvre["dcterms:identifier"][0]['@value'], 
+                gen = r.omk["dcterms:identifier"][0]['@value'];
+              d3.text(`https://artnum.univ-paris8.fr/balpe/generateur/services/api.php?oeu=${oeu}&cpt=${gen}`).then(
+                data=>{
+                  me.tgtContent.select("#genText"+d.n).html(data);         
+                  progress.destroy();
+                  contResult.select('#progressGenConcept').remove();
+                }
+              ).catch(
+                error=>{
+                  progress.destroy();
+                  contResult.select('#progressGenConcept').remove();
+                  me.tgtContent.select("#genText"+d.n).html('Generateur error: ' + error.message);    
+                }
+              );              
+            }
+          }
+        }
+
+        function genereTest(e){
+          addChampResult('concept');
+          me.oeuvre.explodeConcept(me.data.id).then(rs=>{
+            if(rs.length==0){
+              me.tgtContent.select("#genTextjsEditor").html('No test generated');
+              return;
+            }
+            showResultGen(me.data,{'strct':rs},'jsEditor');           
+          });
+        }
 
         function genere(e,r,d){
           let conj,a,formes,rs;
           addChampResult(d);
           if(d=='concept'){
             showGen(d,me.omk ? r : `[${r.type}_${r.title}]`,'jsEditor');           
+            return;
+          }
+          if(r[4]=='Term'){
+            showGen(d,{'term':r[0],'concept':me.data.id},'jsEditor');           
             return;
           }
           if(!r[d.k])r=d.data.filter(i=>i[d.k]==r[0])[0];
@@ -625,7 +714,7 @@ export class concept {
               showUri(d,r);           
               break;            
             case 'Sparqls':
-              getSparql()
+              getSparql();
               showGen(d,r.valeur,'jsEditor');           
               break;            
             case 'Generators':

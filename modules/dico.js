@@ -1,7 +1,7 @@
-import {concept} from '../modules/concept.js';
-import {modal} from '../modules/modal.js';
-import {moteur} from '../modules/moteur.js';
-import {conjugaisons} from '../modules/conjugaisons.js';
+import {concept} from './concept.js';
+import {modal} from './modal.js';
+import {moteur} from './moteur.js';
+import {conjugaisons} from './conjugaisons.js';
 import {parse} from '../node_modules/csv-parse/dist/esm/sync.js';
 import {loader} from './loader.js';
 
@@ -102,9 +102,9 @@ export class dico {
                   enter=>enter.append('button')
                     .attr('type',"button")
                     .attr('class',"btn btn-primary").html('Import')
-                    .on('click',importDico)                    
+                    .on('click',me.importDico)                    
                 );
-                mainSlt.select("#btnDicoImport").on('click',showImportDico);            
+                mainSlt.select("#btnDicoImport").on('click',me.showImportDico);            
             }
 
             //ajout la colone de résultat
@@ -140,6 +140,7 @@ export class dico {
         function showData(){
             //me.hot.loadData(me.data);
             //création de la table
+            if(me.data.length==0){ me.loader.hide();return;}
             let headers = Object.keys(me.data[0]),
                 rectFooter = d3.select('footer').select('h3').node().getBoundingClientRect(),
                 rectHeader = d3.select('header').node().getBoundingClientRect(),
@@ -191,7 +192,8 @@ export class dico {
                 showContent(me.hot.getDataAtRow(r));
             });
             me.hot.addHook('afterChange', (changes,s) => {
-                changes?.forEach(([r, p, oldValue, newValue]) => {
+                if(me.omk) return; //pas de modification dans OmekaS
+                changes.forEach(([r, p, oldValue, newValue]) => {
                     //mise à jour de l'item
                     let data = {};
                     data[p]=newValue;
@@ -234,10 +236,10 @@ export class dico {
               })
             return editors;
         }
-        function showImportDico(e,d){
+        this.showImportDico = function(e,d){
             if(table.mImp)table.mImp.m.show();
         }
-        function importDico(){
+        this.importDico = function(){
             const csvFile = document.getElementById("importDicoconceptsFile");
             const input = csvFile.files[0];
             const reader = new FileReader();
@@ -250,44 +252,48 @@ export class dico {
                     skip_empty_lines: true,
                     trim: true
                   });
-                records.forEach(r=>{
-                    //récupération du concept
-                    //pour minimiser les appels à la base
-                    if(!r.type){
-                        let cpt = r.concept.split('_');
-                        r.type = cpt[0];
-                        r.concept = cpt[1];
-                    }
-                    let rs, dt, idItem, idConcept, cpt = me.data.filter(c=>c.type==r.type && c.lib == r.concept);
-                    if(cpt.length==0){
-                        idConcept = me.api.syncCreate(table.t, {'id_dico':me.d.id_dico,'type':r.type,'lib':r.concept});
-                        me.data.push({'id_concept':idConcept,'id_dico':me.d.id_dico,'type':r.type,'lib':r.concept});
-                    }else{
-                        idConcept = cpt[0].id_concept;
-                    } 
-                    //ajoute l'item suivant le type
-                    if(r.type && r.concept && r.valeur){
-                        //vérifie l'existence
-                        rs = me.api.syncList('gen_generateurs',['id_concept,eq,'+idConcept,'valeur,eq,'+r.valeur]);
-                        dt = {'id_concept':idConcept,'valeur':r.valeur};
-                        //ajoute ou update                           
-                        if(rs.records.length==0)
-                            idItem = me.api.syncCreate('gen_generateurs', dt);
-                        else
-                            idItem = me.api.syncUpdate('gen_generateurs', dt, rs.records[0].id_gen);
-                    }
-                    if(r.uri && r.concept && r.lib && r.format){
-                        //vérifie l'existence
-                        //{filter:['field1,modifier1,value1','field2,modifier2,value2']}); // AND
-                        rs = me.api.syncList('gen_uris',{filter:['id_concept,eq,'+idConcept,'uri,eq,'+encodeURIComponent(r.uri)]});
-                        dt = {'id_concept':idConcept,'uri':r.uri,'lib':r.lib,'format':r.format};
-                        //ajoute ou update                           
-                        if(rs.records.length==0)
-                            idItem = me.api.syncCreate('gen_uris', dt);
-                        else
-                            idItem = me.api.syncUpdate('gen_uris', dt, rs.records[0].id_uri);
-                    }
-                })
+                if(me.omk) {
+                    createConcepts(records,table.mImp.s.select('#resultImport'),0);
+                }else {
+                    records.forEach(r=>{
+                        //récupération du concept   
+                        //pour minimiser les appels à la base
+                        if(!r.type){
+                            let cpt = r.concept.split('_');
+                            r.type = cpt[0];
+                            r.concept = cpt[1];
+                        }
+                        let rs, dt, idItem, idConcept, cpt = me.data.filter(c=>c.type==r.type && c.lib == r.concept);
+                        if(cpt.length==0){
+                            idConcept = me.api.syncCreate(table.t, {'id_dico':me.d.id_dico,'type':r.type,'lib':r.concept});
+                            me.data.push({'id_concept':idConcept,'id_dico':me.d.id_dico,'type':r.type,'lib':r.concept});
+                        }else{
+                            idConcept = cpt[0].id_concept;
+                        } 
+                        //ajoute l'item suivant le type
+                        if(r.type && r.concept && r.valeur){
+                            //vérifie l'existence
+                            rs = me.api.syncList('gen_generateurs',['id_concept,eq,'+idConcept,'valeur,eq,'+r.valeur]);
+                            dt = {'id_concept':idConcept,'valeur':r.valeur};
+                            //ajoute ou update                           
+                            if(rs.records.length==0)
+                                idItem = me.api.syncCreate('gen_generateurs', dt);
+                            else
+                                idItem = me.api.syncUpdate('gen_generateurs', dt, rs.records[0].id_gen);
+                        }
+                        if(r.uri && r.concept && r.lib && r.format){
+                            //vérifie l'existence
+                            //{filter:['field1,modifier1,value1','field2,modifier2,value2']}); // AND
+                            rs = me.api.syncList('gen_uris',{filter:['id_concept,eq,'+idConcept,'uri,eq,'+encodeURIComponent(r.uri)]});
+                            dt = {'id_concept':idConcept,'uri':r.uri,'lib':r.lib,'format':r.format};
+                            //ajoute ou update                           
+                            if(rs.records.length==0)
+                                idItem = me.api.syncCreate('gen_uris', dt);
+                            else
+                                idItem = me.api.syncUpdate('gen_uris', dt, rs.records[0].id_uri);
+                        }
+                    })
+                }
                 /*    
                 d.hot.refreshDimensions();
                 d.hot.updateSettings({ data: me.data } )
@@ -296,6 +302,127 @@ export class dico {
             };
             reader.readAsText(input);
         }
+
+        async function createConcepts(cpts,divResult,i,curCpt){
+            if(i==0){
+                await me.loader.show();
+            }
+            if(i>=cpts.length){
+                divResult.append('div')
+                    .attr("class","alert alert-success").attr("role","alert")
+                    .text("FIN Traitement : "+(new Date().toLocaleTimeString("fr-FR")));
+                //explode les concepts
+                me.oeuvre.explodeConcept(curCpt);
+                me.loader.hide();
+                return;
+            }
+            if(cpts[i].concept || cpts[i].type){
+                //explode les concepts
+                if(curCpt)me.oeuvre.explodeConcept(curCpt);
+                //création des concepts
+                let r = cpts[i],
+                    dt = {
+                    'o:resource_class':'genex:Concept',
+                    'o:resource_template':'genex_Concept',
+                    'dcterms:title':r.type_concept+'_'+r.concept,
+                    'dcterms:description':r.description_concept,
+                    'genex:hasType':r.type_concept,
+                    'genex:hasDico':{'rid':me.d['o:id']},
+                    'dcterms:identifier':me.d['o:id']+'_'+r.type_concept+'_'+r.concept,
+                    },
+                    dtO = {'rt':'genex_Concept','c':'genex:Concept','dt':{}};
+                dtO.dt = dt;
+                dtO.verif={'dcterms:identifier':dt['dcterms:identifier']};
+                dtO['index'] = dt['dcterms:identifier'];
+                //on crée le concept si il n'existe pas
+                curCpt = await me.omk.getsetResource(dtO);
+                divResult.append('div')
+                    .attr("class","alert alert-primary").attr("role","alert")
+                    .text("Traitement du concept "+i+" / "+cpts.length+" : "+(new Date().toLocaleTimeString("fr-FR")));
+            }
+
+            //création du terme
+            await createTerm(curCpt, cpts[i], i, divResult);
+
+            createConcepts(cpts,divResult,i+1,curCpt);
+        }
+
+        async function createTerm(oCpt, r, i, divResult){
+
+            //création du terme
+            let dtO = {'rt':'genex_Term','c':'genex:Term','dt':{}}, dtAc = {},
+                elision = r.elision ? '' : 'no',
+                dt = {
+                    'o:resource_class':'genex:Term',
+                    'o:resource_template':'genex_Term',
+                    'dcterms:title':r.prefix ? r.prefix : r.generateur ? r.generateur : 'Term '+i,
+                    'dcterms:description': r.description_term ? [r.description_term,JSON.stringify(r)] : JSON.stringify(r),
+                    'genex:hasType':r.type_term,
+                    'genex:hasConcept':{'rid':oCpt['o:id']},
+                    'genex:hasGenerateur':r.generateur,
+                    'genex:hasPrefix':r.prefix,
+                    'lexinfo:gender':r.gender,
+                    'genex:hasElision':elision,
+                };
+            dtAc[elision+'EliFemPlu'] = r.fem_plu;
+            dtAc[elision+'EliFemSing'] = r.fem_sin;
+            dtAc[elision+'EliMasPlu'] = r.mas_plu;
+            dtAc[elision+'EliMasSing'] = r.mas_sin;
+            dt['genex:hasAccord']= annoAccord(dtAc,elision);
+            if(r.conjugaison){
+                //récupère l'identifiant de conjugaison
+                let conj = me.oeuvre.conjugaisons.filter(c=>c.title.replace("Modèle de conjugaison : ","")==r.conjugaison);
+                if(conj.length>0){
+                    dt['genex:hasConjugaison'] = {'rid':conj[0].id_conj};
+                }else{
+                    divResult.append('div').attr("class","alert alert-danger").attr("role","alert").text("Term "+i+" - ERREUR : cette conjugaison n'existe pas : "+r.conjugaison);
+                }
+            }
+            dtO.dt = dt;
+            dtO.verif={'dcterms:title':dt['dcterms:title']};
+            dtO['index'] = dt['dcterms:title'];
+            //on crée le terme si il n'existe pas
+            let o = await me.omk.getsetResource(dtO);
+            divResult.append('div')
+                .attr("class","alert alert-info").attr("role","alert")
+                .text(dt['genex:hasType']+" "+i+" traité "+o["o:id"]+" - "+o["o:title"]+" : "+(new Date().toLocaleTimeString("fr-FR")));            
+        }
+        
+
+        function annoAccord(d,elision){
+            let anno = {
+                'genex:hasElision':[{
+                    "@value": elision=="no" ? "0":"1",
+                    "type": "literal",
+                    "property_id": me.omk.getPropId('genex:hasElision'),
+                }],    
+                'genex:accordFemSing':[{
+                    "@value": d[elision+'EliFemSing'],
+                    "type": "literal",
+                    "property_id": me.omk.getPropId('genex:accordFemSing'),
+                }],
+                'genex:accordMasSing':[{
+                    "@value": d[elision+'EliMasSing'],
+                    "type": "literal",
+                    "property_id": me.omk.getPropId('genex:accordMasSing'),
+                }],
+                'genex:accordFemPlu':[{
+                    "@value": d[elision+'EliFemPlu'],
+                    "type": "literal",
+                    "property_id": me.omk.getPropId('genex:accordFemPlu'),
+                }],
+                'genex:accordMasPlu':[{
+                    "@value": d[elision+'EliMasPlu'],
+                    "type": "literal",
+                    "property_id": me.omk.getPropId('genex:accordMasPlu'),
+                }],
+            }, 
+            accord = {};
+            accord.v = elision=="no" ? 'Accord sans élision':'Accord avec élision';
+            accord.a=anno;
+            return accord;
+        }
+
         function showAddItem(e,d){
             if(table.mAdd)table.mAdd.m.show();
         }
@@ -307,38 +434,63 @@ export class dico {
                 if(n.hasAttribute("keycol"))
                     valeurs[n.getAttribute('keycol')]=n.value;
             });
-            valeurs.id_dico=me.d.id_dico;
-            me.api.create(table.t, valeurs).then(
+            if(me.omk){
+                //ajoute l'item dans OmekaS
+                let dt = {
+                    'o:resource_class':'genex:Concept',
+                    'o:resource_template':'genex_Concept',
+                    'dcterms:title':valeurs['type']+'_'+valeurs['lib'],
+                    'genex:hasType':valeurs['type'],
+                    'genex:hasDico':{'rid':me.d['o:id'],'type':'resource'},
+                };
+                me.omk.createItem(dt,item=>{
+                    //ATTENTION l'ordre est important
+                    let d = {
+                        'id':item['o:id'],
+                        'title':item['o:title'],
+                        'resource_class_id':item['o:resource_class']['o:id'],
+                        'resource_template_id': item['o:resource_template']['o:id'],
+                        'local_name': valeurs['lib'],
+                        'type':item["genex:hasType"][0]["@value"],
+                    };
+                    addItemGrid(d,table);
+                })
+            }else{
+               me.api.create(table.t, valeurs).then(
                 id=>{
                     //récupère l'item
                     me.api.read(table.t,id).then(
                         item=>{                            
-                            //ajoute l'item au tableur
-                            let i=0, row = me.hot.countRows();
-                            me.hot.alter('insert_row', row, 1);
-                            for (const p in item) {
-                                me.hot.setDataAtCell(row, i, item[p]);
-                                i++;
-                            }
-                            me.data.push(item);
-                            showContent(item);
-                            table.mAdd.m.hide();
+                           addItemGrid(item,table);
                         }
                     );   
                 }    
-            ).catch (
-                error=>console.log(error)
-            );            
+                ).catch (
+                    error=>console.log(error)
+                );            
+            }
+        }
+        function addItemGrid(item,table){
+            //ajoute l'item au tableur
+            let i=0, row = me.hot.countRows();
+            me.hot.alter('insert_row', row, 1);
+            for (const p in item) {
+                me.hot.setDataAtCell(row, i, item[p]);
+                i++;
+            }
+            me.data.push(item);
+            showContent(item);
+            table.mAdd.m.hide();
         }
         function verifDeleteDico(){
             //vérifie le nombre de dico d'oeuvre
             let dicoOeuvre = me.oeuvre.dicos.filter(d=>d.general==0);
             if(dicoOeuvre.length >= 1){
-                mod.setBody('<h3>You cannot delete this dictionary : it is the only one for this work</h3>');
+                mod.setBody('<h3 class="bg-danger">You cannot delete this dictionary : it is the only one for this work</h3>');
                 mod.setBoutons([{'name':"Close"}]);                
                 mod.show();        
             }else{
-                mod.setBody('<h3>Are you sure you want to delete this dictionary ?</h3>');
+                mod.setBody('<h3 class="bg-danger">Are you sure you want to delete this dictionary ?</h3>');
                 mod.setBoutons([{'name':"Close"},
                     {'name':"Delete",'class':'btn-danger','fct':f=>me.delete(me.d)}
                     ])                
@@ -347,26 +499,46 @@ export class dico {
         }
         
         function verifDeleteItem(s,d){
-            mod.setBody('<h3>Are you sure you want to delete this item?</h3>');
+
+            mod.setBody('<h3 class="bg-danger">Are you sure you want to delete this item?</h3>');
             mod.setBoutons([{'name':"Close"},
                 {'name':"Delete",'class':'btn-danger','fct':f=>deleteItem(s,d)}
                 ])                
                 mod.show();    
         }
         function deleteItem(s,d){
-            me.api.delete(table.t,d[0]).then(e=>{
-                me.hot.alter('remove_row', s[0].start.row, 1);
-                mod.hide();
-                cptContent.selectAll('nav').remove();
-                cptContent.selectAll('ul').remove();
-                cptContent.selectAll('div').remove();
-            });
+            if(me.omk){
+                //supprime l'item dans OmekaS
+                d3.json(me.omk.api.replace("api/","s/balpien/page/ajax")
+                    +"?json=1&helper=sql&action=deleteConcept&id="
+                    +d[0]).then(e=>{
+                    if(e.status=='ok'){
+                        clearConcept(s);
+                    }else{
+                        console.log('error delete item',e);
+                    }
+                }).catch(e=>{
+                    console.log('error delete item',e);
+                });
+            }else {
+                me.api.delete(table.t,d[0]).then(e=>{
+                    clearConcept(s);
+                });
+            }
+        }
+
+        function clearConcept(s){
+            me.hot.alter('remove_row', s[0].start.row, 1);
+            mod.hide();
+            cptContent.selectAll('nav').remove();
+            cptContent.selectAll('ul').remove();
+            cptContent.selectAll('div').remove();
         }
 
         function showConcept(d,id){
             if(d === undefined && id===null) return;
             if(!id)id=d[0];//le grid ne renvoie pas des tableaux associatifs
-            d=me.data.filter(r=>(me.omk ? r.id : r.id_concept)==id)[0];
+            if(!d || !d['id'])d=me.data.filter(r=>(me.omk ? r.id : r.id_concept)==id)[0];
             me.appUrl.change('id_concept',me.omk ? d.id : d.id_concept);
 
             let cpt=new concept({
@@ -400,11 +572,27 @@ export class dico {
         }
 
         this.delete = function (d){
-            //plus nécessaire car base de donnée avec DELETE CASCADE
-            //deleteItems() 
-            me.api.delete('gen_dicos',me.d.id_dico).then(e=>{
-                console.log('dico delete',d);
-            });
+            if(me.omk){
+                //supprime l'item dans OmekaS
+                d3.json(me.omk.api.replace("api/","s/balpien/page/ajax")
+                    +"?json=1&helper=sql&action=deleteDico&idDico="
+                    +d["o:id"]).then(e=>{
+                    if(e.status=='ok'){
+                        me.oeuvre.showDicos(me.oeuvre.curOeuvre); 
+                        mod.hide(); 
+                    }else{
+                        console.log('error delete dico',e);
+                    }
+                }).catch(e=>{
+                    console.log('error delete dico',e);
+                });
+            }else {
+                //plus nécessaire car base de donnée avec DELETE CASCADE
+                //deleteItems() 
+                me.api.delete('gen_dicos',me.d.id_dico).then(e=>{
+                    console.log('dico delete',d);
+                });
+            }
         }
 
         this.getData = function(){

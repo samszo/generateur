@@ -31,6 +31,7 @@ export class loader {
             await setTimeout(function(){
                 curwait ++;
             }, 1000);
+            return curwait;
         }
         this.hide = function(all=false){
             if(all)curwait=0;
