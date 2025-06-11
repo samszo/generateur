@@ -22,3 +22,4 @@ node_modules/csv-parse/*
 *.zip
 bdd/omk_generateur.sql
 asset/data/generateur_old-20250406-072411.json
+modules/authParams.js
