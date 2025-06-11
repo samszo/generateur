@@ -44,7 +44,7 @@ export class concept {
               let grpData = d3.group(data,d=>d["resource_class_id"]);
               me.linkData.forEach(ld=>{
                 if(ld.class){
-                  ld.t = ld.class["o:id"];
+                  ld.t = ld.class["o:id"]+"";
                   ld.n = ld.class["o:local_name"];
                   ld.mAdd = m.add('modalAddConcept'+ld.class["o:local_name"]+"s");                  
                   ld.mAdd.s.select('.modal-footer').selectAll('button').remove();
