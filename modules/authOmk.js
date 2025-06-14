@@ -27,7 +27,7 @@ export class auth {
                 me.apiOmk += me.apiOmk.slice(-1)=='/' ? "" : "/";
                 me.omk = new omk({'api':me.apiOmk});
                 if(!me.navbar.empty())createNavBar();
-                me.getUser();
+                //ne pas faire pour éviter la perte de paramètre me.getUser();
             }
                                                                                               
         }
@@ -148,6 +148,7 @@ export class auth {
             alertUnknown.hide();
             alertGitHub.hide();
             //gestion des événements
+            /*perturbe le passage de paramètres user
             me.m.selectAll("input").on('change',e=>{
                 alertAuth.hide();
                 alertMail.hide();                    
@@ -160,7 +161,8 @@ export class auth {
                 me.apiOmk="";
                 me.user=false;
                 me.keyGitHub="";                    
-            });                                                                                    
+            });
+            */                                                                                    
             nameLogin = me.navbar.select("#userLogin");
             btnLogin = me.navbar.select("#btnLogin");
             btnLogin.on('click',e=>{

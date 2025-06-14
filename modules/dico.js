@@ -114,16 +114,7 @@ export class dico {
                 .attr('id','dicoHot');
             
             if(me.omk){
-                let query = 'resource_class_id='+table.class+
-                    "&property[0][joiner]=and&property[0][property]="+me.omk.getPropId("genex:hasDico")+"&property[0][type]=res&property[0][text]="+me.d['o:id'];
-                me.omk.loader.show();
-                d3.json(me.omk.api.replace("api/","s/balpien/page/ajax")
-                    +"?json=1&helper=sql&action=getDicoItems&idDico="
-                    +me.d["o:id"]).then(data=>{
-                    userAllowed = true;
-                    me.data = data;                                
-                    showData();
-                });                
+                getOmkData();              
                 return;
             }
 
@@ -135,6 +126,19 @@ export class dico {
             ).catch (
                 error=>console.log(error)
             );
+        }
+
+        function getOmkData(){
+            let query = 'resource_class_id='+table.class+
+                "&property[0][joiner]=and&property[0][property]="+me.omk.getPropId("genex:hasDico")+"&property[0][type]=res&property[0][text]="+me.d['o:id'];
+            me.omk.loader.show();
+            d3.json(me.omk.api.replace("api/","s/balpien/page/ajax")
+                +"?json=1&helper=sql&action=getDicoItems&idDico="
+                +me.d["o:id"]).then(data=>{
+                userAllowed = true;
+                me.data = data;                                
+                showData();
+            });              
         }
 
         function showData(){
@@ -342,12 +346,12 @@ export class dico {
             }
 
             //création du terme
-            await createTerm(curCpt, cpts[i], i, divResult);
+            await me.createTerm(curCpt, cpts[i], i, divResult);
 
             createConcepts(cpts,divResult,i+1,curCpt);
         }
 
-        async function createTerm(oCpt, r, i, divResult){
+        me.createTerm = async function (oCpt, r, i, divResult){
 
             //création du terme
             let dtO = {'rt':'genex_Term','c':'genex:Term','dt':{}}, dtAc = {},
@@ -355,7 +359,7 @@ export class dico {
                 dt = {
                     'o:resource_class':'genex:Term',
                     'o:resource_template':'genex_Term',
-                    'dcterms:title':r.prefix ? r.prefix : r.generateur ? r.generateur : 'Term '+i,
+                    'dcterms:title':r.title ? r.title : r.prefix ? r.prefix : r.generateur ? r.generateur : 'Term '+i,
                     'dcterms:description': r.description_term ? [r.description_term,JSON.stringify(r)] : JSON.stringify(r),
                     'genex:hasType':r.type_term,
                     'genex:hasConcept':{'rid':oCpt['o:id']},
@@ -471,6 +475,10 @@ export class dico {
             }
         }
         function addItemGrid(item,table){
+            if(!me.hot){
+                getOmkData();              
+                return;
+            }
             //ajoute l'item au tableur
             let i=0, row = me.hot.countRows();
             me.hot.alter('insert_row', row, 1);
@@ -544,6 +552,7 @@ export class dico {
             let cpt=new concept({
                     'data':d,
                     'dico':d,
+                    'oDico':me,
                     'omk':me.omk,
                     'oeuvre':me.oeuvre,
                     'api':me.api,

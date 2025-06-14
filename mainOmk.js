@@ -8,7 +8,7 @@ a.getUser(initOeuvre);
 function initOeuvre(){
     let oe = new oeuvres({
         'auth':a,
-        'tgtMenu':document.getElementById('menuOeuvres'),
+        'tgtMenu':d3.select('#menuOeuvres'),
         'tgtList':document.getElementById('listDicos'),
         'tgtContent':document.getElementById('contentDetails'),
         'appUrl':new appUrl({

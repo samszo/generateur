@@ -10,6 +10,7 @@ export class concept {
         var me = this;
         this.oeuvre = params.oeuvre ? params.oeuvre : false;
         this.dico = params.dico ? params.dico : false;
+        this.oDico = params.oDico ? params.oDico : false;
         this.api = params.api ? params.api : false;
         this.data = params.data ? params.data : false;
         this.omk = params.omk ? params.omk : false;
@@ -41,7 +42,7 @@ export class concept {
                 {n:'Sparqls',t:'gen_sparqls',k:'id_sparql',data:[],mAdd:true},
               ];
               //construction des modals pour chaque type d'item              
-              let grpData = d3.group(data,d=>d["resource_class_id"]);
+              let grpData = d3.group(data,d=>d["resource_class_id"]+"");
               me.linkData.forEach(ld=>{
                 if(ld.class){
                   ld.t = ld.class["o:id"]+"";
@@ -271,30 +272,47 @@ export class concept {
           let valeurs = {};
           d.mAdd.s.selectAll('.inptValue').nodes().forEach(n=>{
             if(n.hasAttribute("keycol"))
+              console.log(n.getAttribute("keycol")+' '+n.value);
               if(n.getAttribute('type')=="checkbox"){
                   valeurs[n.getAttribute('keycol')]=n.checked ? 1 : 0;
-              }else if(n.getAttribute('keycol')=='genre'){
+              }else if(n.getAttribute('keycol')=='genre' || n.getAttribute('keycol')=='elision'){
                 if(valeurs[n.getAttribute('keycol')]===undefined)
                   valeurs[n.getAttribute('keycol')]=n.checked ? n.getAttribute('value') : undefined;
               }else 
                 valeurs[n.getAttribute('keycol')]=n.value;
           });
-          valeurs.id_concept=me.data.id_concept;
+          valeurs.id_concept= me.omk ? me.data.id : me.data.id_concept;
           //création de l'item
-          me.api.create(d.t,valeurs).then(
-            id=>{
-                //récupère l'item
-                me.api.read(d.t,id).then(
-                    item=>{
-                      d.data.push(item);                            
-                      d.mAdd.m.hide();
-                      changeTab(null,d);
-                    }
-                );   
-            }    
-          ).catch (
-              error=>console.log(error)
-          );            
+          if(me.omk){
+            let r = {'elision':valeurs.elision ? 0 : 1,
+                'title' : valeurs.title,
+                'prefix' : valeurs.prefix,
+                'description_term':valeurs.description,
+                'type_term':valeurs.type,
+                'generateur':valeurs.valeur,
+                'gender':valeurs.gender,
+                'fem_plu':valeurs.f_s,
+                'fem_sin':valeurs.f_p,
+                'mas_plu':valeurs.m_s,
+                'mas_sin':valeurs.m_p            
+              };        
+            me.oDico.createTerm({'o:id':me.data.id}, r, 1, d.mAdd.s.select('#creaTermResult'));
+          }else{
+            me.api.create(d.t,valeurs).then(
+              id=>{
+                  //récupère l'item
+                  me.api.read(d.t,id).then(
+                      item=>{
+                        d.data.push(item);                            
+                        d.mAdd.m.hide();
+                        changeTab(null,d);
+                      }
+                  );   
+              }    
+            ).catch (
+                error=>console.log(error)
+            );    
+          }        
         }
         function changeTab(e,d){
           contResult.selectAll('div').remove();

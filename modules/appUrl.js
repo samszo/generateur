@@ -26,7 +26,13 @@ export class appUrl {
             let sp = new URLSearchParams(me.tgtIn.value);
             sp.set(k, v);
             me.tgtIn.value = sp.toString();                                
-        }            
+        }       
+        this.set = function (k,v){
+            let sp = new URLSearchParams(k+"="+v);
+            sp.set(k, v);
+            me.tgtIn.value = sp.toString();                                
+        }       
+        
         this.init();
     
     }

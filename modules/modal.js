@@ -77,7 +77,7 @@ export let modalAddOeuvre = `
         <h5 class="modal-title">Adding a new work</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body">                    
+        <div class="modal-body bg-white text-dark">                    
             <div class="input-group mb-3">
                 <span class="input-group-text" id="oeuNom">Name</span>
                 <input id="inpOeuNom" type="text" class="form-control" placeholder="Name" aria-label="name" aria-describedby="oeuNom">
@@ -228,7 +228,7 @@ export let modalAddConceptTerms = `
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-
+            <div id="creaTermResult" class="row"></div>
             <div class="input-group my-3">
                 <span class="input-group-text" id="lblTitle">Title</span>
                 <input type="text" class="form-control inptValue" keycol='title' placeholder="title" aria-label="name" aria-describedby="lblTitle">
@@ -248,23 +248,41 @@ export let modalAddConceptTerms = `
             <div class="input-group my-3">
                 <span class="input-group-text" id="lblGen">Generator</span>
                 <textarea class="form-control inptValue" keycol='valeur' placeholder="Put the value of generator" id="genValue" style="height: 100px"></textarea>
-            </div>            
+            </div>   
+            <div class="input-group my-3">
+                <span class="input-group-text" id="choixGenre">Gender</span>
+                <div aria-describedby="choixGenre" class="m-2">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input inptValue" keycol='genre' type="radio" name="nounGenre" id="nounGenreF" value="feminin">
+                        <label class="form-check-label text-dark bg-white" for="nounGenreF"><i class="fa-solid fa-venus"></i></label>
+                    </div>                        
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input inptValue" keycol='genre' type="radio" name="nounGenre" id="nounGenreH" value="masculin">
+                        <label class="form-check-label text-dark bg-white" for="nounGenreH"><i class="fa-solid fa-mars"></i></label>
+                    </div>                        
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input inptValue" keycol='genre' type="radio" name="nounGenre" id="nounGenreN" value="neutre">
+                        <label class="form-check-label text-dark bg-white" for="nounGenreN"><i class="fa-solid fa-neuter"></i></label>
+                    </div>                        
+                </div>
+            </div>
+         
             <div class="input-group my-3">
                 <label class="input-group-text" for="verbConj">Conjugation model</label>
                 <select class="form-select" id="verbConj">
                     <option selected>Choose...</option>
                 </select>
-            </div>
+            </div>            
             <div class="border border-black p-1">
                 <h5 class="modal-title">Agreement</h5>
                 <div class="input-group my-3">
                     <label class="input-group-text" >Elision</label>
                     <div class="form-check form-check-inline mx-2 my-1">
-                        <input class="form-check-input" type="radio" name="rElision" id="rElision1" value="1">
+                        <input class="form-check-input" type="radio" keycol='elision' id="rElision1" value="1">
                         <label class="form-check-label text-dark bg-white" for="rElision1">Yes</label>
                     </div>
                     <div class="form-check form-check-inline my-1">
-                        <input class="form-check-input" type="radio" name="rElision" id="rElision0" value="0">
+                        <input class="form-check-input" type="radio" keycol='elision' id="rElision0" value="0">
                         <label class="form-check-label text-dark bg-white" for="rElision0">No</label>
                     </div>                
                 </div>

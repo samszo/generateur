@@ -33,41 +33,81 @@ export class oeuvres {
             //gestion des événements
             d3.select('#btnaddNewOeuvre').on('click',addNewOeuvre)        
         }
+
         function addNewOeuvre(){
             let nom = mAddOeuvreBody.select("#inpOeuNom").node().value,
             licence = mAddOeuvreBody.node().querySelector('input[name="oeuLicence"]:checked').value,
             lang = mAddOeuvreBody.node().querySelector('input[name="oeuLangue"]:checked').value;
-            me.api.create('gen_oeuvres', {'lib':nom,'licence':licence, 'uti_id':me.auth.user.id}).then(
-                idOeu=>{
-                    //ajoute le dictionnaire de l'oeuvre
-                    me.api.create('gen_dicos', {'nom':nom,'type':'concepts','langue':lang,'general':0,'licence':licence}).then(
-                        idDico=>{
-                            //ajoute le lien entre l'oeuvre, le dico et l'utilisateur
-                            me.api.create('gen_oeuvres_dicos_utis', {'id_oeu':idOeu,'id_dico':idDico,'uti_id':me.auth.user.id});
-                        }
-                    );   
-                    //ajout des dictionnaires généraux à l'oeuvre
-                    me.api.list('gen_dicos',{filter:['langue,eq,'+lang,'general,eq,1']}).then(
-                        result=>{
-                            let inserts=[]; 
-                            result.records.forEach(d => {
-                                inserts.push({'id_oeu':idOeu,'id_dico':d.id_dico,'uti_id':me.auth.user.id});
+            if(me.auth.omk){
+                //création du dictionnaire d'oeuvre
+                let dtDico = {
+                    'o:resource_class':'genex:Dictionnaire',
+                    'o:resource_template':'genex_dictionnaire',
+                    'dcterms:title':"DS_"+nom,
+                    'dcterms:type':'concepts',
+                };
+                me.auth.omk.createItem(dtDico, i=>{
+                    console.log('Dico créé',i);
+                    //ajoute l'oeuvre dans OmekaS
+                    let dt = {
+                        'o:resource_class':'genex:Oeuvre',
+                        'o:resource_template':'genex_oeuvre',
+                        'dcterms:title':nom,
+                        'dcterms:license':licence,
+                        'dcterms:language':lang,
+                        'genex:hasDico':[
+                            {'rid':27,'type':'resource'},
+                            {'rid':28,'type':'resource'},
+                            {'rid':29,'type':'resource'},
+                            {'rid':30,'type':'resource'},
+                            {'rid':36,'type':'resource'},
+                            {'rid':37,'type':'resource'},
+                            {'rid':i["o:id"],'type':'resource'}
+                        ]
+                    };
+                    me.auth.omk.createItem(dt,item=>{
+                        console.log('Oeuvre créée',item);
+                        if(me.appUrl.params && me.appUrl.params.has('id_oeu'))
+                            me.appUrl.change('id_oeu',item["o:id"]);
+                        else
+                            me.appUrl.set('id_oeu',item["o:id"]);
+                        getOeuvres();
+                        mAddOeuvre.hide();
+                    })                                               
+                });                
+            }else{            
+                me.api.create('gen_oeuvres', {'lib':nom,'licence':licence, 'uti_id':me.auth.user.id}).then(
+                    idOeu=>{
+                        //ajoute le dictionnaire de l'oeuvre
+                        me.api.create('gen_dicos', {'nom':nom,'type':'concepts','langue':lang,'general':0,'licence':licence}).then(
+                            idDico=>{
+                                //ajoute le lien entre l'oeuvre, le dico et l'utilisateur
+                                me.api.create('gen_oeuvres_dicos_utis', {'id_oeu':idOeu,'id_dico':idDico,'uti_id':me.auth.user.id});
+                            }
+                        );   
+                        //ajout des dictionnaires généraux à l'oeuvre
+                        me.api.list('gen_dicos',{filter:['langue,eq,'+lang,'general,eq,1']}).then(
+                            result=>{
+                                let inserts=[]; 
+                                result.records.forEach(d => {
+                                    inserts.push({'id_oeu':idOeu,'id_dico':d.id_dico,'uti_id':me.auth.user.id});
+                                });
+                                me.api.create('gen_oeuvres_dicos_utis', inserts);
+                            }
+                        );                         
+                        me.api.read('gen_oeuvres',idOeu).then(
+                            oeu=>{
+                                //affiche l'oeuvre
+                                me.oeuvres.push(oeu);
+                                me.showOeuvre(null,oeu);
+                                mAddOeuvre.hide();
                             });
-                            me.api.create('gen_oeuvres_dicos_utis', inserts);
-                        }
-                    );                         
-                    me.api.read('gen_oeuvres',idOeu).then(
-                        oeu=>{
-                            //affiche l'oeuvre
-                            me.oeuvres.push(oeu);
-                            me.showOeuvre(null,oeu);
-                            mAddOeuvre.hide();
-                        });
 
-                }    
-            ).catch (
-                error=>console.log(error)
-            );
+                    }    
+                ).catch (
+                    error=>console.log(error)
+                );
+            }
         }
         function getOeuvres(){
             //gestion avec omk
@@ -75,10 +115,10 @@ export class oeuvres {
                 me.auth.omk.getAllItems('resource_class_id='+me.auth.omk.getClassByTerm('genex:Oeuvre')["o:id"],function(data){
                     me.oeuvres = data;
                     me.oeuvres.unshift(
-                        {'o:id_oeu':-1,'o:title':'New work'}, 
-                        {'o:id_oeu':-2,'o:title':'<hr class="dropdown-divider">'}
+                        {'id_oeu':-1,'o:title':'New work'}, 
+                        {'id_oeu':-2,'o:title':'<hr class="dropdown-divider">'}
                     );
-                    d3.select(me.tgtMenu).selectAll('li').data(me.oeuvres).enter().append('li')
+                    me.tgtMenu.selectAll('li').data(me.oeuvres).enter().append('li')
                         .append('button')
                         .attr('type', "button")
                         .attr('class',"dropdown-item")
@@ -97,7 +137,7 @@ export class oeuvres {
                         {'id_oeu':-1,'lib':'New work'}, 
                         {'id_oeu':-2,'lib':'<hr class="dropdown-divider">'}
                     );
-                    d3.select(me.tgtMenu).selectAll('li').data(me.oeuvres).enter().append('li')
+                    me.tgtMenu.selectAll('li').data(me.oeuvres).enter().append('li')
                         .append('button')
                         .attr('type', "button")
                         .attr('class',"dropdown-item")
@@ -117,7 +157,7 @@ export class oeuvres {
         this.showOeuvre = function (e,oeu,id){
             if(id)oeu=me.oeuvres.filter(r=>(me.auth.omk ? r['o:id'] : r.id_oeu)==id)[0];
             else me.appUrl.params=false;
-            if(oeu.id_oeu==-1)addOeuvre();
+            if(oeu.id_oeu==-1)me.addOeuvre();
             else if(oeu.id_oeu==-2)return;
             else{
                 me.curOeuvre=oeu;
@@ -180,7 +220,7 @@ export class oeuvres {
         function getStat(){
             console.log('removeOeuvreVerif');
         }
-        function addOeuvre(){
+        this.addOeuvre = function(){
             if(!me.auth.user){
                 mMessage.setBody('<h3>Log in to create a work</h3>');
                 mMessage.setBoutons([{'name':"Close"}])                
