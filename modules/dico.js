@@ -105,6 +105,7 @@ export class dico {
                     .on('click',me.importDico)                    
                 );
                 mainSlt.select("#btnDicoImport").on('click',me.showImportDico);            
+                mainSlt.select("#btnDicoExport").on('click',me.exportDico);            
             }
 
             //ajout la colone de résultat
@@ -240,6 +241,36 @@ export class dico {
               })
             return editors;
         }
+        this.exportDico = function(e,d){
+            const headers = me.data.length ? Object.keys(me.data[0]) : [];
+            const csvRows = [];
+            csvRows.push(headers.join(','));
+            me.data.forEach(row => {
+                const values = headers.map(h => {
+                    let v = row[h];
+                    if (typeof v === 'string') {
+                        // Escape quotes and wrap in quotes if needed
+                        v = v.replace(/"/g, '""');
+                        if (v.includes(',') || v.includes('"') || v.includes('\n')) {
+                            v = `"${v}"`;
+                        }
+                    }
+                    return v;
+                });
+                csvRows.push(values.join(','));
+            });
+            const csvContent = csvRows.join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = (me.omk ? me.d['o:title'] : me.d.nom) + '.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
         this.showImportDico = function(e,d){
             if(table.mImp)table.mImp.m.show();
         }

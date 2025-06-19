@@ -710,7 +710,18 @@ export class concept {
               me.tgtContent.select("#genTextjsEditor").html('No test generated');
               return;
             }
-            showResultGen(me.data,{'strct':rs},'jsEditor');           
+            showResultGen(me.data,{'strct':rs},'jsEditor');
+            /*constrution des tests
+            let tests = [
+              {'title':'Adjectif <i class="fa-solid fa-venus">','gen':'[12|m_joie@f_joie][=1|a_m_joie]','type':'Adjective','id_concept':me.data.id_concept},
+              {'title':'<i class="fa-solid fa-mars">','gen':'[12|m_bonheur@f_bonheur][=1|a_m_bonheur]','type':'Adjective','id_concept':me.data.id_concept},
+              {'title':'<i class="fa-solid fa-ellipsis">','gen':'[12|m_joie@f_joie][=1|a_m_joie][=1|a_f_joie]','type':'Adjective','id_concept':me.data.id_concept};
+            rs.forEach(r=>{
+              let test = {'title':r.title,'type':r.type,'id':r.id_concept};
+              if(r.type=='Term')test.term = r.id_term;
+              tests.push(test);
+            });
+            */           
           });
         }
 
