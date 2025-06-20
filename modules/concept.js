@@ -185,6 +185,11 @@ export class concept {
                     <li><a class="dropdown-item" id="btnGenereOld">Generate Old version</a></li>
                     <li><a class="dropdown-item" id="btnGenereTest">Generate tests</a></li>
                   </ul>
+                </li>
+                <li class="nav-item mx-1">
+                    <button type="button" id="btnDicoExport" class="btn btn-sm btn-danger">
+                        <i class="fa-solid fa-file-export"></i>
+                    </button>
                 </li>`;
             if(userAllowed){
               tools += `

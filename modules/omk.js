@@ -308,7 +308,7 @@ export class omk {
                 };
             return await postData({'u':url,'m':'POST'}, me.formatData(data));
         }
-        this.getsetResource = async function (r){
+        this.getsetResource = async function (r,u){
             if(me.items[r.index])return me.items[r.index];
             //vérifie l'existence de la ressource
             let query = "resource_class_id[]="+me.getClassByTerm(r.c)['o:id'], i=0;
@@ -318,14 +318,22 @@ export class omk {
                 +me.getPropId(k)
                 +"&property["+i+"][type]=eq&property["+i+"][text]="+encodeURI(r.verif[k]);
             }
-            let items = me.searchItems(query);
+            let items = me.searchItems(query),
+                url = me.api+'items?key_identity='+me.ident+'&key_credential='+me.key;
+                r.dt['o:resource_class']=r.c;
+                r.dt['o:resource_template']=r.rt;
             if(items.length){
                 me.items[r.index]=items[0];
-                return items[0];
+                //vérifie s'il faut faire un update
+                if(u){
+                    let uData = me.formatData(u);
+                    uData.forEach((v,k)=>{
+                        items[0][k].push(v);
+                    })
+                    me.items[r.index] = await postData({'u':url,'m':'PATCH'}, items[0]);
+                    return me.items[r.index];
+                }else return items[0];
             } 
-            let url = me.api+'items?key_identity='+me.ident+'&key_credential='+me.key;
-            r.dt['o:resource_class']=r.c;
-            r.dt['o:resource_template']=r.rt;
             me.items[r.index] = await postData({'u':url,'m':'POST'}, me.formatData(r.dt));
             return me.items[r.index];
         }

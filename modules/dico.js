@@ -359,7 +359,7 @@ export class dico {
                     dt = {
                     'o:resource_class':'genex:Concept',
                     'o:resource_template':'genex_Concept',
-                    'dcterms:title':r.type_concept+'_'+r.concept,
+                    'dcterms:title':r.concept ? r.concept : r.type_concept+'_'+r.concept,
                     'dcterms:description':r.description_concept,
                     'genex:hasType':r.type_concept,
                     'genex:hasDico':{'rid':me.d['o:id']},
@@ -393,16 +393,15 @@ export class dico {
                     'dcterms:title':r.title ? r.title : r.prefix ? r.prefix : r.generateur ? r.generateur : 'Term '+i,
                     'dcterms:description': r.description_term ? [r.description_term,JSON.stringify(r)] : JSON.stringify(r),
                     'genex:hasType':r.type_term,
-                    'genex:hasConcept':{'rid':oCpt['o:id']},
                     'genex:hasGenerateur':r.generateur,
                     'genex:hasPrefix':r.prefix,
                     'lexinfo:gender':r.gender,
-                    'genex:hasElision':elision,
+                    'genex:hasElision':r.hasElision,
                 };
-            dtAc[elision+'EliFemPlu'] = r.fem_plu;
-            dtAc[elision+'EliFemSing'] = r.fem_sin;
-            dtAc[elision+'EliMasPlu'] = r.mas_plu;
-            dtAc[elision+'EliMasSing'] = r.mas_sin;
+            dtAc[elision+'EliFemPlu'] = r.accordFemPlu;
+            dtAc[elision+'EliFemSing'] = r.accordFemSing;
+            dtAc[elision+'EliMasPlu'] = r.accordMasPlu;
+            dtAc[elision+'EliMasSing'] = r.accordMasSing;
             dt['genex:hasAccord']= annoAccord(dtAc,elision);
             if(r.conjugaison){
                 //récupère l'identifiant de conjugaison
@@ -413,11 +412,16 @@ export class dico {
                     divResult.append('div').attr("class","alert alert-danger").attr("role","alert").text("Term "+i+" - ERREUR : cette conjugaison n'existe pas : "+r.conjugaison);
                 }
             }
+            //l'identifier est l'ensemble des données
+            dt['dcterms:identifier']=JSON.stringify(dt);
+            //sauf le rapport au concept
+            dt['genex:hasConcept']={'rid':oCpt['o:id']};
             dtO.dt = dt;
-            dtO.verif={'dcterms:title':dt['dcterms:title']};
-            dtO['index'] = dt['dcterms:title'];
-            //on crée le terme si il n'existe pas
-            let o = await me.omk.getsetResource(dtO);
+            dtO.verif={'dcterms:identifier':dt['dcterms:identifier']};
+            dtO['index'] = dt['dcterms:identifier'];
+            // on crée le terme si il n'existe pas
+            // ou on ajoute le lien au concept si toutes les valeurs sont identiques
+            let o = await me.omk.getsetResource(dtO,[{'genex:hasConcept':{'rid':oCpt['o:id']}}]);
             divResult.append('div')
                 .attr("class","alert alert-info").attr("role","alert")
                 .text(dt['genex:hasType']+" "+i+" traité "+o["o:id"]+" - "+o["o:title"]+" : "+(new Date().toLocaleTimeString("fr-FR")));            
