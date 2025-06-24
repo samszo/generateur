@@ -20,17 +20,17 @@ export class appUrl {
             params.forEach(p => {
                 sp.set(p.k, p.v);                
             });
-            me.tgtIn.value = sp.toString();                                
+            me.tgtIn.value = "?"+sp.toString();                                
         }            
         this.change = function (k,v){
             let sp = new URLSearchParams(me.tgtIn.value);
             sp.set(k, v);
-            me.tgtIn.value = sp.toString();                                
+            me.tgtIn.value = "?"+sp.toString();                                
         }       
         this.set = function (k,v){
             let sp = new URLSearchParams(k+"="+v);
             sp.set(k, v);
-            me.tgtIn.value = sp.toString();                                
+            me.tgtIn.value = "?"+sp.toString();                                
         }       
         
         this.init();

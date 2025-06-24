@@ -31,7 +31,7 @@ export class dico {
             userAllowed = me.oeuvre.auth.userAdmin || me.oeuvre.auth.userAllowed(me.d.id_dico,me.oeuvre.dicosUti);
             //récupération de la table suivant le type
             for (const p in m.tables) {
-                if(m.tables[p].type==(me.omk ? me.d["dcterms:type"][0]["@value"] : me.d.type))table=m.tables[p];
+                if(m.tables[p].type==(me.omk ? me.d["genex:hasType"][0]["@value"] : me.d.type))table=m.tables[p];
             }
             /*La mise à jour n'est pas nickel => on recré totalement la grid*/
             mainSlt = d3.select(me.tgtContent);
@@ -242,29 +242,9 @@ export class dico {
             return editors;
         }
         this.exportDico = function(e,d){
-            const headers = me.data.length ? Object.keys(me.data[0]) : [];
-            const csvRows = [];
-            csvRows.push(headers.join(','));
-            me.data.forEach(row => {
-                const values = headers.map(h => {
-                    let v = row[h];
-                    if (typeof v === 'string') {
-                        // Escape quotes and wrap in quotes if needed
-                        v = v.replace(/"/g, '""');
-                        if (v.includes(',') || v.includes('"') || v.includes('\n')) {
-                            v = `"${v}"`;
-                        }
-                    }
-                    return v;
-                });
-                csvRows.push(values.join(','));
-            });
-            const csvContent = csvRows.join('\n');
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
+            const url = me.omk.api.replace("api/","s/balpien/page/ajax?json=1&helper=sql&action=exportDico&export=csv&idDico="+me.d['o:id']);
             a.href = url;
-            a.download = (me.omk ? me.d['o:title'] : me.d.nom) + '.csv';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -348,7 +328,7 @@ export class dico {
                     .text("FIN Traitement : "+(new Date().toLocaleTimeString("fr-FR")));
                 //explode les concepts
                 me.oeuvre.explodeConcept(curCpt);
-                me.loader.hide();
+                me.loader.hide(true);
                 return;
             }
             if(cpts[i].concept || cpts[i].type){
@@ -542,12 +522,12 @@ export class dico {
         }
         
         function verifDeleteItem(s,d){
-
+            mod.setTitle('Delete item');
             mod.setBody('<h3 class="bg-danger">Are you sure you want to delete this item?</h3>');
             mod.setBoutons([{'name':"Close"},
                 {'name':"Delete",'class':'btn-danger','fct':f=>deleteItem(s,d)}
                 ])                
-                mod.show();    
+            mod.show();    
         }
         function deleteItem(s,d){
             if(me.omk){
@@ -559,6 +539,11 @@ export class dico {
                         clearConcept(s);
                     }else{
                         console.log('error delete item',e);
+                        mod.setTitle(e.error);
+                        mod.setBody('<h3 class="bg-danger">'+e.message+'</h3>'+'<a href="'+e.link+'" target="_blank">Connexion</a>');
+                        mod.setBoutons([{'name':"Close"},
+                            {'name':"Delete",'class':'btn-danger','fct':f=>deleteItem(s,d)}
+                        ])                
                     }
                 }).catch(e=>{
                     console.log('error delete item',e);

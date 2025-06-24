@@ -4,7 +4,8 @@ export class modal {
         this.titre = params.titre ? params.titre : "Message";
         this.body = params.body ? params.body : "";
         this.boutons = params.boutons ? params.boutons : [{'name':"Close"}];
-        var m, mBody, mFooter;
+        this.mBody="";
+        var m, mFooter, mTitle;
         this.init = function () {
             //ajoute la modal pour les messages
             let html = `
@@ -27,8 +28,9 @@ export class modal {
                 .attr('id','modalGenerateur').attr('class','modal').attr('tabindex',-1);
             sm.html(html);
             m = new bootstrap.Modal('#modalGenerateur');
-            mBody = sm.select('.modal-body');
+            this.mBody = sm.select('.modal-body');
             mFooter = sm.select('.modal-footer');
+            mTitle = sm.select('.modal-title');
             me.setBoutons();
         }
         this.setBoutons = function(boutons=false){
@@ -57,7 +59,10 @@ export class modal {
             return {'m':new bootstrap.Modal('#'+p),'s':s};
         }
         this.setBody = function(html){
-            mBody.html(html);
+            this.mBody.html(html);
+        }
+        this.setTitle = function(html){
+            mTitle.html(html);
         }
         this.show = function(){
             m.show();

@@ -187,7 +187,7 @@ export class concept {
                   </ul>
                 </li>
                 <li class="nav-item mx-1">
-                    <button type="button" id="btnDicoExport" class="btn btn-sm btn-danger">
+                    <button type="button" id="btnCptExport" class="btn btn-sm btn-danger">
                         <i class="fa-solid fa-file-export"></i>
                     </button>
                 </li>`;
@@ -208,6 +208,9 @@ export class concept {
             let toolsNav = me.tgtContent.append('nav').attr('class','navbar navbar-expand-lg bg-light').html(tools);
             toolsNav.select('#ddmAddCptItem').selectAll('li').data(me.linkData).enter().append('li')
               .append('a').attr('class',"dropdown-item").html(ld=>ld.n).on('click',showAddItem);
+
+            toolsNav.select("#btnCptExport").on('click',me.exportCpt);            
+  
             if(me.omk){
               //ajoute le lien vers OmekaS
               toolsNav.select("#listBtnCpt").append('li').attr('class',"nav-item mx-2").append('a')
@@ -269,9 +272,21 @@ export class concept {
               changeTab(null,me.linkData.filter(ld=>ld.data.length)[0]);                
             }
         }
+        this.exportCpt = function(e,d){
+            const a = document.createElement('a');
+            const url = me.omk.api.replace("api/","s/balpien/page/ajax?json=1&helper=sql&action=exportCpt&export=csv&idCpt="+me.data.id);
+            a.href = url;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        
+
         function showAddItem(e,d){
           if(d.mAdd)d.mAdd.m.show();
-        }
+        }        
         function addItem(e,d){          
           //récupère les valeurs
           let valeurs = {};

@@ -3,6 +3,7 @@ import {dico} from './dico.js';
 import {modal} from './modal.js';
 import {modalAddOeuvre} from './modal.js';
 import jscrudapi from '../node_modules/js-crud-api/index.js';
+import {loader} from './loader.js';
 
 export class oeuvres {
     constructor(params) {
@@ -21,6 +22,7 @@ export class oeuvres {
         this.dicos=[];
         this.dicosUti=[];
         this.conjugaisons = false;
+        this.loader = new loader();
         var mAdd=new modal(),mMessage=new modal(), mAddOeuvre, mAddOeuvreBody;
         this.init = function () {
             getOeuvres();
@@ -44,7 +46,7 @@ export class oeuvres {
                     'o:resource_class':'genex:Dictionnaire',
                     'o:resource_template':'genex_dictionnaire',
                     'dcterms:title':"DS_"+nom,
-                    'dcterms:type':'concepts',
+                    'genex:hasType':'concepts',
                 };
                 me.auth.omk.createItem(dtDico, i=>{
                     console.log('Dico créé',i);
@@ -178,28 +180,64 @@ export class oeuvres {
             }
         }
         function verifDeleteOeuvre(){
-            let b = '<h3>Attention the deletion of the work leads to the deletion of : </h3>';
+            let b = '<h3 class="alert alert-danger">Attention the deletion of the work leads to the deletion of : </h3>';
             //vérifie les usages de l'oeuvre
-            me.api.stats('uses','oeuvre',me.curOeuvre.id_oeu).then(
-                data=>{
-                    b+='<h4>'+data[0].nbDico+' dictionaries</h4>';
-                    b+='<h4>'+data[0].nbConcept+' concept'+(data[0].nbConcept > 0 ? 's' : '')+'</h4>';
-                    mMessage.setBody(b);
-                    mMessage.setBoutons([{'name':"Close"},
-                        {'name':"Delete All",'class':'btn-danger','fct':me.delete}
-                        ])                
-                    mMessage.show();    
-                }
-            ).catch (
-                error=>{
-                    mMessage.setBody('<h3>Impossible to know the uses of the work</h3><p>'+error+'</p>');
-                    mMessage.setBoutons([{'name':"Close"}])                
-                    mMessage.show();
-                }
-            );                    
+            if(me.auth.omk){
+                d3.json(me.auth.omk.api.replace("api/","s/balpien/page/ajax")
+                    +"?json=1&helper=sql&action=getOeuvreUses&idOeu="+me.curOeuvre["o:id"]).then(
+                    data=>{
+                        if(data[0].nbDico==0){
+                            mMessage.setBody('<h3 class="alert alert-success">There are no uses of this work</h3>');
+                        }else{
+                            mMessage.setBody(b+'<ul id="lstDeleteItems"></ul>');
+                            let gMessage = d3.group(data, d => d.class);
+                            mMessage.mBody.select('#lstDeleteItems').selectAll('li').data(gMessage).enter()
+                                .append('li').attr("class","text-start alert alert-warning").attr("role","alert").html(d=>{
+                                    return '<strong>'+d[0]+'</strong> : '+d[1][0].nbItem+' item'+(d[1][0].nbItem > 1 ? 's' : '');
+                                });
+                            mMessage.mBody.append('div').attr("class","alert alert-danger").attr("role","alert").html("This action is irreversible");
+
+                        }
+                        mMessage.setBoutons([{'name':"Close"},
+                            {'name':"Delete All",'class':'btn-danger','fct':me.delete}
+                            ])                
+                        mMessage.show();
+
+                    })
+            }else{
+                me.api.stats('uses','oeuvre',me.curOeuvre.id_oeu).then(
+                    data=>{
+                        b+='<h4>'+data[0].nbDico+' dictionaries</h4>';
+                        b+='<h4>'+data[0].nbConcept+' concept'+(data[0].nbConcept > 0 ? 's' : '')+'</h4>';
+                        mMessage.setBody(b);
+                        mMessage.setBoutons([{'name':"Close"},
+                            {'name':"Delete All",'class':'btn-danger','fct':me.delete}
+                            ])                
+                        mMessage.show();    
+                    }
+                ).catch (
+                    error=>{
+                        mMessage.setBody('<h3>Impossible to know the uses of the work</h3><p>'+error+'</p>');
+                        mMessage.setBoutons([{'name':"Close"}])                
+                        mMessage.show();
+                    }
+                );
+            }                    
         }
         this.delete = function(){
             console.log('removeOeuvreVerif');
+
+            if(me.auth.omk){
+                d3.json(me.auth.omk.api.replace("api","s/balpien/page/ajax")+"?json=1&helper=sql&action=deleteOeuvre&idOeu="+me.curOeuvre["o:id"]).then(data=>{
+                    d3.select('#listDicos').select('h1').remove();                
+                    d3.select('#listDicos').selectAll('div').remove();                
+                    me.init();
+                    mMessage.hide();
+                    window.location.reload();
+                })
+                return;
+            }
+
             //construction des suppressions
             let p = [];
             me.dicos.forEach(d=>{
@@ -237,24 +275,25 @@ export class oeuvres {
                 me.auth.omk.getAllItems('filter[0][join]=and&filter[0][field][]=genex:hasDico&filter[0][type]=lres&filter[0][val]='+oeu["o:id"],function(data){
                     me.dicos = data;
                     d3.select(me.tgtList).selectAll('.gDicos').remove();
-                    let gDicos = d3.group(me.dicos, d => typeof d["genex:hasType"] !== 'undefined');
+                    let gDicos = d3.group(me.dicos, d => d["genex:hasType"][0]["@value"]);
                     d3.select(me.tgtList).selectAll('.gDicos')
                         .data(Array.from(gDicos))
                         .join(
                             enter => {
                                 let div = enter.append('div')
                                     .attr('id',d=>{
-                                        return 'dicos'+d[0] ? 'Gen':'Oeu'
+                                        return 'dicos'+d[0]=="général" ? 'Gen':'Oeu'
                                     }).attr('class','gDicos'),
                                     btn = `<button type="button" id="btnDicoAdd" class="btn btn-sm btn-danger ms-2">
                                             <i class="fa-regular fa-square-plus"></i>
                                         </button>`;
-                                div.append('h3').html(d=>d[0] ? 'general dictionaries' : 'work dictionaries'+btn);
+                                div.append('h3').html(d=>d[0]=="général" ? 'general dictionaries' : 'work dictionaries'+btn);
                                 div.append('ul').attr('class','list-group').call(showListedico);
                                 div.select('#btnDicoAdd').on('click',addNewDico);
                             },
                             //update => update.selectAll('ul').call(showListedico)
                         );
+                     me.loader.hide(true);                    
                 });
                 return
             }
@@ -305,7 +344,7 @@ export class oeuvres {
                                 'o:resource_class':'genex:Dictionnaire',
                                 'o:resource_template':'genex_dictionnaire',
                                 'dcterms:title':name,
-                                'dcterms:type':'concepts',
+                                'genex:hasType':'concepts',
                             };
                         me.auth.omk.createItem(dt, i=>{
                             console.log('Dico créé',i);
