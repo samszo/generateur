@@ -171,6 +171,9 @@ export class oeuvres {
                 let tools = me.auth.userAdmin || oeu.uti_id == me.auth.user.id ?
                     '<button id="btnDeleteOeuvre" type="button" class="btn btn-danger btn-sm mx-2"><i class="fa-solid fa-trash-can"></i></button>'
                     : "";
+                //ajoute le lien vers l'item omk
+                tools += '<a href="'+me.auth.omk.getAdminLink(oeu)+'" target="_blank"><img src="asset/images/logos/OmekaS.png" style="margin-top:-4px;height:30px" /></a>';
+
 
                 list.append('h1').html(
                     (me.auth.omk ? oeu['o:title'] : oeu.lib)+tools
@@ -275,7 +278,7 @@ export class oeuvres {
                 me.auth.omk.getAllItems('filter[0][join]=and&filter[0][field][]=genex:hasDico&filter[0][type]=lres&filter[0][val]='+oeu["o:id"],function(data){
                     me.dicos = data;
                     d3.select(me.tgtList).selectAll('.gDicos').remove();
-                    let gDicos = d3.group(me.dicos, d => d["genex:hasType"][0]["@value"]);
+                    let gDicos = d3.group(me.dicos, d => d["genex:isGeneral"] ? "général" : "oeuvre");
                     d3.select(me.tgtList).selectAll('.gDicos')
                         .data(Array.from(gDicos))
                         .join(
@@ -374,6 +377,15 @@ export class oeuvres {
                         li.append('label').attr('class','form-check-label')
                             .attr('for',d=>'dico'+me.auth.omk ? d['o:id'] : d.id_dico)
                             .html(d=>me.auth.omk ? d['o:title'] : d.nom/*+' ('+d.id_dico+')'*/);
+                        /*ajoute un lien vers l'item omk
+                        NON car en conflit avec la sélection du dico
+                        li.append('a')
+                            .attr('href',d=>me.auth.omk.getAdminLink(d))
+                            .attr('target',"_blank")
+                            .append('img').attr('src','asset/images/logos/OmekaS.png')
+                                .style("margin-left","2px")
+                                .style("height","20px");
+                        */
                     },
                     update => {
                         let li = update.selectAll('li')

@@ -42,7 +42,8 @@ export class dico {
             colL = row.append('div').attr('class','h-100 '+(table.content ? 'w-auto':'w-100'));
             if(userAllowed){
                 //ajoute les outils
-                let tools = `<div class="container-fluid">
+                let general = me.omk && me.d['genex:isGeneral'] ? true : false,
+                    tools = `<div class="container-fluid">
                 <a class="navbar-brand" href="#">${me.omk ? me.d['o:title'] : me.d.nom}</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarDico" aria-controls="navbarDico" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -50,17 +51,17 @@ export class dico {
                 <div class="collapse navbar-collapse" id="navbarDico">
                     <ul id="listBtnDico" class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item mx-1">
-                            <button type="button" id="btnDicoAddItem" class="btn btn-sm btn-danger">
+                            <button type="button" id="btnDicoAddItem" class="btn btn-sm btn-danger" ${general ? 'disabled':''}>
                                 <i class="fa-regular fa-square-plus"></i>
                             </button>
                         </li>
                         <li class="nav-item mx-1">
-                            <button type="button" id="btnDicoDel" class="btn btn-sm btn-danger">
+                            <button type="button" id="btnDicoDel" class="btn btn-sm btn-danger" ${general ? 'disabled':''}>
                                 <i class="fa-regular fa-trash-can"></i>
                             </button>
                         </li>
                         <li class="nav-item mx-1">
-                            <button type="button" id="btnDicoImport" class="btn btn-sm btn-danger">
+                            <button type="button" id="btnDicoImport" class="btn btn-sm btn-danger" ${general ? 'disabled':''}>
                                 <i class="fa-solid fa-download"></i>
                             </button>
                         </li>                    
