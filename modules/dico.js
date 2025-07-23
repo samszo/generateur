@@ -368,10 +368,12 @@ export class dico {
             //création du terme
             let dtO = {'rt':'genex_Term','c':'genex:Term','dt':{}}, dtAc = {},
                 elision = r.elision ? '' : 'no',
-                dt = {
+                termTitle = r.term ? r.term : r.type_term+':';
+                termTitle += r.generateur ? r.generateur : r.prefix+' - '+r.gender+' - '+r.hasElision+' - '+r.accordFemSing+'_'+r.accordFemplu+'_'+r.accordMasSing+'_'+r.accordMasPlu;
+            let dt = {
                     'o:resource_class':'genex:Term',
                     'o:resource_template':'genex_Term',
-                    'dcterms:title':r.title ? r.title : r.prefix ? r.prefix : r.generateur ? r.generateur : 'Term '+i,
+                    'dcterms:title':termTitle,
                     'dcterms:description': r.description_term ? [r.description_term,JSON.stringify(r)] : JSON.stringify(r),
                     'genex:hasType':r.type_term,
                     'genex:hasGenerateur':r.generateur,

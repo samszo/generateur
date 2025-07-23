@@ -190,8 +190,9 @@ export class oeuvres {
                 d3.json(me.auth.omk.api.replace("api/","s/balpien/page/ajax")
                     +"?json=1&helper=sql&action=getOeuvreUses&idOeu="+me.curOeuvre["o:id"]).then(
                     data=>{
-                        if(data[0].nbDico==0){
+                        if(data.length==0){
                             mMessage.setBody('<h3 class="alert alert-success">There are no uses of this work</h3>');
+                            me.delete();
                         }else{
                             mMessage.setBody(b+'<ul id="lstDeleteItems"></ul>');
                             let gMessage = d3.group(data, d => d.class);
