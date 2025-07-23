@@ -1,15 +1,14 @@
-concept,description_concept,type_concept,type_term,description_term,generateur,prefix,gender,conjugaison,elision,fem_sin,fem_plu,mas_sin,mas_plu
-paris 8,La liste des bâtiments de Paris 8,batiment,substantif,,A,,,,,,,,
-,,,substantif,,B,,,,,,,,
-,,,substantif,,C,,,,,,,,
-,,,substantif,,D,,,,,,,,
-,,,substantif,,E,,,,,,,,
-paris 8,Numéro des salles de Paris 8,numsalle,nombre,,1->99,,,,,,,,
-paris 8,Etages des batiments de Paris 8,étage,nombre,,0->5,,,,,,,,
-topos,Le nom de la salle,salle,générateur,,[batiment_paris 8] [étage_paris 8][numsalle_paris 8],,,,,,,,
-chora,Ce qui se passe dans une salle de cours,salle,générateur,,dans la salle [salle_topo] on trouve [66|argot_étudiant] qui [030000000|v_chanter],,,,,,,,
-étudiant,,argot,adjectif,https://www.languefrancaise.net/Bob/16787,,badouillard,,,,e,es,,s
-,,,adjectif,https://www.languefrancaise.net/Bob/22002,,basingot,,,,te,tes,,s
-,,,adjectif,https://www.languefrancaise.net/Bob/4904,,bûche,,,,use,uses,ur,urs
-,,,adjectif,https://www.languefrancaise.net/Bob/86944,,lettreu,,,,se,ses,x,x
-test,,ancien,générateur,,[62|a_ancien@m_livre] [10|m_médecine],,,,,,,,
+concept,description_concept,type_concept,term,type_term,description_term,generateur,prefix,gender,conjugaison,elision,fem_sin,fem_plu,mas_sin,mas_plu
+paris 8,La liste des bâtiments de Paris 8,bâtiment,sub:A,substantif,,,A,,,,,,,
+,,,sub:B,substantif,,,B,,,,,,,
+,,,sub:C,substantif,,,C,,,,,,,
+,,,sub:C,substantif,,,D,,,,,,,
+,,,sub:E,substantif,,,E,,,,,,,
+paris 8,Numéro des salles de Paris 8,numsalle,Nombre de 1 à 9,nombre,,,1->99,,,,,,,
+paris 8,Etages des batiments de Paris 8,étage,Nombre de 0 à 5,nombre,,,0->5,,,,,,,
+topos,Le nom de la salle,salle,generateur:bât étage numsalle,générateur,,[batiment_paris 8] [étage_paris 8][numsalle_paris 8],,,,,,,,
+chora,Ce qui se passe dans une salle de cours,salle,generateur:dans la salle… in trouve…,générateur,,dans la salle [salle_topo] on trouve [66|argot_étudiant] qui [030000000|v_chanter],,,,,,,,
+étudiant,,argot,adjectif:badouillard,adjectif,https://www.languefrancaise.net/Bob/16787,,badouillard,,,,e,es,,s
+,,,adjectif:basingot,adjectif,https://www.languefrancaise.net/Bob/22002,,basingot,,,,te,tes,,s
+,,,adjectif:bûche,adjectif,https://www.languefrancaise.net/Bob/4904,,bûche,,,,use,uses,ur,urs
+,,,adjectif:lettreu,adjectif,https://www.languefrancaise.net/Bob/86944,,lettreu,,,,se,ses,x,x

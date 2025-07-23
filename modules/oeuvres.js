@@ -46,6 +46,7 @@ export class oeuvres {
                     'o:resource_class':'genex:Dictionnaire',
                     'o:resource_template':'genex_dictionnaire',
                     'dcterms:title':"DS_"+nom,
+                    'genex:isGeneral':"non",
                     'genex:hasType':'concepts',
                 };
                 me.auth.omk.createItem(dtDico, i=>{
@@ -278,19 +279,19 @@ export class oeuvres {
                 me.auth.omk.getAllItems('filter[0][join]=and&filter[0][field][]=genex:hasDico&filter[0][type]=lres&filter[0][val]='+oeu["o:id"],function(data){
                     me.dicos = data;
                     d3.select(me.tgtList).selectAll('.gDicos').remove();
-                    let gDicos = d3.group(me.dicos, d => d["genex:isGeneral"] ? "général" : "oeuvre");
+                    let gDicos = d3.group(me.dicos, d => d["genex:isGeneral"][0]["@value"]);
                     d3.select(me.tgtList).selectAll('.gDicos')
                         .data(Array.from(gDicos))
                         .join(
                             enter => {
                                 let div = enter.append('div')
                                     .attr('id',d=>{
-                                        return 'dicos'+d[0]=="général" ? 'Gen':'Oeu'
+                                        return 'dicos'+d[0]=="oui" ? 'Gen':'Oeu'
                                     }).attr('class','gDicos'),
                                     btn = `<button type="button" id="btnDicoAdd" class="btn btn-sm btn-danger ms-2">
                                             <i class="fa-regular fa-square-plus"></i>
                                         </button>`;
-                                div.append('h3').html(d=>d[0]=="général" ? 'general dictionaries' : 'work dictionaries'+btn);
+                                div.append('h3').html(d=>d[0]=="oui" ? 'general dictionaries' : 'work dictionaries'+btn);
                                 div.append('ul').attr('class','list-group').call(showListedico);
                                 div.select('#btnDicoAdd').on('click',addNewDico);
                             },

@@ -42,7 +42,7 @@ export class dico {
             colL = row.append('div').attr('class','h-100 '+(table.content ? 'w-auto':'w-100'));
             if(userAllowed){
                 //ajoute les outils
-                let general = me.omk && me.d['genex:isGeneral'] ? true : false,
+                let general = me.omk && me.d['genex:isGeneral'][0]["@value"]=="oui" ? true : false,
                     tools = `<div class="container-fluid">
                 <a class="navbar-brand" href="#">${me.omk ? me.d['o:title'] : me.d.nom}</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarDico" aria-controls="navbarDico" aria-expanded="false" aria-label="Toggle navigation">
