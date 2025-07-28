@@ -31,86 +31,48 @@ export class concept {
             sparqlEndpoint: 'https://query.wikidata.org/sparql'
           });
 
-          if(me.omk) {
-            d3.json(me.omk.api.replace("api","s/balpien/page/ajax")+"?json=1&helper=sql&action=getConceptTerms&idCpt="+me.data.id).then(data=>{
-              userAllowed = true;
-              me.linkData=[
-                {'class':me.omk.getClassByTerm('genex:Term'),data:[],mAdd:true},
-                //uniquement dans le dictionnaire général {n:'Syntagms',t:'gen_syntagmes',k:'id_syn',data:[],mAdd:true},
-                //{n:'Verbs',t:'gen_verbes',k:'id_verbe',data:[],mAdd:true},
-                {n:'Uris',t:'gen_uris',k:'id_uri',data:[],mAdd:true},
-                {n:'Sparqls',t:'gen_sparqls',k:'id_sparql',data:[],mAdd:true},
-              ];
-              //construction des modals pour chaque type d'item              
-              let grpData = d3.group(data,d=>d["resource_class_id"]+"");
-              me.linkData.forEach(ld=>{
-                if(ld.class){
-                  ld.t = ld.class["o:id"]+"";
-                  ld.n = ld.class["o:local_name"];
-                  ld.mAdd = m.add('modalAddConcept'+ld.class["o:local_name"]+"s");                  
-                  ld.mAdd.s.select('.modal-footer').selectAll('button').remove();
-                  ld.mAdd.s.select('.modal-footer').selectAll('button').data([ld]).enter().append('button')
-                      .attr('type',"button")
-                      .attr('class',"btn btn-primary").html('Add new')
-                      .on('click',addItem);
-                  //ajoute les options de conjugaison
-                  if(ld.n=="Term"){
-                    me.conjData = me.oeuvre.getConjugaisons();
-                    ld.mAdd.s.select('#verbConj').selectAll('option').data(
-                      [{'id_conj':-1,'modele':'choose a conjugation model'}].concat(me.conjData)
-                      ).join(
-                      enter=>enter.append('option')
-                        .attr('value',c=>c.id)
-                        .html(c=>c.title.replace("Modèle de conjugaison : ",""))                    
-                    );
-                  }
-                  if(grpData.has(ld.t)){
-                    ld.data = grpData.get(ld.t);
-                  }else{
-                    ld.data = [];
-                  }
-                }
-              });
-              showLinkData();
-            }); 
-          }else{  
+          d3.json(me.omk.api.replace("api","s/balpien/page/ajax")+"?json=1&helper=sql&action=getConceptTerms&idCpt="+me.data.id).then(data=>{
+            userAllowed = true;
             me.linkData=[
-              {n:'Adjectives',t:'gen_adjectifs',k:'id_adj',data:[],mAdd:true},
-              {n:'Generators',t:'gen_generateurs',k:'id_gen',data:[],mAdd:true},
-              {n:'Nouns',t:'gen_substantifs',k:'id_sub',data:[],mAdd:true},
+              {'class':me.omk.getClassByTerm('genex:Term'),data:[],mAdd:true},
               //uniquement dans le dictionnaire général {n:'Syntagms',t:'gen_syntagmes',k:'id_syn',data:[],mAdd:true},
-              {n:'Verbs',t:'gen_verbes',k:'id_verbe',data:[],mAdd:true},
+              //{n:'Verbs',t:'gen_verbes',k:'id_verbe',data:[],mAdd:true},
               {n:'Uris',t:'gen_uris',k:'id_uri',data:[],mAdd:true},
               {n:'Sparqls',t:'gen_sparqls',k:'id_sparql',data:[],mAdd:true},
             ];
-            if(me.sync)getSyncLinkData();
-            else{
-              userAllowed = me.oeuvre.auth.userAdmin || me.oeuvre.auth.userAllowed(me.dico.id_dico,me.oeuvre.dicosUti);
-              //construction des modals pour chaque type de lien              
-              me.linkData.forEach(ld=>{
-                if(ld.mAdd){
-                  ld.mAdd = m.add('modalAddConcept'+ld.n);                  
-                  ld.mAdd.s.select('.modal-footer').selectAll('button').remove();
-                  ld.mAdd.s.select('.modal-footer').selectAll('button').data([ld]).enter().append('button')
-                      .attr('type',"button")
-                      .attr('class',"btn btn-primary").html('Add new')
-                      .on('click',addItem);
-                  if(ld.n=="Verbs"){
-                    //ajoute les options de conjugaison
-                    me.conjData = me.oeuvre.getConjugaisons();
-                    ld.mAdd.s.select('#verbConj').selectAll('option').data(
-                      [{'id_conj':-1,'modele':'choose a conjugation model'}].concat(me.conjData)
-                      ).join(
-                      enter=>enter.append('option')
-                        .attr('value',c=>c.id_conj)
-                        .html(c=>c.modele)                    
-                    );
-                  }
+            //construction des modals pour chaque type d'item              
+            let grpData = d3.group(data,d=>d["resource_class_id"]+"");
+            me.linkData.forEach(ld=>{
+              if(ld.class){
+                ld.t = ld.class["o:id"]+"";
+                ld.n = ld.class["o:local_name"];
+                ld.mAdd = m.add('modalAddConcept'+ld.class["o:local_name"]+"s");                  
+                ld.mAdd.s.select('.modal-footer').selectAll('button').remove();
+                ld.mAdd.s.select('.modal-footer').selectAll('button').data([ld]).enter().append('button')
+                    .attr('id',d=>"btnAction"+d.n)
+                    .attr('type',"button")
+                    .attr('class',"btn btn-warning").html('Add new')
+                    .on('click',addItem);
+                //ajoute les options de conjugaison
+                if(ld.n=="Term"){
+                  me.conjData = me.oeuvre.getConjugaisons();
+                  ld.mAdd.s.select('#verbConj').selectAll('option').data(
+                    [{'id_conj':-1,'modele':'choose a conjugation model'}].concat(me.conjData)
+                    ).join(
+                    enter=>enter.append('option')
+                      .attr('value',c=>c.id)
+                      .html(c=>c.title.replace("Modèle de conjugaison : ",""))                    
+                  );
                 }
-              })
-              getLinkData();
-            } 
-          }
+                if(grpData.has(ld.t)){
+                  ld.data = grpData.get(ld.t);
+                }else{
+                  ld.data = [];
+                }
+              }
+            });
+            showLinkData();
+          }); 
         }
         async function getSparql(d){
           let SPARQL = `SELECT ?item ?itemLabel WHERE {
@@ -176,16 +138,11 @@ export class concept {
               </button>
               <div class="collapse navbar-collapse" id="navbarConcept">
                 <ul id="listBtnCpt" class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item dropdown mx-2">
-                  <button type="button" class="btn btn-sm btn-danger dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                      <i class="fa-solid fa-shuffle"></i>
-                  </button>
-                  <ul class="dropdown-menu" id="ddmGenereItem" >
-                    <li><a class="dropdown-item" id="btnGenere">Generate</a></li>
-                    <li><a class="dropdown-item" id="btnGenereOld">Generate Old version</a></li>
-                    <li><a class="dropdown-item" id="btnGenereTest">Generate tests</a></li>
-                  </ul>
-                </li>
+                <li class="nav-item mx-1">
+                    <button type="button" id="btnGenere" class="btn btn-sm btn-danger">
+                        <i class="fa-solid fa-shuffle"></i>
+                    </button>
+                </li>                
                 <li class="nav-item mx-1">
                     <button type="button" id="btnCptExport" class="btn btn-sm btn-danger">
                         <i class="fa-solid fa-file-export"></i>
@@ -283,9 +240,54 @@ export class concept {
         }
 
         
-
+        function showUpdateItem(d, id){
+          if(d.mAdd){
+            d.mAdd.s.select(".modal-title").html("Update term")//Adding a new term
+            d.mAdd.s.select('#btnAction'+d.n)
+              .attr('class',d=>"btn btn-danger")//btn btn-warning
+              .html("Update");//.html('Add new')
+            let item = d.data.filter(i=>i.id==id)[0], accords = [];
+            item.accords.split(',').forEach(a=>{
+              let vals = a.split(' : ');
+              accords[vals[0]] = vals[1];
+            })
+            d.mAdd.s.selectAll('.inptValue').nodes().forEach(n=>{
+                if(n.hasAttribute("keycol")){
+                  console.log(n.getAttribute("keycol")+' '+n.value);
+                  switch (n.getAttribute('keycol')) {
+                    case 'genre':
+                      n.checked = item[n.getAttribute('keycol')] ? 1 : 0;                    
+                      break;                  
+                    case 'hasElision':
+                      n.checked =  accords[n.getAttribute('keycol')] ? 1 : 0;                    
+                      break;                  
+                    case 'accordFemSing':
+                    case 'accordMasSing':
+                    case 'accordFemPlu':
+                    case 'accordMasPlu':
+                      n.value =  accords[n.getAttribute('keycol')] ? accords[n.getAttribute('keycol')] : "";                    
+                      break;                  
+                    default:
+                      n.value = item[n.getAttribute('keycol')] ? item[n.getAttribute('keycol')] : "";
+                      break;
+                  }
+                }
+            });
+            d.mAdd.m.show();
+          }          
+        }
         function showAddItem(e,d){
-          if(d.mAdd)d.mAdd.m.show();
+          if(d.mAdd){
+            d.mAdd.s.select(".modal-title").html("Adding a new term")
+            d.mAdd.s.select('#btnAction'+d.n)
+              .attr('class',d=>"btn btn-warning")
+              .html('Add new')
+            d.mAdd.s.selectAll('.inptValue').nodes().forEach(n=>{
+              n.checked = false;
+              n.value = "";
+            });
+            d.mAdd.m.show();
+          }
         }        
         function addItem(e,d){          
           //récupère les valeurs
@@ -301,38 +303,33 @@ export class concept {
               }else 
                 valeurs[n.getAttribute('keycol')]=n.value;
           });
-          valeurs.id_concept= me.omk ? me.data.id : me.data.id_concept;
+          valeurs.id_concept= me.data.id;
           //création de l'item
-          if(me.omk){
-            let r = {'elision':valeurs.elision ? 0 : 1,
-                'title' : valeurs.title,
-                'prefix' : valeurs.prefix,
-                'description_term':valeurs.description,
-                'type_term':valeurs.type,
-                'generateur':valeurs.valeur,
-                'gender':valeurs.gender,
-                'fem_plu':valeurs.f_s,
-                'fem_sin':valeurs.f_p,
-                'mas_plu':valeurs.m_s,
-                'mas_sin':valeurs.m_p            
-              };        
-            me.oDico.createTerm({'o:id':me.data.id}, r, 1, d.mAdd.s.select('#creaTermResult'));
-          }else{
-            me.api.create(d.t,valeurs).then(
-              id=>{
-                  //récupère l'item
-                  me.api.read(d.t,id).then(
-                      item=>{
-                        d.data.push(item);                            
-                        d.mAdd.m.hide();
-                        changeTab(null,d);
-                      }
-                  );   
-              }    
-            ).catch (
-                error=>console.log(error)
-            );    
-          }        
+          let title =  valeurs.type+':'
+                  +(valeurs.gen ? valeurs.gen : "")
+                  +' - '+(valeurs.prefix ? valeurs.prefix : "")
+                  +' - '+(valeurs.gender?valeurs.gender:"")
+                  +' - '+(valeurs.elision?valeurs.hasElision:"")
+                  +' - '+(valeurs.accordFemSing?valeurs.accordFemSing:"")
+                  +'_'+(valeurs.accordFemPlu?valeurs.accordFemPlu:"")
+                  +'_'+(valeurs.accordMasSing?valeurs.accordMasSing:"")
+                  +'_'+(valeurs.accordMasPlu?valeurs.accordMasPlu:""),
+            r = {'elision':valeurs.elision ? 0 : 1,
+              'title' : title,
+              'prefix' : valeurs.prefix,
+              'description_term':valeurs.description,
+              'type_term':valeurs.type,
+              'generateur':valeurs.gen,
+              'gender':valeurs.gender,
+              'fem_plu':valeurs.accordFemPlu,
+              'fem_sin':valeurs.accordFemSing,
+              'mas_plu':valeurs.accordMasSing,
+              'mas_sin':valeurs.accordMasPlu            
+            };
+
+          if(d.mAdd.s.select(".modal-title").html()=="Update term")
+            r.id = valeurs.id;
+          me.oDico.createTerm({'o:id':me.data.id}, r, 1, d.mAdd.s.select('#creaTermResult'));
         }
         function changeTab(e,d){
           contResult.selectAll('div').remove();
@@ -447,9 +444,13 @@ export class concept {
                 let dr = d.hot.getDataAtRow(r),
                   cols = d.hot.getColHeader();
                 cols.forEach((col,i)=>{
-                  if(col.substring(0,2)=='id')me.appUrl.change(col,dr[i]);
+                  if(col.substring(0,2)=='id'){
+                    showUpdateItem(d, dr[i]);
+                    me.appUrl.change(col,dr[i]);
+                  }
                 })
               });
+              /*
               d.hot.addHook('afterChange', (changes,s) => {
                 changes?.forEach(([r, p, oldValue, newValue]) => {
                   //mise à jour de l'item
@@ -464,6 +465,7 @@ export class concept {
                   );            
                 });    
               });
+              */
 
               if(me.appUrl.params && me.appUrl.params.has('id_gen')){
                 const search = d.hot.getPlugin('search');
@@ -641,7 +643,7 @@ export class concept {
 
         function showGen(d,g,view){
           if(me.omk){
-            let url = me.omk.api.replace("api","s/balpien/page/ajax")+"?json=1&helper=generate&structure=1&"
+            let url = me.omk.api.replace("api","s/balpien/page/ajax")+"?json=1&helper=generate&structure=1&explode=1&"
               +(g.term ? "idTerm="+g.term+"&idConcept="+g.concept : "idConcept="+g.id);
             d3.json(url).then(data=>{
               console.log(data);

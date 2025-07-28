@@ -234,10 +234,14 @@ export let modalAddConceptTerms = `
         </div>
         <div class="modal-body">
             <div id="creaTermResult" class="row"></div>
+            <input type="hidden" class="inptValue" keycol='id' value="" />
+            <input type="hidden" class="inptValue" keycol='accord_id' value="" />
+            <!-- input pour le titre du terme 
             <div class="input-group my-3">
                 <span class="input-group-text" id="lblTitle">Title</span>
                 <input type="text" class="form-control inptValue" keycol='title' placeholder="title" aria-label="name" aria-describedby="lblTitle">
             </div>            
+            -->
             <div class="input-group my-3">
                 <span class="input-group-text" id="lblDesc">Description</span>
                 <input type="text" class="form-control inptValue" keycol='description' placeholder="description" aria-label="name" aria-describedby="lblDesc">
@@ -252,7 +256,7 @@ export let modalAddConceptTerms = `
             </div>            
             <div class="input-group my-3">
                 <span class="input-group-text" id="lblGen">Generator</span>
-                <textarea class="form-control inptValue" keycol='valeur' placeholder="Put the value of generator" id="genValue" style="height: 100px"></textarea>
+                <textarea class="form-control inptValue" keycol='gen' placeholder="Put the value of generator" id="genValue" style="height: 100px"></textarea>
             </div>   
             <div class="input-group my-3">
                 <span class="input-group-text" id="choixGenre">Gender</span>
@@ -281,31 +285,33 @@ export let modalAddConceptTerms = `
             <div class="border border-black p-1">
                 <h5 class="modal-title">Agreement</h5>
                 <div class="input-group my-3">
-                    <label class="input-group-text" >Elision</label>
-                    <div class="form-check form-check-inline mx-2 my-1">
-                        <input class="form-check-input" type="radio" keycol='elision' id="rElision1" value="1">
-                        <label class="form-check-label text-dark bg-white" for="rElision1">Yes</label>
-                    </div>
-                    <div class="form-check form-check-inline my-1">
-                        <input class="form-check-input" type="radio" keycol='elision' id="rElision0" value="0">
-                        <label class="form-check-label text-dark bg-white" for="rElision0">No</label>
+                    <label class="input-group-text" id="choixElision">Elision</label>
+                    <div aria-describedby="choixElision" class="m-2">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" keycol='hasElision' id="rElision1" value="1">
+                            <label class="form-check-label text-dark bg-white" for="rElision1">Yes</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" keycol='hasElision' id="rElision0" value="0">
+                            <label class="form-check-label text-dark bg-white" for="rElision0">No</label>
+                        </div>                
                     </div>                
                 </div>
                 <div class="input-group mb-3">
                     <span class="input-group-text" id="adjf_s"><i class="fa-solid fa-venus"></i></span>
-                    <input type="text" class="form-control inptValue" keycol='f_s' aria-label="name" aria-describedby="adjf_s">
+                    <input type="text" class="form-control inptValue" keycol='accordFemSing' aria-label="name" aria-describedby="adjf_s">
                 </div>            
                 <div class="input-group mb-3">
                     <span class="input-group-text" id="adjf_p"><i class="fa-solid fa-venus-double"></i></span>
-                    <input type="text" class="form-control inptValue" keycol='f_p' aria-label="name" aria-describedby="adjf_p">
+                    <input type="text" class="form-control inptValue" keycol='accordFemPlu' aria-label="name" aria-describedby="adjf_p">
                 </div>            
                 <div class="input-group mb-3">
                     <span class="input-group-text" id="adjm_s"><i class="fa-solid fa-mars"></i></span>
-                    <input type="text" class="form-control inptValue" keycol='m_s' aria-label="name" aria-describedby="adjm_s">
+                    <input type="text" class="form-control inptValue" keycol='accordMasSing' aria-label="name" aria-describedby="adjm_s">
                 </div>            
                 <div class="input-group mb-3">
                     <span class="input-group-text" id="adjm_p"><i class="fa-solid fa-mars-double"></i></span>
-                    <input type="text" class="form-control inptValue" keycol='m_p' aria-label="name" aria-describedby="adjm_p">
+                    <input type="text" class="form-control inptValue" keycol='accordMasPlu' aria-label="name" aria-describedby="adjm_p">
                 </div>            
             </div>
 

@@ -268,48 +268,7 @@ export class dico {
                     skip_empty_lines: true,
                     trim: true
                   });
-                if(me.omk) {
-                    createConcepts(records,table.mImp.s.select('#resultImport'),0);
-                }else {
-                    records.forEach(r=>{
-                        //récupération du concept   
-                        //pour minimiser les appels à la base
-                        if(!r.type){
-                            let cpt = r.concept.split('_');
-                            r.type = cpt[0];
-                            r.concept = cpt[1];
-                        }
-                        let rs, dt, idItem, idConcept, cpt = me.data.filter(c=>c.type==r.type && c.lib == r.concept);
-                        if(cpt.length==0){
-                            idConcept = me.api.syncCreate(table.t, {'id_dico':me.d.id_dico,'type':r.type,'lib':r.concept});
-                            me.data.push({'id_concept':idConcept,'id_dico':me.d.id_dico,'type':r.type,'lib':r.concept});
-                        }else{
-                            idConcept = cpt[0].id_concept;
-                        } 
-                        //ajoute l'item suivant le type
-                        if(r.type && r.concept && r.valeur){
-                            //vérifie l'existence
-                            rs = me.api.syncList('gen_generateurs',['id_concept,eq,'+idConcept,'valeur,eq,'+r.valeur]);
-                            dt = {'id_concept':idConcept,'valeur':r.valeur};
-                            //ajoute ou update                           
-                            if(rs.records.length==0)
-                                idItem = me.api.syncCreate('gen_generateurs', dt);
-                            else
-                                idItem = me.api.syncUpdate('gen_generateurs', dt, rs.records[0].id_gen);
-                        }
-                        if(r.uri && r.concept && r.lib && r.format){
-                            //vérifie l'existence
-                            //{filter:['field1,modifier1,value1','field2,modifier2,value2']}); // AND
-                            rs = me.api.syncList('gen_uris',{filter:['id_concept,eq,'+idConcept,'uri,eq,'+encodeURIComponent(r.uri)]});
-                            dt = {'id_concept':idConcept,'uri':r.uri,'lib':r.lib,'format':r.format};
-                            //ajoute ou update                           
-                            if(rs.records.length==0)
-                                idItem = me.api.syncCreate('gen_uris', dt);
-                            else
-                                idItem = me.api.syncUpdate('gen_uris', dt, rs.records[0].id_uri);
-                        }
-                    })
-                }
+                createConcepts(records,table.mImp.s.select('#resultImport'),0);
                 /*    
                 d.hot.refreshDimensions();
                 d.hot.updateSettings({ data: me.data } )
@@ -340,7 +299,7 @@ export class dico {
                     dt = {
                     'o:resource_class':'genex:Concept',
                     'o:resource_template':'genex_Concept',
-                    'dcterms:title':r.concept ? r.concept : r.type_concept+'_'+r.concept,
+                    'dcterms:title':r.type_concept+'_'+r.concept,
                     'dcterms:description':r.description_concept,
                     'genex:hasType':r.type_concept,
                     'genex:hasDico':{'rid':me.d['o:id']},
@@ -366,25 +325,32 @@ export class dico {
         me.createTerm = async function (oCpt, r, i, divResult){
 
             //création du terme
-            let dtO = {'rt':'genex_Term','c':'genex:Term','dt':{}}, dtAc = {},
+            let o, dtO = {'rt':'genex_Term','c':'genex:Term','dt':{}}, dtAc = {},
                 elision = r.elision ? '' : 'no',
-                termTitle = r.term ? r.term : r.type_term+':';
-                termTitle += r.generateur ? r.generateur : r.prefix+' - '+r.gender+' - '+r.hasElision+' - '+r.accordFemSing+'_'+r.accordFemplu+'_'+r.accordMasSing+'_'+r.accordMasPlu;
+                termTitle = r.type_term+':'
+                    +(r.generateur ? r.generateur : "")
+                    +' - '+(r.prefix ? r.prefix : "")
+                    +' - '+(r.gender?r.gender:"")
+                    +' - '+(r.elision?r.elision:"")
+                    +' - '+(r.fem_sin?r.fem_sin:"")
+                    +'_'+(r.fem_plu?r.fem_plu:"")
+                    +'_'+(r.mas_sin?r.mas_sin:"")
+                    +'_'+(r.mas_plu?r.mas_plu:"");
             let dt = {
                     'o:resource_class':'genex:Term',
                     'o:resource_template':'genex_Term',
                     'dcterms:title':termTitle,
-                    'dcterms:description': r.description_term ? [r.description_term,JSON.stringify(r)] : JSON.stringify(r),
+                    'dcterms:description': r.description_term,
                     'genex:hasType':r.type_term,
                     'genex:hasGenerateur':r.generateur,
                     'genex:hasPrefix':r.prefix,
                     'lexinfo:gender':r.gender,
-                    'genex:hasElision':r.hasElision,
+                    'genex:hasElision':r.elision,
                 };
-            dtAc[elision+'EliFemPlu'] = r.accordFemPlu;
-            dtAc[elision+'EliFemSing'] = r.accordFemSing;
-            dtAc[elision+'EliMasPlu'] = r.accordMasPlu;
-            dtAc[elision+'EliMasSing'] = r.accordMasSing;
+            dtAc[elision+'EliFemPlu'] = r.fem_plu;
+            dtAc[elision+'EliFemSing'] = r.fem_sin;
+            dtAc[elision+'EliMasPlu'] = r.mas_plu;
+            dtAc[elision+'EliMasSing'] = r.mas_sin;
             dt['genex:hasAccord']= annoAccord(dtAc,elision);
             if(r.conjugaison){
                 //récupère l'identifiant de conjugaison
@@ -395,16 +361,21 @@ export class dico {
                     divResult.append('div').attr("class","alert alert-danger").attr("role","alert").text("Term "+i+" - ERREUR : cette conjugaison n'existe pas : "+r.conjugaison);
                 }
             }
-            //l'identifier est l'ensemble des données
-            dt['dcterms:identifier']=JSON.stringify(dt);
-            //sauf le rapport au concept
-            dt['genex:hasConcept']={'rid':oCpt['o:id']};
-            dtO.dt = dt;
-            dtO.verif={'dcterms:identifier':dt['dcterms:identifier']};
-            dtO['index'] = dt['dcterms:identifier'];
-            // on crée le terme si il n'existe pas
-            // ou on ajoute le lien au concept si toutes les valeurs sont identiques
-            let o = await me.omk.getsetResource(dtO,[{'genex:hasConcept':{'rid':oCpt['o:id']}}]);
+            if(r.id){
+                // on met à jour les données
+                o = await me.omk.updateRessource(r.id,dt,'items',null,'PATCH');
+            }else{
+                //l'identifier est l'ensemble des données
+                dt['dcterms:identifier']=JSON.stringify(dt);
+                //sauf le rapport au concept
+                dt['genex:hasConcept']={'rid':oCpt['o:id']};
+                dtO.dt = dt;
+                dtO.verif={'dcterms:identifier':dt['dcterms:identifier']};
+                dtO['index'] = dt['dcterms:identifier'];
+                // on crée le terme si il n'existe pas
+                // ou on ajoute le lien au concept si toutes les valeurs sont identiques
+                o = await me.omk.getsetResource(dtO,[{'genex:hasConcept':{'rid':oCpt['o:id']}}]);
+            }
             divResult.append('div')
                 .attr("class","alert alert-info").attr("role","alert")
                 .text(dt['genex:hasType']+" "+i+" traité "+o["o:id"]+" - "+o["o:title"]+" : "+(new Date().toLocaleTimeString("fr-FR")));            

@@ -311,17 +311,22 @@ export class omk {
         this.getsetResource = async function (r,u){
             if(me.items[r.index])return me.items[r.index];
             //vérifie l'existence de la ressource
-            let query = "resource_class_id[]="+me.getClassByTerm(r.c)['o:id'], i=0;
+            let query = "resource_class_id[]="+me.getClassByTerm(r.c)['o:id'], i=0, items=[], url;
             if(!r.verif)r.verif=r.dt;
-            for (const k in r.verif) {
-                query += "&property["+i+"][joiner]=and&property["+i+"][property]="
-                +me.getPropId(k)
-                +"&property["+i+"][type]=eq&property["+i+"][text]="+encodeURI(r.verif[k]);
-            }
-            let items = me.searchItems(query),
+            else if(r.verif.id){
+                items = me.getItem(r.verif.id);
+            }else{
+                for (const k in r.verif) {
+                    query += "&property["+i+"][joiner]=and&property["+i+"][property]="
+                    +me.getPropId(k)
+                    +"&property["+i+"][type]=eq&property["+i+"][text]="+encodeURI(r.verif[k]);
+                }
+                items = me.searchItems(query);
                 url = me.api+'items?key_identity='+me.ident+'&key_credential='+me.key;
                 r.dt['o:resource_class']=r.c;
                 r.dt['o:resource_template']=r.rt;
+            }
+            //création ou mise à jour de l'item
             if(items.length){
                 me.items[r.index]=items[0];
                 //vérifie s'il faut faire un update
