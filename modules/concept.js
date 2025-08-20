@@ -45,20 +45,20 @@ export class concept {
             ];
             //construction des modals pour chaque type d'item              
             let grpData = d3.group(data,d=>d["resource_class_id"]+""), 
-            btnParams = [{"t":"Create","f":addItem},{"t":"Update","f":addItem},{"t":"Delete","f":verifDeleteItem}];
+            btnParams = [{"t":"Create","a":addItem},{"t":"Update","a":addItem},{"t":"Delete","a":verifDeleteItem}];
             me.linkData.forEach(ld=>{
               if(ld.class){
                 ld.t = ld.class["o:id"]+"";
                 ld.n = ld.class["o:local_name"];
                 ld.mAdd = m.add('modalAddConcept'+ld.class["o:local_name"]+"s","modal-lg");                  
                 ld.mAdd.s.select('.modal-footer').selectAll('button').remove();                
-                ld.mAdd.s.select('.modal-footer').selectAll('button').data([ld,ld,ld]).enter().append('button')
+                ld.mAdd.s.select('.modal-footer').selectAll('button').data(btnParams).enter().append('button')
                     .attr('id',(d,i)=>{
-                      d.a = btnParams[i].f;
-                      return "btnAction"+d.n+i
+                      d.ld = ld;
+                      return "btnAction"+d.ld.n+i
                     })
                     .attr('type',"button")
-                    .attr('class',"btn btn-danger").html((d,i)=>btnParams[i].t)
+                    .attr('class',"btn btn-danger").html((d,i)=>d.t)
                     .on('click',runAction);
                 //ajoute les options
                 if(ld.n=="Term"){
@@ -95,7 +95,7 @@ export class concept {
         }
 
         function runAction(e,d){
-          d.a(e,d);
+          d.a(e,d.ld);
         }
 
         async function setParamGen(ld){

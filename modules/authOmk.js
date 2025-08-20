@@ -51,7 +51,7 @@ export class auth {
 
                         <div class="input-group mb-3">
                         <span class="input-group-text" id="serverIcon"><i class="fa-solid fa-server"></i></span>
-                        <input id="authServer" type="text" class="form-control" placeholder="Server" aria-label="Email" aria-describedby="serverIcon">
+                        <input id="authServer" value="${me.apiOmk}" type="text" class="form-control" placeholder="Server" aria-label="serveur url" aria-describedby="serverIcon">
                         </div>
 
                         <div class="input-group mb-3">
@@ -61,22 +61,14 @@ export class auth {
 
                         <div class="input-group mb-3">
                         <span class="input-group-text" id="identIcon"><i class="fa-solid fa-fingerprint"></i></i></span>
-                        <input id="authIdent" type="password" class="form-control" placeholder="Identity" aria-describedby="identIcon">
+                        <input id="authIdent" value="${me.ident}" type="password" class="form-control" placeholder="Identity" aria-describedby="identIcon">
                         </div>
                         
 
                         <div class="input-group mb-3">
                         <span class="input-group-text" id="mdpIcon"><i class="fa-solid fa-key"></i></span>
-                        <input id="authPwd" type="password" class="form-control" placeholder="Key" aria-describedby="mdpIcon">
+                        <input id="authPwd" value="${me.key}" type="password" class="form-control" placeholder="Key" aria-describedby="mdpIcon">
                         </div>
-
-                        <div class="input-group mb-3">
-                        <span class="input-group-text" id="keyGitHub">
-                        <i class="fa-brands fa-github"></i>
-                        <i style="margin-left:3px;" class="fa-solid fa-key"></i>
-                        </span>
-                        <input id="authGitHubKey" type="password" class="form-control" placeholder="GitHub Key" aria-describedby="keyGitHub">
-                        </div>                        
 
                         <div class="collapse" id="alertAuth">
                             <div  class="alert alert-danger d-flex align-items-center" role="alert">
@@ -113,17 +105,7 @@ export class auth {
                                 Please contact the administrator.                                
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="collapse" id="alertGitHub">
-                            <div  class="alert alert-warning d-flex align-items-center" role="alert">
-                                <i class="fa-solid fa-triangle-exclamation"></i>
-                                <div id='errorMessage' class='mx-1'>
-                                This GitHub Key is not correct !.
-                                </div>
-                            </div>
-                        </div>
-                        
+                        </div>                        
 
                     </div>                          
                     <div class="modal-footer">
@@ -141,12 +123,10 @@ export class auth {
             alertMail = new bootstrap.Collapse('#alertMail', {toggle: false});
             alertServer = new bootstrap.Collapse('#alertServer', {toggle: false});
             alertUnknown = new bootstrap.Collapse('#alertUnknown', {toggle: false});
-            alertGitHub = new bootstrap.Collapse('#alertGitHub', {toggle: false});
             alertAuth.hide();
             alertMail.hide();
             alertServer.hide();
             alertUnknown.hide();
-            alertGitHub.hide();
             //gestion des événements
             /*perturbe le passage de paramètres user
             me.m.selectAll("input").on('change',e=>{
@@ -179,6 +159,12 @@ export class auth {
                 }
             });                                                                                    
             me.m.select("#btnCheck").on('click',e=>{
+                //récupère les paramètres de connexion
+                me.apiOmk = me.m.select("#authServer").node().value;
+                if(me.apiOmk) me.apiOmk += me.apiOmk.slice(-1)=='/' ? "" : "/";
+                me.mail = me.m.select("#authMail").node().value;
+                me.ident = me.m.select("#authIdent").node().value;
+                me.key = me.m.select("#authPwd").node().value;
                 me.getUser(null);
             });  
         }
@@ -192,11 +178,6 @@ export class auth {
         this.getUser = function (cb){
 
             //vérifie la connexion à OMK
-            me.apiOmk = me.apiOmk ? me.apiOmk : me.m.select("#authServer").node().value;
-            if(me.apiOmk) me.apiOmk += me.apiOmk.slice(-1)=='/' ? "" : "/";
-            me.mail = me.mail ? me.mail : me.m.select("#authMail").node().value;
-            me.ident = me.ident ? me.ident : me.m.select("#authIdent").node().value;
-            me.key = me.key ? me.key : me.m.select("#authPwd").node().value;
             if(!me.mail || !me.ident || !me.key || !me.apiOmk){
                 if(cb)cb(me.user);
             }else{
@@ -213,11 +194,13 @@ export class auth {
                         if(nameLogin){
                             nameLogin.html(me.user['o:name']);
                             btnLogin.attr('class','btn btn-danger').html(iconOut);                        
-                            me.modal.hide();    
-                            authGitHub(uGitHub=>{
-                                me.user.loginGitHub=uGitHub;
-                                if(cb)cb(me.user);
-                            })
+                            me.modal.hide();
+                            if(me.loginGitHub) {                              
+                                authGitHub(uGitHub=>{
+                                    me.user.loginGitHub=uGitHub;
+                                    if(cb)cb(me.user);
+                                })
+                            }
                         }            
                     }
                 })    

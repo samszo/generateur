@@ -26,3 +26,4 @@ modules/authParams.js
 bdd/csv/.~lock.exportDico-gen français général.csv#
 bdd/csv/.~lock.TestImport.csv#
 bdd/gen_balpe.sql
+modules/authParamsLocal.js
