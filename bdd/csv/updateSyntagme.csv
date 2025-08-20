@@ -1,0 +1,219 @@
+id,title,idSyn,label,action
+3515,absolument,300,Syntagme,update
+3517,cent,301,Syntagme,update
+3518,cinquante,302,Syntagme,update
+3519,debout,303,Syntagme,update
+3520,deux,304,Syntagme,update
+3521,dix,305,Syntagme,update
+3522,hier,306,Syntagme,update
+3523,huit,307,Syntagme,update
+3524,lentement,308,Syntagme,update
+3526,maintenant,309,Syntagme,update
+3527,nettement,310,Syntagme,update
+3528,onze,311,Syntagme,update
+3532,!-,312,Syntagme,update
+3533,sans fin,313,Syntagme,update
+3534,seize,314,Syntagme,update
+3540,tellement,315,Syntagme,update
+3541,toujours,316,Syntagme,update
+3542,trente,317,Syntagme,update
+3543,trois,318,Syntagme,update
+3544,vingt,319,Syntagme,update
+3546,vraiment,320,Syntagme,update
+3547,suffisamment,321,Syntagme,update
+3548,immédiatement,322,Syntagme,update
+3549,jadis,323,Syntagme,update
+3550,avec avidité,324,Syntagme,update
+3551,avec passion,325,Syntagme,update
+3552,avidement,326,Syntagme,update
+3553,intensément,327,Syntagme,update
+3554,au plus haut point,328,Syntagme,update
+3555,considérablement,329,Syntagme,update
+3556,extrêmement,330,Syntagme,update
+3557,fort,331,Syntagme,update
+3558,fortement,332,Syntagme,update
+3559,grandement,333,Syntagme,update
+3560,infiniment,334,Syntagme,update
+3561,prodigieusement,335,Syntagme,update
+3562,profondément,336,Syntagme,update
+3563,des conglomérats,337,Syntagme,update
+3564,des foultitudes,338,Syntagme,update
+3565,quantité,339,Syntagme,update
+3566,bien,340,Syntagme,update
+3567,convenablement,341,Syntagme,update
+3568,correctement,342,Syntagme,update
+3569,facilement,343,Syntagme,update
+3570,normalement,344,Syntagme,update
+3571,bizarrement,345,Syntagme,update
+3572,curieusement,346,Syntagme,update
+3574,étrangement,347,Syntagme,update
+3575,paradoxalement,348,Syntagme,update
+3577,apparemment,349,Syntagme,update
+3578,certainement,350,Syntagme,update
+3579,évidemment,351,Syntagme,update
+3580,sans-doute,352,Syntagme,update
+3581,sûrement,353,Syntagme,update
+3582,vraisemblablement,354,Syntagme,update
+3583,complètement,355,Syntagme,update
+3584,totalement,356,Syntagme,update
+3585,tout à fait,357,Syntagme,update
+3586,ergo,358,Syntagme,update
+3587,par conséquent,359,Syntagme,update
+3588,en vain,360,Syntagme,update
+3589,inutilement,361,Syntagme,update
+3590,vainement,362,Syntagme,update
+3591,ensemble,363,Syntagme,update
+3592,tous ensemble,364,Syntagme,update
+3593,exactement,365,Syntagme,update
+3594,précisément,366,Syntagme,update
+3595,d'habitude,367,Syntagme,update
+3596,fréquemment,368,Syntagme,update
+3598,habituellement,369,Syntagme,update
+3599,le plus souvent,370,Syntagme,update
+3600,fortuitement,371,Syntagme,update
+3601,attentivement,372,Syntagme,update
+3602,longuement,373,Syntagme,update
+3603,patiemment,374,Syntagme,update
+3604,douze,375,Syntagme,update
+3609,treize,376,Syntagme,update
+3610,de temps en temps,377,Syntagme,update
+3611,par intermittences,378,Syntagme,update
+3612,par intervalles,379,Syntagme,update
+3613,par moments,380,Syntagme,update
+3614,approximativement,381,Syntagme,update
+3615,quasiment,382,Syntagme,update
+3616,vaguement,383,Syntagme,update
+3619,continuellement,384,Syntagme,update
+3620,continuement,385,Syntagme,update
+3621,indéfiniment,386,Syntagme,update
+3622,inépuisablement,387,Syntagme,update
+3623,intarissablement,388,Syntagme,update
+3624,perpétuellement,389,Syntagme,update
+3625,excepté,390,Syntagme,update
+3626,mis à part,391,Syntagme,update
+3628,avec attention,392,Syntagme,update
+3629,avec minutie,393,Syntagme,update
+3630,avec soin,394,Syntagme,update
+3631,méthodiquement,395,Syntagme,update
+3632,méticuleusement,396,Syntagme,update
+3633,minutieusement,397,Syntagme,update
+3634,scrupuleusement,398,Syntagme,update
+3635,soigneusement,399,Syntagme,update
+3636,abruptement,400,Syntagme,update
+3637,brusquement,401,Syntagme,update
+3638,brutalement,402,Syntagme,update
+3639,soudainement,403,Syntagme,update
+3640,tout à coup,404,Syntagme,update
+3641,tout d'un coup,405,Syntagme,update
+3643,communément,406,Syntagme,update
+3644,la plupart du temps,407,Syntagme,update
+3646,particulièrement,408,Syntagme,update
+3647,spécialement,409,Syntagme,update
+3649,constamment,410,Syntagme,update
+3650,éternellement,411,Syntagme,update
+3651,sans arrêt,412,Syntagme,update
+3653,des siècles,413,Syntagme,update
+3654,entièrement,414,Syntagme,update
+3655,intégralement,415,Syntagme,update
+3657,remarquablement,416,Syntagme,update
+3658,étonnamment,417,Syntagme,update
+3659,horriblement,418,Syntagme,update
+3660,légèrement,419,Syntagme,update
+3661,médiocrement,420,Syntagme,update
+3662,modérément,421,Syntagme,update
+3663,moyennement,422,Syntagme,update
+3664,sans exagération,423,Syntagme,update
+3665,un petit peu,424,Syntagme,update
+3666,un peu,425,Syntagme,update
+3667,un tant soit peu,426,Syntagme,update
+3668,à l'instant,427,Syntagme,update
+3670,hâtivement,428,Syntagme,update
+3671,précipitamment,429,Syntagme,update
+3672,promptement,430,Syntagme,update
+3673,rapidement,431,Syntagme,update
+3674,sans tarder,432,Syntagme,update
+3676,décidément,433,Syntagme,update
+3677,effectivement,434,Syntagme,update
+3678,réellement,435,Syntagme,update
+4213,marre,436,Syntagme,update
+4216,malgré tout,437,Syntagme,update
+4217,tout de même,438,Syntagme,update
+4218,maintes fois,439,Syntagme,update
+4219,solo,440,Syntagme,update
+4220,également,441,Syntagme,update
+4221,bonjour,442,Syntagme,update
+4224,récemment,443,Syntagme,update
+4225,1988,444,Syntagme,update
+4234,follement,445,Syntagme,update
+3146,[0|m_ailleurs],446,Syntagme,update
+4236,épisodiquement,447,Syntagme,update
+4237,périodiquement,448,Syntagme,update
+3357,terriblement,449,Syntagme,update
+4239,depuis toujours,450,Syntagme,update
+3151,au fur et à mesure,451,Syntagme,update
+3152,au gré,452,Syntagme,update
+4242,purement,453,Syntagme,update
+4243,simplement,454,Syntagme,update
+4245,six,455,Syntagme,update
+4246,très souvent,456,Syntagme,update
+4247,trop souvent,457,Syntagme,update
+4248,sept,458,Syntagme,update
+4249,.,459,Syntagme,update
+4276,quatorze,460,Syntagme,update
+4277,quatre,461,Syntagme,update
+4278,quinze,462,Syntagme,update
+4285,ainsi,463,Syntagme,update
+4286,définitivement,464,Syntagme,update
+4287,durablement,465,Syntagme,update
+4288,inéluctablement,466,Syntagme,update
+4289,irrévocablement,467,Syntagme,update
+4290,irréversiblement,468,Syntagme,update
+4292,essentiellement,469,Syntagme,update
+4293,avant tout,470,Syntagme,update
+4294,principalement,471,Syntagme,update
+4295,généralement,472,Syntagme,update
+4296,auto,473,Syntagme,update
+4297,.,474,Syntagme,update
+4298,machinalement,475,Syntagme,update
+4299,instinctivement,476,Syntagme,update
+4300,involontairement,477,Syntagme,update
+4301,mécaniquement,478,Syntagme,update
+4302,1,479,Syntagme,update
+4303,2,480,Syntagme,update
+4304,0,481,Syntagme,update
+4305,3,482,Syntagme,update
+4306,4,483,Syntagme,update
+4307,5,484,Syntagme,update
+4308,6,485,Syntagme,update
+4309,7,486,Syntagme,update
+4310,8,487,Syntagme,update
+4311,9,488,Syntagme,update
+4312,subitement,489,Syntagme,update
+4313,gaîment,490,Syntagme,update
+4314,joyeusement,491,Syntagme,update
+4315,jovialement,492,Syntagme,update
+4316,allègrement,493,Syntagme,update
+4317,incessamment,494,Syntagme,update
+4319,mollement,495,Syntagme,update
+4320,doucement,496,Syntagme,update
+4321,délicatement,497,Syntagme,update
+4322,délicieusement,498,Syntagme,update
+4323,paisiblement,499,Syntagme,update
+4324,furtivement,500,Syntagme,update
+4325,en grande partie,501,Syntagme,update
+4326,plus tard,502,Syntagme,update
+4327,le lendemain,503,Syntagme,update
+4328,[32|a_autre@m_jour 1],504,Syntagme,update
+4329,nullement,505,Syntagme,update
+4330,pas,506,Syntagme,update
+4331,pas du tout,507,Syntagme,update
+4333,autrefois,508,Syntagme,update
+4336,soudain,509,Syntagme,update
+4337,.,510,Syntagme,update
+4338,?,511,Syntagme,update
+4339,instantanément,512,Syntagme,update
+4340,sur le champ,513,Syntagme,update
+4341,tout de suite,514,Syntagme,update
+4342,à la minute même,515,Syntagme,update
+4344,ailleurs,516,Syntagme,update
+3225,naguère,517,Syntagme,update

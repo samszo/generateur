@@ -25,3 +25,4 @@ asset/data/generateur_old-20250406-072411.json
 modules/authParams.js
 bdd/csv/.~lock.exportDico-gen français général.csv#
 bdd/csv/.~lock.TestImport.csv#
+bdd/gen_balpe.sql

@@ -49,12 +49,12 @@ export class modal {
                 }
             })
         }
-        this.add = function(p){
+        this.add = function(p,size=""){
             //suprime la modal si elle existe pour éviter les objets en mémoire
             d3.select('#'+p).remove();
             //ajoute la modal si inexistant
             let s = d3.select('body').append('div')
-                .attr('id',p).attr('class','modal').attr('tabindex',-1);
+                .attr('id',p).attr('class','modal '+size).attr('tabindex',-1);
             s.html(eval(p));
             return {'m':new bootstrap.Modal('#'+p),'s':s};
         }
@@ -224,6 +224,102 @@ export let modalAddDicosyntagmes = `
     </div>
 `;
 
+//modal pour le paramètrage des générateurs
+export let modalParamsGen = `
+    <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title">Parameters for generator</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+
+            <div class="border border-black mt-3 px-2">
+                <h6 class="modal-title">Determinant for conjugation</h6>
+        <!--
+        Position 0 : type de négation
+        Position 1 : temps verbal
+        Position 2 : pronoms sujets définis
+        Positions 3 ET 4 : pronoms compléments
+        Position 5 : ordre des pronoms sujets
+        Position 6 : pronoms indéfinis
+        Position 7 : Place du sujet dans la chaîne grammaticale
+        -->                
+                <div class="row">
+                    <div class="col">         
+                        <div class="input-group mb-1">                  
+                            <label class="input-group-text" for="conjNeg">Négation</label>
+                            <select class="form-select" id="conjNeg" >
+                            </select>
+                        </div>            
+                        <div class="input-group mb-1">
+                            <label class="input-group-text" for="conjTemps">Temps</label>
+                            <select class="form-select" id="conjTemps">
+                                <option value="1">indicatif présent</option>
+                                <option value="2">indicatif imparfait</option>
+                                <option value="3">passé simple</option>
+                                <option value="4">futur simple</option>
+                                <option value="5">conditionnel présent</option>
+                                <option value="6">subjonctif présent</option>
+                                <option value="7">impératif</option>
+                                <option value="8">participe présent</option>
+                                <option value="9">infinitif</option>
+                            </select>
+                        </div>            
+                        <div class="input-group mb-1">
+                            <label class="input-group-text" for="conjSujet">Sujet</label>
+                            <select class="form-select" id="conjSujet">
+                            </select>
+                        </div>       
+                        <div class="input-group mb-1">
+                            <label class="input-group-text" for="conjSujetComp">Pronom complément</label>
+                            <select class="form-select" id="conjSujetComp">
+                            </select>
+                        </div>       
+                        
+                        <div class="input-group mb-1">
+                            <span class="input-group-text" id="choixOrdreProSuj">Ordre des pronoms sujets</span>
+                            <div aria-describedby="choixOrdreProSuj" class="form-control">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="ordreProSuj" id="ordreProSujInv" value="1">
+                                    <label class="form-check-label text-dark bg-white" for="ordreProSujInv">inverse</label>
+                                </div>                        
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="ordreProSuj" id="ordreProSujNormal" checked value="0">
+                                    <label class="form-check-label text-dark bg-white" for="ordreProSujInv" value="1">normal</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="input-group mb-1">
+                            <label class="input-group-text" for="conjSujetInd">Pronom indéfini</label>
+                            <select class="form-select" id="conjSujetInd">
+                            </select>
+                        </div>       
+                    </div>
+                </div>            
+                <div class="row mb-1">
+                    <div class="col">
+                        <button type="button" id="btnGenereDetConj" class="btn btn-sm btn-danger">
+                        Genére déterminant
+                        </button>
+                    </div>
+                    <div class="col">
+                        <div id="detConjResult" class="form-control" >
+                    </div>
+                </div>                
+            </div>
+
+
+
+        </div>                          
+        <div class="modal-footer">
+        </div>
+    </div>
+    </div>
+`;
+
+
 //modal pour l'ajout d'un term dans un concept
 export let modalAddConceptTerms = `
     <div class="modal-dialog">
@@ -234,59 +330,98 @@ export let modalAddConceptTerms = `
         </div>
         <div class="modal-body">
             <div id="creaTermResult" class="row"></div>
-            <input type="hidden" class="inptValue" keycol='id' value="" />
+            <input type="hidden" id="termId" class="inptValue" keycol='id' value="" />
             <input type="hidden" class="inptValue" keycol='accord_id' value="" />
             <!-- input pour le titre du terme 
-            <div class="input-group my-3">
+            <div class="input-group mb-1">
                 <span class="input-group-text" id="lblTitle">Title</span>
                 <input type="text" class="form-control inptValue" keycol='title' placeholder="title" aria-label="name" aria-describedby="lblTitle">
             </div>            
             -->
-            <div class="input-group my-3">
+            <div class="input-group mb-1">
                 <span class="input-group-text" id="lblDesc">Description</span>
                 <input type="text" class="form-control inptValue" keycol='description' placeholder="description" aria-label="name" aria-describedby="lblDesc">
             </div>            
-            <div class="input-group my-3">
-                <span class="input-group-text" id="lblType">Type</span>
-                <input type="text" class="form-control inptValue" keycol='type' placeholder="type" aria-label="name" aria-describedby="lblType">
-            </div>            
-            <div class="input-group my-3">
-                <span class="input-group-text" id="lblhasPrefix">Prefix</span>
-                <input type="text" class="form-control inptValue" keycol='prefix' placeholder="prefix" aria-label="name" aria-describedby="lblhasPrefix">
-            </div>            
-            <div class="input-group my-3">
-                <span class="input-group-text" id="lblGen">Generator</span>
-                <textarea class="form-control inptValue" keycol='gen' placeholder="Put the value of generator" id="genValue" style="height: 100px"></textarea>
-            </div>   
-            <div class="input-group my-3">
-                <span class="input-group-text" id="choixGenre">Gender</span>
-                <div aria-describedby="choixGenre" class="m-2">
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input inptValue" keycol='genre' type="radio" name="nounGenre" id="nounGenreF" value="feminin">
-                        <label class="form-check-label text-dark bg-white" for="nounGenreF"><i class="fa-solid fa-venus"></i></label>
-                    </div>                        
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input inptValue" keycol='genre' type="radio" name="nounGenre" id="nounGenreH" value="masculin">
-                        <label class="form-check-label text-dark bg-white" for="nounGenreH"><i class="fa-solid fa-mars"></i></label>
-                    </div>                        
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input inptValue" keycol='genre' type="radio" name="nounGenre" id="nounGenreN" value="neutre">
-                        <label class="form-check-label text-dark bg-white" for="nounGenreN"><i class="fa-solid fa-neuter"></i></label>
-                    </div>                        
-                </div>
-            </div>
-         
-            <div class="input-group my-3">
-                <label class="input-group-text" for="verbConj">Conjugation model</label>
-                <select class="form-select" id="verbConj">
-                    <option selected>Choose...</option>
+            <div class="input-group mb-1">
+                <label class="input-group-text" for="termType">Type</label>
+                <select class="form-select inptValue" keycol='type' id="termType">
                 </select>
             </div>            
-            <div class="border border-black p-1">
-                <h5 class="modal-title">Agreement</h5>
-                <div class="input-group my-3">
+            <div class="input-group mb-1">
+                <span class="input-group-text" id="lblhasPrefix">Prefix</span>
+                <input type="text" class="form-control inptValue" keycol='prefix' placeholder="prefix" aria-label="name" aria-describedby="lblhasPrefix">
+            </div>
+            <div class="row">
+                <div class="col">                
+                    <div class="input-group">
+                        <span class="input-group-text" id="choixGenre">Gender</span>
+                        <div aria-describedby="choixGenre" class="form-control">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input inptValue" keycol='genre' type="radio" name="nounGenre" id="nounGenreF" value="feminin">
+                                <label class="form-check-label text-dark bg-white" for="nounGenreF"><i class="fa-solid fa-venus"></i></label>
+                            </div>                        
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input inptValue" keycol='genre' type="radio" name="nounGenre" id="nounGenreH" value="masculin">
+                                <label class="form-check-label text-dark bg-white" for="nounGenreH"><i class="fa-solid fa-mars"></i></label>
+                            </div>
+                            <!--                        
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input inptValue" keycol='genre' type="radio" name="nounGenre" id="nounGenreN" value="neutre">
+                                <label class="form-check-label text-dark bg-white" for="nounGenreN"><i class="fa-solid fa-neuter"></i></label>
+                            </div>
+                            -->                        
+                        </div>
+                    </div>
+                </div>
+                <div class="col">         
+                    <div class="input-group">
+                        <label class="input-group-text" for="verbConj">Conjugation</label>
+                        <select class="form-select inptValue" keycol='hasConjugaison' id="verbConj">
+                            <option selected>Choose...</option>
+                        </select>
+                    </div>            
+                </div>
+            </div>            
+            
+            <div class="border border-black mt-3 px-2">
+                <h6 class="modal-title">Generator</h6>
+                <div class="btn-toolbar mb-1" role="toolbar" aria-label="Toolbar with button groups">
+                    <div class="btn-group me-2" role="group" aria-label="generation group">
+                        <button type="button" id="btnGenereInModal" class="btn btn-sm btn-danger">
+                            <i class="fa-solid fa-shuffle"></i>
+                        </button>
+                    </div>
+                    <div class="btn-group me-2" role="group" aria-label="generation parameters">
+                        <button type="button" id="btnGenereParams" class="btn btn-sm btn-danger">
+                            <i class="fa-solid fa-sliders"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="btn-group" role="group" aria-label="help group">
+                        <button type="button" id="btnGenereHelp" class="btn btn-sm btn-danger">
+                            <i class="fa-solid fa-question"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="input-group mb-1">
+                    <span class="input-group-text" id="lblGen">Text</span>
+                    <textarea class="form-control inptValue" keycol='gen' placeholder="Put the value of generator" id="genValue" style="height: 100px"></textarea>
+                </div>   
+                <div class="input-group mb-1">
+                    <!--
+                    <span class="input-group-text" >Result</span>
+                    <div class="form-control" id="genResultInModalOld" style="height: 100px;text-align:left;"></div>
+                    -->
+                    <div id="genResultInModal" style="color: black;"></span>
+                </div>   
+            </div>
+
+
+            <div class="border border-black mt-3 px-2">
+                <h6 class="modal-title">Agreements</h6>
+                <div class="input-group mb-1">
                     <label class="input-group-text" id="choixElision">Elision</label>
-                    <div aria-describedby="choixElision" class="m-2">
+                    <div aria-describedby="choixElision" class="form-control">
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" keycol='hasElision' id="rElision1" value="1">
                             <label class="form-check-label text-dark bg-white" for="rElision1">Yes</label>
@@ -297,22 +432,27 @@ export let modalAddConceptTerms = `
                         </div>                
                     </div>                
                 </div>
-                <div class="input-group mb-3">
+                <div class="row">
+                <div class="col">                
+                <div class="input-group mb-1">
                     <span class="input-group-text" id="adjf_s"><i class="fa-solid fa-venus"></i></span>
                     <input type="text" class="form-control inptValue" keycol='accordFemSing' aria-label="name" aria-describedby="adjf_s">
                 </div>            
-                <div class="input-group mb-3">
+                <div class="input-group mb-1">
                     <span class="input-group-text" id="adjf_p"><i class="fa-solid fa-venus-double"></i></span>
                     <input type="text" class="form-control inptValue" keycol='accordFemPlu' aria-label="name" aria-describedby="adjf_p">
                 </div>            
-                <div class="input-group mb-3">
+                </div>
+                <div class="col">
+                <div class="input-group mb-1">
                     <span class="input-group-text" id="adjm_s"><i class="fa-solid fa-mars"></i></span>
                     <input type="text" class="form-control inptValue" keycol='accordMasSing' aria-label="name" aria-describedby="adjm_s">
                 </div>            
-                <div class="input-group mb-3">
+                <div class="input-group mb-1">
                     <span class="input-group-text" id="adjm_p"><i class="fa-solid fa-mars-double"></i></span>
                     <input type="text" class="form-control inptValue" keycol='accordMasPlu' aria-label="name" aria-describedby="adjm_p">
-                </div>            
+                </div>           
+                </div> 
             </div>
 
         </div>                          

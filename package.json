@@ -1,8 +1,11 @@
 {
   "dependencies": {
+    "@textcomplete/core": "^0.1.13",
+    "@textcomplete/textarea": "^0.1.13",
     "csv-parse": "^5.3.3",
     "immutable-json-patch": "^5.1.1",
     "js-crud-api": "^0.3.0",
+    "textcomplete": "^0.18.2",
     "vanilla-jsoneditor": "^0.11.4",
     "wikibase-sdk": "^9.0.5"
   }

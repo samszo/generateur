@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -40,11 +40,45 @@
         <section id="section2">
             <h2>Importer les concepts et les termes</h2>
             <div>
-                <label for="urlInputConcet">Entrez l'URL de la liste des concepts</label>
+                <label for="urlInputConcept">Entrez l'URL de la liste des concepts</label>
                 <input type="url" id="urlInputConcept" name="urlInputConcept" required value="http://localhost/omk_generateur/files/bulk_export/generateur_old-20250419-055327.json">
                 <button id="btnImportConcept" type="button">Soumettre</button>
             </div>
         </section>
+        <section id="section2">
+            <h2>Corriger les syntagmes</h2>
+            <div>
+                <label for="urlInputSyn">Entrez l'URL de la liste des syntagmes</label>
+                <input type="url" id="urlInputSyn" name="urlInputSyn" required value="bdd/csv/gen_syntagmes.csv">
+                <button id="btnCorrigeSyn" type="button">Soumettre</button>
+            </div>
+        </section>
+        <section id="section2">
+            <h2>Corriger les générateur pour les concepts</h2>
+            <div>
+                <label for="urlInputCorrCpt">Entrez l'URL de la liste des items à corriger</label>
+                <input type="url" id="urlInputCorrCpt" name="urlInputCorrCpt" required value="bdd/csv/gen_concepts.csv">
+                <button id="btnCorrigeGenCpt" type="button">Soumettre</button>
+            </div>
+        </section>
+
+        <div>
+            <button id="btnAddText1254" type="button">Générer</button>
+            <span id="displayText1254" style="margin-top:10px; color: #333;" />
+        </div>
+        <script>
+            document.getElementById('btnAddText1254').addEventListener('click', getDataFor1254);
+            function getDataFor1254() {
+                const u = "http://localhost/omk_generateur/s/balpien/page/ajax?json=1&helper=generate&idConcept=596755";
+                const c = document.getElementById('displayText1254');
+                fetch(u)
+                    .then(async response => c.textContent = await response.text())
+                    .catch(error => c.textContent=error);
+            }
+            getDataFor1254();
+        </script>        
+
+
         <div id="resultSave"></div>
     </main>
     <footer>
@@ -52,16 +86,14 @@
     </footer>
     <script type="module">
         import {auth} from './modules/authOmk.js';
+        import {pa} from './modules/authParams.js';
 
-        let a = new auth({
-            mail:'samuel.szoniecky@univ-paris8.fr',
-            apiOmk:'http://localhost/omk_generateur/api/',
-            ident: 'rqzo8WXIejwWj3CtfPraTDOOzKaIgnPj',
-            key:'OOCK0VvxeaE2BFdI8ZVsCC9nhy2hU3Yp',
-        }),
-        divResult = d3.select("#resultSave"),
+        let a = new auth(pa),
+        divResult = d3.select("#resultSave"), idDicoGen = 418948,
         oDicos = [],
-        oConjs = [];
+        oConjs = [],conceptById,concepts;
+
+        a.getUser(console.log);
         
         d3.select("#btnImportDeterminant").on("click",()=>{
             let url = document.getElementById('urlInputDeterminant').value;
@@ -93,6 +125,127 @@
             });
         });        
 
+        d3.select("#btnCorrigeSyn").on("click",()=>{
+            let url = document.getElementById('urlInputSyn').value;
+            d3.csv(url).then(function(data) {
+                console.log(data);
+                corrigeSyn(data)
+            }).catch(function(error) {
+                console.error('Error fetching the csv:', error);
+            });
+        });        
+
+        d3.select("#btnCorrigeGenCpt").on("click",()=>{
+            let url = document.getElementById('urlInputCorrCpt').value;
+            d3.csv(url).then(function(data) {
+                console.log(data);
+                corrigeAllCpt(data)
+            }).catch(function(error) {
+                console.error('Error fetching the csv:', error);
+            });
+        });        
+
+        
+        async function corrigeAllCpt(data){
+            //récupération des conjugaison pour faire le lien dans les verbes
+            oConjs = a.omk.getAllItems("resource_class_id[]="+a.omk.getClassByTerm('genex:Conjugaison')['o:id']);
+
+            //regroupement par lib
+            conceptById = d3.group(data, s=>s.id_concept);
+            concepts = Array.from(conceptById.keys());
+            //on récupère le i d'un concept avec son id
+            let iId = 0;//concepts.findIndex(c=>c==169030);//0
+            divResult.append('div').text("Concept à traiter : "+data.length+" - "+concepts.length);
+            corrigeCpt(iId); 
+        }
+
+        async function corrigeCpt(i){
+            if(i>=concepts.length) return;
+
+            let s = conceptById.get(concepts[i]),
+                dt = {
+                    'cpt':s[0].type+"_"+s[0].lib,
+                    'idCpt':s[0].id_concept,
+                    'idDico':idDicoGen,//on met les items dans le dictionnaire général0
+                    'type':s[0].type,
+                    'langue':'français',
+                    'links': {
+                        'adjectifs':s.filter(d=>d.id_adj && d.id_adj!="NULL").map(d=>{ 
+                            return {
+                                'idsCpt':d.id_concept,
+                                'id': d.id_adj,
+                                'f_p': d.f_p,
+                                'f_s': d.f_s,
+                                'm_p': d.m_p,
+                                'm_s': d.m_s,
+                                'elision': d.aEli,
+                                'prefix': d.aPre};
+                        }),
+                        'substantifs':s.filter(d=>d.id_sub && d.id_sub!="NULL").map(d=>{ 
+                            return {
+                                'idsCpt':d.id_concept,
+                                'id': d.id_sub,
+                                'p': d.p,
+                                's': d.s,
+                                'genre': d.genre,
+                                'elision': d.sEli,
+                                'prefix': d.sPre};
+                        }),
+                        'verbes':s.filter(d=>d.id_verbe && d.id_verbe!="NULL").map(d=>{ 
+                            return {
+                                'idsCpt':d.id_concept,
+                                'id': d.id_verbe,
+                                'id_conj': d.id_conj.replace("930","766"),//on remplace l'id de la conjugaison par celui de la nouvelle version
+                                'elision': d.vEli,
+                                'prefix': d.vPre};
+                        }),
+                        'generateurs':s.filter(d=>d.id_gen && d.id_gen!="NULL").map(d=>{ 
+                            return {
+                                'idsCpt':d.id_concept,
+                                'id': d.id_gen,
+                                'valeur': d.valeur};
+                        }),
+                        'syntagmes':s.filter(d=>d.id_syn && d.id_syn!="NULL").map(d=>{ 
+                            return {
+                                'idsCpt':d.id_concept,
+                                'num': d.num,
+                                'valeur': d.syLib};
+                        })
+                    }
+                };
+            divResult.append('div').text("Données concept : "+i+" "+dt.cpt+" "+dt.idCpt);
+            await createConcept([dt], [dt], 0, 0);  
+            corrigeCpt(i+1);
+        }
+
+        async function corrigeSyn(data){
+            //regroupement par lib
+            let syntagmesById = d3.group(data, s=>s.lib_cpt);
+            console.log(syntagmesById);
+            //pour chaque syntagme on vérifie si il est dans la liste
+            syntagmesById.forEach((s,i)=>{
+                let dt = {
+                    'cpt':"s_"+s[0].lib_cpt,
+                    'idCpt':s[0].id_concept,
+                    'idDico':idDicoGen,//on met les syntagmes dans le dictionnaire général0
+                    'type':'concept',
+                    'langue':'français',
+                    'links': {
+                        'adjectifs':[],
+                        'substantifs':[],
+                        'verbes':[],
+                        'generateurs':[],
+                        'syntagmes':s.map(d=>{ 
+                            return {'valeur':d.lib_term,"num":d.num,'idsCpt':s[0].id_concept};
+                        })
+                    }
+                };
+                createConcept([dt], [dt], 0, 0);  
+            });
+        }
+
+        
+
         async function importConcepts(data){
 
             //regroupement par type
@@ -107,7 +260,7 @@
             //récupération des dico pour avoir les langues
             oDicos = a.omk.getAllItems("resource_class_id[]="+a.omk.getClassByTerm('genex:Dictionnaire')['o:id']);
             console.log(oDicos);
-            //récupération des conjugaison pour faire le lien dan sles verbes
+            //récupération des conjugaison pour faire le lien dans les verbes
             oConjs = a.omk.getAllItems("resource_class_id[]="+a.omk.getClassByTerm('genex:Conjugaison')['o:id']);
             console.log(oConjs);
             /*TODO:vérifie si on ajoute le concept au dictionnaire général == les concept sont de la même langue et les links sont équivalent
@@ -153,7 +306,7 @@
                     'dcterms:identifier':cpt.idCpt,
                     'genex:hasDico':{'rid':cpt.idDico},
                     'genex:isCaract':d.cpt.split('_')[0] == 'carac' ? '1':'0',
-                    'genex:hasType':d.cpt.split('_')[0],
+                    'genex:hasType':d.type ? d.type : d.cpt.split('_')[0],
                     'dcterms:language':cpt.langue
                 },
                 dtO = {'rt':'genex_Concept','c':'genex:Concept','dt':{}};
@@ -169,7 +322,8 @@
             await createTerm(oCpt, d.links.adjectifs, 'adjectif', 0);
             await createTerm(oCpt, d.links.substantifs, 'substantif', 0);
             await createTerm(oCpt, d.links.verbes, 'verbe', 0);
-            await createTerm(oCpt, d.links.generateurs, 'generateur', 2120);
+            await createTerm(oCpt, d.links.generateurs, 'generateur', 0);
+            await createTerm(oCpt, d.links.syntagmes, 'syntagme', 0);
 
             createConcept(data, cpts, i, j+1);
         }
@@ -191,6 +345,7 @@
                         dtAc[elision+'EliFemSing'] = l.f_s;
                         dtAc[elision+'EliMasPlu'] = l.m_p;
                         dtAc[elision+'EliMasSing'] = l.m_s;
+                        dt['dcterms:identifier']=l.id;
                         dt['genex:hasAccord']= annoAccord(dtAc,l.elision ? '' : 'no');
                         dt['genex:hasPrefix'] = l.prefix;
                         dt['dcterms:title'] = dt['genex:hasType']+':'+l.prefix+' '+l.f_s+' '+l.f_p+' '+l.m_s+' '+l.m_p;                                
@@ -201,6 +356,7 @@
                         dtAc[elision+'EliFemSing'] = l.genre == '1' ? '':l.s;
                         dtAc[elision+'EliMasPlu'] = l.genre == '1' ? l.p:'';
                         dtAc[elision+'EliMasSing'] = l.genre == '1' ? l.s:'';
+                        dt['dcterms:identifier']=l.id;
                         dt['genex:hasAccord']= annoAccord(dtAc,l.elision ? '' : 'no');
                         dt['genex:hasPrefix'] = l.prefix;
                         dt['lexinfo:gender'] = l.genre == '1' ? 'masculin':'féminin';
@@ -210,12 +366,19 @@
                     case 'verbe':
                         let conj = oConjs.filter(oc=>oc['dcterms:identifier'][0]['@value']==l.id_conj)[0];
                         dt['genex:hasPrefix'] = l.prefix;
+                        dt['dcterms:identifier']=l.id;
                         dt['genex:hasConjugaison'] = {'rid':conj['o:id']};
                         dt['dcterms:title'] = dt['genex:hasType']+':'+l.prefix+' ('+conj['o:title']+')';
                         dt['genex:hasElision'] = l.elision;
                         break;
                     case 'generateur':
+                        dt['dcterms:identifier']=l.id;
                         dt['genex:hasGenerateur'] = l.valeur;
+                        dt['dcterms:title'] = dt['genex:hasType']+':'+l.valeur;
+                        break;
+                    case 'syntagme':
+                        dt['genex:hasPrefix'] = l.valeur;
+                        dt['dcterms:identifier']=l.num;
                         dt['dcterms:title'] = dt['genex:hasType']+':'+l.valeur;
                         break;
                 }
@@ -227,8 +390,9 @@
                 //on ajoute le lien vers le concept si ce n'est pas déjà fait
                 if(!o['genex:hasConcept'] || o['genex:hasConcept'].filter(hc=>hc.value_resource_id==oCpt['o:id']).length==0){
                     o = await a.omk.updateRessource(o['o:id'], {'genex:hasConcept':{'rid':oCpt['o:id']}}, 'items', null, 'PUT',false, o);
-                }
-                divResult.append('div').text(dt['genex:hasType']+" "+i+" ajouté "+o["o:id"]+" : "+o["o:title"]);
+                    divResult.append('div').text(dt['genex:hasType']+" "+i+" créé "+o["o:id"]+" : "+o["o:title"]);
+                }else
+                    divResult.append('div').text(dt['genex:hasType']+" "+i+" déjà créé "+o["o:id"]+" : "+o["o:title"]);
             }
             await createTerm(oCpt, links, type, i+1);
         }

@@ -23,6 +23,7 @@ export class oeuvres {
         this.dicosUti=[];
         this.conjugaisons = false;
         this.loader = new loader();
+        this.dataDico = [];
         var mAdd=new modal(),mMessage=new modal(), mAddOeuvre, mAddOeuvreBody;
         this.init = function () {
             getOeuvres();
@@ -62,7 +63,7 @@ export class oeuvres {
                             {'rid':27,'type':'resource'},
                             {'rid':28,'type':'resource'},
                             {'rid':29,'type':'resource'},
-                            {'rid':30,'type':'resource'},
+                            {'rid':325954,'type':'resource'},
                             {'rid':36,'type':'resource'},
                             {'rid':37,'type':'resource'},
                             {'rid':i["o:id"],'type':'resource'}
@@ -275,66 +276,29 @@ export class oeuvres {
         this.showDicos = function (oeu){
             d3.select(me.tgtList).selectAll('.gDicos').remove();
             //récupère les dicos de l'oeuvre
-            //gestion avec omk
-            if(me.auth.omk){
-                me.auth.omk.getAllItems('filter[0][join]=and&filter[0][field][]=genex:hasDico&filter[0][type]=lres&filter[0][val]='+oeu["o:id"],function(data){
-                    me.dicos = data;
-                    d3.select(me.tgtList).selectAll('.gDicos').remove();
-                    let gDicos = d3.group(me.dicos, d => d["genex:isGeneral"][0]["@value"]);
-                    d3.select(me.tgtList).selectAll('.gDicos')
-                        .data(Array.from(gDicos))
-                        .join(
-                            enter => {
-                                let div = enter.append('div')
-                                    .attr('id',d=>{
-                                        return 'dicos'+d[0]=="oui" ? 'Gen':'Oeu'
-                                    }).attr('class','gDicos'),
-                                    btn = `<button type="button" id="btnDicoAdd" class="btn btn-sm btn-danger ms-2">
-                                            <i class="fa-regular fa-square-plus"></i>
-                                        </button>`;
-                                div.append('h3').html(d=>d[0]=="oui" ? 'general dictionaries' : 'work dictionaries'+btn);
-                                div.append('ul').attr('class','list-group').call(showListedico);
-                                div.select('#btnDicoAdd').on('click',addNewDico);
-                            },
-                            //update => update.selectAll('ul').call(showListedico)
-                        );
-                     me.loader.hide(true);                    
-                });
-                return
-            }
-            me.api.list('gen_oeuvres_dicos_utis',{filter:'id_oeu,eq,'+oeu.id_oeu}).then(
-                result=>{
-                    let ids=[];
-                    me.dicosUti = result.records; 
-                    me.dicosUti.forEach(d => {
-                        if(!ids.includes(d.id_dico))ids.push(d.id_dico);
-                    });                    
-                    if(ids.length==0)return;
-                    me.api.read('gen_dicos',ids).then(
-                        result=>{
-                            me.dicos=result.filter(d=>d);
-                            d3.select(me.tgtList).selectAll('.gDicos').remove();
-                            let gDicos = d3.group(me.dicos, d => d.general);
-                            d3.select(me.tgtList).selectAll('.gDicos')
-                                .data(Array.from(gDicos))
-                                .join(
-                                    enter => {
-                                        let div = enter.append('div')
-                                        .attr('id',d=>'dicos'+d[0]?'Gen':'Oeu').attr('class','gDicos')
-                                        div.append('h3').html(d=>d[0] ? 'general dictionaries' : 'work dictionaries')
-                                        div.append('ul').attr('class','list-group').call(showListedico)
-                                    },
-                                    //update => update.selectAll('ul').call(showListedico)
-                                );
-                       
-                        }
-                    ).catch (
-                        error=>console.log(error)
-                    );        
-                }
-            ).catch (
-                error=>console.log(error)
-            );        
+            me.auth.omk.getAllItems('filter[0][join]=and&filter[0][field][]=genex:hasDico&filter[0][type]=lres&filter[0][val]='+oeu["o:id"],function(data){
+                me.dicos = data;
+                d3.select(me.tgtList).selectAll('.gDicos').remove();
+                let gDicos = d3.group(me.dicos, d => d["genex:isGeneral"][0]["@value"]);
+                d3.select(me.tgtList).selectAll('.gDicos')
+                    .data(Array.from(gDicos))
+                    .join(
+                        enter => {
+                            let div = enter.append('div')
+                                .attr('id',d=>{
+                                    return 'dicos'+d[0]=="oui" ? 'Gen':'Oeu'
+                                }).attr('class','gDicos'),
+                                btn = `<button type="button" id="btnDicoAdd" class="btn btn-sm btn-danger ms-2">
+                                        <i class="fa-regular fa-square-plus"></i>
+                                    </button>`;
+                            div.append('h3').html(d=>d[0]=="oui" ? 'general dictionaries' : 'work dictionaries'+btn);
+                            div.append('ul').attr('class','list-group').call(showListedico);
+                            div.select('#btnDicoAdd').on('click',addNewDico);
+                        },
+                        //update => update.selectAll('ul').call(showListedico)
+                    );
+                    me.loader.hide(true);                    
+            });
         }
 
         function addNewDico(){
@@ -366,7 +330,23 @@ export class oeuvres {
 
         function showListedico(slct){
             slct.selectAll('li')
-                .data(d=>d[1])
+                .data(d=>{
+                    //on intialise le tableau des dicos si pas encore fait
+                    d[1].forEach(dic=>{
+                        if(!me.dataDico[dic["genex:hasType"][0]["@value"]])me.dataDico[dic["genex:hasType"][0]["@value"]] = [];
+                        //on charge les données du dictionnaire si ce n'est pas un dictionnaire de concepts
+                        if(dic["genex:hasType"][0]["@value"]!="concepts"){
+                            let oDico = new dico({
+                                'oeuvre':me,
+                                'd':dic,
+                                'api':me.api,
+                                'omk':me.auth.omk,
+                                'onlyData':true
+                            });           
+                        }
+                    });
+                    return d[1];
+                })
                 .join(
                     enter => {
                         let li = enter.append('li')
@@ -405,7 +385,7 @@ export class oeuvres {
             if(id)d=me.dicos.filter(r=>(me.auth.omk ? r['o:id'] : r.id_dico)==id)[0];
             else me.appUrl.changes([{k:'id_oeu',v:me.auth.omk ? me.curOeuvre['o:id'] : me.curOeuvre.id_oeu}]);
             me.appUrl.change('id_dico',me.auth.omk ? d['o:id'] : d.id_dico);
-            me.curDico=new dico({
+            me.curDico = new dico({
                     'oeuvre':me,
                     'd':d,
                     'api':me.api,

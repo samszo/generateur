@@ -27,12 +27,47 @@ export class dico {
           }),table;
 
         this.init = function () {
+            if(!me.d)return;
             me.loader.show();
             userAllowed = me.oeuvre.auth.userAdmin || me.oeuvre.auth.userAllowed(me.d.id_dico,me.oeuvre.dicosUti);
             //récupération de la table suivant le type
             for (const p in m.tables) {
                 if(m.tables[p].type==(me.omk ? me.d["genex:hasType"][0]["@value"] : me.d.type))table=m.tables[p];
+            }                        
+            me.getData();
+            me.loader.hide();
+        }
+
+        this.getData = async function(){
+            userAllowed = true;
+            if(me.oeuvre.dataDico[me.d["genex:hasType"][0]["@value"]].length>0){
+                let dico = me.oeuvre.dataDico[me.d["genex:hasType"][0]["@value"]].filter(d=>me.d["o:id"]==d.idDico);
+                if(dico.length>0){
+                    me.data = dico[0].data;
+                    if(!this.onlyData)initIHM();
+                    return;
+                }
             }
+            /*
+            let query = me.d["genex:hasType"][0]["@value"]!="concepts" ? 
+                me.omk.api+'items?resource_class_id='+table.class+"&property[0][joiner]=and&property[0][property]="+me.omk.getPropId("genex:hasDico")+"&property[0][type]=res&property[0][text]="+me.d['o:id']
+                : me.omk.api.replace("api/","s/balpien/page/ajax")+"?json=1&helper=sql&action=getDicoItems&idDico="+me.d["o:id"];
+            */
+            //récupère les données du dictionnaire
+            await me.setData(me.d["o:id"],me.d["genex:hasType"][0]["@value"]);
+            if(!this.onlyData)initIHM();
+        }
+
+        this.setData = async function(id,type){            
+            let query = me.omk.api.replace("api/","s/balpien/page/ajax")+"?json=1&helper=sql&action=getDicoItems&idDico="                
+                +id+"&type="+type
+            me.data = await d3.json(query);            
+            me.oeuvre.dataDico[type].push({'idDico':id,'data':me.data});
+            return me.data;                                                
+        }
+
+
+        function initIHM(){
             /*La mise à jour n'est pas nickel => on recré totalement la grid*/
             mainSlt = d3.select(me.tgtContent);
             mainSlt.selectAll('div').remove();
@@ -42,7 +77,7 @@ export class dico {
             colL = row.append('div').attr('class','h-100 '+(table.content ? 'w-auto':'w-100'));
             if(userAllowed){
                 //ajoute les outils
-                let general = me.omk && me.d['genex:isGeneral'][0]["@value"]=="oui" ? true : false,
+                let general = false,//me.omk && me.d['genex:isGeneral'][0]["@value"]=="oui" ? true : false,
                     tools = `<div class="container-fluid">
                 <a class="navbar-brand" href="#">${me.omk ? me.d['o:title'] : me.d.nom}</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarDico" aria-controls="navbarDico" aria-expanded="false" aria-label="Toggle navigation">
@@ -74,15 +109,13 @@ export class dico {
                 </div>
                 </div>`,
                 toolsNav = colL.append('nav').attr('class','navbar navbar-expand-lg bg-light').html(tools);
-                if(me.omk){
-                    //ajoute le lien vers OmekaS
-                    toolsNav.select("#listBtnDico").append('li').attr('class',"nav-item mx-2").append('a')
-                        .attr('href',me.omk.getAdminLink(me.d))
-                        .attr('target',"_blank")
-                        .append('img').attr('src','asset/images/logos/OmekaS.png')
-                            .style("margin-top","-4px")
-                            .style("height","20px");
-                }
+                //ajoute le lien vers OmekaS
+                toolsNav.select("#listBtnDico").append('li').attr('class',"nav-item mx-2").append('a')
+                    .attr('href',me.omk.getAdminLink(me.d))
+                    .attr('target',"_blank")
+                    .append('img').attr('src','asset/images/logos/OmekaS.png')
+                        .style("margin-top","-4px")
+                        .style("height","20px");
             }
             //création de la modal spécifique à la table
             if(table.mAdd){
@@ -115,53 +148,31 @@ export class dico {
             dicoHot = colL.append('div').attr('class','clearfix')
                 .attr('id','dicoHot');
             
-            if(me.omk){
-                getOmkData();              
-                return;
-            }
-
-            me.api.list(table.t,{filter:'id_dico,eq,'+me.d.id_dico}).then(
-                result=>{
-                    me.data = result.records                                
-                    showData();
-                }
-            ).catch (
-                error=>console.log(error)
-            );
+            //montre les data
+            showData();            
         }
 
-        function getOmkData(){
-            let query = 'resource_class_id='+table.class+
-                "&property[0][joiner]=and&property[0][property]="+me.omk.getPropId("genex:hasDico")+"&property[0][type]=res&property[0][text]="+me.d['o:id'];
-            me.omk.loader.show();
-            d3.json(me.omk.api.replace("api/","s/balpien/page/ajax")
-                +"?json=1&helper=sql&action=getDicoItems&idDico="
-                +me.d["o:id"]).then(data=>{
-                userAllowed = true;
-                me.data = data;                                
-                showData();
-            });              
-        }
 
         function showData(){
             //me.hot.loadData(me.data);
             //création de la table
             if(me.data.length==0){ me.loader.hide();return;}
+            //let headers = me.d["genex:hasType"][0]["@value"]=="concepts" ? Object.keys(me.data[0]) : ['o:id','o:title'],
             let headers = Object.keys(me.data[0]),
                 rectFooter = d3.select('footer').select('h3').node().getBoundingClientRect(),
                 rectHeader = d3.select('header').node().getBoundingClientRect(),
                 hCol = {columns: headers.map((h,i)=>{
-                        if(me.omk) return h.indexOf('_') > 0 ? i : null
-                        else return h.substring(0,3)=='id_' ? i : null
+                        return h.indexOf('_') > 0 ? i : null
                     }).filter(k=>k!=null)
-                };
+                },
+                hotWidth = me.d["genex:hasType"][0]["@value"]=="concepts" ? 375 : "100%";
 
             me.hot = new Handsontable(dicoHot.node(), {
                 rowHeaders: true,
                 data: me.data,
                 colHeaders: headers,
                 height: rectFooter.top-rectFooter.height-rectHeader.bottom,
-                width: 375,//table.content ? '300' : '100%',
+                width: hotWidth,
                 licenseKey: 'non-commercial-and-evaluation',
                 customBorders: true,
                 dropdownMenu: true,
@@ -288,6 +299,8 @@ export class dico {
                     .text("FIN Traitement : "+(new Date().toLocaleTimeString("fr-FR")));
                 //explode les concepts
                 me.oeuvre.explodeConcept(curCpt);
+                await me.setData(me.d["o:id"],me.d["genex:hasType"][0]["@value"]);
+                initIHM();
                 me.loader.hide(true);
                 return;
             }
@@ -295,15 +308,15 @@ export class dico {
                 //explode les concepts
                 if(curCpt)me.oeuvre.explodeConcept(curCpt);
                 //création des concepts
-                let r = cpts[i],
+                let r = cpts[i], title = r.concept.indexOf('_') !== -1 ? r.concept : r.type_concept+'_'+r.concept,
                     dt = {
                     'o:resource_class':'genex:Concept',
                     'o:resource_template':'genex_Concept',
-                    'dcterms:title':r.type_concept+'_'+r.concept,
+                    'dcterms:title':title,
                     'dcterms:description':r.description_concept,
                     'genex:hasType':r.type_concept,
                     'genex:hasDico':{'rid':me.d['o:id']},
-                    'dcterms:identifier':me.d['o:id']+'_'+r.type_concept+'_'+r.concept,
+                    'dcterms:identifier':me.d['o:id']+'_'+title,
                     },
                     dtO = {'rt':'genex_Concept','c':'genex:Concept','dt':{}};
                 dtO.dt = dt;
@@ -322,7 +335,7 @@ export class dico {
             createConcepts(cpts,divResult,i+1,curCpt);
         }
 
-        me.createTerm = async function (oCpt, r, i, divResult){
+        me.createTerm = async function (oCpt, r, i, divResult,cb=null){
 
             //création du terme
             let o, dtO = {'rt':'genex_Term','c':'genex:Term','dt':{}}, dtAc = {},
@@ -332,6 +345,7 @@ export class dico {
                     +' - '+(r.prefix ? r.prefix : "")
                     +' - '+(r.gender?r.gender:"")
                     +' - '+(r.elision?r.elision:"")
+                    +' - '+(r.libConjugaison?r.libConjugaison:"")
                     +' - '+(r.fem_sin?r.fem_sin:"")
                     +'_'+(r.fem_plu?r.fem_plu:"")
                     +'_'+(r.mas_sin?r.mas_sin:"")
@@ -341,6 +355,7 @@ export class dico {
                     'o:resource_template':'genex_Term',
                     'dcterms:title':termTitle,
                     'dcterms:description': r.description_term,
+                    'genex:hasConjugaison':{'rid':r.hasConjugaison},
                     'genex:hasType':r.type_term,
                     'genex:hasGenerateur':r.generateur,
                     'genex:hasPrefix':r.prefix,
@@ -376,9 +391,12 @@ export class dico {
                 // ou on ajoute le lien au concept si toutes les valeurs sont identiques
                 o = await me.omk.getsetResource(dtO,[{'genex:hasConcept':{'rid':oCpt['o:id']}}]);
             }
-            divResult.append('div')
-                .attr("class","alert alert-info").attr("role","alert")
-                .text(dt['genex:hasType']+" "+i+" traité "+o["o:id"]+" - "+o["o:title"]+" : "+(new Date().toLocaleTimeString("fr-FR")));            
+            if(divResult){  
+                divResult.append('div')
+                    .attr("class","alert alert-info").attr("role","alert")
+                    .text(dt['genex:hasType']+" "+i+" traité "+o["o:id"]+" - "+o["o:title"]+" : "+(new Date().toLocaleTimeString("fr-FR")));            
+            }
+            if(cb)cb(o);
         }
         
 
@@ -598,21 +616,8 @@ export class dico {
             }
         }
 
-        this.getData = function(){
-            me.api.list('gen_concepts',{filter:'id_dico,eq,'+me.d.id_dico}).then(
-                result=>{
-                    me.data = result.records
-                    me.hot.loadData(me.data);
-                    if(me.appUrl.params && me.appUrl.params.has('id_concept'))showConcept(null,me.appUrl.params.get('id_concept'));
-                }
-            ).catch (
-                error=>console.log(error)
-            );
-        }
-
         //gestion des initialisation de l'objet
         if(this.remove) this.delete();
-        if(this.onlyData) this.getData();
         else this.init();
     
     }

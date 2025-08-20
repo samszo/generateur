@@ -1,0 +1,19 @@
+concept,description_concept,type_concept,term,type_term,description_term,generateur,prefix,gender,hasConjugaison,elision,fem_sin,fem_plu,mas_sin,mas_plu
+"bâtiment_paris 8","La liste des bâtiments de Paris 8",bâtiment,"substantif: - A -  - 0 -  - ___",substantif,,,A,,,1,,,,
+,,,"substantif: - B -  - 0 -  - ___",substantif,,,B,,,1,,,,
+,,,"substantif: - C -  - 0 -  - ___",substantif,,,C,,,1,,,,
+,,,"substantif: - D -  - 0 -  - ___",substantif,,,D,,,1,,,,
+,,,"substantif: - E -  - 0 -  - ___",substantif,,,E,,,1,,,,
+"numsalle_paris 8","Numéro des salles de Paris 8",numsalle,"nombre: - 1->99 -  - 0 -  - ___",nombre,,,1->99,,,1,,,,
+"étage_paris 8","Etages des batiments de Paris 8",étage,"nombre: - 0->5 -  - 0 -  - ___",nombre,,,0->5,,,1,,,,
+salle_topos,"Le nom de la salle",salle,"generateur:[batiment_paris 8] [étage_paris 8][numsalle_paris 8] -  -  - 0 -  - ___",generateur,,"[batiment_paris 8] [étage_paris 8][numsalle_paris 8]",,,,1,,,,
+salle_chora,"Ce qui se passe dans une salle de cours",salle,"generateur:[batiment_paris 8] [étage_paris 8][numsalle_paris 8] -  -  -  -  - ___",generateur,,"[batiment_paris 8] [étage_paris 8][numsalle_paris 8]",,,,0,,,,
+argot_étudiant,,argot,"adjectif: - badouillard -  - 0 -  - e_es__s",adjectif,https://www.languefrancaise.net/Bob/16787,,badouillard,,,1,e,es,,s
+,,,"adjectif: - basingot -  - 0 -  - te_tes__s",adjectif,https://www.languefrancaise.net/Bob/22002,,basingot,,,1,te,tes,,s
+,,,"adjectif: - bûche -  - 0 -  - use_uses_ur_urs",adjectif,https://www.languefrancaise.net/Bob/4904,,bûche,,,1,use,uses,ur,urs
+,,,"adjectif: - lettreu -  - 0 -  - se_ses_x_x",adjectif,https://www.languefrancaise.net/Bob/86944,,lettreu,,,1,se,ses,x,x
+test_test,,test,"generateur:[3240400|v_manger] [62|argot_étudiant] [v_déguster] -  -  - 1 -  - ___",generateur,,"[3240400|v_manger] [62|argot_étudiant] [v_déguster]",,,,1,,,,
+,,,"generateur:[62|m_pensée 2]  [61|argot_étudiant] [0180000|v_être] [=1|a_méchant] [s_quand 1]   [66|m_conseil 1]  [0180600|v_surprendre] -  -  - 1 -  - ___",generateur,,"[62|m_pensée 2]  [61|argot_étudiant] [0180000|v_être] [=1|a_méchant] [s_quand 1]   [66|m_conseil 1]  [0180600|v_surprendre]",,,,1,,,,
+
+
+

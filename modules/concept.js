@@ -3,7 +3,7 @@ import {getIn, parseFrom} from '../node_modules/immutable-json-patch/lib/esm/ind
 import {modal} from './modal.js';
 import {conjugaisons} from './conjugaisons.js';
 import { WBK } from '../node_modules/wikibase-sdk/dist/index.js';
-
+import {writeGen} from './writeGen.js';
 
 export class concept {
     constructor(params) {
@@ -23,7 +23,10 @@ export class concept {
         this.jsEditor;
         this.jsPath;
         this.wdk;
-        var m=new modal(), contResult, contHeight, userAllowed, progress;
+        this.wGen;
+        var m=new modal(), mParamsGen, contResult, contHeight, userAllowed, progress;
+        
+
         this.init = function () {
 
           me.wdk = WBK({
@@ -41,20 +44,25 @@ export class concept {
               {n:'Sparqls',t:'gen_sparqls',k:'id_sparql',data:[],mAdd:true},
             ];
             //construction des modals pour chaque type d'item              
-            let grpData = d3.group(data,d=>d["resource_class_id"]+"");
+            let grpData = d3.group(data,d=>d["resource_class_id"]+""), 
+            btnParams = [{"t":"Create","f":addItem},{"t":"Update","f":addItem},{"t":"Delete","f":verifDeleteItem}];
             me.linkData.forEach(ld=>{
               if(ld.class){
                 ld.t = ld.class["o:id"]+"";
                 ld.n = ld.class["o:local_name"];
-                ld.mAdd = m.add('modalAddConcept'+ld.class["o:local_name"]+"s");                  
-                ld.mAdd.s.select('.modal-footer').selectAll('button').remove();
-                ld.mAdd.s.select('.modal-footer').selectAll('button').data([ld]).enter().append('button')
-                    .attr('id',d=>"btnAction"+d.n)
+                ld.mAdd = m.add('modalAddConcept'+ld.class["o:local_name"]+"s","modal-lg");                  
+                ld.mAdd.s.select('.modal-footer').selectAll('button').remove();                
+                ld.mAdd.s.select('.modal-footer').selectAll('button').data([ld,ld,ld]).enter().append('button')
+                    .attr('id',(d,i)=>{
+                      d.a = btnParams[i].f;
+                      return "btnAction"+d.n+i
+                    })
                     .attr('type',"button")
-                    .attr('class',"btn btn-warning").html('Add new')
-                    .on('click',addItem);
-                //ajoute les options de conjugaison
+                    .attr('class',"btn btn-danger").html((d,i)=>btnParams[i].t)
+                    .on('click',runAction);
+                //ajoute les options
                 if(ld.n=="Term"){
+                  // de conjugaison
                   me.conjData = me.oeuvre.getConjugaisons();
                   ld.mAdd.s.select('#verbConj').selectAll('option').data(
                     [{'id_conj':-1,'modele':'choose a conjugation model'}].concat(me.conjData)
@@ -63,6 +71,17 @@ export class concept {
                       .attr('value',c=>c.id)
                       .html(c=>c.title.replace("Modèle de conjugaison : ",""))                    
                   );
+                  // de type
+                  let termTypes = ["adjectif","generateur","nombre","substantif","syntagme","verbe"];
+                  ld.mAdd.s.select('#termType').selectAll('option').data(termTypes).join(
+                    enter=>enter.append('option')
+                      .attr('value',t=>t)
+                      .html(t=>t)                    
+                  );
+                  // de textcomplete pour le générateur
+                  me.wGen = new writeGen({'oeuvre':me.oeuvre,'omk':me.omk,'textarea':ld.mAdd.s.select('#genValue')});
+                  // de génération
+                  setParamGen(ld);
                 }
                 if(grpData.has(ld.t)){
                   ld.data = grpData.get(ld.t);
@@ -74,6 +93,97 @@ export class concept {
             showLinkData();
           }); 
         }
+
+        function runAction(e,d){
+          d.a(e,d);
+        }
+
+        async function setParamGen(ld){
+
+            //de paramètres de génération
+            mParamsGen = m.add('modalParamsGen');
+            if(me.oeuvre.dataDico["négations"][0].data.length==0) await me.oDico.setData(me.oeuvre.dataDico["négations"][0].idDico,"négations");
+            mParamsGen.s.select('#conjNeg').selectAll('option').data(
+                [{'num':-1,'lib':'Choose...'}].concat(me.oeuvre.dataDico["négations"][0].data)
+                )
+              .join(
+                enter=>enter.append('option')
+                  .attr('value',d=>d.num)
+                  .html(d=>d.lib)                    
+              );
+            if(me.oeuvre.dataDico["pronoms"][0].data.length==0) await me.oDico.setData(me.oeuvre.dataDico["pronoms"][0].idDico,"pronoms");
+            mParamsGen.s.select('#conjSujet').selectAll('option').data(
+                me.oeuvre.dataDico["pronoms"][0].data.filter(p=>p.type=="sujet")
+            ).join(
+              enter=>enter.append('option')
+                .attr('value',d=>d.num)
+                .html(d=>d.lib+ " - "+d.elision)                   
+            );
+            mParamsGen.s.select('#conjSujetComp').selectAll('option').data(
+              [{'num':-1,'lib':'Choose...','elision':''}].concat(me.oeuvre.dataDico["pronoms"][0].data.filter(p=>p.type=="complément"))
+            ).join(
+              enter=>enter.append('option')
+                .attr('value',d=>d.num)
+                .html(d=>d.lib+ " - "+d.elision)                   
+            );
+            mParamsGen.s.select('#conjSujetInd').selectAll('option').data(
+              [{'num':-1,'lib':'Choose...','elision':''}].concat(me.oeuvre.dataDico["pronoms"][0].data.filter(p=>p.type=="sujet indéfini"))
+            ).join(
+              enter=>enter.append('option')
+                .attr('value',d=>d.num)
+                .html(d=>d.lib+ " - "+d.elision)                   
+            );
+            
+            mParamsGen.s.select('#btnGenereDetConj').on('click',e=>{
+                /*construction du déterminant
+                Position 0 : type de négation
+                Position 1 : temps verbal
+                Position 2 : pronoms sujets définis
+                Positions 3 ET 4 : pronoms compléments
+                Position 5 : ordre des pronoms sujets
+                Position 6 : pronoms indéfinis
+                Position 7 : Place du sujet dans la chaîne grammaticale
+                */                
+                let sujet = mParamsGen.s.select('#conjSujet').node().value,
+                    temps = mParamsGen.s.select('#conjTemps').node().value,
+                    sujetComp = mParamsGen.s.select('#conjSujetComp').node().value,
+                    sujetInd = mParamsGen.s.select('#conjSujetInd').node().value,
+                    neg = mParamsGen.s.select('#conjNeg').node().value, 
+                    ordre = mParamsGen.s.select('#ordreProSujInv').node().checked;                     
+                mParamsGen.s.select("#detConjResult").html(
+                  (neg==-1 ? 0 : neg)
+                  +temps
+                  +sujet
+                  +(sujetComp==-1 ? "00" : (sujetComp.length==1 ? "0"+sujetComp : sujetComp))
+                  +(ordre ? 1 : 0)
+                  +(sujetInd==-1 ? "0" : sujetInd)
+                  +"|"
+                );
+            });
+            
+            //gestion des événements du bloc de génération
+            ld.mAdd.s.select('#btnGenereInModal').on('click',e=>{
+              addChampResult("concept",ld.mAdd.s.select('#genResultInModal'));
+              addItem(e,ld,d=>{
+                showGen(d,{'term':d["o:id"],'concept':me.data.id},'jsEditor',ld.mAdd.s.select('#genTextconcept'));           
+              });                     
+            });
+            ld.mAdd.s.select('#btnGenereParams').on('click',e=>{
+                mParamsGen.m.show();
+            });
+            ld.mAdd.s.select('#btnGenereHelp').on('click',e=>{
+              const textarea = ld.mAdd.s.select('#genValue').node();
+              const selectedText = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd);
+              console.log('Selected text:', selectedText);
+              if(!selectedText){
+                m.setBody('<h3  class="bg-danger">Please select a text for information.</h3>');
+                m.setBoutons([{'name':"Close"}]);                
+                m.show();   
+              }
+            });
+
+        }
+
         async function getSparql(d){
           let SPARQL = `SELECT ?item ?itemLabel WHERE {
             SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE]". }
@@ -147,7 +257,8 @@ export class concept {
                     <button type="button" id="btnCptExport" class="btn btn-sm btn-danger">
                         <i class="fa-solid fa-file-export"></i>
                     </button>
-                </li>`;
+                </li>
+                `;
             if(userAllowed){
               tools += `
                 <li class="nav-item dropdown mx-2">
@@ -158,6 +269,12 @@ export class concept {
                   </ul>
                 </li>`;
             }
+              tools += `
+                <li class="nav-item mx-1">
+                    <button type="button" id="btnCptGenerateEmbed" class="btn btn-sm btn-danger">
+                      &lt;/&gt;
+                    </button>
+                </li>`;
             tools += `           
                 </ul>
               </div>
@@ -167,6 +284,8 @@ export class concept {
               .append('a').attr('class',"dropdown-item").html(ld=>ld.n).on('click',showAddItem);
 
             toolsNav.select("#btnCptExport").on('click',me.exportCpt);            
+            toolsNav.select("#btnCptGenerateEmbed").on('click',embedGenerateCpt);            
+            
   
             if(me.omk){
               //ajoute le lien vers OmekaS
@@ -239,18 +358,42 @@ export class concept {
             URL.revokeObjectURL(url);
         }
 
+        function embedGenerateCpt(e,d){
+          let url = me.omk.api.replace("api","s/balpien/page/ajax")+"?json=1&helper=generate&idConcept="+me.data.id;
+          const embedCode = `<button id="btnAddText${me.data.id}" type="button" onclick="getDataFor${me.data.id}()">Générer</button>
+          <div id="displayText${me.data.id}" style="margin-top:10px; color: #333;"></div>    
+<script>
+    function getDataFor${me.data.id}() {
+        const u = "${url}";
+        const c = document.getElementById('displayText${me.data.id}');
+        fetch(u)
+            .then(async response => c.textContent = await response.text())
+            .catch(error => c.textContent=error);
+    }
+    getDataFor${me.data.id}();
+</script> `;
+          // Affiche le code embed dans un div HTML pour un aperçu visuel
+          m.setBody(`<div class="text-bg-light text-start"><h5>Copy this code to generate this concept:</h5>
+          <pre class="overflow-y-scroll overflow-x-scroll text-bg-dark p-3" style="height:300px;">${embedCode.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>
+          </div>`);
+          m.setTitle("Embed Code To Generate Concept");
+          m.setBoutons([{ name: "Close" }]);
+          m.show();
+        }
         
         function showUpdateItem(d, id){
           if(d.mAdd){
             d.mAdd.s.select(".modal-title").html("Update term")//Adding a new term
-            d.mAdd.s.select('#btnAction'+d.n)
-              .attr('class',d=>"btn btn-danger")//btn btn-warning
-              .html("Update");//.html('Add new')
+            d.mAdd.s.select('#btnAction'+d.n+"0").style('display','none');0
+            d.mAdd.s.select('#btnAction'+d.n+"1").style('display','inline-block');
+            d.mAdd.s.select('#btnAction'+d.n+"2").style('display','inline-block');
             let item = d.data.filter(i=>i.id==id)[0], accords = [];
-            item.accords.split(',').forEach(a=>{
-              let vals = a.split(' : ');
-              accords[vals[0]] = vals[1];
-            })
+            if(item.accords){
+              item.accords.split(',').forEach(a=>{
+                let vals = a.split(' : ');
+                accords[vals[0]] = vals[1];
+              })
+            }
             d.mAdd.s.selectAll('.inptValue').nodes().forEach(n=>{
                 if(n.hasAttribute("keycol")){
                   console.log(n.getAttribute("keycol")+' '+n.value);
@@ -279,9 +422,9 @@ export class concept {
         function showAddItem(e,d){
           if(d.mAdd){
             d.mAdd.s.select(".modal-title").html("Adding a new term")
-            d.mAdd.s.select('#btnAction'+d.n)
-              .attr('class',d=>"btn btn-warning")
-              .html('Add new')
+            d.mAdd.s.select('#btnAction'+d.n+"0").style('display','inline-block');
+            d.mAdd.s.select('#btnAction'+d.n+"1").style('display','none');
+            d.mAdd.s.select('#btnAction'+d.n+"2").style('display','none');
             d.mAdd.s.selectAll('.inptValue').nodes().forEach(n=>{
               n.checked = false;
               n.value = "";
@@ -289,7 +432,7 @@ export class concept {
             d.mAdd.m.show();
           }
         }        
-        function addItem(e,d){          
+        function addItem(e,d,cb=null){          
           //récupère les valeurs
           let valeurs = {};
           d.mAdd.s.selectAll('.inptValue').nodes().forEach(n=>{
@@ -300,6 +443,11 @@ export class concept {
               }else if(n.getAttribute('keycol')=='genre' || n.getAttribute('keycol')=='elision'){
                 if(valeurs[n.getAttribute('keycol')]===undefined)
                   valeurs[n.getAttribute('keycol')]=n.checked ? n.getAttribute('value') : undefined;
+              }else if(n.getAttribute('keycol')=='hasConjugaison'){
+                if(n.selectedIndex != -1){
+                  valeurs[n.getAttribute('keycol')]=n.value;
+                  valeurs.libConjugaison = n.options[n.selectedIndex].text;
+                }
               }else 
                 valeurs[n.getAttribute('keycol')]=n.value;
           });
@@ -310,6 +458,7 @@ export class concept {
                   +' - '+(valeurs.prefix ? valeurs.prefix : "")
                   +' - '+(valeurs.gender?valeurs.gender:"")
                   +' - '+(valeurs.elision?valeurs.hasElision:"")
+                  +' - '+(valeurs.libConjugaison?valeurs.libConjugaison:"")
                   +' - '+(valeurs.accordFemSing?valeurs.accordFemSing:"")
                   +'_'+(valeurs.accordFemPlu?valeurs.accordFemPlu:"")
                   +'_'+(valeurs.accordMasSing?valeurs.accordMasSing:"")
@@ -319,6 +468,7 @@ export class concept {
               'prefix' : valeurs.prefix,
               'description_term':valeurs.description,
               'type_term':valeurs.type,
+              'hasConjugaison':valeurs.hasConjugaison,
               'generateur':valeurs.gen,
               'gender':valeurs.gender,
               'fem_plu':valeurs.accordFemPlu,
@@ -329,7 +479,7 @@ export class concept {
 
           if(d.mAdd.s.select(".modal-title").html()=="Update term")
             r.id = valeurs.id;
-          me.oDico.createTerm({'o:id':me.data.id}, r, 1, d.mAdd.s.select('#creaTermResult'));
+          me.oDico.createTerm({'o:id':me.data.id}, r, 1, !cb ? d.mAdd.s.select('#creaTermResult') : null,cb);
         }
         function changeTab(e,d){
           contResult.selectAll('div').remove();
@@ -492,11 +642,11 @@ export class concept {
             })
           return editors;
         }
-        function verifDeleteItem(h, s){
+        function verifDeleteItem(e,d){
           if(userAllowed){
             m.setBody('<h3  class="bg-danger">Are you sure you want to delete this item?</h3>');
             m.setBoutons([{'name':"Close"},
-                {'name':"Delete",'class':'btn-danger','fct':f=>deleteItem(h, s)}
+                {'name':"Delete",'class':'btn-danger','fct':f=>deleteItem(e,d)}
                 ]);                
           }else{
             m.setBody('<h3  class="bg-danger">You are not authorized to delete this item</h3>');
@@ -504,31 +654,22 @@ export class concept {
           }
           m.show();    
         }
-        function deleteItem(h,s){
-            let r = h.getDataAtRow(s[0].start.row),
-              k = h.getColHeader()[0],
-              ld = me.linkData.filter(l=>l.k==k);
-            if(me.omk){
-                d3.json(me.omk.api.replace("api/","s/balpien/page/ajax")
-                    +"?json=1&helper=sql&action=deleteConcept&id="
-                    +r[0]).then(e=>{
-                    if(e.status=='ok'){
-                      h.alter('remove_row', s[0].start.row, 1);
-                      m.hide();    
-                    }else{
-                        console.log('error delete item',e);
-                    }
-                }).catch(e=>{
-                    console.log('error delete item',e);
-                });
-            }else{
-              me.api.delete(ld[0].t,r[0]).then(e=>{
-                  h.alter('remove_row', s[0].start.row, 1);
-                  m.hide();    
-              });
-            }
+        function deleteItem(e,d){
+          let id = d.mAdd.s.select('#termId').node().value;
+          d3.json(me.omk.api.replace("api/","s/balpien/page/ajax")
+              +"?json=1&helper=sql&action=deleteConcept&id="
+              +id).then(e=>{
+              if(e.status=='ok'){
+                m.hide();
+                d.mAdd.m.hide();    
+                me.init();                
+              }else{
+                  console.log('error delete item',e);
+              }
+          }).catch(e=>{
+              console.log('error delete item',e);
+          });
         }
-
 
         function changeJsonEditor(u,p,r){
           let allowChangeKey=['lib','term_id','cpt_id'], item, path = parseFrom(r.patchResult.redo[0].path),
@@ -543,26 +684,27 @@ export class concept {
           }          
         }
 
-        function addChampResult(d){
+        function addChampResult(d,result=null){
+          if(!result)result=contResult;
             //ajoute les champs de résultats
-            contResult.selectAll('div').remove();
-            let htmlResult = `<div class="row h-100">
-            <div class="col">
-              <h4>Generated texts</h4>
+            result.selectAll('div').remove();
+            let htmlResult = `<div class="row">
+            <div class="col-6">
+              <h6>Texts</h6>
               <div class="progress" id="progressGenConcept">
               </div>
-              <div id="genText${d.n}"></div>
+              <div class="overflow-y-scroll overflow-x-scroll" id="genText${d.n ? d.n : d}" style="height:300px;width:100%;text-align:left;"></div>
             </div>`;
 
             if(d=='concept' || d.n=="Term"  || d.t=="gen_generateurs" || d.t=="gen_uris"){
-              htmlResult += `<div class="col">
-                      <h4>Generation structure</h4>
-                      <div id="genStrct"></div>
+              htmlResult += `<div class="col-6 pe-2">
+                      <h6>Structure</h6>
+                      <div id="genStrct" style="height:300px"></div>
                     </div>
                   </div>`;
-              contResult.html(htmlResult);
+              result.html(htmlResult);
               me.jsEditor = new JSONEditor({
-                target: document.getElementById("genStrct"),
+                target: result.select("#genStrct").node(),
                 props: {
                   mode: 'tree',
                   onChange:changeJsonEditor, 
@@ -576,11 +718,11 @@ export class concept {
               //écouteur pour les modifications
             }else{
               htmlResult += `</div>`;
-              contResult.html(htmlResult);
+              result.html(htmlResult);
             }
 
             //ajoute le progresse bar
-            progress = new ProgressBar.Circle(contResult.select('#progressGenConcept').node(), {
+            progress = new ProgressBar.Circle(result.select('#progressGenConcept').node(), {
               color: '#aaa',
               // This has to be the same size as the maximum width to
               // prevent clipping
@@ -641,16 +783,29 @@ export class concept {
           return hours+":"+minutes+":"+seconds+":"+millis;
         }
 
-        function showGen(d,g,view){
+        function showGen(d,g,view,result=false){
           if(me.omk){
             let url = me.omk.api.replace("api","s/balpien/page/ajax")+"?json=1&helper=generate&structure=1&explode=1&"
               +(g.term ? "idTerm="+g.term+"&idConcept="+g.concept : "idConcept="+g.id);
+            fetch(url)
+              .then(async response => {
+                if (!response.ok) {
+                  let r = await response.text();
+                  showResultGen(d,{'error':r},view,result);
+                }else  return response.json();
+              })
+              .then(data => {
+                console.log(data);
+                showResultGen(d, data, view, result);
+              });
+            /*
             d3.json(url).then(data=>{
               console.log(data);
-              showResultGen(d,data,view);
+              showResultGen(d,data,view,result);
             }).catch(function(error) {
-              showResultGen(d,{'strct':error},view);
+              showResultGen(d,{'error':error},view,result);
             });
+            */
           }else{
             me.oeuvre.wGen.postMessage({
               'g':g,
@@ -670,19 +825,28 @@ export class concept {
           }
         }
 
-        function showResultGen(d,data,view){
-            me.tgtContent.select("#genText"+d.n).html(data.texte);    
-            switch (view) {
-              case 'jsEditor':
-                me.jsEditor.set({json:data.strct});                
-                break;            
-              case 'Handsontable':
-                let div = me.tgtContent.select("#genText"+d.n),
-                  hot = new Handsontable(div.node(), {data:data,height:contHeight,licenseKey: 'non-commercial-and-evaluation'});                
-                break;            
-              }
-            progress.destroy();
-            contResult.select('#progressGenConcept').remove();          
+        function showResultGen(d,data,view,divResult){          
+          divResult = divResult ? divResult : me.tgtContent.select("#genText"+(d.n?d.n:d)); 
+          if(data.error){
+            divResult.html(data.error);
+            if(progress && progress.path)progress.destroy();
+            d3.select(divResult.node().parentNode).select('#progressGenConcept').remove();          
+            return;
+          } 
+          switch (view) {
+            case 'jsEditor':
+              me.jsEditor.set({json:data.strct});                
+              break;            
+            case 'Handsontable':
+              let div = me.tgtContent.select("#genText"+d.n),
+                hot = new Handsontable(div.node(), {data:data,height:contHeight,licenseKey: 'non-commercial-and-evaluation'});                
+              break;            
+            default:
+              me.jsEditor.set({json:data.strct});                
+          }
+          divResult.html(data.texte);    
+          if(progress && progress.path)progress.destroy();
+          d3.select(divResult.node().parentNode).select('#progressGenConcept').remove();          
         }
 
         function showSparql(d,g){
