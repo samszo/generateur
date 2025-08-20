@@ -198,11 +198,11 @@ export class auth {
                             if(me.loginGitHub) {                              
                                 authGitHub(uGitHub=>{
                                     me.user.loginGitHub=uGitHub;
-                                    if(cb)cb(me.user);
                                 })
                             }
                         }            
                     }
+                    if(cb)cb(me.user);
                 })    
             };
         }
