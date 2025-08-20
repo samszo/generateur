@@ -60,10 +60,9 @@ export class oeuvres {
                         'dcterms:license':licence,
                         'dcterms:language':lang,
                         'genex:hasDico':[
-                            {'rid':27,'type':'resource'},
                             {'rid':28,'type':'resource'},
                             {'rid':29,'type':'resource'},
-                            {'rid':325954,'type':'resource'},
+                            {'rid':418948,'type':'resource'},
                             {'rid':36,'type':'resource'},
                             {'rid':37,'type':'resource'},
                             {'rid':i["o:id"],'type':'resource'}
