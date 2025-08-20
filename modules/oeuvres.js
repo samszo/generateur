@@ -276,10 +276,12 @@ export class oeuvres {
         this.showDicos = function (oeu){
             d3.select(me.tgtList).selectAll('.gDicos').remove();
             //récupère les dicos de l'oeuvre
-            me.auth.omk.getAllItems('filter[0][join]=and&filter[0][field][]=genex:hasDico&filter[0][type]=lres&filter[0][val]='+oeu["o:id"],function(data){
+            let query = me.auth.omk.api.replace("api/","s/balpien/page/ajax")+"?json=1&helper=sql&action=getDicos&idOeu="+oeu["o:id"];
+            d3.json(query).then(data=>{            
+            //me.auth.omk.getAllItems('filter[0][join]=and&filter[0][field][]=genex:hasDico&filter[0][type]=lres&filter[0][val]='+oeu["o:id"],function(data){
                 me.dicos = data;
                 d3.select(me.tgtList).selectAll('.gDicos').remove();
-                let gDicos = d3.group(me.dicos, d => d["genex:isGeneral"][0]["@value"]);
+                let gDicos = d3.group(me.dicos, d => d.general);
                 d3.select(me.tgtList).selectAll('.gDicos')
                     .data(Array.from(gDicos))
                     .join(
@@ -333,9 +335,9 @@ export class oeuvres {
                 .data(d=>{
                     //on intialise le tableau des dicos si pas encore fait
                     d[1].forEach(dic=>{
-                        if(!me.dataDico[dic["genex:hasType"][0]["@value"]])me.dataDico[dic["genex:hasType"][0]["@value"]] = [];
+                        if(!me.dataDico[dic.type])me.dataDico[dic.type] = [];
                         //on charge les données du dictionnaire si ce n'est pas un dictionnaire de concepts
-                        if(dic["genex:hasType"][0]["@value"]!="concepts"){
+                        if(dic.type!="concepts"){
                             let oDico = new dico({
                                 'oeuvre':me,
                                 'd':dic,
@@ -355,26 +357,17 @@ export class oeuvres {
                         li.append('input').attr('class','form-check-input me-1')
                             .attr('type','radio')
                             .attr('name','listeDicos')
-                            .attr('id',d=>'dico'+me.auth.omk ? d['o:id'] : d.id_dico);
+                            .attr('id',d=>'dico'+d.id);
                         li.append('label').attr('class','form-check-label')
-                            .attr('for',d=>'dico'+me.auth.omk ? d['o:id'] : d.id_dico)
-                            .html(d=>me.auth.omk ? d['o:title'] : d.nom/*+' ('+d.id_dico+')'*/);
-                        /*ajoute un lien vers l'item omk
-                        NON car en conflit avec la sélection du dico
-                        li.append('a')
-                            .attr('href',d=>me.auth.omk.getAdminLink(d))
-                            .attr('target',"_blank")
-                            .append('img').attr('src','asset/images/logos/OmekaS.png')
-                                .style("margin-left","2px")
-                                .style("height","20px");
-                        */
+                            .attr('for',d=>'dico'+d.id)
+                            .html(d=>d.title);
                     },
                     update => {
                         let li = update.selectAll('li')
-                        li.selectAll('input').attr('id',d=>'dico'+me.auth.omk ? d['o:id'] : d.id_dico);
+                        li.selectAll('input').attr('id',d=>'dico'+d.id);
                         li.selectAll('label')                        
-                            .attr('for',d=>'dico'+me.auth.omk ? d['o:id'] : d.id_dico)
-                            .html(d=>me.auth.omk ? d['o:title'] : d.nom/*+' ('+d.id_dico+')'*/);
+                            .attr('for',d=>'dico'+d.id)
+                            .html(d=>d.title);
                     },
                     exit => exit.remove()
                 );
@@ -382,9 +375,9 @@ export class oeuvres {
           
         }
         function showDico(e,d,id){
-            if(id)d=me.dicos.filter(r=>(me.auth.omk ? r['o:id'] : r.id_dico)==id)[0];
+            if(id)d=me.dicos.filter(r=>r.id==id)[0];
             else me.appUrl.changes([{k:'id_oeu',v:me.auth.omk ? me.curOeuvre['o:id'] : me.curOeuvre.id_oeu}]);
-            me.appUrl.change('id_dico',me.auth.omk ? d['o:id'] : d.id_dico);
+            me.appUrl.change('id_dico',d.id);
             me.curDico = new dico({
                     'oeuvre':me,
                     'd':d,

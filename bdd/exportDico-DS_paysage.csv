@@ -1,0 +1,6 @@
+concept,description_concept,type_concept,term,type_term,description_term,generateur,prefix,gender,hasConjugaison,elision,fem_sin,fem_plu,mas_sin,mas_plu
+Paysage,,normand,"generateur:Le verger de pommiers était en fleurs.",generateur,"{""concept"":""Paysage"",""description_concept"":"""",""type_concept"":""normand"",""term"":"""",""type_term"":""generateur"",""description_term"":"""",""generateur"":""Le verger de pommiers était en fleurs."",""prefix"":"""",""gender"":"""",""conjugaison"":"""",""elision"":"""",""fem_sin"":"""",""fem_plu"":"""",""mas_sin"":"""",""mas_plu"":""""}","Le verger de pommiers était en fleurs.",,,,0,,,,
+,,,"generateur:Un troupeau de vaches, paisibles, ruminait à l’ombre.",generateur,"{""concept"":"""",""description_concept"":"""",""type_concept"":"""",""term"":"""",""type_term"":""generateur"",""description_term"":"""",""generateur"":""Un troupeau de vaches, paisibles, ruminait à l’ombre."",""prefix"":"""",""gender"":"""",""conjugaison"":"""",""elision"":"""",""fem_sin"":"""",""fem_plu"":"""",""mas_sin"":"""",""mas_plu"":""""}","Un troupeau de vaches, paisibles, ruminait à l’ombre.",,,,0,,,,
+
+
+

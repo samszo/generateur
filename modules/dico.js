@@ -32,7 +32,7 @@ export class dico {
             userAllowed = me.oeuvre.auth.userAdmin || me.oeuvre.auth.userAllowed(me.d.id_dico,me.oeuvre.dicosUti);
             //récupération de la table suivant le type
             for (const p in m.tables) {
-                if(m.tables[p].type==(me.omk ? me.d["genex:hasType"][0]["@value"] : me.d.type))table=m.tables[p];
+                if(m.tables[p].type==me.d.type)table=m.tables[p];
             }                        
             me.getData();
             me.loader.hide();
@@ -40,8 +40,8 @@ export class dico {
 
         this.getData = async function(){
             userAllowed = true;
-            if(me.oeuvre.dataDico[me.d["genex:hasType"][0]["@value"]].length>0){
-                let dico = me.oeuvre.dataDico[me.d["genex:hasType"][0]["@value"]].filter(d=>me.d["o:id"]==d.idDico);
+            if(me.oeuvre.dataDico[me.d.type].length>0){
+                let dico = me.oeuvre.dataDico[me.d.type].filter(d=>me.d.id==d.idDico);
                 if(dico.length>0){
                     me.data = dico[0].data;
                     if(!this.onlyData)initIHM();
@@ -50,11 +50,11 @@ export class dico {
             }
             /*
             let query = me.d["genex:hasType"][0]["@value"]!="concepts" ? 
-                me.omk.api+'items?resource_class_id='+table.class+"&property[0][joiner]=and&property[0][property]="+me.omk.getPropId("genex:hasDico")+"&property[0][type]=res&property[0][text]="+me.d['o:id']
+                me.omk.api+'items?resource_class_id='+table.class+"&property[0][joiner]=and&property[0][property]="+me.omk.getPropId("genex:hasDico")+"&property[0][type]=res&property[0][text]="+me.d.id
                 : me.omk.api.replace("api/","s/balpien/page/ajax")+"?json=1&helper=sql&action=getDicoItems&idDico="+me.d["o:id"];
             */
             //récupère les données du dictionnaire
-            await me.setData(me.d["o:id"],me.d["genex:hasType"][0]["@value"]);
+            await me.setData(me.d.id,me.d.type);
             if(!this.onlyData)initIHM();
         }
 
@@ -79,7 +79,7 @@ export class dico {
                 //ajoute les outils
                 let general = false,//me.omk && me.d['genex:isGeneral'][0]["@value"]=="oui" ? true : false,
                     tools = `<div class="container-fluid">
-                <a class="navbar-brand" href="#">${me.omk ? me.d['o:title'] : me.d.nom}</a>
+                <a class="navbar-brand" href="#">${me.d.title}</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarDico" aria-controls="navbarDico" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -111,7 +111,7 @@ export class dico {
                 toolsNav = colL.append('nav').attr('class','navbar navbar-expand-lg bg-light').html(tools);
                 //ajoute le lien vers OmekaS
                 toolsNav.select("#listBtnDico").append('li').attr('class',"nav-item mx-2").append('a')
-                    .attr('href',me.omk.getAdminLink(me.d))
+                    .attr('href',me.omk.getAdminLink(null,me.d.id,"o:Item"))
                     .attr('target',"_blank")
                     .append('img').attr('src','asset/images/logos/OmekaS.png')
                         .style("margin-top","-4px")
@@ -165,7 +165,7 @@ export class dico {
                         return h.indexOf('_') > 0 ? i : null
                     }).filter(k=>k!=null)
                 },
-                hotWidth = me.d["genex:hasType"][0]["@value"]=="concepts" ? 375 : "100%";
+                hotWidth = me.d.type=="concepts" ? 375 : "100%";
 
             me.hot = new Handsontable(dicoHot.node(), {
                 rowHeaders: true,
@@ -255,7 +255,7 @@ export class dico {
         }
         this.exportDico = function(e,d){
             const a = document.createElement('a');
-            const url = me.omk.api.replace("api/","s/balpien/page/ajax?json=1&helper=sql&action=exportDico&export=csv&idDico="+me.d['o:id']);
+            const url = me.omk.api.replace("api/","s/balpien/page/ajax?json=1&helper=sql&action=exportDico&export=csv&idDico="+me.d.id);
             a.href = url;
             document.body.appendChild(a);
             a.click();
@@ -299,7 +299,7 @@ export class dico {
                     .text("FIN Traitement : "+(new Date().toLocaleTimeString("fr-FR")));
                 //explode les concepts
                 me.oeuvre.explodeConcept(curCpt);
-                await me.setData(me.d["o:id"],me.d["genex:hasType"][0]["@value"]);
+                await me.setData(me.d.id,me.d.type);
                 initIHM();
                 me.loader.hide(true);
                 return;
@@ -315,8 +315,8 @@ export class dico {
                     'dcterms:title':title,
                     'dcterms:description':r.description_concept,
                     'genex:hasType':r.type_concept,
-                    'genex:hasDico':{'rid':me.d['o:id']},
-                    'dcterms:identifier':me.d['o:id']+'_'+title,
+                    'genex:hasDico':{'rid':me.d.id},
+                    'dcterms:identifier':me.d.id+'_'+title,
                     },
                     dtO = {'rt':'genex_Concept','c':'genex:Concept','dt':{}};
                 dtO.dt = dt;
@@ -452,7 +452,7 @@ export class dico {
                     'o:resource_template':'genex_Concept',
                     'dcterms:title':valeurs['type']+'_'+valeurs['lib'],
                     'genex:hasType':valeurs['type'],
-                    'genex:hasDico':{'rid':me.d['o:id'],'type':'resource'},
+                    'genex:hasDico':{'rid':me.d.id,'type':'resource'},
                 };
                 me.omk.createItem(dt,item=>{
                     //ATTENTION l'ordre est important
